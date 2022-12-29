@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FC335319-C157-4369-8E78-4AE46720E535}</ProjectGuid>
+    <RootNamespace>pixianimatevs2015</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <ProjectName>Plugin</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.fcm</TargetExt>
+    <OutDir>../../build/win/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.fcm</TargetExt>
+    <OutDir>../../build/win/</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\;..\..\src\include;..\..\AnimateSDK\app\include\common;..\..\AnimateSDK\core\include\common;..\..\AnimateSDK\app\include\interfaces;..\..\AnimateSDK\core\include\interfaces;..\..\AnimateSDK\app\include\interfaces\DOM;..\..\ThirdParty\libjson_7.6.1\libjson;..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\;..\..\src\include;..\..\AnimateSDK\app\include\common;..\..\AnimateSDK\core\include\common;..\..\AnimateSDK\app\include\interfaces;..\..\AnimateSDK\core\include\interfaces;..\..\AnimateSDK\app\include\interfaces\DOM;..\..\ThirdParty\libjson_7.6.1\libjson;..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>del /q "$(OutDirFullPath)$(ProjectName).lib"
+del /q "$(OutDirFullPath)$(ProjectName).exp"</Command>
+    </PostBuildEvent>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ImportLibrary />
+    </Link>
+    <PreBuildEvent>
+      <Command>del /q "$(TargetDir)"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\DocType.h" />
+    <ClInclude Include="..\..\src\include\IOutputWriter.h" />
+    <ClInclude Include="..\..\src\include\OutputWriter.h" />
+    <ClInclude Include="..\..\PluginConfiguration.h" />
+    <ClInclude Include="..\..\src\include\Publisher.h" />
+    <ClInclude Include="..\..\src\include\Utils.h" />
+    <ClInclude Include="..\..\src\include\Version.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\JSONOptions.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\libjson.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Dependencies\mempool++\mempool.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\internalJSONNode.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONAllocator.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONChildren.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDebug.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDefs.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDefs\GNU_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDefs\Strings_Defs.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDefs\Unknown_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDefs\Visual_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONGlobals.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONMemory.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONMemoryPool.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONNode.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONPreparse.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONSharedString.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONSingleton.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONStats.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONStream.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONValidator.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONWorker.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSON_Base64.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\NumberToString.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\DocType.cpp" />
+    <ClCompile Include="..\..\src\Main.cpp" />
+    <ClCompile Include="..\..\src\OutputWriter.cpp" />
+    <ClCompile Include="..\..\src\Publisher.cpp" />
+    <ClCompile Include="..\..\src\Utils.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\internalJSONNode.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONAllocator.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONChildren.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONDebug.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONIterators.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONMemory.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONNode.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONNode_Mutex.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONPreparse.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONStream.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONValidator.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONWorker.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\JSONWriter.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson_7.6.1\libjson\_internal\Source\libjson.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

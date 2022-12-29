@@ -1,0 +1,6 @@
+// Main folder
+./build
+
+// CPP Plugin source files
+./plugin/PluginConfiguration.h
+./plugin/build
