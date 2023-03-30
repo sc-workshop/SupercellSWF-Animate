@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FC335319-C157-4369-8E78-4AE46720E535}</ProjectGuid>
+    <RootNamespace>pixianimatevs2015</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <ProjectName>Plugin</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.fcm</TargetExt>
+    <OutDir>../../build/win/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.fcm</TargetExt>
+    <OutDir>../../build/win/</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\;..\..\include;..\..\include\AnimateSDK\app\include\interfaces\DOM;..\..\include\AnimateSDK\app\include\common;..\..\include\AnimateSDK\core\include\common;..\..\include\AnimateSDK\app\include\interfaces;..\..\include\AnimateSDK\core\include\interfaces;..\..\ThirdParty\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;USE_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\;..\..\include;..\..\include\AnimateSDK\app\include\interfaces\DOM;..\..\include\AnimateSDK\app\include\common;..\..\include\AnimateSDK\core\include\common;..\..\include\AnimateSDK\app\include\interfaces;..\..\include\AnimateSDK\core\include\interfaces;..\..\ThirdParty\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>del /q "$(OutDirFullPath)$(ProjectName).lib"
+del /q "$(OutDirFullPath)$(ProjectName).exp"</Command>
+    </PostBuildEvent>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ImportLibrary />
+    </Link>
+    <PreBuildEvent>
+      <Command>del /q "$(TargetDir)"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\DocType\DataTypes.cpp" />
+    <ClCompile Include="..\..\src\DocType\DocType.cpp" />
+    <ClCompile Include="..\..\src\DocType\FeatureMatrix.cpp" />
+    <ClCompile Include="..\..\src\Main.cpp" />
+    <ClCompile Include="..\..\src\OutputWriter.cpp" />
+    <ClCompile Include="..\..\src\Publisher.cpp" />
+    <ClCompile Include="..\..\src\Utils.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\internalJSONNode.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONAllocator.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONChildren.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONDebug.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONIterators.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONMemory.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONNode.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONNode_Mutex.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONPreparse.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONStream.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONValidator.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONWorker.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\JSONWriter.cpp" />
+    <ClCompile Include="..\..\ThirdParty\libjson\src\libjson.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\AppNamespace.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\common\ApplicationFCMPublicIDs.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\common\FlashFCMPublicIDs.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Application\Service\IApplicationService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Application\Service\IFlashApplicationService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Application\Service\IOutputConsoleService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DocType\IDocType.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DocType\IFeatureMatrix.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FillStyle\IBitmapFillStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FillStyle\IGradientFillStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FillStyle\ISolidFillStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IBitmapInstance.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IButton.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IClassicText.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IComponentInstance.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IFrameDisplayElement.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IGraphic.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IGroup.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IInstance.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IMovieClip.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IParagraph.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\IShape.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\ISound.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\ISymbolInstance.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\ITextBehaviour.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\ITextRun.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\FrameElement\ITextStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IAdjustColorFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IBevelFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IBlurFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IDropShadowFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IGlowFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IGradientBevelFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\GraphicFilter\IGradientGlowFilter.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ICamera.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\IFilterable.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\IFLADocument.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\IFrame.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\IFrame1.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ILayer.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ILayer1.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ILayer2.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ILibraryItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ITimeline.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ITimeline1.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\ITween.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\LibraryItem\IComponentItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\LibraryItem\IFolderItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\LibraryItem\IFontItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\LibraryItem\IMediaItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\LibraryItem\ISymbolItem.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\MediaInfo\IBitmapInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\MediaInfo\ISoundInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Document\IFLADocService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\FontTable\IFontTable.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\FontTable\IFontTableGeneratorService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\FontTable\IGlyph.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\FontTable\IKerningPair.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Image\IBitmapExportService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Media3D\IMedia3DExportService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IEdge.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IFilledRegion.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IPath.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IRegionGeneratorService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IShapeService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Shape\IStrokeGroup.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Sound\ISoundExportService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\TextLayout\ITextLine.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\TextLayout\ITextLinesGeneratorService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IColorTweener.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IColorTweenInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IEasingInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IFilterTweener.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IFilterTweenInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IGeometricTweener.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IGeometricTweenInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IPropertyIDs.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IPropertyTweenInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IShapeHintInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IShapeTweener.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\IShapeTweenInfo.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\ITweenerService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Service\Tween\ITweenInfoService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IDashedStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IDottedStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IHatchedStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IPaintbrushStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IRaggedStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\ISolidStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IStippleStrokeStyle.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\StrokeStyle\IStrokeWidth.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\DOMTypes.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\ILinearColorGradient.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\IMatrix2D.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\IRadialColorGradient.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\IRect.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\DOM\Utils\ISoundEffect.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\IFrameCommandGenerator.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\IResourcePalette.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\ISWFExportService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\ITimelineBuilder.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\ITimelineBuilder2.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\ITimelineBuilder3.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Exporter\Service\ITimelineBuilderFactory.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\app\include\interfaces\Publisher\IPublisher.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMErrors.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMMacros.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMPluginInterface.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMPostConfig.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMPreConfig.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMPublicIDs.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\FCMTypes.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\mac\FCMPostAlign_MAC.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\mac\FCMPreAlign_MAC.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\win\FCMPostAlign_WIN.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\common\win\FCMPreAlign_WIN.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\FCMCoreNamespaces.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMCallback.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMCalloc.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMClassFactory.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMDictionary.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMList.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMNoAggregationUnknown.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMNotificationClient.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMNotificationService.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMPair.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMPluginDictionary.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMStringUtils.h" />
+    <ClInclude Include="..\..\include\AnimateSDK\core\include\interfaces\IFCMUnknown.h" />
+    <ClInclude Include="..\..\include\DocType\DataTypes.h" />
+    <ClInclude Include="..\..\include\DocType\DocType.h" />
+    <ClInclude Include="..\..\include\DocType\FeatureMatrix.h" />
+    <ClInclude Include="..\..\include\IOutputWriter.h" />
+    <ClInclude Include="..\..\include\OutputWriter.h" />
+    <ClInclude Include="..\..\include\Publisher.h" />
+    <ClInclude Include="..\..\include\Utils.h" />
+    <ClInclude Include="..\..\include\Version.h" />
+    <ClInclude Include="..\..\PluginConfiguration.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\JSONOptions.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\libjson.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\internalJSONNode.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONAllocator.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONChildren.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDebug.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDefs.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDefs\GNU_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDefs\Strings_Defs.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDefs\Unknown_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONDefs\Visual_C.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONGlobals.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONMemory.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONMemoryPool.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONNode.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONPreparse.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONSharedString.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONSingleton.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONStats.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONStream.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONValidator.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSONWorker.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\JSON_Base64.h" />
+    <ClInclude Include="..\..\ThirdParty\libjson\src\NumberToString.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

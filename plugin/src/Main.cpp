@@ -1,18 +1,25 @@
-#include "FCMPluginInterface.h"
+#include <FCMPluginInterface.h>
 
-#include "DocType.h"
-#include "Publisher.h"
+
+#include "DocType/DocType.h"
+#include "DocType/FeatureMatrix.h"
+
+#include "SharedPublisher/Publisher.h"
+#include "SharedPublisher/ResourcePalette.h"
+#include "SharedPublisher/TimelineBuilder.h"
+#include "SharedPublisher/TimelineBuilderFactory.h"
+
 #include "Utils.h"
 
 namespace SupercellSWF
 {
-    BEGIN_MODULE(CreateJSModule)
+    BEGIN_MODULE(Module)
 
         BEGIN_CLASS_ENTRY
 
-            CLASS_ENTRY(CLSID_DocType, CDocType)
+            CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
             CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-            CLASS_ENTRY(CLSID_Publisher, CPublisher)
+            CLASS_ENTRY(CLSID_Publisher, ModulePublisher)
             CLASS_ENTRY(CLSID_ResourcePalette, ResourcePalette)
             CLASS_ENTRY(CLSID_TimelineBuilder, TimelineBuilder)
             CLASS_ENTRY(CLSID_TimelineBuilderFactory, TimelineBuilderFactory)
@@ -29,7 +36,7 @@ namespace SupercellSWF
     END_MODULE
 
     
-    CreateJSModule g_createJSModule;
+    Module module;
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback pCallback)
     {
@@ -37,12 +44,12 @@ namespace SupercellSWF
         std::string langCode;
         std::string modulePath;
 
-        res = g_createJSModule.init(pCallback);
+        res = module.init(pCallback);
 
         Utils::GetModuleFilePath(modulePath, pCallback);
         Utils::GetLanguageCode(pCallback, langCode);
 
-        g_createJSModule.SetResPath(modulePath + "../res/" + langCode + "/");
+        module.SetResPath(modulePath + "../res/" + langCode + "/");
         return res;
     }
 
@@ -50,7 +57,7 @@ namespace SupercellSWF
         FCM::PIFCMCalloc pCalloc, 
         FCM::PFCMClassInterfaceInfo* ppClassInfo)
     {
-        return g_createJSModule.getClassInfo(pCalloc, ppClassInfo);
+        return module.getClassInfo(pCalloc, ppClassInfo);
     }
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassObject(
@@ -59,7 +66,7 @@ namespace SupercellSWF
         FCM::ConstRefFCMIID iid, 
         FCM::PPVoid pAny)
     {
-        return g_createJSModule.getClassObject(pUnkOuter, clsid, iid, pAny);
+        return module.getClassObject(pUnkOuter, clsid, iid, pAny);
     }
 
     // Register the plugin - Register plugin as both DocType and Publisher
@@ -72,7 +79,7 @@ namespace SupercellSWF
         AutoPtr<IFCMDictionary> pPlugins;
         pDictionary->AddLevel((const FCM::StringRep8)kFCMComponent, pPlugins.m_Ptr);
     
-        res = RegisterDocType(pPlugins, g_createJSModule.GetResPath());
+        res = RegisterDocType(pPlugins, module.GetResPath());
         if (FCM_FAILURE_CODE(res))
         {
             return res;
@@ -85,12 +92,12 @@ namespace SupercellSWF
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::U_Int32 PluginCanUnloadNow(void)
     {
-        return g_createJSModule.canUnloadNow();
+        return module.canUnloadNow();
     }
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginShutdown()
     {
-        g_createJSModule.finalize();
+        module.finalize();
 
         return FCM_SUCCESS;
     }

@@ -11,9 +11,10 @@ if system() not in ['Windows', 'Linux']:
     raise Exception("Unsupported build platform")
 
 # Consts
-PLATFORM_CODE = "win" if system() == 'Windows' else 'mac'
+PLATFORM_CODE: str = "win" if system() == 'Windows' else 'mac'
 CONFIG_FILE: str = './config.json'
 DEBUG: bool = '--debug' in sys.argv
+DEBUG_RELEASE: bool = '--debug-release' in sys.argv
 BUILD_BINARY: bool = True
 # Config init
 if os.path.exists(CONFIG_FILE):
@@ -21,13 +22,17 @@ if os.path.exists(CONFIG_FILE):
 else:
     raise Exception("Config not found")
 
-EXTENSION_VERSION: str = config['version']
+VERSION: list[str] = str(config['version']).split(".")
+VERSION_MAJOR = int(VERSION[0])
+VERSION_MINOR = int(VERSION[1])
+VERSION_MAINTENANCE = int(VERSION[2])
 EXTENSION_NAME: str = config['name']
 EXTENSION_ORG: str = config['org']
 EXTENSION_DESC: str = config['description']
 EXTENSION_ID: str = f"com.{EXTENSION_ORG}.{EXTENSION_NAME}"
-BUILD_FOLDER: str = "./build"
-if DEBUG:
+EXTENSION_RESOURCES: list[str] = config['resources']
+BUILD_FOLDER: str = os.path.abspath("build")
+if DEBUG or DEBUG_RELEASE:
     BUILD_FOLDER = os.path.join(BUILD_FOLDER, EXTENSION_ID)
 
 ENV_CONFIG: dict = config['env']
@@ -40,6 +45,11 @@ EXTENSION_INSTANCES: Dict[str, dict] = config['instances']
 
 CSXS_PATH: str = os.path.join(BUILD_FOLDER, "CSXS")
 
+WORKSPACE: str = os.getcwd()
+
+def createDir(path: str):
+    if (not os.path.exists(path)):
+        os.makedirs(path, exist_ok=True)
 
 # CPP things
 def create_extension_config(path: str,
@@ -47,8 +57,7 @@ def create_extension_config(path: str,
                             ui: str,
                             consts: Dict[str, str],
                             class_ids: Dict[str, str]):
-    res: str = "#ifndef _PLUGIN_CONFIGURATION_H_\n" \
-               "#define _PLUGIN_CONFIGURATION_H_\n" \
+    res: str = "#pragma once\n" \
                "\n" \
                f'#define PUBLISHER_NAME						"{EXTENSION_NAME}"\n' \
                f'#define PUBLISHER_UNIVERSAL_NAME			"{extension_id}"\n' \
@@ -58,6 +67,11 @@ def create_extension_config(path: str,
                f'#define DOCTYPE_NAME						"{EXTENSION_NAME}"\n' \
                f'#define DOCTYPE_UNIVERSAL_NAME				"{EXTENSION_ID}"\n' \
                f'#define DOCTYPE_DESCRIPTION					"{EXTENSION_DESC}"\n' \
+               '\n' \
+               f'#define PLUGIN_VERSION_MAJOR					{VERSION_MAJOR}\n' \
+               f'#define PLUGIN_VERSION_MINOR					{VERSION_MINOR}\n' \
+               f'#define PLUGIN_VERSION_MAINTENANCE					{VERSION_MAINTENANCE}\n' \
+               '#define PLUGIN_VERSION ( (PLUGIN_VERSION_MAJOR << 24) | (PLUGIN_VERSION_MINOR << 16) | (PLUGIN_VERSION_MAINTENANCE << 8) )\n' \
                '\n'
 
     for constant in consts:
@@ -68,33 +82,21 @@ def create_extension_config(path: str,
     for class_id in class_ids:
         res += f'const FCM::FCMCLSID {class_id} = {class_ids[class_id]};\n'
 
-    res += '}\n' \
-           '#endif'
+    res += "}"
 
     with open(os.path.join(path, 'PluginConfiguration.h'), 'w') as f:
         f.write(res)
 
 
-def common_extension_processing(name: str, common_filepath: str) -> str:
-    if not os.path.exists(common_filepath):
-        raise Exception(f"File not exist {common_filepath}")
-
-    src_folder: str = os.path.dirname(common_filepath)
-    dst_folder: str = os.path.join(BUILD_FOLDER, name)
-
-    copytree(src_folder, dst_folder)
-
-    return f"./{name}/{os.path.basename(common_filepath)}"
-
-
 def cpp_building_windows(solution_path: str):
-    msbuild = which('msbuild')
+    msbuild: str = which('msbuild')
     if not msbuild:
         raise Exception('MSBuild not found!')
 
     print("C++ building..")
 
-    subprocess.run([msbuild, solution_path, f"-property:Configuration={'Release' if not DEBUG else 'Debug'}"])
+    subprocess.run([msbuild, solution_path,
+                   f"-property:Configuration={'Release' if not DEBUG else 'Debug'}"])
 
 
 def cpp_extension_processing(name: str, project_dir: str, cpp_info: dict) -> str:
@@ -106,7 +108,8 @@ def cpp_extension_processing(name: str, project_dir: str, cpp_info: dict) -> str
     fcm_folder: str = os.path.join(extension_folder, 'lib')
     os.makedirs(fcm_folder, exist_ok=True)
 
-    solution_path: str = os.path.join(project_dir, "project", PLATFORM_CODE, f"{name}.sln")
+    solution_path: str = os.path.join(
+        project_dir, "project", PLATFORM_CODE, f"{name}.sln")
     if not os.path.exists(solution_path):
         raise Exception(f"Solution file not found {solution_path}")
 
@@ -118,18 +121,20 @@ def cpp_extension_processing(name: str, project_dir: str, cpp_info: dict) -> str
                 cpp_building_windows(solution_path)
             except Exception:
                 print("Building failed!")
-        #TODO: Mac
+        # TODO: Mac
 
         binary_folder = os.path.join(project_dir, 'build', PLATFORM_CODE)
         if os.path.exists(binary_folder):
-            copytree(binary_folder, os.path.join(fcm_folder, PLATFORM_CODE))
+            copytree(binary_folder, os.path.join(
+                fcm_folder, PLATFORM_CODE), dirs_exist_ok=True)
         else:
             print("Binary files not found. Skip...")
 
     # Include file copying
     for file in include_files:
         if os.path.isdir(file):
-            copytree(file, os.path.join(fcm_folder, os.path.basename(file)), dirs_exist_ok=True)
+            copytree(file, os.path.join(
+                fcm_folder, os.path.basename(file)), dirs_exist_ok=True)
         else:
             copy(file, fcm_folder)
 
@@ -137,31 +142,52 @@ def cpp_extension_processing(name: str, project_dir: str, cpp_info: dict) -> str
 
     return f"./{name}/fcm.xml"
 
-
 # CEP things
+
+
+def common_extension_processing(name: str, common_filepath: str) -> str:
+    if not os.path.exists(common_filepath):
+        raise Exception(f"File not exist {common_filepath}")
+
+    src_folder: str = os.path.dirname(common_filepath)
+    dst_folder: str = os.path.join(BUILD_FOLDER, name)
+
+    if (os.path.exists(dst_folder)):
+        rmtree(dst_folder)
+
+    copytree(src_folder, dst_folder)
+
+    return f"./{name}/{os.path.basename(common_filepath)}"
+
+
 def process_config():
     # Debug
     debug_file: ElementTree.Element = ElementTree.Element("ExtensionList")
 
     # Manifest
-    os.mkdir(CSXS_PATH)
+    createDir(CSXS_PATH)
     manifest: ElementTree.Element = ElementTree.Element("ExtensionManifest")
     manifest.attrib['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
     manifest.attrib['Version'] = "9.0"
 
     manifest.attrib['ExtensionBundleId'] = str(EXTENSION_ID)
-    manifest.attrib['ExtensionBundleVersion'] = str(EXTENSION_VERSION)
-    manifest.attrib['ExtensionBundleName'] = str(config['name'])
+    manifest.attrib['ExtensionBundleVersion'] = f'{VERSION_MAJOR}.{VERSION_MINOR}'
+    manifest.attrib['ExtensionBundleName'] = str(EXTENSION_NAME)
 
     # Main elements
-    extension_list: ElementTree.Element = ElementTree.SubElement(manifest, 'ExtensionList')
+    extension_list: ElementTree.Element = ElementTree.SubElement(
+        manifest, 'ExtensionList')
 
-    env: ElementTree.Element = ElementTree.SubElement(manifest, "ExecutionEnvironment")
+    env: ElementTree.Element = ElementTree.SubElement(
+        manifest, "ExecutionEnvironment")
     env_hosts: ElementTree.Element = ElementTree.SubElement(env, 'HostList')
-    env_locales: ElementTree.Element = ElementTree.SubElement(env, 'LocaleList')
-    env_runtimes: ElementTree.Element = ElementTree.SubElement(env, 'RequiredRuntimeList')
+    env_locales: ElementTree.Element = ElementTree.SubElement(
+        env, 'LocaleList')
+    env_runtimes: ElementTree.Element = ElementTree.SubElement(
+        env, 'RequiredRuntimeList')
 
-    extension_info_list: ElementTree.Element = ElementTree.SubElement(manifest, "DispatchInfoList")
+    extension_info_list: ElementTree.Element = ElementTree.SubElement(
+        manifest, "DispatchInfoList")
 
     # Manifest configure
     # Extension app
@@ -208,6 +234,9 @@ def process_config():
                                                                     "MainPath")
         match instance_info['type']:
             case "common":
+                if "build_command" in instance_info:
+                    os.system(instance_info["build_command"])
+                
                 instance_path.text = common_extension_processing(instance,
                                                                  instance_resources['path'])
             case "cpp":
@@ -246,10 +275,12 @@ def process_config():
 
         manifest_autovisible_bool: ElementTree.Element = ElementTree.SubElement(manifest_instance_lifecycle,
                                                                                 "AutoVisible")
-        manifest_autovisible_bool.text = str(instance_lifecycle['auto_visible']).lower()
+        manifest_autovisible_bool.text = str(
+            instance_lifecycle['auto_visible']).lower()
 
         for action in instance_lifecycle['events']:
-            instance_action: ElementTree.Element = ElementTree.SubElement(manifest_instance_lifecycle, str(action))
+            instance_action: ElementTree.Element = ElementTree.SubElement(
+                manifest_instance_lifecycle, str(action))
             for event in instance_lifecycle['events'][action]:
                 app_event = ElementTree.SubElement(instance_action, 'Event')
                 app_event.text = event
@@ -275,52 +306,71 @@ def process_config():
         ui_height.text = str(height)
 
         # Instance debug
-        debug_instance = ElementTree.SubElement(debug_file, 'Extension', {"Id": instance_id})
+        debug_instance = ElementTree.SubElement(
+            debug_file, 'Extension', {"Id": instance_id})
         for app_index, app in enumerate(ENV_APPS):
             debug_port = 8100
             debug_port += instance_index * 10
             debug_port += app_index
             debug_hosts = ElementTree.SubElement(debug_instance, "HostList")
-            ElementTree.SubElement(debug_hosts, 'Host', {"Name": app, "Port": str(debug_port)})
+            ElementTree.SubElement(debug_hosts, 'Host', {
+                                   "Name": app, "Port": str(debug_port)})
+            print(f"Debug port for {instance_id} is {debug_port}")
 
+    if DEBUG or DEBUG_RELEASE:
+        debug_tree = ElementTree.ElementTree(debug_file)
+        ElementTree.indent(debug_tree)
+        debug_tree.write(os.path.join(BUILD_FOLDER, '.debug'),
+                         encoding="UTF-8", xml_declaration=True)
 
     manifest_tree = ElementTree.ElementTree(manifest)
-    if DEBUG:
-        debug_tree = ElementTree.ElementTree(debug_file)
-
-        ElementTree.indent(debug_tree)
-        ElementTree.indent(manifest_tree)
-
-        debug_tree.write(os.path.join(BUILD_FOLDER, '.debug'), encoding="UTF-8", xml_declaration=True)
-
-
-    manifest_tree.write(os.path.join(CSXS_PATH, 'manifest.xml'), encoding="UTF-8", xml_declaration=True)
-
+    ElementTree.indent(manifest_tree)
+    manifest_tree.write(os.path.join(CSXS_PATH, 'manifest.xml'),
+                        encoding="UTF-8", xml_declaration=True)
 
 # Base functions
+
+
+def build_common():
+    # Resources copy
+    for resource in EXTENSION_RESOURCES:
+        # If resource is dir
+        if os.path.isdir(resource):
+            dst_path = os.path.join(BUILD_FOLDER, os.path.basename(resource))
+            if os.path.exists(dst_path):
+                os.rmtree(dst_path)
+
+            copytree(resource, dst_path)
+        # else if file
+        else:
+            if (os.path.exists(resource)):
+                os.remove(resource)
+            copy(resource, BUILD_FOLDER)
+
+    print("Config processing...")
+    process_config()
+    print("Done!")
+
+
+def build_binary():
+    for instance in EXTENSION_INSTANCES:
+        instance_info: dict = EXTENSION_INSTANCES[instance]
+        instance_resources: dict = instance_info["resources"]
+        if instance_info['type'] == 'cpp':
+            cpp_extension_processing(instance,
+                                     instance_resources['path'],
+                                     instance_info['cpp'])
+
+
 def build_extension():
     # Build folder init
     if os.path.exists(BUILD_FOLDER):
         rmtree(BUILD_FOLDER)
     os.makedirs(BUILD_FOLDER)
 
-    print("Config processing...")
-    process_config()
-    print("Done!")
+    build_common()
 
     deploy()
-
-def build_binary():
-    if os.path.exists(BUILD_FOLDER):
-        for instance in EXTENSION_INSTANCES:
-            instance_info: dict = EXTENSION_INSTANCES[instance]
-            instance_resources: dict = instance_info["resources"]
-            if instance_info['type'] == 'cpp':
-                cpp_extension_processing(instance,
-                                         instance_resources['path'],
-                                         instance_info['cpp'])
-    else:
-        build_extension()
 
 
 def clean():
@@ -333,32 +383,44 @@ def clean():
                     else:
                         os.remove(fileline)
 
+
 def deploy():
     if DEBUG and PLATFORM_CODE == 'win':
         appdata: str = os.getenv("APPDATA")
-        dst_path: str = os.path.join(appdata, "Adobe/CEP/extensions", EXTENSION_ID)
+        dst_path: str = os.path.join(
+            appdata, "Adobe/CEP/extensions", EXTENSION_ID)
         if os.path.islink(dst_path):
             os.remove(dst_path)
         os.symlink(os.path.abspath(BUILD_FOLDER), dst_path, True)
+
+
+def cmd_help():
+    print("Modes: ")
+    print("build - to build extension into \"build\" folder")
+    print("buildCommon - to build only JS side")
+    print("buildBinary - to build only C++ side")
+    print("clean - to clean all extension files after build")
+    print("deploy - to push extension to Animate for testing (will work only if debug mode is enabled)")
+    print("Additional flags: ")
+    print("--debug - enables debug mode")
+
 
 # Cli
 if __name__ == '__main__':
     argv = [arg for arg in sys.argv if not arg.startswith('--')]
 
-    if len(argv) > 1:
-        match sys.argv[1]:
-            case 'clean':
-                clean()
-            case 'prepare':
-                BUILD_BINARY = False
-                clean()
-                build_extension()
-            case 'build':
-                build_binary()
-            case 'deploy':
-                deploy()
-            case _:
-                print('Unknown command')
-    else:
-        clean()
-        build_extension()
+    match sys.argv[1]:
+        case 'clean':
+            clean()
+        case 'buildCommon':
+            BUILD_BINARY = False
+            build_common()
+        case 'buildBinary':
+            build_binary()
+        case 'build':
+            clean()
+            build_extension()
+        case 'deploy':
+            deploy()
+        case _:
+            cmd_help()

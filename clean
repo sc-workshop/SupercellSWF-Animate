@@ -4,3 +4,6 @@
 // CPP Plugin source files
 ./plugin/PluginConfiguration.h
 ./plugin/build
+
+// Publisher build files
+./publisher/build

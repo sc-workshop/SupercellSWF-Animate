@@ -1,5 +1,5 @@
 {
-	"version": "1.0",
+	"version": "1.0.0",
 	"org": "scwmake",
 	"name": "SupercellSWF",
 	"description": "",
@@ -12,6 +12,7 @@
 			"CSXS": "9.0"
 		}
 	},
+	"resources": [],
 	"instances": {
 		"Plugin": {
 			"version": 1.0,
@@ -45,7 +46,6 @@
 				"ui_instance": "PublishSettings",
 	
 				"constants": {
-					"RUNTIME_FOLDER_NAME": "SampleRuntime",
 					"FEATURES_PATH": "../res"
 				},
 	
@@ -64,9 +64,11 @@
 			"version": 1.0,
 			"name": "SCSWF Publish settings",
 			"type": "common",
+			"build_command": "cd publisher && npm run build",
 
 			"resources": {
-				"path": "./publisher/index.html"
+				"path": "./publisher/build/index.html",
+				"command_line": ["--enable-nodejs", "--allow-file-access", "--allow-file-access-from-files"]
 			},
 
 			"lifecycle": {
