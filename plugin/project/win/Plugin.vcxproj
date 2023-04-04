@@ -260,6 +260,7 @@
     <ClInclude Include="..\..\include\DocType\DocType.h" />
     <ClInclude Include="..\..\include\DocType\FeatureMatrix.h" />
     <ClInclude Include="..\..\include\Ids.h" />
+    <ClInclude Include="..\..\include\PluginConfiguration.h" />
     <ClInclude Include="..\..\include\SharedPublisher\Publisher.h" />
     <ClInclude Include="..\..\include\SharedPublisher\ResourcePalette.h" />
     <ClInclude Include="..\..\include\SharedPublisher\TimelineBuilder.h" />
@@ -270,7 +271,6 @@
     <ClInclude Include="..\..\include\Writers\Base\TimelineWriter.h" />
     <ClInclude Include="..\..\include\Writers\JSON\JSONOutputWriter.h" />
     <ClInclude Include="..\..\include\Writers\JSON\JSONTimelineWriter.h" />
-    <ClInclude Include="..\..\PluginConfiguration.h" />
     <ClInclude Include="..\..\ThirdParty\libjson\JSONOptions.h" />
     <ClInclude Include="..\..\ThirdParty\libjson\libjson.h" />
     <ClInclude Include="..\..\ThirdParty\libjson\src\internalJSONNode.h" />

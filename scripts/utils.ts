@@ -1,12 +1,16 @@
 import pc from "picocolors";
 
 import { join } from "path";
+import { userInfo, homedir } from "os";
 import { copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
-import { Colors, Formatter } from "picocolors/types";
+import { Colors, type Formatter } from "picocolors/types";
 
 export const processPath = process.cwd();
 
-export const isDev = getEnv() === 'development'
+export const isDev = getEnv() === 'development';
+
+export const isWindows = process.platform === "win32";
+export const isMac = process.platform === "darwin";
 
 type ColorName = keyof Pick<Colors, { [K in keyof Colors]: Colors[K] extends Formatter ? K : never }[keyof Colors]>;
 
@@ -49,7 +53,7 @@ export function copyDir(src: string, dst: string) {
     }
 
     if (!existsSync(dst) || !lstatSync(dst).isDirectory()) {
-        return;
+        mkdirSync(dst, {recursive: true});
     }
 
     for (const name of readdirSync(src)) {
@@ -82,10 +86,6 @@ export function processExecError(err: any) {
     console.log(err.message);
 }
 
-export function isWindows() {
-    return process.platform.startsWith('win')
-}
-
 export function getEnv(): Environment {
     let env: Environment = 'development'
 
@@ -98,4 +98,17 @@ export function getEnv(): Environment {
     }
 
     return env
+}
+
+export function extensionsFolder() {
+    if (isWindows) {
+        const extensionsPath = userInfo().homedir + '\\AppData\\Roaming\\Adobe\\CEP\\extensions'
+        if (existsSync(extensionsPath))
+            mkdirSync(extensionsPath, { recursive: true })
+
+        return extensionsPath;
+    } else {
+        return join(homedir(), 'Library/Application Support/Adobe/CEP/extensions')
+    }
+
 }

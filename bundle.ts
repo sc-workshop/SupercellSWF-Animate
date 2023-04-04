@@ -5,7 +5,7 @@ export const config: ConfigInterface = {
     cep_version: "9.0",
     environment: {
         apps: {
-            FLPR: "15.1",
+            FLPR: "15.0",
         },
         locales: ["All"],
         runtimes: {
@@ -17,9 +17,9 @@ export const config: ConfigInterface = {
             root: "./plugin",
             path: "./fcm.xml",
             ui: {
-                name: "",
+                name: "SC Plugin",
                 type: "ModalDialog",
-                size: {width: 0, height: 0}
+                size: {width: 1, height: 1}
             }
         },
         PublishSettings: {

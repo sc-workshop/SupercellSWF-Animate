@@ -1,22 +1,30 @@
 import which from "which";
 import { join } from "path";
-import { progress } from "../scripts/utils";
+import { isMac, isWindows, progress } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, copyFileSync, writeFileSync } from "fs";
 import { version, description } from "./package.json"
+
+if (!isWindows && !isMac) {
+    throw new Error("Unsupported platform");
+}
 
 const args = process.argv;
 const isDev = args[2] == "development";
 const outputPath = args[3];
 
+const libPath = join(outputPath, "lib");
+mkdirSync(libPath, {recursive: true});
+
 const winSolution = "project/win/Plugin.sln";
 const winDll = "build/win/Plugin.fcm";
 
 const publisherName = "SupercellSWF"
-const publisherId = "com.scwmake.ScSwfAnimate.PublishSettings";
+const publisherId = "com.scwmake.SupercellSWF.Publisher";
+const publisherUi = "com.scwmake.SupercellSWF.PublishSettings"
 
 const doctypeName = "SupercellSWF";
-const doctypeId = "com.scwmake.ScSwfAnimate";
+const doctypeId = "com.scwmake.SupercellSWF";
 
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
@@ -30,10 +38,14 @@ function buildWindows() {
 
     progress("Done");
 
-    const fcmOutputFolder = join(outputPath, "win");
+    const fcmOutputFolder = join(libPath, "win");
     mkdirSync(fcmOutputFolder, { recursive: true });
 
     copyFileSync(winDll, join(fcmOutputFolder, "plugin.fcm"));
+}
+
+function buildMac() {
+    throw new Error();
 }
 
 const config =
@@ -42,7 +54,7 @@ const config =
     `#define PUBLISHER_NAME						"${publisherName}"\n` +
     `#define PUBLISHER_UNIVERSAL_NAME			"${publisherId}"\n` +
     '\n' +
-    `#define PUBLISH_SETTINGS_UI_ID				"${publisherId}"\n` +
+    `#define PUBLISH_SETTINGS_UI_ID				"${publisherUi}"\n` +
     '\n' +
     `#define DOCTYPE_NAME						"${doctypeName}"\n` +
     `#define DOCTYPE_UNIVERSAL_NAME				"${doctypeId}"\n` +
@@ -50,7 +62,7 @@ const config =
     '\n' +
     `#define PLUGIN_VERSION_MAJOR				${MAJOR}\n` +
     `#define PLUGIN_VERSION_MINOR				${MINOR}\n` +
-    `#define PLUGIN_VERSION_MAINTENANCE			${MAINTENANCE}\n`
+    `#define PLUGIN_VERSION_MAINTENANCE				${MAINTENANCE}\n`
 
 writeFileSync(
     "include/PluginConfiguration.h",
@@ -58,13 +70,10 @@ writeFileSync(
     "utf-8"
 )
 
-switch (process.platform) {
-    case "win32":
-        buildWindows();
-        break;
-    case "darwin":
-    default:
-        throw Error("Unsupported platform");
+if (isWindows) {
+    buildWindows();
+} else {
+    buildMac();
 }
 
 writeFileSync(join(outputPath, "fcm.xml"), "");

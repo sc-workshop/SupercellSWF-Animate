@@ -1,8 +1,8 @@
 {
   "name": "sc-animate-native",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": "true",
-  "description": "C++ side of SC-Animate",
+  "description": "",
   "main": "build.ts",
   "scripts": {
     "build:dev": "ts-node build.ts development",

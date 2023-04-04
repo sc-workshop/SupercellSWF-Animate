@@ -1,5 +1,5 @@
 import { create as CreateXML } from "xmlbuilder2";
-import { resolve as resolvePath, join as joinPath, relative as relativePath } from "path";
+import { resolve as resolvePath, join as joinPath, posix } from "path";
 import { readFileSync, mkdirSync, writeFileSync } from "fs";
 import { version as bundleVersion, name } from "../../package.json"
 import { ConfigInterface } from "./interfaces";
@@ -19,7 +19,7 @@ export function generateCSXS(config: ConfigInterface) {
         "ExtensionManifest",
         {
             "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            version: config.cep_version,
+            Version: "6.0",
             ExtensionBundleId: bundleId,
             ExtensionBundleVersion: bundleVersion,
             ExtensionBundleName: name
@@ -34,7 +34,7 @@ export function generateCSXS(config: ConfigInterface) {
     const apps = Object.keys(config.environment.apps);
     for (const hostName of apps) {
         hosts.ele(
-            "HostList",
+            "Host",
             {
                 Name: hostName,
                 Version: config.environment.apps[hostName]
@@ -106,10 +106,10 @@ export function generateCSXS(config: ConfigInterface) {
 
         const resources = extensionNode.ele("Resources");
 
-        resources.ele("MainPath").txt(
-            relativePath(
-                distFolder,
-                resolvePath(extensionDistRoot, extension.path)
+        resources.ele("MainPath").txt( "./" +
+            posix.relative(
+                extensionDistRoot,
+                posix.join(extensionDistRoot, extensionName, extension.path)
             )
         );
 
@@ -139,19 +139,19 @@ export function generateCSXS(config: ConfigInterface) {
         const geometry = ui.ele("Geometry");
 
         const size = geometry.ele("Size");
-        size.ele("Widht").txt(String(extension.ui.size.width))
         size.ele("Height").txt(String(extension.ui.size.height))
+        size.ele("Width").txt(String(extension.ui.size.width))
 
         if (extension.ui.maxSize != undefined) {
-            const maxSize = geometry.ele("Size");
-            maxSize.ele("Widht").txt(String(extension.ui.maxSize.width))
+            const maxSize = geometry.ele("MaxSize");
             maxSize.ele("Height").txt(String(extension.ui.maxSize.height))
+            maxSize.ele("Width").txt(String(extension.ui.maxSize.width))
         }
 
         if (extension.ui.minSize != undefined) {
-            const minSize = geometry.ele("Size");
-            minSize.ele("Widht").txt(String(extension.ui.minSize.width))
+            const minSize = geometry.ele("MinSize");
             minSize.ele("Height").txt(String(extension.ui.minSize.height))
+            minSize.ele("Width").txt(String(extension.ui.minSize.width))
         }
 
         if (extension.ui.icons != undefined) {

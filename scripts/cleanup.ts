@@ -1,7 +1,7 @@
 import { config } from "../bundle";
-import {readdirSync, readFileSync} from "fs";
-import {join, resolve} from "path";
-import { log, error, progress, getEnv, removeDirs as removeFiles } from "./utils";
+import { readdirSync } from "fs";
+import { join, resolve } from "path";
+import { progress, removeDirs as removeFiles } from "./utils";
 
 export function cleanup() {
     progress('Cleaning dist files...');

@@ -696,7 +696,6 @@
     <ClInclude Include="..\..\include\DocType\DataTypes.h">
       <Filter>Headers\DocType</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PluginConfiguration.h" />
     <ClInclude Include="..\..\include\Writers\Base\OutputWriter.h">
       <Filter>Headers\Writers\Base</Filter>
     </ClInclude>
@@ -725,6 +724,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Ids.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\PluginConfiguration.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
