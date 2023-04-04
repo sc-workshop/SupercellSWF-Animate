@@ -1,4 +1,4 @@
-import { CSInterface } from "./CEP";
+import { getInterface, isCEP } from "../CEP";
 
 export enum themes {
     Dark,
@@ -8,9 +8,10 @@ export enum themes {
 export let theme: themes = themes.Dark;
 
 export function refreshTheme() {
-    if (!CSInterface) {
+    if (!isCEP()) {
         return;
     }
+    const CSInterface = getInterface();
     alert(CSInterface.getHostEnvironment());
     //const skinInfo = JSON.parse().appSkinInfo;
 }

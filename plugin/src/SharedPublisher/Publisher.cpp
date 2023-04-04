@@ -22,7 +22,7 @@
 
 #include <algorithm>
 
-#include "PluginConfiguration.h"
+#include "Ids.h"
 #include "Utils.h"
 
 #define SCSWF_PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"

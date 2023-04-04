@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include "Version.h"
+
 using namespace Publisher;
 using namespace Exporter::Service;
 

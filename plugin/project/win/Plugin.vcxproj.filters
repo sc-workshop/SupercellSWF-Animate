@@ -721,5 +721,11 @@
     <ClInclude Include="..\..\include\SharedPublisher\TimelineBuilderFactory.h">
       <Filter>Headers\SharedPublisher</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\Version.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Ids.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

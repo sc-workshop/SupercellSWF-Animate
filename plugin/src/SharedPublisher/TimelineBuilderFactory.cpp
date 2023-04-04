@@ -1,6 +1,7 @@
 #include "SharedPublisher/TimelineBuilderFactory.h"
 
 #include "SharedPublisher/TimelineBuilder.h"
+#include "Ids.h"
 
 namespace SupercellSWF {
     TimelineBuilderFactory::TimelineBuilderFactory()

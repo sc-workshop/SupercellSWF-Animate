@@ -1,8 +1,11 @@
-import { createElement } from "react";
-import { CSInterface } from "../CEP";
+import { createElement, useState } from "react";
+
 import { Stylefield } from "./Stylefield";
+import { getInterface, isCEP } from "../../CEP";
 
 export function Filefield(name: string, ext: string, callback: (value: any) => void, defaultValue: string = "") {
+    const [input, setInput] = useState("");
+
     const outputLabel = Stylefield(
         `${name} :`,
         {
@@ -14,10 +17,12 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
             paddingRight: "11px"
         }
     );
+
     const filepath = createElement("input", {
         key: `Filefield_${name}_filepath`,
         type: "text",
         defaultValue: defaultValue,
+        value: input,
         onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
             callback(e.target.value);
         },
@@ -46,13 +51,16 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
             left: "10px"
         },
         onClick: function () {
-            if (!CSInterface) {
+            if (!isCEP()) {
                 return;
             }
+            const CSInterface = getInterface();
+
             CSInterface.evalScript(`fl.browseForFileURL('save','Publish to ${ext}', 'SWF','${ext}');`,
                 function (path: string) {
-                    filepath.props.value = path;
-                });
+                    setInput(path);
+                }
+            );
         }
     });
 

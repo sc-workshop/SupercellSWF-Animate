@@ -1,9 +1,11 @@
 #include "DocType/DocType.h"
 
+#include <ApplicationFCMPublicIDs.h>
+
 #include "DocType/FeatureMatrix.h"
 #include "Utils.h"
+#include "Ids.h"
 
-#include <ApplicationFCMPublicIDs.h>
 
 namespace SupercellSWF {
 	ModuleDocumentType::ModuleDocumentType()

@@ -44,7 +44,7 @@ namespace SupercellSWF {
 		Utils::GetModuleFilePath(modulePath, pCallback);
 
 		fs::path featuresPath(modulePath);
-		featuresPath /= FEATURES_PATH;
+		featuresPath /= "res";
 		featuresPath /= "Features.xml";
 
 		// trace

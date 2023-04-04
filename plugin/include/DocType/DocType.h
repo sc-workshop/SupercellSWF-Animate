@@ -2,7 +2,7 @@
 
 #include "FCMTypes.h"
 #include "DocType/IDocType.h"
-#include "PluginConfiguration.h"
+#include "Version.h"
 
 #include <map>
 #include <string>

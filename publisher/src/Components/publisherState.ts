@@ -1,5 +1,4 @@
-import { CSEvent } from "ts-csinterface";
-import { CEP, CSInterface } from "./CEP";
+import { CSEvent, getInterface, isCEP } from "../CEP"
 
 enum PublisherModes {
   JSON  
@@ -41,11 +40,12 @@ export function restoreState(event: CSEvent) {
 }
 
 export function saveState() {
-  if (!CSInterface) {
+  if (!isCEP()) {
     return;
   }
+  const CSInterface = getInterface();
 
-  var event = new CEP.CSEvent(
+  var event = new CSEvent(
     "com.adobe.events.flash.extension.savestate",
     "APPLICATION"
   );

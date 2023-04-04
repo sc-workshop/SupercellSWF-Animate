@@ -1,3 +1,6 @@
-/build/
-/plugin/build/
+/dist
 .*
+/node_modules
+
+
+plugin/include/PluginConfiguration.h

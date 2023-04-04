@@ -4,7 +4,7 @@
 #include "DocType/IFeatureMatrix.h"
 #include "DataTypes.h"
 
-#include "PluginConfiguration.h"
+#include "Version.h"
 
 using namespace FCM;
 using namespace DocType;

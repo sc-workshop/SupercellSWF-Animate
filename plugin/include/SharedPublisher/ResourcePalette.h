@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Writers/Base/OutputWriter.h"
-#include "PluginConfiguration.h"
+#include "Version.h"
 
 using namespace Exporter::Service;
 

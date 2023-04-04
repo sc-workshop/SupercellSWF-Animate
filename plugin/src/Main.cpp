@@ -1,6 +1,5 @@
 #include <FCMPluginInterface.h>
 
-
 #include "DocType/DocType.h"
 #include "DocType/FeatureMatrix.h"
 
@@ -10,6 +9,7 @@
 #include "SharedPublisher/TimelineBuilderFactory.h"
 
 #include "Utils.h"
+#include "Ids.h"
 
 namespace SupercellSWF
 {
@@ -17,26 +17,26 @@ namespace SupercellSWF
 
         BEGIN_CLASS_ENTRY
 
-            CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
-            CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-            CLASS_ENTRY(CLSID_Publisher, ModulePublisher)
-            CLASS_ENTRY(CLSID_ResourcePalette, ResourcePalette)
-            CLASS_ENTRY(CLSID_TimelineBuilder, TimelineBuilder)
-            CLASS_ENTRY(CLSID_TimelineBuilderFactory, TimelineBuilderFactory)
+        CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
+        CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
+        CLASS_ENTRY(CLSID_Publisher, ModulePublisher)
+        CLASS_ENTRY(CLSID_ResourcePalette, ResourcePalette)
+        CLASS_ENTRY(CLSID_TimelineBuilder, TimelineBuilder)
+        CLASS_ENTRY(CLSID_TimelineBuilderFactory, TimelineBuilderFactory)
 
         END_CLASS_ENTRY
 
-        public:
-            void SetResPath(const std::string& resPath) {m_resPath = resPath;}
-            const std::string& GetResPath() {return m_resPath;}
+public:
+    void SetResPath(const std::string& resPath) { m_resPath = resPath; }
+    const std::string& GetResPath() { return m_resPath; }
 
-        private:
-            std::string m_resPath;
+private:
+    std::string m_resPath;
 
     END_MODULE
 
-    
-    Module module;
+
+        Module module;
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback pCallback)
     {
@@ -54,16 +54,16 @@ namespace SupercellSWF
     }
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassInfo(
-        FCM::PIFCMCalloc pCalloc, 
-        FCM::PFCMClassInterfaceInfo* ppClassInfo)
+        FCM::PIFCMCalloc pCalloc,
+        FCM::PFCMClassInterfaceInfo * ppClassInfo)
     {
         return module.getClassInfo(pCalloc, ppClassInfo);
     }
 
     extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassObject(
-        FCM::PIFCMUnknown pUnkOuter, 
-        FCM::ConstRefFCMCLSID clsid, 
-        FCM::ConstRefFCMIID iid, 
+        FCM::PIFCMUnknown pUnkOuter,
+        FCM::ConstRefFCMCLSID clsid,
+        FCM::ConstRefFCMIID iid,
         FCM::PPVoid pAny)
     {
         return module.getClassObject(pUnkOuter, clsid, iid, pAny);
@@ -78,13 +78,13 @@ namespace SupercellSWF
 
         AutoPtr<IFCMDictionary> pPlugins;
         pDictionary->AddLevel((const FCM::StringRep8)kFCMComponent, pPlugins.m_Ptr);
-    
+
         res = RegisterDocType(pPlugins, module.GetResPath());
         if (FCM_FAILURE_CODE(res))
         {
             return res;
         }
-        
+
         res = RegisterPublisher(pPlugins, CLSID_DocType);
 
         return res;

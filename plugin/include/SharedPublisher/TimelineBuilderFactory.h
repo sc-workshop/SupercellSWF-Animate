@@ -8,6 +8,8 @@
 #include "Writers/Base/OutputWriter.h"
 #include "Writers/Base/TimelineWriter.h"
 
+#include "Version.h"
+
 using namespace Exporter::Service;
 
 namespace SupercellSWF {
