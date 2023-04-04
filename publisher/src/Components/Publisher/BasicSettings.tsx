@@ -14,7 +14,7 @@ export function BasicSettings() {
     },
         Filefield(
             "Output",
-            State.PublishSettings.SupercellSWF.publisher,
+            State.PublishSettings.SupercellSWF.publisher.toLowerCase(),
             value => (setParam("output", value)),
             getParam("output")
         )

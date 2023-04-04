@@ -9,7 +9,6 @@
     "build:prod": "ts-node scripts/build.ts production",
     "deploy:dev": "ts-node scripts/deploy.ts development",
     "deploy:prod": "ts-node scripts/deploy.ts production",
-    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "DaniilSV",
@@ -17,6 +16,7 @@
   "dependencies": {
     "picocolors": "^1.0.0",
     "ts-node": "^10.9.1",
+    "url": "^0.11.0",
     "xmlbuilder2": "^3.0.2"
   }
 }

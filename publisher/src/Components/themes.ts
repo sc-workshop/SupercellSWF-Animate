@@ -5,13 +5,13 @@ export enum themes {
     Light
 }
 
-export let theme: themes = themes.Dark;
-
 export function refreshTheme() {
     if (!isCEP()) {
         return;
     }
     const CSInterface = getInterface();
-    alert(CSInterface.getHostEnvironment());
-    //const skinInfo = JSON.parse().appSkinInfo;
-}
+    const hostEnv = CSInterface.getHostEnvironment();}
+
+export let theme: themes = themes.Dark;
+
+export let themeColor = theme === themes.Dark ? 0x333333 : 0xFFFFFF;

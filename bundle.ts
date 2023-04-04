@@ -33,7 +33,7 @@ export const config: ConfigInterface = {
             ui: {
                 name: "SCSWF Publisher",
                 type: "ModalDialog",
-                size: {width: 350, height: 700}
+                size: {width: 500, height: 700}
             }
         }
     }

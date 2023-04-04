@@ -13,6 +13,7 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
             textAlign: "right",
             display: "block",
             float: "left",
+            color: "white",
             paddingTop: "4px",
             paddingRight: "11px"
         }
@@ -58,7 +59,12 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
 
             CSInterface.evalScript(`fl.browseForFileURL('save','Publish to ${ext}', 'SWF','${ext}');`,
                 function (path: string) {
-                    setInput(path);
+                    CSInterface.evalScript(
+                        `FLfile.uriToPlatformPath('${path}');`,
+                        function (normalized: string) {
+                            setInput(normalized)
+                        }
+                    )
                 }
             );
         }

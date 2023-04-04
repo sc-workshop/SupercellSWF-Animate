@@ -1,18 +1,24 @@
 
 import { getInterface, isCEP } from "../CEP";
-import { restoreState as setState, saveState, State } from "./publisherState";
+import { restoreState as setState, saveState } from "./publisherState";
 import { refreshTheme } from "./themes";
 
 export function publish() {
-    alert(State.PublishSettings.SupercellSWF.output);
+    if (!isCEP) {
+        return;
+    }
+
     saveState();
+    const CSInterface = getInterface();
+    CSInterface.evalScript("fl.getDocumentDOM().publish()", function() {
+        CSInterface.closeExtension();
+    })
 }
 
 export function onLoad() {
     if (isCEP()) {
         refreshTheme();
         const CSInterface = getInterface();
-        CSInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, refreshTheme);
         CSInterface.addEventListener("com.adobe.events.flash.extension.setstate", setState);
     }
 }
