@@ -13,7 +13,7 @@ using namespace Publisher;
 using namespace Exporter::Service;
 
 #define PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"
-#define PUBLISHER_MODE "PublishSettings.SupercellSWF.publisher"
+#define PUBLISHER_MODE "PublishSettings.SupercellSWF.mode"
 
 namespace SupercellSWF {
     enum class PublisherMode {

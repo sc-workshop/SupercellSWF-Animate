@@ -7,7 +7,7 @@ export enum PublisherModes {
 
 interface ModuleState {
     output: string,
-    publisher: string
+    mode: string
 }
 
 interface PublisherState {
@@ -20,7 +20,7 @@ export const State: PublisherState = {
     PublishSettings: {
         SupercellSWF: {
             output: "",
-            publisher: PublisherModes[PublisherModes.JSON]
+            mode: PublisherModes[PublisherModes.JSON]
         }
     }
 

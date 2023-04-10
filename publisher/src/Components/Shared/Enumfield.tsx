@@ -5,7 +5,6 @@ interface Enum {
     [id: string]: any;
 }
 
-
 export function Enumfield(enumeration: Enum, defaultValue: string, selectorStyle: CSSProperties, onChange: (value: string) => void) {
     const options = [];
 

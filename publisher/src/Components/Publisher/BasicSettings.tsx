@@ -17,7 +17,7 @@ export function BasicSettings() {
     },
         Filefield(
             "Output",
-            State.PublishSettings.SupercellSWF.publisher.toLowerCase(),
+            State.PublishSettings.SupercellSWF.mode.toLowerCase(),
             value => (setParam("output", value)),
             getParam("output")
         ),
@@ -34,7 +34,7 @@ export function BasicSettings() {
                 paddingLeft: "50%"
             }
         ),
-        Enumfield(PublisherModes, getParam("publisher"), {
+        Enumfield(PublisherModes, getParam("mode"), {
             width: "15%",
             background: "#c6c6c6",
             border: "1px solid #070707",
@@ -43,7 +43,7 @@ export function BasicSettings() {
             borderColor: "solid #D49B00"
         },
         function(value: string) {
-            setParam("publisher", value);
+            setParam("mode", value);
         })
     )
 

@@ -280,7 +280,7 @@ namespace SupercellSWF {
         }
 
         std::string modeName;
-        Utils::ReadString(config, PUBLISHER_OUTPUT, modeName);
+        Utils::ReadString(config, PUBLISHER_MODE, modeName);
         if (modeName == "JSON") {
             m_publishMode = PublisherMode::JSON;
         } else {
