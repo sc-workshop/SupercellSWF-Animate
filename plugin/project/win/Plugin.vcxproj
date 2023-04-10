@@ -260,6 +260,8 @@
     <ClInclude Include="..\..\include\DocType\DocType.h" />
     <ClInclude Include="..\..\include\DocType\FeatureMatrix.h" />
     <ClInclude Include="..\..\include\Ids.h" />
+    <ClInclude Include="..\..\include\io\Colors.h" />
+    <ClInclude Include="..\..\include\io\Console.h" />
     <ClInclude Include="..\..\include\PluginConfiguration.h" />
     <ClInclude Include="..\..\include\SharedPublisher\Publisher.h" />
     <ClInclude Include="..\..\include\SharedPublisher\ResourcePalette.h" />

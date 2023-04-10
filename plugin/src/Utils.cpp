@@ -512,33 +512,7 @@ namespace SupercellSWF
 #else
        file.open(outputFileName.c_str(),mode);
 #endif
-    }
-
-    void Utils::Trace(FCM::PIFCMCallback pCallback, const char* fmt, ...)
-    {
-        FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
-        FCM::AutoPtr<Application::Service::IOutputConsoleService> outputConsoleService;
-        FCM::Result tempRes = pCallback->GetService(Application::Service::APP_OUTPUT_CONSOLE_SERVICE, pUnk.m_Ptr);
-        outputConsoleService = pUnk;
-        pUnk.Reset();
-
-        if (outputConsoleService)
-        {
-            va_list args;
-            char buffer[1024];
-
-            va_start(args, fmt);
-            vsnprintf(buffer, 1024, fmt, args);
-            va_end(args);
-
-            FCM::AutoPtr<FCM::IFCMCalloc> pCalloc = SupercellSWF::Utils::GetCallocService(pCallback);
-            ASSERT(pCalloc.m_Ptr != NULL);
-
-            FCM::StringRep16 outputString = Utils::ToString16(std::string(buffer), pCallback);
-            outputConsoleService->Trace(outputString);
-            pCalloc->Free(outputString);
-        }
-    }
+    };
 
     // Removes the folder all its contents
     FCM::Result Utils::Remove(const std::string& folder, FCM::PIFCMCallback pCallback)

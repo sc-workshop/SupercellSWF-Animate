@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Version.h"
+#include "io/Console.h"
 
 using namespace Publisher;
 using namespace Exporter::Service;
@@ -20,9 +21,9 @@ namespace SupercellSWF {
         JSON
     };
 
-    class ModulePublisher : public IPublisher, public FCMObjectBase
+    class SharedPublisher : public IPublisher, public FCMObjectBase
     {
-        BEGIN_INTERFACE_MAP(ModulePublisher, PLUGIN_VERSION)
+        BEGIN_INTERFACE_MAP(SharedPublisher, PLUGIN_VERSION)
             INTERFACE_ENTRY(IPublisher)
         END_INTERFACE_MAP
 
@@ -42,9 +43,9 @@ namespace SupercellSWF {
 
         FCM::Result _FCMCALL ClearCache();
 
-        ModulePublisher();
+        SharedPublisher();
 
-        ~ModulePublisher();
+        ~SharedPublisher();
 
     private:
         FCM::Result Export(
@@ -65,8 +66,10 @@ namespace SupercellSWF {
         PublisherMode m_publishMode;
 
         AutoPtr<IFrameCommandGenerator> m_frameCmdGeneratorService;
-        AutoPtr<IResourcePalette> m_pResourcePalette;
+        AutoPtr<IResourcePalette> m_resourcePalette;
+
+        Console console;
     };
 
-    FCM::Result RegisterPublisher(PIFCMDictionary pPlugins, FCM::FCMCLSID docId);
+    FCM::Result RegisterPublisher(PIFCMDictionary plugins, FCM::FCMCLSID docId);
 }

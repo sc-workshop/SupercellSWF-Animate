@@ -13,6 +13,7 @@
 
 #include "Writers/Base/OutputWriter.h"
 #include "Version.h"
+#include "io/Console.h"
 
 using namespace Exporter::Service;
 
@@ -113,10 +114,11 @@ namespace SupercellSWF {
 
     private:
 
-        OutputWriter* m_pOutputWriter;
+        OutputWriter* m_outputWriter; 
 
         std::vector<FCM::U_Int32> m_resourceList;
-
         std::vector<std::string> m_resourceNames;
+
+        Console console;;
     };
 }

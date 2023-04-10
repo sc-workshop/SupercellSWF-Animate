@@ -23,10 +23,10 @@ namespace SupercellSWF {
 		ASSERT(pShapeInfo);
 		ASSERT(pShapeInfo->structSize >= sizeof(SHAPE_INFO));
 
-		Log(GetCallback(), "[AddShape] ObjId: %d ResId: %d PlaceAfter: %d\n",
+		console.debugLog("{AddShape} ObjId: %d ResId: %d PlaceAfter: %d",
 			objectId, pShapeInfo->resourceId, pShapeInfo->placeAfterObjectId);
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pShapeInfo->resourceId,
 			objectId,
 			pShapeInfo->placeAfterObjectId,
@@ -42,7 +42,7 @@ namespace SupercellSWF {
 		ASSERT(pClassicTextInfo);
 		ASSERT(pClassicTextInfo->structSize >= sizeof(CLASSIC_TEXT_INFO));
 
-		Log(GetCallback(), "[AddClassicText] ObjId: %d ResId: %d PlaceAfter: %d\n",
+		console.debugLog("{AddClassicText} ObjId: %d ResId: %d PlaceAfter: %d",
 			objectId, pClassicTextInfo->resourceId, pClassicTextInfo->placeAfterObjectId);
 
 		//To get the bounding rect of the text
@@ -59,7 +59,7 @@ namespace SupercellSWF {
 			}
 		}
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pClassicTextInfo->resourceId,
 			objectId,
 			pClassicTextInfo->placeAfterObjectId,
@@ -75,10 +75,10 @@ namespace SupercellSWF {
 		ASSERT(pBitmapInfo);
 		ASSERT(pBitmapInfo->structSize >= sizeof(BITMAP_INFO));
 
-		Log(GetCallback(), "[AddBitmap] ObjId: %d ResId: %d PlaceAfter: %d\n",
+		console.debugLog("{AddBitmap} ObjId: %d ResId: %d PlaceAfter: %d",
 			objectId, pBitmapInfo->resourceId, pBitmapInfo->placeAfterObjectId);
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pBitmapInfo->resourceId,
 			objectId,
 			pBitmapInfo->placeAfterObjectId,
@@ -95,7 +95,7 @@ namespace SupercellSWF {
 		ASSERT(pMovieClipInfo);
 		ASSERT(pMovieClipInfo->structSize >= sizeof(MOVIE_CLIP_INFO));
 
-		Log(GetCallback(), "[AddMovieClip] ObjId: %d ResId: %d PlaceAfter: %d\n",
+		console.debugLog("{AddMovieClip} ObjId: %d ResId: %d PlaceAfter: %d",
 			objectId, pMovieClipInfo->resourceId, pMovieClipInfo->placeAfterObjectId);
 
 		AutoPtr<DOM::FrameElement::IButton> pButton = pMovieClip;
@@ -105,18 +105,18 @@ namespace SupercellSWF {
 			pButton->GetTrackingMode(trackMode);
 			if (trackMode == DOM::FrameElement::TRACK_AS_BUTTON)
 			{
-				Log(GetCallback(), "[AddMovieClip] ObjId: %d, is a button with TrackingMode set to TRACK_AS_BUTTON\n",
+				console.debugLog("{AddMovieClip} ObjId: %d, is a button with TrackingMode set to TRACK_AS_BUTTON",
 					objectId);
 
 			}
 			else
 			{
-				Log(GetCallback(), "[AddMovieClip] ObjId: %d, is a button with TrackingMode set to TRACK_AS_MENU_ITEM\n",
+				console.debugLog("{AddMovieClip} ObjId: %d, is a button with TrackingMode set to TRACK_AS_MENU_ITEM",
 					objectId);
 			}
 		}
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pMovieClipInfo->resourceId,
 			objectId,
 			pMovieClipInfo->placeAfterObjectId,
@@ -133,10 +133,10 @@ namespace SupercellSWF {
 		ASSERT(pGraphicInfo);
 		ASSERT(pGraphicInfo->structSize >= sizeof(GRAPHIC_INFO));
 
-		Log(GetCallback(), "[AddGraphic] ObjId: %d ResId: %d PlaceAfter: %d\n",
+		console.debugLog("{AddGraphic} ObjId: %d ResId: %d PlaceAfter: %d",
 			objectId, pGraphicInfo->resourceId, pGraphicInfo->placeAfterObjectId);
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pGraphicInfo->resourceId,
 			objectId,
 			pGraphicInfo->placeAfterObjectId,
@@ -156,10 +156,10 @@ namespace SupercellSWF {
 		ASSERT(pSoundInfo);
 		ASSERT(pSoundInfo->structSize == sizeof(SOUND_INFO));
 
-		Log(GetCallback(), "[AddSound] ObjId: %d ResId: %d\n",
+		console.debugLog("{AddSound} ObjId: %d ResId: %d",
 			objectId, pSoundInfo->resourceId);
 
-		res = m_pTimelineWriter->PlaceObject(
+		res = m_timelineWriter->PlaceObject(
 			pSoundInfo->resourceId,
 			objectId,
 			pUnknown);
@@ -171,10 +171,10 @@ namespace SupercellSWF {
 	{
 		FCM::Result res = FCM_SUCCESS;
 
-		Log(GetCallback(), "[UpdateZOrder] ObjId: %d PlaceAfter: %d\n",
+		console.debugLog("{UpdateZOrder} ObjId: %d PlaceAfter: %d",
 			objectId, placeAfterObjectId);
 
-		res = m_pTimelineWriter->UpdateZOrder(objectId, placeAfterObjectId);
+		res = m_timelineWriter->UpdateZOrder(objectId, placeAfterObjectId);
 
 		return res;
 	}
@@ -183,10 +183,10 @@ namespace SupercellSWF {
 	{
 		FCM::Result res = FCM_SUCCESS;
 
-		Log(GetCallback(), "[UpdateMask] ObjId: %d MaskTill: %d\n",
+		console.debugLog("{UpdateMask} ObjId: %d MaskTill: %d",
 			objectId, maskTillObjectId);
 
-		res = m_pTimelineWriter->UpdateMask(objectId, maskTillObjectId);
+		res = m_timelineWriter->UpdateMask(objectId, maskTillObjectId);
 
 		return res;
 	}
@@ -195,9 +195,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[Remove] ObjId: %d\n", objectId);
+		console.debugLog("{Remove} ObjId: %d", objectId);
 
-		res = m_pTimelineWriter->RemoveObject(objectId);
+		res = m_timelineWriter->RemoveObject(objectId);
 
 		return res;
 	}
@@ -206,9 +206,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[UpdateBlendMode] ObjId: %d BlendMode: %d\n", objectId, blendMode);
+		console.debugLog("{UpdateBlendMode} ObjId: %d BlendMode: %d", objectId, blendMode);
 
-		res = m_pTimelineWriter->UpdateBlendMode(objectId, blendMode);
+		res = m_timelineWriter->UpdateBlendMode(objectId, blendMode);
 
 		return res;
 	}
@@ -217,9 +217,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[UpdateVisibility] ObjId: %d Visible: %d\n", objectId, visible);
+		console.debugLog("{UpdateVisibility} ObjId: %d Visible: %d", objectId, visible);
 
-		res = m_pTimelineWriter->UpdateVisibility(objectId, visible);
+		res = m_timelineWriter->UpdateVisibility(objectId, visible);
 
 		return res;
 	}
@@ -231,7 +231,7 @@ namespace SupercellSWF {
 		FCM::Result res;
 		FCM::FCMListPtr pFilterList;
 
-		Log(GetCallback(), "[UpdateGraphicFilter] ObjId: %d\n", objectId);
+		console.debugLog("{UpdateGraphicFilter} ObjId: %d", objectId);
 
 		res = pFilterable->Count(count);
 		ASSERT(FCM_SUCCESS_CODE(res));
@@ -239,7 +239,7 @@ namespace SupercellSWF {
 		for (FCM::U_Int32 i = 0; i < count; i++)
 		{
 			FCM::AutoPtr<FCM::IFCMUnknown> pUnknown = (*pFilterable)[i];
-			res = m_pTimelineWriter->AddGraphicFilter(objectId, pUnknown.m_Ptr);
+			res = m_timelineWriter->AddGraphicFilter(objectId, pUnknown.m_Ptr);
 
 			if (FCM_FAILURE_CODE(res))
 			{
@@ -255,9 +255,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[UpdateDisplayTransform] ObjId: %d\n", objectId);
+		console.debugLog("{UpdateDisplayTransform} ObjId: %d", objectId);
 
-		res = m_pTimelineWriter->UpdateDisplayTransform(objectId, matrix);
+		res = m_timelineWriter->UpdateDisplayTransform(objectId, matrix);
 
 		return res;
 	}
@@ -266,9 +266,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[UpdateColorTransform] ObjId: %d\n", objectId);
+		console.debugLog("{UpdateColorTransform} ObjId: %d", objectId);
 
-		res = m_pTimelineWriter->UpdateColorTransform(objectId, colorMatrix);
+		res = m_timelineWriter->UpdateColorTransform(objectId, colorMatrix);
 
 		return res;
 	}
@@ -277,9 +277,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		Log(GetCallback(), "[ShowFrame] Frame: %d\n", m_frameIndex);
+		console.debugLog("{ShowFrame} Frame: %d", m_frameIndex);
 
-		res = m_pTimelineWriter->ShowFrame(m_frameIndex);
+		res = m_timelineWriter->ShowFrame(m_frameIndex);
 
 		m_frameIndex++;
 
@@ -290,11 +290,11 @@ namespace SupercellSWF {
 	{
 		FCM::Result res = FCM_SUCCESS;
 
-		Log(GetCallback(), "[AddFrameScript] LayerNum: %d\n", layerNum);
+		console.debugLog("{AddFrameScript} LayerNum: %d", layerNum);
 
 		if (pScript != NULL)
 		{
-			res = m_pTimelineWriter->AddFrameScript(pScript, layerNum);
+			res = m_timelineWriter->AddFrameScript(pScript, layerNum);
 		}
 
 		return res;
@@ -304,9 +304,9 @@ namespace SupercellSWF {
 	{
 		FCM::Result res = FCM_SUCCESS;
 
-		Log(GetCallback(), "[RemoveFrameScript] LayerNum: %d\n", layerNum);
+		console.debugLog("{RemoveFrameScript} LayerNum: %d", layerNum);
 
-		res = m_pTimelineWriter->RemoveFrameScript(layerNum);
+		res = m_timelineWriter->RemoveFrameScript(layerNum);
 
 		return res;
 	}
@@ -315,11 +315,11 @@ namespace SupercellSWF {
 	{
 		FCM::Result res = FCM_SUCCESS;
 
-		Log(GetCallback(), "[SetFrameLabel]\n");
+		console.debugLog("{SetFrameLabel}");
 
 		if (pLabel != NULL)
 		{
-			res = m_pTimelineWriter->SetFrameLabel(pLabel, labelType);
+			res = m_timelineWriter->SetFrameLabel(pLabel, labelType);
 		}
 
 		return res;
@@ -332,32 +332,31 @@ namespace SupercellSWF {
 	{
 		FCM::Result res;
 
-		res = m_pOutputWriter->EndDefineTimeline(resourceId, pName, m_pTimelineWriter);
+		res = m_outputWriter->EndDefineTimeline(resourceId, pName, m_timelineWriter);
 
-		*ppTimelineWriter = m_pTimelineWriter;
+		*ppTimelineWriter = m_timelineWriter;
 
 		return res;
 	}
 
 
 	TimelineBuilder::TimelineBuilder() :
-		m_pOutputWriter(NULL),
+		m_outputWriter(NULL),
 		m_frameIndex(0)
 	{
-		//Log(("[CreateTimeline]\n"));
+		console.debugLog("{CreateTimeline}");
 	}
 
 	TimelineBuilder::~TimelineBuilder()
 	{
 	}
 
-	void TimelineBuilder::Init(OutputWriter* pOutputWriter)
+	void TimelineBuilder::Init(OutputWriter* outputWriter, TimelineWriter* timelineWriter)
 	{
-		m_pOutputWriter = pOutputWriter;
+		m_outputWriter = outputWriter;
+		m_timelineWriter = timelineWriter;
+		console.Init("Timeline", GetCallback());
 
-		m_pOutputWriter->StartDefineTimeline();
-
-		m_pTimelineWriter = new JSONTimelineWriter(GetCallback());
-		ASSERT(m_pTimelineWriter);
+		m_outputWriter->StartDefineTimeline();
 	}
 }

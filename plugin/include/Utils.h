@@ -36,8 +36,6 @@
 /* -------------------------------------------------- Macros / Constants */
 
 #ifdef _DEBUG
-    #define Log(pCallback, fmt, ...)  Utils::Trace(pCallback, fmt, __VA_ARGS__)
-
     #define ASSERT(cond)                    \
     {                                       \
         if (!(cond))                        \
@@ -48,7 +46,6 @@
 
 #else
     #define ASSERT(cond)
-    #define Log(pCallback, fmt, ...)
 
 #endif
 
@@ -119,7 +116,7 @@ namespace SupercellSWF
 
         static void GetAppVersion(FCM::PIFCMCallback pCallback, FCM::U_Int32& version);
    
-        static void Trace(FCM::PIFCMCallback pCallback, const char* str, ...);
+        // static void Trace(FCM::PIFCMCallback pCallback, const char* str, ...);
 
         static void OpenFStream(const std::string& outputFileName, std::fstream &file, std::ios_base::openmode mode, FCM::PIFCMCallback pCallback);
 

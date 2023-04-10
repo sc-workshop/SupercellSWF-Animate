@@ -156,6 +156,8 @@ namespace SupercellSWF {
 		// End of a path
 		FCM::Result EndDefinePath();
 
+		TimelineWriter* createTimelineWriter(const FCM::PIFCMCallback callback);
+
 	private:
 
 		FCM::Result CreateImageFileName(const std::string& libPathName, std::string& name);

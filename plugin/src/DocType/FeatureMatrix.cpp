@@ -26,7 +26,7 @@ namespace SupercellSWF {
 
 	FeatureMatrix::FeatureMatrix()
 	{
-		m_Inited = true;
+		m_inited = true;
 	}
 
 	FeatureMatrix::~FeatureMatrix()
@@ -35,7 +35,7 @@ namespace SupercellSWF {
 
 	void FeatureMatrix::Init(FCM::PIFCMCallback pCallback)
 	{
-		if (m_Inited)
+		if (m_inited)
 		{
 			return;
 		}
@@ -54,7 +54,6 @@ namespace SupercellSWF {
 
 		FCM::AutoPtr<Application::Service::IOutputConsoleService> outputConsoleService = pUnk;
 		FCM::StringRep16 path = Utils::ToString16(featuresPath.string(), pCallback);
-		Log(GetCallback(), "\nThe feature settings for %s is read from %s", DOCTYPE_UNIVERSAL_NAME, path);
 
 		FCM::AutoPtr<FCM::IFCMCalloc> pCalloc = SupercellSWF::Utils::GetCallocService(pCallback);
 		ASSERT(pCalloc.m_Ptr != NULL);
@@ -242,18 +241,18 @@ namespace SupercellSWF {
 		if (kElement_Feature.compare(name8) == 0)
 		{
 			// Start of a feature tag
-			mCurrentFeature = UpdateFeature(attrs);
-			mCurrentProperty = NULL;
+			m_currentFeature = UpdateFeature(attrs);
+			m_currentProperty = NULL;
 		}
 		else if (kElement_Property.compare(name8) == 0)
 		{
 			// Start of a property tag
-			mCurrentProperty = UpdateProperty(mCurrentFeature, attrs);
+			m_currentProperty = UpdateProperty(m_currentFeature, attrs);
 		}
 		else if (kElement_Value.compare(name8) == 0)
 		{
 			// Start of a value tag
-			UpdateValue(mCurrentProperty, attrs);
+			UpdateValue(m_currentProperty, attrs);
 		}
 
 		return FCM_SUCCESS;
@@ -266,21 +265,21 @@ namespace SupercellSWF {
 		if (kElement_Feature.compare(name8) == 0)
 		{
 			// End of a feature tag
-			mCurrentFeature = NULL;
-			mCurrentProperty = NULL;
+			m_currentFeature = NULL;
+			m_currentProperty = NULL;
 		}
 		else if (kElement_Property.compare(name8) == 0)
 		{
 			// End of a property tag
-			mCurrentProperty = NULL;
+			m_currentProperty = NULL;
 		}
 		return FCM_SUCCESS;
 	}
 
 	Feature* FeatureMatrix::FindFeature(const std::string& inFeatureName)
 	{
-		StrFeatureMap::iterator itr = mFeatures.find(inFeatureName);
-		if (itr != mFeatures.end())
+		StrFeatureMap::iterator itr = m_features.find(inFeatureName);
+		if (itr != m_features.end())
 		{
 			return itr->second;
 		}
@@ -315,7 +314,7 @@ namespace SupercellSWF {
 		if (pFeature == NULL)
 		{
 			pFeature = new Feature(supported);
-			mFeatures.insert(std::pair<std::string, Feature*>(name, pFeature));
+			m_features.insert(std::pair<std::string, Feature*>(name, pFeature));
 		}
 
 		return pFeature;

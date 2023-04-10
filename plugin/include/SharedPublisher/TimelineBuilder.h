@@ -8,6 +8,7 @@
 #include "Writers/Base/TimelineWriter.h"
 
 #include "Version.h"
+#include "io/Console.h"
 
 using namespace Exporter::Service;
 
@@ -93,14 +94,16 @@ namespace SupercellSWF {
             FCM::StringRep16 pName,
             TimelineWriter** ppTimelineWriter);
 
-        void Init(OutputWriter* pOutputWriter);
+        void Init(OutputWriter* pOutputWriter, TimelineWriter* timelineWriter);
 
     private:
 
-        OutputWriter* m_pOutputWriter;
+        OutputWriter* m_outputWriter;
 
-        TimelineWriter* m_pTimelineWriter;
+        TimelineWriter* m_timelineWriter;
 
         FCM::U_Int32 m_frameIndex;
+
+        Console console;
     };
 }

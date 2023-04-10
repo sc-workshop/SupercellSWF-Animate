@@ -41,7 +41,7 @@ namespace SupercellSWF {
         FCM::Result res;
         TimelineWriter* pTimelineWriter;
 
-        Log(GetCallback(), "[EndSymbol] ResId: %d\n", resourceId);
+        console.debugLog("{EndSymbol} ResId: %d", resourceId);
 
         m_resourceList.push_back(resourceId);
 
@@ -66,10 +66,10 @@ namespace SupercellSWF {
         FCM::Boolean hasFancy;
         FCM::AutoPtr<DOM::FrameElement::IShape> pNewShape;
 
-        Log(GetCallback(), "[DefineShape] ResId: %d\n", resourceId);
+        console.debugLog("{DefineShape} ResId: %d", resourceId);
 
         m_resourceList.push_back(resourceId);
-        m_pOutputWriter->StartDefineShape();
+        m_outputWriter->StartDefineShape();
 
         if (pShape)
         {
@@ -90,7 +90,7 @@ namespace SupercellSWF {
             }
         }
 
-        m_pOutputWriter->EndDefineShape(resourceId);
+        m_outputWriter->EndDefineShape(resourceId);
 
         return FCM_SUCCESS;
     }
@@ -104,7 +104,7 @@ namespace SupercellSWF {
         FCM::StringRep16 pName;
         std::string libName;
 
-        Log(GetCallback(), "[DefineSound] ResId: %d\n", resourceId);
+        console.debugLog("{DefineSound} ResId: %d", resourceId);
 
         m_resourceList.push_back(resourceId);
 
@@ -122,7 +122,7 @@ namespace SupercellSWF {
         AutoPtr<DOM::MediaInfo::ISoundInfo> pSoundInfo = pUnknown;
         ASSERT(pSoundInfo);
 
-        m_pOutputWriter->DefineSound(resourceId, libName, pMediaItem);
+        m_outputWriter->DefineSound(resourceId, libName, pMediaItem);
 
         // Free the name
         FCM::AutoPtr<FCM::IFCMUnknown> pUnkCalloc;
@@ -141,7 +141,7 @@ namespace SupercellSWF {
         FCM::Result res;
         FCM::StringRep16 pName;
 
-        Log(GetCallback(), "[DefineBitmap] ResId: %d\n", resourceId);
+        console.debugLog("{DefineBitmap} ResId: %d", resourceId);
 
         m_resourceList.push_back(resourceId);
 
@@ -170,7 +170,7 @@ namespace SupercellSWF {
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Dump the definition of a bitmap
-        res = m_pOutputWriter->DefineBitmap(resourceId, height, width, libItemName, pMediaItem);
+        res = m_outputWriter->DefineBitmap(resourceId, height, width, libItemName, pMediaItem);
 
         // Free the name
         FCM::AutoPtr<FCM::IFCMUnknown> pUnkCalloc;
@@ -195,7 +195,7 @@ namespace SupercellSWF {
         DOM::Utils::COLOR fontColor;
         FCM::Result res;
 
-        Log(GetCallback(), "[DefineClassicText] ResId: %d\n", resourceId);
+        console.debugLog("{DefineClassicText} ResId: %d", resourceId);
 
         m_resourceList.push_back(resourceId);
 
@@ -254,7 +254,7 @@ namespace SupercellSWF {
         }
 
         //Define Text Element
-        res = m_pOutputWriter->DefineText(resourceId, fName, fontColor, displayText, pTextItem);
+        res = m_outputWriter->DefineText(resourceId, fName, fontColor, displayText, pTextItem);
 
         return FCM_SUCCESS;
     }
@@ -275,7 +275,7 @@ namespace SupercellSWF {
             }
         }
 
-        //Log(("[HasResource] ResId: %d HasResource: %d\n", resourceId, hasResource));
+        //Log(("[HasResource] ResId: %d HasResource: %d", resourceId, hasResource));
 
         return FCM_SUCCESS;
     }
@@ -283,7 +283,7 @@ namespace SupercellSWF {
 
     ResourcePalette::ResourcePalette()
     {
-        m_pOutputWriter = NULL;
+        m_outputWriter = NULL;
     }
 
 
@@ -294,7 +294,8 @@ namespace SupercellSWF {
 
     void ResourcePalette::Init(OutputWriter* pOutputWriter)
     {
-        m_pOutputWriter = pOutputWriter;
+        console.Init("Resources", GetCallback());
+        m_outputWriter = pOutputWriter;
     }
 
     void ResourcePalette::Clear()
@@ -341,7 +342,7 @@ namespace SupercellSWF {
             FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> pFilledRegion = pFilledRegionList[j];
             FCM::AutoPtr<DOM::Service::Shape::IPath> pPath;
 
-            m_pOutputWriter->StartDefineFill();
+            m_outputWriter->StartDefineFill();
 
             // Fill Style
             FCM::AutoPtr<DOM::IFCMUnknown> fillStyle;
@@ -376,7 +377,7 @@ namespace SupercellSWF {
                 res = ExportHole(pPath);
             }
 
-            m_pOutputWriter->EndDefineFill();
+            m_outputWriter->EndDefineFill();
         }
 
         return res;
@@ -387,12 +388,12 @@ namespace SupercellSWF {
     {
         FCM::Result res;
 
-        m_pOutputWriter->StartDefineBoundary();
+        m_outputWriter->StartDefineBoundary();
 
         res = ExportPath(pPath);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        m_pOutputWriter->EndDefineBoundary();
+        m_outputWriter->EndDefineBoundary();
 
         return res;
     }
@@ -402,12 +403,12 @@ namespace SupercellSWF {
     {
         FCM::Result res;
 
-        m_pOutputWriter->StartDefineHole();
+        m_outputWriter->StartDefineHole();
 
         res = ExportPath(pPath);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        m_pOutputWriter->EndDefineHole();
+        m_outputWriter->EndDefineHole();
 
         return res;
     }
@@ -435,7 +436,7 @@ namespace SupercellSWF {
 
             res = pEdge->GetSegment(segment);
 
-            m_pOutputWriter->SetSegment(segment);
+            m_outputWriter->SetSegment(segment);
         }
 
         return res;
@@ -515,7 +516,7 @@ namespace SupercellSWF {
             AutoPtr<DOM::Service::Shape::IStrokeGroup> pStrokeGroup = pStrokeGroupList[j];
             ASSERT(pStrokeGroup);
 
-            res = m_pOutputWriter->StartDefineStrokeGroup();
+            res = m_outputWriter->StartDefineStrokeGroup();
             ASSERT(FCM_SUCCESS_CODE(res));
 
             AutoPtr<FCM::IFCMUnknown> pStrokeStyle;
@@ -539,7 +540,7 @@ namespace SupercellSWF {
                 pPath = pPathList[k];
                 ASSERT(pPath);
 
-                res = m_pOutputWriter->StartDefineStroke();
+                res = m_outputWriter->StartDefineStroke();
                 ASSERT(FCM_SUCCESS_CODE(res));
 
                 res = ExportStrokeStyle(pStrokeStyle);
@@ -548,11 +549,11 @@ namespace SupercellSWF {
                 res = ExportPath(pPath);
                 ASSERT(FCM_SUCCESS_CODE(res));
 
-                res = m_pOutputWriter->EndDefineStroke();
+                res = m_outputWriter->EndDefineStroke();
                 ASSERT(FCM_SUCCESS_CODE(res));
             }
 
-            res = m_pOutputWriter->EndDefineStrokeGroup();
+            res = m_outputWriter->EndDefineStrokeGroup();
             ASSERT(FCM_SUCCESS_CODE(res));
         }
 
@@ -688,7 +689,7 @@ namespace SupercellSWF {
         res = pSolidStrokeStyle->GetStrokeHinting(strokeHinting);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = m_pOutputWriter->StartDefineSolidStrokeStyle(
+        res = m_outputWriter->StartDefineSolidStrokeStyle(
             thickness,
             joinStyle,
             capStyle,
@@ -703,7 +704,7 @@ namespace SupercellSWF {
         res = ExportFillStyle(pFillStyle);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = m_pOutputWriter->EndDefineSolidStrokeStyle();
+        res = m_outputWriter->EndDefineSolidStrokeStyle();
         ASSERT(FCM_SUCCESS_CODE(res));
 
         return res;
@@ -721,7 +722,7 @@ namespace SupercellSWF {
         res = solidFill->GetColor(color);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        m_pOutputWriter->DefineSolidFillStyle(color);
+        m_outputWriter->DefineSolidFillStyle(color);
 
         return res;
     }
@@ -751,7 +752,7 @@ namespace SupercellSWF {
         res = radialColorGradient->GetFocalPoint(focalPoint);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = m_pOutputWriter->StartDefineRadialGradientFillStyle(spread, matrix, focalPoint);
+        res = m_outputWriter->StartDefineRadialGradientFillStyle(spread, matrix, focalPoint);
         ASSERT(FCM_SUCCESS_CODE(res));
 
         FCM::U_Int8 nColors;
@@ -765,11 +766,11 @@ namespace SupercellSWF {
             res = radialColorGradient->GetKeyColorAtIndex(i, point);
             ASSERT(FCM_SUCCESS_CODE(res));
 
-            res = m_pOutputWriter->SetKeyColorPoint(point);
+            res = m_outputWriter->SetKeyColorPoint(point);
             ASSERT(FCM_SUCCESS_CODE(res));
         }
 
-        res = m_pOutputWriter->EndDefineRadialGradientFillStyle();
+        res = m_outputWriter->EndDefineRadialGradientFillStyle();
         ASSERT(FCM_SUCCESS_CODE(res));
 
         return res;
@@ -795,7 +796,7 @@ namespace SupercellSWF {
         res = gradientFill->GetMatrix(matrix);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = m_pOutputWriter->StartDefineLinearGradientFillStyle(spread, matrix);
+        res = m_outputWriter->StartDefineLinearGradientFillStyle(spread, matrix);
         ASSERT(FCM_SUCCESS_CODE(res));
 
         FCM::U_Int8 nColors;
@@ -809,11 +810,11 @@ namespace SupercellSWF {
             res = linearColorGradient->GetKeyColorAtIndex(i, point);
             ASSERT(FCM_SUCCESS_CODE(res));
 
-            res = m_pOutputWriter->SetKeyColorPoint(point);
+            res = m_outputWriter->SetKeyColorPoint(point);
             ASSERT(FCM_SUCCESS_CODE(res));
         }
 
-        res = m_pOutputWriter->EndDefineLinearGradientFillStyle();
+        res = m_outputWriter->EndDefineLinearGradientFillStyle();
         ASSERT(FCM_SUCCESS_CODE(res));
 
         return res;
@@ -867,7 +868,7 @@ namespace SupercellSWF {
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Dump the definition of a bitmap fill style
-        res = m_pOutputWriter->DefineBitmapFillStyle(
+        res = m_outputWriter->DefineBitmapFillStyle(
             isClipped,
             matrix,
             height,

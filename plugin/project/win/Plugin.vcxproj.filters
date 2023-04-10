@@ -146,6 +146,9 @@
     <Filter Include="Source\SharedPublisher">
       <UniqueIdentifier>{0dea6af5-2fbd-4c70-b4ef-bce4a6054368}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\io">
+      <UniqueIdentifier>{80a4201d-5a13-49e0-ae47-44d695f3670d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Main.cpp">
@@ -728,6 +731,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\PluginConfiguration.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\io\Console.h">
+      <Filter>Headers\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\io\Colors.h">
+      <Filter>Headers\io</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

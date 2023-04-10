@@ -61,14 +61,10 @@ namespace SupercellSWF {
 		Value* UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs);
 
 	private:
-
-		StrFeatureMap mFeatures;
-
-		Feature* mCurrentFeature;
-
-		Property* mCurrentProperty;
-
-		bool m_Inited = false;
+		StrFeatureMap m_features;
+		Feature* m_currentFeature;
+		Property* m_currentProperty;
+		bool m_inited = false;
 
 		friend class FeatureDocumentHandler;
 	};

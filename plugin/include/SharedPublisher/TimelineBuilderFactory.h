@@ -27,10 +27,10 @@ namespace SupercellSWF {
 
         ~TimelineBuilderFactory();
 
-        void Init(OutputWriter* pOutputWriter);
+        void Init(OutputWriter* outputWriter);
 
     private:
 
-        OutputWriter* m_pOutputWriter;
+        OutputWriter* m_outputWriter;
     };
 }

@@ -178,7 +178,7 @@ namespace SupercellSWF {
                 res = Utils::CreateDir(m_outputImageFolder, m_pCallback);
                 if (!(FCM_SUCCESS_CODE(res)))
                 {
-                    Utils::Trace(m_pCallback, "Output image folder (%s) could not be created\n", m_outputImageFolder.c_str());
+                    //Utils::Trace(m_pCallback, "Output image folder (%s) could not be created\n", m_outputImageFolder.c_str());
                     return res;
                 }
                 m_imageFolderCreated = true;
@@ -577,7 +577,7 @@ namespace SupercellSWF {
                 res = Utils::CreateDir(m_outputImageFolder, m_pCallback);
                 if (!(FCM_SUCCESS_CODE(res)))
                 {
-                    Utils::Trace(m_pCallback, "Output image folder (%s) could not be created\n", m_outputImageFolder.c_str());
+                    //Utils::Trace(m_pCallback, "Output image folder (%s) could not be created\n", m_outputImageFolder.c_str());
                     return res;
                 }
                 m_imageFolderCreated = true;
@@ -677,7 +677,7 @@ namespace SupercellSWF {
             res = Utils::CreateDir(m_outputSoundFolder, m_pCallback);
             if (!(FCM_SUCCESS_CODE(res)))
             {
-                Utils::Trace(m_pCallback, "Output sound folder (%s) could not be created\n", m_outputSoundFolder.c_str());
+                //Utils::Trace(m_pCallback, "Output sound folder (%s) could not be created\n", m_outputSoundFolder.c_str());
                 return res;
             }
             m_soundFolderCreated = true;
@@ -880,5 +880,9 @@ namespace SupercellSWF {
         ASSERT(m_imageMap.find(libPathName) == m_imageMap.end());
 
         m_imageMap.insert(std::pair<std::string, std::string>(libPathName, name));
+    }
+
+    TimelineWriter* JSONOutputWriter::createTimelineWriter(const FCM::PIFCMCallback callback) {
+        return new JSONTimelineWriter(callback);
     }
 }

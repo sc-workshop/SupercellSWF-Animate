@@ -171,5 +171,9 @@ namespace SupercellSWF {
             FCM::U_Int32 resId,
             const std::string& libPathName,
             DOM::LibraryItem::PIMediaItem pMediaItem) = 0;
+
+        // Sub-classes getters
+
+        virtual TimelineWriter* createTimelineWriter(const FCM::PIFCMCallback callback) = 0;
     };
 }

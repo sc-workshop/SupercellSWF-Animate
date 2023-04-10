@@ -26,18 +26,18 @@
 #include "Utils.h"
     
 namespace SupercellSWF {
-    ModulePublisher::ModulePublisher()
+    SharedPublisher::SharedPublisher()
     {
 
     }
 
-    ModulePublisher::~ModulePublisher()
+    SharedPublisher::~SharedPublisher()
     {
 
     }
 
 
-    FCM::Result ModulePublisher::Publish(
+    FCM::Result SharedPublisher::Publish(
         DOM::PIFLADocument pFlaDocument,
         const PIFCMDictionary pDictPublishSettings,
         const PIFCMDictionary config)
@@ -45,7 +45,7 @@ namespace SupercellSWF {
         return Export(pFlaDocument, pDictPublishSettings, config);
     }
 
-    FCM::Result ModulePublisher::Publish(
+    FCM::Result SharedPublisher::Publish(
         DOM::PIFLADocument pFlaDocument,
         DOM::PITimeline pTimeline,
         const Exporter::Service::RANGE& frameRange,
@@ -56,14 +56,14 @@ namespace SupercellSWF {
     }
 
 
-    FCM::Result ModulePublisher::Export(
+    FCM::Result SharedPublisher::Export(
         DOM::PIFLADocument document,
         const PIFCMDictionary publishSettings,
         const PIFCMDictionary config)
     {
         FCM::Result res;
         FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
-        FCM::AutoPtr<FCM::IFCMCalloc> pCalloc;
+        FCM::AutoPtr<FCM::IFCMCalloc> calloc;
 
         res = Init(publishSettings);
         if (FCM_FAILURE_CODE(res))
@@ -71,10 +71,10 @@ namespace SupercellSWF {
             return res;
         }
 
-        pCalloc = SupercellSWF::Utils::GetCallocService(GetCallback());
-        ASSERT(pCalloc.m_Ptr != NULL);
+        calloc = SupercellSWF::Utils::GetCallocService(GetCallback());
+        ASSERT(calloc.m_Ptr != NULL);
 
-        Utils::Trace(GetCallback(), "[Publisher] Creating output file : %s\n", m_outputPath.c_str());
+        console.log("Creating output file : %s", m_outputPath.c_str());
 
         DOM::Utils::COLOR color;
         FCM::U_Int32 stageHeight;
@@ -82,9 +82,9 @@ namespace SupercellSWF {
 
         FCM::Double fps;
         FCM::U_Int32 framesPerSec;
-        AutoPtr<ITimelineBuilderFactory> timelineBuilderFactory;
+        AutoPtr<ITimelineBuilderFactory> timelineBuilderFactory; // TODO rename to document builder (maybe)
 
-        FCM::FCMListPtr pTimelineList; // TODO remove this
+        FCM::FCMListPtr timelinesList; // TODO remove this
         FCM::U_Int32 timelineCount;
         
         // Create a output writer
@@ -93,7 +93,6 @@ namespace SupercellSWF {
         {
         case PublisherMode::JSON:
             outputWriter = std::shared_ptr<OutputWriter>(new JSONOutputWriter(GetCallback()));
-            /* code */
             break;
         }
 
@@ -103,7 +102,7 @@ namespace SupercellSWF {
         }
 
         // Start output
-        outputWriter->StartOutput(m_outputPath);
+        outputWriter->StartOutput(m_outputPath); // TODO move path passing to output end
 
         // Create a Timeline Builder Factory for the root timeline of the document
         res = GetCallback()->CreateInstance(
@@ -119,9 +118,9 @@ namespace SupercellSWF {
         (static_cast<TimelineBuilderFactory*>(timelineBuilderFactory.m_Ptr))->Init(
             outputWriter.get());
 
-        ResourcePalette* pResPalette = static_cast<ResourcePalette*>(m_pResourcePalette.m_Ptr);
-        pResPalette->Clear();
-        pResPalette->Init(outputWriter.get());
+        ResourcePalette* resPalette = static_cast<ResourcePalette*>(m_resourcePalette.m_Ptr);
+        resPalette->Clear();
+        resPalette->Init(outputWriter.get());
 
         res = document->GetBackgroundColor(color);
         ASSERT(FCM_SUCCESS_CODE(res));
@@ -141,13 +140,13 @@ namespace SupercellSWF {
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Get all the timelines for the document
-        res = document->GetTimelines(pTimelineList.m_Ptr);
+        res = document->GetTimelines(timelinesList.m_Ptr);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
         }
 
-        res = pTimelineList->Count(timelineCount);
+        res = timelinesList->Count(timelineCount);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
@@ -157,10 +156,10 @@ namespace SupercellSWF {
         for (FCM::U_Int32 i = 0; i < timelineCount; i++) // TODO move to library items exporting
         {
             Exporter::Service::RANGE range;
-            AutoPtr<ITimelineBuilder> pTimelineBuilder;
-            TimelineWriter* pTimelineWriter;
+            AutoPtr<ITimelineBuilder> timelineBuilder;
+            TimelineWriter* timelineWriter;
 
-            AutoPtr<DOM::ITimeline> timeline = pTimelineList[i];
+            AutoPtr<DOM::ITimeline> timeline = timelinesList[i];
 
             range.min = 0;
             res = timeline->GetMaxFrameCount(range.max);
@@ -176,16 +175,16 @@ namespace SupercellSWF {
                 timeline,
                 range,
                 publishSettings,
-                m_pResourcePalette,
+                m_resourcePalette,
                 timelineBuilderFactory,
-                pTimelineBuilder.m_Ptr);
+                timelineBuilder.m_Ptr);
 
             if (FCM_FAILURE_CODE(res))
             {
                 return res;
             }
 
-            ((TimelineBuilder*)pTimelineBuilder.m_Ptr)->Build(0, NULL, &pTimelineWriter);
+            ((TimelineBuilder*)timelineBuilder.m_Ptr)->Build(0, NULL, &timelineWriter);
         }
 
         res = outputWriter->EndDocument();
@@ -195,31 +194,31 @@ namespace SupercellSWF {
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Export the library items with linkages
-        FCM::FCMListPtr pLibraryItemList;
-        res = document->GetLibraryItems(pLibraryItemList.m_Ptr);
+        FCM::FCMListPtr libraryItems;
+        res = document->GetLibraryItems(libraryItems.m_Ptr);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
         }
 
-        ExportLibraryItems(pLibraryItemList);
+        ExportLibraryItems(libraryItems);
 
         return FCM_SUCCESS;
     }
 
 
-    FCM::Result ModulePublisher::ClearCache()
+    FCM::Result SharedPublisher::ClearCache()
     {
-        if (m_pResourcePalette)
+        if (m_resourcePalette)
         {
-            ResourcePalette* pResPalette = static_cast<ResourcePalette*>(m_pResourcePalette.m_Ptr);
+            ResourcePalette* resources = static_cast<ResourcePalette*>(m_resourcePalette.m_Ptr);
 
-            pResPalette->Clear();
+            resources->Clear();
         }
         return FCM_SUCCESS;
     }
 
-    FCM::Boolean ModulePublisher::IsPreviewNeeded(const PIFCMDictionary config)
+    FCM::Boolean SharedPublisher::IsPreviewNeeded(const PIFCMDictionary config)
     {
         FCM::Boolean found;
         std::string previewNeeded;
@@ -243,15 +242,13 @@ namespace SupercellSWF {
     }
 
 
-    FCM::Result ModulePublisher::ShowPreview(const std::string& outFile)
+    FCM::Result SharedPublisher::ShowPreview(const std::string& outFile)
     {
-        FCM::Result res = FCM_SUCCESS;
-
-        return res;
+        return FCM_SUCCESS;
     }
 
 
-    FCM::Result ModulePublisher::Init(const PIFCMDictionary config)
+    FCM::Result SharedPublisher::Init(const PIFCMDictionary config)
     {
         FCM::Result res = FCM_SUCCESS;;
         FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
@@ -263,19 +260,20 @@ namespace SupercellSWF {
             m_frameCmdGeneratorService = pUnk;
         }
 
-        if (!m_pResourcePalette)
+        if (!m_resourcePalette)
         {
             // Create a Resource Palette
-            res = GetCallback()->CreateInstance(NULL, CLSID_ResourcePalette, IID_IResourcePalette, (void**)&m_pResourcePalette);
+            res = GetCallback()->CreateInstance(NULL, CLSID_ResourcePalette, IID_IResourcePalette, (void**)&m_resourcePalette);
             ASSERT(FCM_SUCCESS_CODE(res));
         }
 
-        // Initialization of class members
+        console.Init("Publisher", GetCallback());
 
+        // Initialization of class members
         Utils::ReadString(config, PUBLISHER_OUTPUT, m_outputPath);
         if (m_outputPath.empty())
         {
-            Utils::Trace(GetCallback(), "[PublisherSettings] Failed to get output path.\n");
+            console.log("Failed to get output path");
             return FCM_INVALID_PARAM;
         }
 
@@ -284,7 +282,7 @@ namespace SupercellSWF {
         if (modeName == "JSON") {
             m_publishMode = PublisherMode::JSON;
         } else {
-            Utils::Trace(GetCallback(), "[PublisherSettings] Failed to get publisher mode. Default mode will be used - JSON.\n");
+            console.log("Failed to get publisher mode. Default mode will be used - JSON.");
             m_publishMode = PublisherMode::JSON;
         }
 
@@ -296,15 +294,14 @@ namespace SupercellSWF {
     // Note: This function is NOT completely implemented but provides guidelines 
     // on how this can be possibly done.      
     //
-    FCM::Result ModulePublisher::ExportLibraryItems(FCM::FCMListPtr pLibraryItemList)
+    FCM::Result SharedPublisher::ExportLibraryItems(FCM::FCMListPtr libraryItems)
     {
         FCM::U_Int32 count = 0;
         FCM::Result res;
 
+        ASSERT(libraryItems);
 
-        ASSERT(pLibraryItemList);
-
-        res = pLibraryItemList->Count(count);
+        res = libraryItems->Count(count);
         ASSERT(FCM_SUCCESS_CODE(res));
 
         FCM::AutoPtr<FCM::IFCMUnknown> pUnkCalloc;
@@ -313,68 +310,68 @@ namespace SupercellSWF {
 
         for (FCM::U_Int32 index = 0; index < count; index++)
         {
-            FCM::StringRep16 pLibItemName = NULL;
-            std::string libItemName;
-            AutoPtr<IFCMDictionary> pDict;
-            AutoPtr<DOM::ILibraryItem> pLibItem = pLibraryItemList[index];
+            FCM::StringRep16 LibItemName = NULL;
+            std::string itemName;
+            AutoPtr<IFCMDictionary> dict;
+            AutoPtr<DOM::ILibraryItem> item = libraryItems[index];
 
-            res = pLibItem->GetName(&pLibItemName);
+            res = item->GetName(&LibItemName);
             ASSERT(FCM_SUCCESS_CODE(res));
-            libItemName = Utils::ToString(pLibItemName, GetCallback());
+            itemName = Utils::ToString(LibItemName, GetCallback());
 
-            AutoPtr<DOM::LibraryItem::IFolderItem> pFolderItem = pLibItem;
-            if (pFolderItem)
+            AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
+            if (folderItem)
             {
-                FCM::FCMListPtr pChildren;
+                FCM::FCMListPtr childrens;
 
-                res = pFolderItem->GetChildren(pChildren.m_Ptr);
+                res = folderItem->GetChildren(childrens.m_Ptr);
                 ASSERT(FCM_SUCCESS_CODE(res));
 
                 // Export all its children
-                res = ExportLibraryItems(pChildren);
+                res = ExportLibraryItems(childrens);
                 ASSERT(FCM_SUCCESS_CODE(res));
             }
             else
             {
                 FCM::FCMDictRecTypeID type;
                 FCM::U_Int32 valLen;
-                AutoPtr<DOM::LibraryItem::IFontItem> pFontItem = pLibItem;
-                AutoPtr<DOM::LibraryItem::ISymbolItem> pSymbolItem = pLibItem;
-                AutoPtr<DOM::LibraryItem::IMediaItem> pMediaItem = pLibItem;
+                AutoPtr<DOM::LibraryItem::IFontItem> fontItem = item;
+                AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
+                AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
 
-                res = pLibItem->GetProperties(pDict.m_Ptr);
+                res = item->GetProperties(dict.m_Ptr);
                 ASSERT(FCM_SUCCESS_CODE(res));
 
-                res = pDict->GetInfo(kLibProp_LinkageClass_DictKey,
+                res = dict->GetInfo(kLibProp_LinkageClass_DictKey,
                     type, valLen);
 
                 if (FCM_SUCCESS_CODE(res))
                 {
                     FCM::Boolean hasResource;
-                    ResourcePalette* pResPalette = static_cast<ResourcePalette*>(m_pResourcePalette.m_Ptr);
+                    ResourcePalette* resPalette = static_cast<ResourcePalette*>(m_resourcePalette.m_Ptr);
 
                     // Library Item has linkage identifer
 
-                    if (pSymbolItem)
+                    if (symbolItem)
                     {
                         //
                         // Check if it has been exported already by comparing names of resources 
                         // already exported from the timelines.
                         //
-                        res = pResPalette->HasResource(libItemName, hasResource);
+                        res = resPalette->HasResource(itemName, hasResource);
                         if (!hasResource)
                         {
                             // Resource is not yet exported. Export it using 
                             // FrameCommandGenerator::GenerateFrameCommands
                         }
                     }
-                    else if (pMediaItem)
+                    else if (mediaItem)
                     {
                         //
                         // Check if it has been exported already by comparing names of resources 
                         // already exported from the timelines.
                         //
-                        res = pResPalette->HasResource(libItemName, hasResource);
+                        res = resPalette->HasResource(itemName, hasResource);
                         if (!hasResource)
                         {
                             // Resource is not yet exported. Export it.
@@ -382,7 +379,7 @@ namespace SupercellSWF {
                             // Depending on bitmap/sound, export it.
                         }
                     }
-                    else if (pFontItem)
+                    else if (fontItem)
                     {
                         // Use the font name to check if already exported.
 
@@ -392,12 +389,12 @@ namespace SupercellSWF {
                 }
             }
 
-            callocService->Free((FCM::PVoid)pLibItemName);
+            callocService->Free((FCM::PVoid)LibItemName);
         }
         return FCM_SUCCESS;
     }
 
-    FCM::Result RegisterPublisher(PIFCMDictionary pPlugins, FCM::FCMCLSID docId)
+    FCM::Result RegisterPublisher(PIFCMDictionary plugins, FCM::FCMCLSID docId)
     {
         FCM::Result res;
 
@@ -442,7 +439,7 @@ namespace SupercellSWF {
         {
             // Level 1 Dictionary
             AutoPtr<IFCMDictionary> pPlugin;
-            res = pPlugins->AddLevel(
+            res = plugins->AddLevel(
                 (const FCM::StringRep8)Utils::ToString(CLSID_Publisher).c_str(),
                 pPlugin.m_Ptr);
 

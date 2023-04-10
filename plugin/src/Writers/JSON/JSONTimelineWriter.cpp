@@ -858,7 +858,7 @@ namespace SupercellSWF {
         }
 
 
-        Utils::Trace(m_pCallback, "[AddFrameScript] (Layer: %d): %s\n", layerNum, script.c_str());
+        //Utils::Trace(m_pCallback, "[AddFrameScript] (Layer: %d): %s\n", layerNum, script.c_str());
 
         m_pFrameElement->push_back(JSONNode(scriptWithLayerNumber, script));
 
@@ -868,7 +868,7 @@ namespace SupercellSWF {
 
     FCM::Result JSONTimelineWriter::RemoveFrameScript(FCM::U_Int32 layerNum)
     {
-        Utils::Trace(m_pCallback, "[RemoveFrameScript] (Layer: %d)\n", layerNum);
+        //Utils::Trace(m_pCallback, "[RemoveFrameScript] (Layer: %d)\n", layerNum);
 
         return FCM_SUCCESS;
     }
@@ -876,7 +876,7 @@ namespace SupercellSWF {
     FCM::Result JSONTimelineWriter::SetFrameLabel(FCM::StringRep16 pLabel, DOM::KeyFrameLabelType labelType)
     {
         std::string label = Utils::ToString(pLabel, m_pCallback);
-        Utils::Trace(m_pCallback, "[SetFrameLabel] (Type: %d): %s\n", labelType, label.c_str());
+        //Utils::Trace(m_pCallback, "[SetFrameLabel] (Type: %d): %s\n", labelType, label.c_str());
 
         if (labelType == 1)
             m_pFrameElement->push_back(JSONNode("LabelType:Name", label));

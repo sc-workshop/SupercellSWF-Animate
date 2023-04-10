@@ -19,7 +19,7 @@ namespace SupercellSWF
 
         CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
         CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-        CLASS_ENTRY(CLSID_Publisher, ModulePublisher)
+        CLASS_ENTRY(CLSID_Publisher, SharedPublisher)
         CLASS_ENTRY(CLSID_ResourcePalette, ResourcePalette)
         CLASS_ENTRY(CLSID_TimelineBuilder, TimelineBuilder)
         CLASS_ENTRY(CLSID_TimelineBuilderFactory, TimelineBuilderFactory)
