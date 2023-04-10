@@ -3,8 +3,11 @@ import Publisher from './Publisher';
 import { createElement, useState } from 'react';
 import { refreshTheme, themeColor } from './Components/themes';
 import { getInterface, isCEP } from './CEP';
+import { onLoad } from './Components';
 
 function App() {
+  onLoad();
+  
   const [bgr, setBgr] = useState(`#${themeColor.toString(16)}`);
 
   if (isCEP()) {
@@ -17,8 +20,6 @@ function App() {
       }
     );
   }
-
-  console.log(bgr);
 
   return createElement("body",
     {

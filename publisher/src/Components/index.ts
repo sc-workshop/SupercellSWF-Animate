@@ -1,6 +1,6 @@
 
 import { getInterface, isCEP } from "../CEP";
-import { restoreState as setState, saveState } from "./publisherState";
+import { restoreState, saveState } from "./publisherState";
 import { refreshTheme } from "./themes";
 
 export function publish() {
@@ -19,6 +19,6 @@ export function onLoad() {
     if (isCEP()) {
         refreshTheme();
         const CSInterface = getInterface();
-        CSInterface.addEventListener("com.adobe.events.flash.extension.setstate", setState);
+        CSInterface.addEventListener("com.adobe.events.flash.extension.setstate", restoreState);
     }
 }

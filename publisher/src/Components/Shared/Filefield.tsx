@@ -24,9 +24,6 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
         type: "text",
         defaultValue: defaultValue,
         value: input,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-            callback(e.target.value);
-        },
         style: {
             background: "#c6c6c6",
             border: "1px solid #070707",
@@ -63,6 +60,7 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
                         `FLfile.uriToPlatformPath('${path}');`,
                         function (normalized: string) {
                             setInput(normalized)
+                            callback(normalized);
                         }
                     )
                 }

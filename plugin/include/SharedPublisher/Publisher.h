@@ -12,7 +12,14 @@
 using namespace Publisher;
 using namespace Exporter::Service;
 
+#define PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"
+#define PUBLISHER_MODE "PublishSettings.SupercellSWF.publisher"
+
 namespace SupercellSWF {
+    enum class PublisherMode {
+        JSON
+    };
+
     class ModulePublisher : public IPublisher, public FCMObjectBase
     {
         BEGIN_INTERFACE_MAP(ModulePublisher, PLUGIN_VERSION)
@@ -22,16 +29,16 @@ namespace SupercellSWF {
     public:
 
         FCM::Result _FCMCALL Publish(
-            DOM::PIFLADocument pFlaDocument,
-            const PIFCMDictionary pDictPublishSettings,
-            const PIFCMDictionary pDictConfig);
+            DOM::PIFLADocument document,
+            const PIFCMDictionary publishSettings,
+            const PIFCMDictionary config);
 
         FCM::Result _FCMCALL Publish(
-            DOM::PIFLADocument pFlaDocument,
+            DOM::PIFLADocument document,
             DOM::PITimeline pTimeline,
             const Exporter::Service::RANGE& frameRange,
-            const PIFCMDictionary pDictPublishSettings,
-            const PIFCMDictionary pDictConfig);
+            const PIFCMDictionary publishSettings,
+            const PIFCMDictionary config);
 
         FCM::Result _FCMCALL ClearCache();
 
@@ -40,25 +47,22 @@ namespace SupercellSWF {
         ~ModulePublisher();
 
     private:
-        FCM::Result GetOutputFileName(
-            DOM::PIFLADocument pFlaDocument,
-            const PIFCMDictionary pDictPublishSettings,
-            std::string& outFile);
-
         FCM::Result Export(
-            DOM::PIFLADocument pFlaDocument,
-            const PIFCMDictionary pDictPublishSettings,
-            const PIFCMDictionary pDictConfig);
+            DOM::PIFLADocument document,
+            const PIFCMDictionary publishSettings,
+            const PIFCMDictionary config);
 
-        FCM::Boolean IsPreviewNeeded(const PIFCMDictionary pDictConfig);
+        FCM::Boolean IsPreviewNeeded(const PIFCMDictionary config);
 
-        FCM::Result Init();
+        FCM::Result Init(const PIFCMDictionary config);
 
         FCM::Result ShowPreview(const std::string& outFile);
 
-        FCM::Result ExportLibraryItems(FCM::FCMListPtr pLibraryItemList);
+        FCM::Result ExportLibraryItems(FCM::FCMListPtr libraryItems);
 
     private:
+        std::string m_outputPath;
+        PublisherMode m_publishMode;
 
         AutoPtr<IFrameCommandGenerator> m_frameCmdGeneratorService;
         AutoPtr<IResourcePalette> m_pResourcePalette;

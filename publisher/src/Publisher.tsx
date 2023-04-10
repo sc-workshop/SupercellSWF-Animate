@@ -1,12 +1,10 @@
 import { createElement } from 'react';
 import { BasicSettings } from './Components/Publisher/BasicSettings';
-import { onLoad, publish } from './Components';
+import { publish } from './Components';
 import { Stylefield } from './Components/Shared/Stylefield';
 import { Header } from './Components/Publisher/Header';
 
 function Publisher() {
-  onLoad();
-
   const publishButton = createElement("button", 
   {
     style: {

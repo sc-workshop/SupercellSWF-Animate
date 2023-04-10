@@ -1,13 +1,27 @@
 import { config } from "../bundle";
-import { readdirSync } from "fs";
+import { readdirSync, existsSync } from "fs";
 import { join, resolve } from "path";
 import { progress, removeDirs as removeFiles } from "./utils";
 
-export function cleanup() {
+export function cleanup(extensions: string[] = []) {
     progress('Cleaning dist files...');
-    removeFiles("dist");
+    if (existsSync("dist")) {
+        for (const filename of readdirSync("dist")){
+            if (extensions.length != 0) {
+                if (extensions.indexOf(filename) === -1) {
+                    continue;
+                } 
+            }
+            removeFiles(join("dist", filename));
+        }
+    }
 
     for (const extensionName of Object.keys(config.extensions)) {
+        if (extensions.length != 0) {
+            if (extensions.indexOf(extensionName) === -1) {
+                continue;
+            } 
+        }
         const extension = config.extensions[extensionName];
 
         const content = readdirSync(extension.root);

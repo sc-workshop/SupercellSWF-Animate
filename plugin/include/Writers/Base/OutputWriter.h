@@ -59,7 +59,7 @@ namespace SupercellSWF {
         virtual FCM::Result EndDocument() = 0;
 
         // Marks the start of a timeline
-        virtual FCM::Result StartDefineTimeline() = 0;
+        virtual FCM::Result StartDefineTimeline() = 0; // TODO change to defineMovieClip
 
         // Marks the end of a timeline
         virtual FCM::Result EndDefineTimeline(

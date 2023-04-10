@@ -17,16 +17,14 @@
 
 #include "Writers/Base/OutputWriter.h"
 #include "Writers/Base/TimelineWriter.h"
+
 #include "Writers/JSON/JSONOutputWriter.h"
-#include "Writers/JSON/JSONTimelineWriter.h"
 
 #include <algorithm>
 
 #include "Ids.h"
 #include "Utils.h"
-
-#define SCSWF_PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"
-
+    
 namespace SupercellSWF {
     ModulePublisher::ModulePublisher()
     {
@@ -42,114 +40,108 @@ namespace SupercellSWF {
     FCM::Result ModulePublisher::Publish(
         DOM::PIFLADocument pFlaDocument,
         const PIFCMDictionary pDictPublishSettings,
-        const PIFCMDictionary pDictConfig)
+        const PIFCMDictionary config)
     {
-        return Export(pFlaDocument, pDictPublishSettings, pDictConfig);
+        return Export(pFlaDocument, pDictPublishSettings, config);
     }
 
-    // This function will be currently called in "Test-Scene" workflow. 
-    // In future, it might be called in other workflows as well. 
     FCM::Result ModulePublisher::Publish(
         DOM::PIFLADocument pFlaDocument,
         DOM::PITimeline pTimeline,
         const Exporter::Service::RANGE& frameRange,
         const PIFCMDictionary pDictPublishSettings,
-        const PIFCMDictionary pDictConfig)
+        const PIFCMDictionary config)
     {
         return FCM_SERVICE_NOT_FOUND;
     }
 
 
     FCM::Result ModulePublisher::Export(
-        DOM::PIFLADocument pFlaDocument,
-        const PIFCMDictionary pDictPublishSettings,
-        const PIFCMDictionary pDictConfig)
+        DOM::PIFLADocument document,
+        const PIFCMDictionary publishSettings,
+        const PIFCMDictionary config)
     {
-        std::string outFile;
         FCM::Result res;
-        FCM::FCMGUID guid;
         FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
         FCM::AutoPtr<FCM::IFCMCalloc> pCalloc;
-        ///////////////////////
-        Init();
+
+        res = Init(publishSettings);
+        if (FCM_FAILURE_CODE(res))
+        {
+            return res;
+        }
 
         pCalloc = SupercellSWF::Utils::GetCallocService(GetCallback());
         ASSERT(pCalloc.m_Ptr != NULL);
 
-        res = pFlaDocument->GetTypeId(guid);
-        ASSERT(FCM_SUCCESS_CODE(res));
-
-        std::string pub_guid = Utils::ToString(guid);
-        Utils::Trace(GetCallback(), "Publish. GUID: %s\n",
-            pub_guid.c_str());
-
-        res = GetOutputFileName(pFlaDocument, pDictPublishSettings, outFile);
-        if (FCM_FAILURE_CODE(res))
-        {
-            // FLA is untitled. Ideally, we should use a temporary location for output generation.
-            // However, for now, we report an error.
-            Utils::Trace(GetCallback(), "Failed to publish. Either save the FLA or provide output path in publish settings.\n");
-            return res;
-        }
-
-        Utils::Trace(GetCallback(), "Creating output file : %s\n", outFile.c_str());
+        Utils::Trace(GetCallback(), "[Publisher] Creating output file : %s\n", m_outputPath.c_str());
 
         DOM::Utils::COLOR color;
         FCM::U_Int32 stageHeight;
-        FCM::U_Int32 stageWidth;
+        FCM::U_Int32 stageWidth; // TODO remove unused
+
         FCM::Double fps;
         FCM::U_Int32 framesPerSec;
-        AutoPtr<ITimelineBuilderFactory> pTimelineBuilderFactory;
-        FCM::FCMListPtr pTimelineList;
-        FCM::U_Int32 timelineCount;
+        AutoPtr<ITimelineBuilderFactory> timelineBuilderFactory;
 
+        FCM::FCMListPtr pTimelineList; // TODO remove this
+        FCM::U_Int32 timelineCount;
+        
         // Create a output writer
-        std::shared_ptr<OutputWriter> pOutputWriter(new JSONOutputWriter(GetCallback()));
-        if (pOutputWriter.get() == NULL)
+        std::shared_ptr<OutputWriter> outputWriter;
+        switch (m_publishMode)
+        {
+        case PublisherMode::JSON:
+            outputWriter = std::shared_ptr<OutputWriter>(new JSONOutputWriter(GetCallback()));
+            /* code */
+            break;
+        }
+
+        if (outputWriter.get() == NULL)
         {
             return FCM_MEM_NOT_AVAILABLE;
         }
 
         // Start output
-        pOutputWriter->StartOutput(outFile);
+        outputWriter->StartOutput(m_outputPath);
 
         // Create a Timeline Builder Factory for the root timeline of the document
         res = GetCallback()->CreateInstance(
             NULL,
             CLSID_TimelineBuilderFactory,
             IID_ITimelineBuilderFactory,
-            (void**)&pTimelineBuilderFactory);
+            (void**)&timelineBuilderFactory);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
         }
 
-        (static_cast<TimelineBuilderFactory*>(pTimelineBuilderFactory.m_Ptr))->Init(
-            pOutputWriter.get());
+        (static_cast<TimelineBuilderFactory*>(timelineBuilderFactory.m_Ptr))->Init(
+            outputWriter.get());
 
         ResourcePalette* pResPalette = static_cast<ResourcePalette*>(m_pResourcePalette.m_Ptr);
         pResPalette->Clear();
-        pResPalette->Init(pOutputWriter.get());
+        pResPalette->Init(outputWriter.get());
 
-        res = pFlaDocument->GetBackgroundColor(color);
+        res = document->GetBackgroundColor(color);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = pFlaDocument->GetStageHeight(stageHeight);
+        res = document->GetStageHeight(stageHeight);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = pFlaDocument->GetStageWidth(stageWidth);
+        res = document->GetStageWidth(stageWidth);
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = pFlaDocument->GetFrameRate(fps);
+        res = document->GetFrameRate(fps);
         ASSERT(FCM_SUCCESS_CODE(res));
 
         framesPerSec = (FCM::U_Int32)fps;
 
-        res = pOutputWriter->StartDocument(color, stageHeight, stageWidth, framesPerSec);
+        res = outputWriter->StartDocument(color, stageHeight, stageWidth, framesPerSec);
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Get all the timelines for the document
-        res = pFlaDocument->GetTimelines(pTimelineList.m_Ptr);
+        res = document->GetTimelines(pTimelineList.m_Ptr);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
@@ -162,7 +154,7 @@ namespace SupercellSWF {
         }
 
         // Generate frame commands for each timeline
-        for (FCM::U_Int32 i = 0; i < timelineCount; i++)
+        for (FCM::U_Int32 i = 0; i < timelineCount; i++) // TODO move to library items exporting
         {
             Exporter::Service::RANGE range;
             AutoPtr<ITimelineBuilder> pTimelineBuilder;
@@ -183,9 +175,9 @@ namespace SupercellSWF {
             res = m_frameCmdGeneratorService->GenerateFrameCommands(
                 timeline,
                 range,
-                pDictPublishSettings,
+                publishSettings,
                 m_pResourcePalette,
-                pTimelineBuilderFactory,
+                timelineBuilderFactory,
                 pTimelineBuilder.m_Ptr);
 
             if (FCM_FAILURE_CODE(res))
@@ -196,15 +188,15 @@ namespace SupercellSWF {
             ((TimelineBuilder*)pTimelineBuilder.m_Ptr)->Build(0, NULL, &pTimelineWriter);
         }
 
-        res = pOutputWriter->EndDocument();
+        res = outputWriter->EndDocument();
         ASSERT(FCM_SUCCESS_CODE(res));
 
-        res = pOutputWriter->EndOutput();
+        res = outputWriter->EndOutput();
         ASSERT(FCM_SUCCESS_CODE(res));
 
         // Export the library items with linkages
         FCM::FCMListPtr pLibraryItemList;
-        res = pFlaDocument->GetLibraryItems(pLibraryItemList.m_Ptr);
+        res = document->GetLibraryItems(pLibraryItemList.m_Ptr);
         if (FCM_FAILURE_CODE(res))
         {
             return res;
@@ -227,37 +219,13 @@ namespace SupercellSWF {
         return FCM_SUCCESS;
     }
 
-
-    FCM::Result ModulePublisher::GetOutputFileName(
-        DOM::PIFLADocument pFlaDocument,
-        const PIFCMDictionary pDictPublishSettings,
-        std::string& outFile)
-    {
-        FCM::Result res = FCM_SUCCESS;
-        FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
-        FCM::AutoPtr<FCM::IFCMCalloc> pCalloc;
-
-        pCalloc = SupercellSWF::Utils::GetCallocService(GetCallback());
-        ASSERT(pCalloc.m_Ptr != NULL);
-
-        // Read the output file name from the publish settings
-        Utils::ReadString(pDictPublishSettings, SCSWF_PUBLISHER_OUTPUT, outFile);
-        if (outFile.empty())
-        {
-            res = FCM_INVALID_PARAM;
-        }
-
-        return res;
-    }
-
-
-    FCM::Boolean ModulePublisher::IsPreviewNeeded(const PIFCMDictionary pDictConfig)
+    FCM::Boolean ModulePublisher::IsPreviewNeeded(const PIFCMDictionary config)
     {
         FCM::Boolean found;
         std::string previewNeeded;
         FCM::Boolean res;
 
-        found = Utils::ReadString(pDictConfig, (FCM::StringRep8)kPublishSettingsKey_PreviewNeeded, previewNeeded);
+        found = Utils::ReadString(config, (FCM::StringRep8)kPublishSettingsKey_PreviewNeeded, previewNeeded);
 
         res = true;
         if (found)
@@ -283,7 +251,7 @@ namespace SupercellSWF {
     }
 
 
-    FCM::Result ModulePublisher::Init()
+    FCM::Result ModulePublisher::Init(const PIFCMDictionary config)
     {
         FCM::Result res = FCM_SUCCESS;;
         FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
@@ -300,6 +268,24 @@ namespace SupercellSWF {
             // Create a Resource Palette
             res = GetCallback()->CreateInstance(NULL, CLSID_ResourcePalette, IID_IResourcePalette, (void**)&m_pResourcePalette);
             ASSERT(FCM_SUCCESS_CODE(res));
+        }
+
+        // Initialization of class members
+
+        Utils::ReadString(config, PUBLISHER_OUTPUT, m_outputPath);
+        if (m_outputPath.empty())
+        {
+            Utils::Trace(GetCallback(), "[PublisherSettings] Failed to get output path.\n");
+            return FCM_INVALID_PARAM;
+        }
+
+        std::string modeName;
+        Utils::ReadString(config, PUBLISHER_OUTPUT, modeName);
+        if (modeName == "JSON") {
+            m_publishMode = PublisherMode::JSON;
+        } else {
+            Utils::Trace(GetCallback(), "[PublisherSettings] Failed to get publisher mode. Default mode will be used - JSON.\n");
+            m_publishMode = PublisherMode::JSON;
         }
 
         return res;
