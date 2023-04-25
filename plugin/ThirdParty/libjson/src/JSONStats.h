@@ -1,7 +1,7 @@
 #ifndef TestSuite_JSONStats_h
 #define TestSuite_JSONStats_h
 
-#include "libjson/JSONOptions.h"
+#include "JSONOptions.h"
 
 #if defined(JSON_UNIT_TEST) || defined(JSON_DEBUG)
 	#define LIBJSON_OBJECT(name)\

@@ -13,7 +13,7 @@
 
 namespace fs = std::filesystem;
 
-namespace SupercellSWF {
+namespace Adobe {
 	static const std::string kElement_Features("Features");
 	static const std::string kElement_Feature("Feature");
 	static const std::string kElement_Property("Property");
@@ -55,7 +55,7 @@ namespace SupercellSWF {
 		FCM::AutoPtr<Application::Service::IOutputConsoleService> outputConsoleService = pUnk;
 		FCM::StringRep16 path = Utils::ToString16(featuresPath.string(), pCallback);
 
-		FCM::AutoPtr<FCM::IFCMCalloc> pCalloc = SupercellSWF::Utils::GetCallocService(pCallback);
+		FCM::AutoPtr<FCM::IFCMCalloc> pCalloc = Utils::GetCallocService(pCallback);
 		ASSERT(pCalloc.m_Ptr != NULL);
 
 		pCalloc->Free(path);

@@ -1,13 +1,7 @@
 import { CSEvent, getInterface, isCEP } from "../CEP"
 
-export enum PublisherModes {
-    JSON,
-    //SC
-}
-
 interface ModuleState {
-    output: string,
-    mode: string
+    [key: string]: string
 }
 
 interface PublisherState {
@@ -20,7 +14,7 @@ export const State: PublisherState = {
     PublishSettings: {
         SupercellSWF: {
             output: "",
-            mode: PublisherModes[PublisherModes.JSON]
+            debug: "1"
         }
     }
 

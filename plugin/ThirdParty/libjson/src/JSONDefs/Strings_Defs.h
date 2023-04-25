@@ -1,7 +1,7 @@
 #ifndef STRINGS_DEFS_HEADER
 #define STRINGS_DEFS_HEADER
 
-#include "libjson/JSONOptions.h"
+#include "JSONOptions.h"
 
 #ifdef JSON_UNICODE
     #define json_char wchar_t

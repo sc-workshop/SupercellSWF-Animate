@@ -1,0 +1,3 @@
+[submodule "plugin/ThirdParty/SC"]
+	path = plugin/ThirdParty/SC
+	url = https://github.com/scwmake/Supercell-Tools

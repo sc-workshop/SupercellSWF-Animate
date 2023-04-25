@@ -10,7 +10,7 @@
 using namespace FCM;
 using namespace DocType;
 
-namespace SupercellSWF
+namespace Adobe
 {
 	class ModuleDocumentType : public DocType::IDocType, public FCMObjectBase
 	{

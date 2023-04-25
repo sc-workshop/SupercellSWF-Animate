@@ -7,7 +7,7 @@
 #include "Ids.h"
 
 
-namespace SupercellSWF {
+namespace Adobe {
 	ModuleDocumentType::ModuleDocumentType()
 	{
 		m_featureMatrix = NULL;

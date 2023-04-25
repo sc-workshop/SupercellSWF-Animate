@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-namespace SupercellSWF {
+namespace Adobe {
 	class Value
 	{
 	public:

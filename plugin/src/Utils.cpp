@@ -41,7 +41,7 @@
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
-namespace SupercellSWF
+namespace Adobe
 {
     static std::string comma = ",";
 }
@@ -64,7 +64,7 @@ const std::string FixSlashes(const std::string& path) {
 
 /* -------------------------------------------------- Utils */
 
-namespace SupercellSWF
+namespace Adobe
 {
     FCM::AutoPtr<FCM::IFCMStringUtils> Utils::GetStringUtilsService(FCM::PIFCMCallback pCallback)
     {

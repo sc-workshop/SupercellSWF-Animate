@@ -1,6 +1,6 @@
 #include "DocType/DataTypes.h"
 
-namespace SupercellSWF {
+namespace Adobe {
 	/* -------------------------------------------------- Value */
 
 	Value::Value(bool supported)

@@ -312,7 +312,7 @@ namespace FCM
      */
     #define BEGIN_CLASS_ENTRY \
             public: \
-            FCM::Result init(FCM::PIFCMCallback pCallback) { FCM::Result res = FCMPluginModule::init(pCallback); 
+            FCM::Result Init(FCM::PIFCMCallback pCallback) { FCM::Result res = FCMPluginModule::Init(pCallback); 
 
 
     /**

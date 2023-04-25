@@ -9,7 +9,7 @@
 using namespace FCM;
 using namespace DocType;
 
-namespace SupercellSWF {
+namespace Adobe {
 	class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
 	{
 		BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)

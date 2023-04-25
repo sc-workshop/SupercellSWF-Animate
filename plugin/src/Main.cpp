@@ -3,15 +3,12 @@
 #include "DocType/DocType.h"
 #include "DocType/FeatureMatrix.h"
 
-#include "SharedPublisher/Publisher.h"
-#include "SharedPublisher/ResourcePalette.h"
-#include "SharedPublisher/TimelineBuilder.h"
-#include "SharedPublisher/TimelineBuilderFactory.h"
+#include "Publisher/Publisher.h"
 
 #include "Utils.h"
 #include "Ids.h"
 
-namespace SupercellSWF
+namespace Adobe
 {
     BEGIN_MODULE(Module)
 
@@ -19,10 +16,7 @@ namespace SupercellSWF
 
         CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
         CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-        CLASS_ENTRY(CLSID_Publisher, SharedPublisher)
-        CLASS_ENTRY(CLSID_ResourcePalette, ResourcePalette)
-        CLASS_ENTRY(CLSID_TimelineBuilder, TimelineBuilder)
-        CLASS_ENTRY(CLSID_TimelineBuilderFactory, TimelineBuilderFactory)
+        CLASS_ENTRY(CLSID_Publisher, sc::Adobe::Publisher)
 
         END_CLASS_ENTRY
 
@@ -38,16 +32,16 @@ private:
 
         Module module;
 
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback pCallback)
+    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback callback)
     {
         FCM::Result res;
         std::string langCode;
         std::string modulePath;
 
-        res = module.init(pCallback);
+        res = module.Init(callback);
 
-        Utils::GetModuleFilePath(modulePath, pCallback);
-        Utils::GetLanguageCode(pCallback, langCode);
+        Utils::GetModuleFilePath(modulePath, callback);
+        Utils::GetLanguageCode(callback, langCode);
 
         module.SetResPath(modulePath + "../res/" + langCode + "/");
         return res;
@@ -74,18 +68,18 @@ private:
     {
         FCM::Result res = FCM_SUCCESS;
 
-        AutoPtr<IFCMDictionary> pDictionary = pPluginDict;
+        AutoPtr<IFCMDictionary> dict = pPluginDict;
 
-        AutoPtr<IFCMDictionary> pPlugins;
-        pDictionary->AddLevel((const FCM::StringRep8)kFCMComponent, pPlugins.m_Ptr);
+        AutoPtr<IFCMDictionary> plugins;
+        dict->AddLevel((const FCM::StringRep8)kFCMComponent, plugins.m_Ptr);
 
-        res = RegisterDocType(pPlugins, module.GetResPath());
+        res = RegisterDocType(plugins, module.GetResPath());
         if (FCM_FAILURE_CODE(res))
         {
             return res;
         }
 
-        res = RegisterPublisher(pPlugins, CLSID_DocType);
+        res = sc::Adobe::RegisterPublisher(plugins, CLSID_DocType);
 
         return res;
     }

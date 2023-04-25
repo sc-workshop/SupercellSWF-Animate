@@ -478,7 +478,7 @@ namespace FCM
             return --m_LiveObjectCounter;
         }
 
-        FCM::Result init(FCM::PIFCMCallback pCallback)
+        FCM::Result Init(FCM::PIFCMCallback pCallback)
         {
             AutoPtr<IFCMUnknown> pCallocUnk;
             FCM::Result res = pCallback->GetService(FCM::SRVCID_Core_Memory,pCallocUnk.m_Ptr);

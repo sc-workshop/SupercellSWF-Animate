@@ -1,8 +1,8 @@
 import which from "which";
 import { join } from "path";
-import { isMac, isWindows, progress } from "../scripts/utils";
+import { isMac, isWindows, processExecError, progress } from "../scripts/utils";
 import { execSync } from "child_process";
-import { mkdirSync, copyFileSync, writeFileSync } from "fs";
+import { mkdirSync, copyFileSync, writeFileSync, existsSync } from "fs";
 import { version, description } from "./package.json"
 
 if (!isWindows && !isMac) {
@@ -14,10 +14,9 @@ const isDev = args[2] == "development";
 const outputPath = args[3];
 
 const libPath = join(outputPath, "lib");
-mkdirSync(libPath, {recursive: true});
+mkdirSync(libPath, { recursive: true });
 
-const winSolution = "project/win/Plugin.sln";
-const winDll = "build/win/Plugin.fcm";
+const winSolution = "project/ScAnimate.sln";
 
 const publisherName = "SupercellSWF"
 const publisherId = "com.scwmake.SupercellSWF.Publisher";
@@ -30,18 +29,34 @@ const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 function buildWindows() {
     const msBuildPath = which.sync("msbuild");
+    if (msBuildPath.length <= 0 ) {
+        throw new Error("Failed to find MSBuild executable");
+    }
+
     const solutionPath = join(__dirname, winSolution);
+
+    if (!existsSync(winSolution)) {
+        const premakePath = which.sync("premake5");
+        if (premakePath.length <= 0 ) {
+            throw new Error("Failed to find premake5 executable");
+        }
+
+        execSync(`generate_solution.bat`);
+    }
 
     progress("Building with MSBuild...");
 
-    execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`)
+    try {
+        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`)
+    } catch (err) {
+        throw processExecError(err);
+    }
 
     progress("Done");
 
     const fcmOutputFolder = join(libPath, "win");
     mkdirSync(fcmOutputFolder, { recursive: true });
-
-    copyFileSync(winDll, join(fcmOutputFolder, "plugin.fcm"));
+    copyFileSync("project/win/Plugin.fcm", join(fcmOutputFolder, "plugin.fcm"));
 }
 
 function buildMac() {

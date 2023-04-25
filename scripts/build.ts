@@ -27,7 +27,7 @@ for (const extensionName of Object.keys(config.extensions)) {
     try {
         execSync(`npm run build:${isDev ? "dev" : "prod"} -- "${extensionDistFolder}"`);
     } catch (err) {
-        processExecError(err as any);
+        throw processExecError(err as any);
     }
 }
 

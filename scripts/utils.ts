@@ -70,9 +70,10 @@ export function copyDir(src: string, dst: string) {
     }
 }
 
-export function processExecError(err: any) {
-    if (err.status !== undefined) {
-        error("Process exit with code " + err.status)
+export function processExecError(err: any): Error {
+    let errorMessage = "Failed to exec process";
+    if (err.status) {
+        errorMessage = "Process exit with code " + err.status;
     }
 
     if (err.stdout.length !== 0) {
@@ -84,6 +85,8 @@ export function processExecError(err: any) {
     }
     
     console.log(err.message);
+
+    return new Error(errorMessage)
 }
 
 export function getEnv(): Environment {
