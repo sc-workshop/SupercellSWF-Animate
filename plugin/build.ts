@@ -1,6 +1,6 @@
 import which from "which";
 import { join } from "path";
-import { isMac, isWindows, processExecError, progress } from "../scripts/utils";
+import { copyDir, isMac, isWindows, processExecError, progress, makeLink } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, copyFileSync, writeFileSync, existsSync } from "fs";
 import { version, description } from "./package.json"
@@ -84,6 +84,13 @@ writeFileSync(
     config,
     "utf-8"
 )
+
+const dstResourceFolder = join(libPath, "res");
+if (isDev) {
+    makeLink(join(__dirname, "res"), dstResourceFolder);
+} else {
+    copyDir("res", dstResourceFolder)
+}
 
 if (isWindows) {
     buildWindows();

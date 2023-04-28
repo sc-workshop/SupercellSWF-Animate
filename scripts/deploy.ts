@@ -1,8 +1,8 @@
-import { copyDir, extensionsFolder, error, isDev, isWindows, processExecError, progress, removeDirs } from "./utils";
+import { copyDir, extensionsFolder, error, isDev, isWindows, processExecError, progress, removeDirs, makeLink } from "./utils";
 import { existsSync, lstatSync, unlinkSync } from "fs";
 import { execSync } from "child_process"
 import { bundleId, config, distFolder } from "./manifest";
-import { symlinkSync } from "fs";
+
 import { join } from "path";
 
 const deployFolder = join(extensionsFolder(), bundleId)
@@ -38,9 +38,7 @@ if (isDev) {
     progress('Creating symlink into extensions folder')
 
     try {
-        const type = isWindows ? 'junction' : 'dir'
-
-        symlinkSync(distFolder, deployFolder, type)
+        makeLink(distFolder, deployFolder);
     } catch (err) {
         error(err as any)
     }

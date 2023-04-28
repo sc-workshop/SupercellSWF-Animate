@@ -4,7 +4,10 @@
 #include "DocType/IFeatureMatrix.h"
 #include "DataTypes.h"
 
+#include "libjson.h"
+
 #include "Version.h"
+#include "io/Console.h"
 
 using namespace FCM;
 using namespace DocType;
@@ -42,7 +45,7 @@ namespace Adobe {
 
 		~FeatureMatrix();
 
-		void Init(FCM::PIFCMCallback pCallback);
+		FCM::Result Init(FCM::PIFCMCallback pCallback);
 
 	private:
 
@@ -60,11 +63,16 @@ namespace Adobe {
 
 		Value* UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs);
 
+		void ReadFeature(JSONNode& feature);
+		void ReadProperty(Feature& feature, JSONNode& property);
+		void ReadValue(Property& property, JSONNode& value);
+
 	private:
-		StrFeatureMap m_features;
+		Console console;
+
+		FeatureMap m_features;
 		Feature* m_currentFeature;
 		Property* m_currentProperty;
-		bool m_inited = false;
 
 		friend class FeatureDocumentHandler;
 	};

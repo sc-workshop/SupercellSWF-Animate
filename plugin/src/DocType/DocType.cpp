@@ -6,6 +6,7 @@
 #include "Utils.h"
 #include "Ids.h"
 
+#include "Macros.h"
 
 namespace Adobe {
 	ModuleDocumentType::ModuleDocumentType()
@@ -18,7 +19,7 @@ namespace Adobe {
 		FCM_RELEASE(m_featureMatrix);
 	}
 
-	FCM::Result ModuleDocumentType::GetFeatureMatrix(PIFeatureMatrix& pFeatureMatrix)
+	FCM::Result ModuleDocumentType::GetFeatureMatrix(PIFeatureMatrix& matrix)
 	{
 		FCM::Result res = FCM_SUCCESS;
 
@@ -29,11 +30,13 @@ namespace Adobe {
 				CLSID_FeatureMatrix,
 				ID_IFEATURE_MATRIX,
 				(FCM::PPVoid)&m_featureMatrix);
+			FCM_CHECK;
 
-			((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
+			res = ((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
+			FCM_CHECK;
 		}
 
-		pFeatureMatrix = m_featureMatrix;
+		matrix = m_featureMatrix;
 		return res;
 	}
 

@@ -5,7 +5,7 @@ namespace Adobe {
 
 	Value::Value(bool supported)
 	{
-		mbSupported = supported;
+		m_supported = supported;
 	}
 
 	Value::~Value()
@@ -14,88 +14,78 @@ namespace Adobe {
 
 	bool Value::IsSupported()
 	{
-		return mbSupported;
+		return m_supported;
 	}
 
 	/* -------------------------------------------------- Property */
 
 	Property::Property(const std::string& def, bool supported)
 	{
-		mbSupported = supported;
-		mDefault = def;
+		m_supported = supported;
+		m_default = def;
 	}
 
 	Property::~Property()
 	{
-		StrValueMap::iterator itr = mValues.begin();
-		for (; itr != mValues.end(); itr++)
-		{
-			if (itr->second) delete itr->second;
-		}
-		mValues.clear();
+		m_values.clear();
 	}
 
 	Value* Property::FindValue(const std::string& inValueName)
 	{
-		StrValueMap::iterator itr = mValues.find(inValueName);
-		if (itr != mValues.end())
-			return itr->second;
+		ValueMap::iterator itr = m_values.find(inValueName);
+		if (itr != m_values.end())
+			return &itr->second;
 		return NULL;
 	}
 
-	bool Property::AddValue(const std::string& valueName, Value* pValue)
+	bool Property::AddValue(const std::string& valueName, Value value)
 	{
-		mValues.insert(std::pair<std::string, Value*>(valueName, pValue));
+		m_values.insert(std::pair<std::string, Value>(valueName, value));
 
 		return true;
 	}
 
 	bool Property::IsSupported()
 	{
-		return mbSupported;
+		return m_supported;
 	}
 
 	std::string Property::GetDefault()
 	{
-		return mDefault;
+		return m_default;
 	}
 
 	/* -------------------------------------------------- Feature */
 
 	Feature::Feature(bool supported)
 	{
-		mbSupported = supported;
+		m_supported = supported;
 	}
 
 	Feature::~Feature()
 	{
-		StrPropertyMap::iterator itr = mProperties.begin();
-		for (; itr != mProperties.end(); itr++)
-		{
-			if (itr->second) delete itr->second;
-		}
-		mProperties.clear();
+		m_properties.clear();
 	}
 
 	Property* Feature::FindProperty(const std::string& inPropertyName)
 	{
-		StrPropertyMap::iterator itr = mProperties.find(inPropertyName);
-		if (itr != mProperties.end())
+		PropertyMap::iterator itr = m_properties.find(inPropertyName);
+		if (itr != m_properties.end())
 		{
-			return itr->second;
+			return &itr->second;
 		}
 		return NULL;
 	}
 
-	bool Feature::AddProperty(const std::string& name, Property* pProperty)
+	bool Feature::AddProperty(const std::string& name, Property property)
 	{
-		mProperties.insert(std::pair<std::string, Property*>(name, pProperty));
+		m_properties.insert(std::pair<std::string, Property>(name, property));
 
 		return true;
 	}
 
 	bool Feature::IsSupported()
 	{
-		return mbSupported;
+		return m_supported;
 	}
 }

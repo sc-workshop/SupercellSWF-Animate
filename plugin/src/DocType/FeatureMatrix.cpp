@@ -10,7 +10,6 @@
 #include <sstream>
 
 #include <filesystem>
-
 namespace fs = std::filesystem;
 
 namespace Adobe {
@@ -26,73 +25,158 @@ namespace Adobe {
 
 	FeatureMatrix::FeatureMatrix()
 	{
-		m_inited = true;
 	}
 
 	FeatureMatrix::~FeatureMatrix()
 	{
 	}
 
-	void FeatureMatrix::Init(FCM::PIFCMCallback pCallback)
+	Result FeatureMatrix::Init(FCM::PIFCMCallback callback)
 	{
-		if (m_inited)
-		{
-			return;
-		}
-
 		std::string modulePath;
-		Utils::GetModuleFilePath(modulePath, pCallback);
+		Utils::GetModuleFilePath(modulePath, callback);
 
-		fs::path featuresPath(modulePath);
+		console.Init("Features", callback);
+
+		std::string libPath;
+		Utils::GetParent(modulePath, libPath);
+
+		fs::path featuresPath(libPath);
 		featuresPath /= "res";
-		featuresPath /= "Features.xml";
+		featuresPath /= "Features.json";
 
-		// trace
-		FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
-		FCM::Result res = pCallback->GetService(Application::Service::APP_OUTPUT_CONSOLE_SERVICE, pUnk.m_Ptr);
-		ASSERT(FCM_SUCCESS_CODE(res));
+		std::ifstream file(featuresPath);
 
-		FCM::AutoPtr<Application::Service::IOutputConsoleService> outputConsoleService = pUnk;
-		FCM::StringRep16 path = Utils::ToString16(featuresPath.string(), pCallback);
+		size_t fileSize = 0;
 
-		FCM::AutoPtr<FCM::IFCMCalloc> pCalloc = Utils::GetCallocService(pCallback);
-		ASSERT(pCalloc.m_Ptr != NULL);
+		file.seekg(0, file.end);
+		fileSize = file.tellg();
+		file.seekg(0, file.beg);
 
-		pCalloc->Free(path);
-		path = NULL;
+		if (fileSize <= 0) {
+			console.log("Failed to get feature list. All scene features are disabled.");
+			return FCM_GENERAL_ERROR;
+		};
 
-		std::ifstream xmlFile(featuresPath, std::ifstream::in | std::ifstream::binary);
+		std::string featureListBuffer(fileSize, ' ');
 
-		char* buffer = NULL;
-		long length = 0;
+		file.read(featureListBuffer.data(), fileSize);
+		file.close();
 
-		if (xmlFile)
-		{
-			xmlFile.seekg(0, xmlFile.end);
-			length = (long)xmlFile.tellg();
-			xmlFile.seekg(0, xmlFile.beg);
-			buffer = new char[length + 1];
-			xmlFile.read(buffer, length);
-			buffer[length] = 0;
+		JSONNode features = libjson::parse(featureListBuffer);
+		for (JSONNode feature : features) {
+			ReadFeature(feature);
 		}
-		xmlFile.close();
 
-		delete[] buffer;
+		return FCM_SUCCESS;
+	}
+
+	void FeatureMatrix::ReadFeature(JSONNode& feature) {
+		std::string featureName = "";
+		bool featureSupported = false;
+		JSONNode propertiesNode;
+
+		for (JSONNode featureVariable : feature) {
+			std::string featureVariableName = featureVariable.name();
+
+			if (featureVariableName == "name") {
+				featureName = featureVariable.as_string();
+			}
+			else if (featureVariableName == "supported") {
+				featureSupported = featureVariable.as_bool();
+			}
+			else if (featureVariableName == "properties") {
+				propertiesNode = featureVariable.as_array();
+			}
+		}
+
+		if (featureName.empty()) return;
+
+		Feature featureItem(featureSupported);
+
+		if (!propertiesNode.empty()) {
+			for (JSONNode property : propertiesNode) {
+				ReadProperty(featureItem, property);
+			}
+		}
+
+		m_features.insert(std::pair(featureName, featureItem));
+	}
+
+	void FeatureMatrix::ReadProperty(Feature& feature, JSONNode& property) {
+		std::string propertyName = "";
+		std::string propertyDefault = "";
+		bool propertySupported = false;
+
+		JSONNode valuesNode;
+
+		for (JSONNode propertyVariable : property) {
+			std::string propertyVariableName = propertyVariable.name();
+
+			if (propertyVariableName == "name") {
+				propertyName = propertyVariable.as_string();
+			}
+			else if (propertyVariableName == "supported") {
+				propertySupported = propertyVariable.as_bool();
+			}
+			else if (propertyVariableName == "default") {
+				propertyDefault = propertyVariable.as_string();
+			}
+			else if (propertyVariableName == "values") {
+				valuesNode = propertyVariable.as_array();
+			}
+		}
+
+		Property propertyItem(propertyDefault, propertySupported);
+
+		if (!valuesNode.empty()) {
+			for (JSONNode value : valuesNode) {
+				ReadValue(propertyItem, value);
+			}
+		}
+
+		if (!propertyName.empty()) {
+			feature.AddProperty(propertyName, propertyItem);
+		}
+	}
+
+	void FeatureMatrix::ReadValue(Property& property, JSONNode& value) {
+		std::string valueName = "";
+		bool valueSupported = false;
+
+		for (JSONNode valueVariable : value) {
+			std::string valueVariableName = valueVariable.name();
+
+			if (valueVariableName == "name") {
+				valueName = valueVariable.as_string();
+			}
+			else if (valueVariableName == "supported") {
+				valueSupported = valueVariable.as_bool();
+			}
+		}
+
+		if (!valueName.empty()) {
+			property.AddValue(valueName, Value(valueSupported));
+		}
 	}
 
 	FCM::Result FeatureMatrix::IsSupported(CStringRep16 inFeatureName, FCM::Boolean& isSupported)
 	{
-		std::string featureLC = Utils::ToString(inFeatureName, GetCallback());
+		std::string featureName = Utils::ToString(inFeatureName, GetCallback());
 
-		Feature* pFeature = FindFeature(featureLC);
-		if (pFeature == NULL)
+		if (featureName.empty()) {
+			return true;
+		}
+
+		Feature* feature = FindFeature(featureName);
+		if (feature == NULL)
 		{
-			/* If a feature is not found, it is supported */
-			isSupported = true;
+			console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+			isSupported = false;
 		}
 		else
 		{
-			isSupported = pFeature->IsSupported();
+			isSupported = feature->IsSupported();
 		}
 		return FCM_SUCCESS;
 	}
@@ -102,35 +186,36 @@ namespace Adobe {
 		CStringRep16 inPropName,
 		FCM::Boolean& isSupported)
 	{
-		std::string featureLC = Utils::ToString(inFeatureName, GetCallback());
+		std::string featureName = Utils::ToString(inFeatureName, GetCallback());
+		std::string propertyName = Utils::ToString(inPropName, GetCallback());
 
-		Feature* pFeature = FindFeature(featureLC);
-		if (pFeature == NULL)
+		if (featureName.empty() || propertyName.empty()) {
+			return true;
+		}
+
+		Feature* feature = FindFeature(featureName);
+		if (feature == NULL)
 		{
-			/* If a feature is not found, it is supported */
-			isSupported = true;
+			console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+			isSupported = false;
 		}
 		else
 		{
-			if (!pFeature->IsSupported())
+			if (!feature->IsSupported())
 			{
-				/* If a feature is not supported, sub-features are not supported */
 				isSupported = false;
 			}
 			else
 			{
-				// Look if sub-features are supported.
-				std::string propertyLC = Utils::ToString(inPropName, GetCallback());
-
-				Property* pProperty = pFeature->FindProperty(propertyLC);
-				if (pProperty == NULL)
+				Property* property = feature->FindProperty(propertyName);
+				if (property == NULL)
 				{
-					/* If a property is not found, it is supported */
-					isSupported = true;
+					console.log("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+					isSupported = false;
 				}
 				else
 				{
-					isSupported = pProperty->IsSupported();
+					isSupported = property->IsSupported();
 				}
 			}
 		}
@@ -143,51 +228,51 @@ namespace Adobe {
 		CStringRep16 inValName,
 		FCM::Boolean& isSupported)
 	{
-		std::string featureLC = Utils::ToString(inFeatureName, GetCallback());
+		std::string featureName = Utils::ToString(inFeatureName, GetCallback());
+		std::string propertyName(Utils::ToString(inPropName, GetCallback()));
+		std::string valueName(Utils::ToString(inValName, GetCallback()));
 
-		Feature* pFeature = FindFeature(featureLC);
-		if (pFeature == NULL)
+		if (featureName.empty() || propertyName.empty() || valueName.empty()) {
+			return true;
+		}
+
+		Feature* feature = FindFeature(featureName);
+		if (feature == NULL)
 		{
-			/* If a feature is not found, it is supported */
-			isSupported = true;
+			console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+			isSupported = false;
 		}
 		else
 		{
-			if (!pFeature->IsSupported())
+			if (!feature->IsSupported())
 			{
-				/* If a feature is not supported, sub-features are not supported */
 				isSupported = false;
 			}
 			else
 			{
-				std::string propertyLC(Utils::ToString(inPropName, GetCallback()));
-
-				Property* pProperty = pFeature->FindProperty(propertyLC);
-				if (pProperty == NULL)
+				Property* property = feature->FindProperty(propertyName);
+				if (property == NULL)
 				{
-					/* If a property is not found, it is supported */
-					isSupported = true;
+					console.log("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+					isSupported = false;
 				}
 				else
 				{
-					if (!pProperty->IsSupported())
+					if (!property->IsSupported())
 					{
-						/* If a property is not supported, all values are not supported */
 						isSupported = false;
 					}
 					else
 					{
-						std::string valueLC(Utils::ToString(inValName, GetCallback()));
-
-						Value* pValue = pProperty->FindValue(valueLC);
-						if (pValue == NULL)
+						Value* value = property->FindValue(valueName);
+						if (!valueName.empty() && value == NULL)
 						{
-							/* If a value is not found, it is supported */
-							isSupported = true;
+							console.log("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
+							isSupported = false;
 						}
 						else
 						{
-							isSupported = pValue->IsSupported();
+							isSupported = value->IsSupported();
 						}
 					}
 				}
@@ -278,10 +363,10 @@ namespace Adobe {
 
 	Feature* FeatureMatrix::FindFeature(const std::string& inFeatureName)
 	{
-		StrFeatureMap::iterator itr = m_features.find(inFeatureName);
+		FeatureMap::iterator itr = m_features.find(inFeatureName);
 		if (itr != m_features.end())
 		{
-			return itr->second;
+			return &itr->second;
 		}
 		return NULL;
 	}
@@ -359,18 +444,18 @@ namespace Adobe {
 		}
 
 		// Find or Create new Property
-		Property* pProperty = NULL;
-		pProperty = inFeature->FindProperty(name);
-		if (pProperty == NULL)
+		Property* property = NULL;
+		property = inFeature->FindProperty(name);
+		if (property == NULL)
 		{
-			pProperty = new Property(def, supported);
-			if (pProperty != NULL)
+			property = new Property(def, supported);
+			if (property != NULL)
 			{
-				inFeature->AddProperty(name, pProperty);
+				inFeature->AddProperty(name, *property);
 			}
 		}
 
-		return pProperty;
+		return property;
 	}
 
 	Value* FeatureMatrix::UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs)

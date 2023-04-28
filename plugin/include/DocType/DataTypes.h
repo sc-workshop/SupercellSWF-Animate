@@ -15,10 +15,10 @@ namespace Adobe {
 		bool IsSupported();
 
 	private:
-		bool mbSupported;
+		bool m_supported;
 	};
 
-	typedef std::map<std::string, Value*> StrValueMap;
+	typedef std::map<std::string, Value> ValueMap;
 
 	class Property
 	{
@@ -29,19 +29,19 @@ namespace Adobe {
 
 		Value* FindValue(const std::string& inValueName);
 
-		bool AddValue(const std::string& valueName, Value* pValue);
+		bool AddValue(const std::string& valueName, Value value);
 
 		bool IsSupported();
 
 		std::string GetDefault();
 
 	private:
-		std::string mDefault;
-		bool mbSupported;
-		StrValueMap mValues;
+		std::string m_default;
+		bool m_supported;
+		ValueMap m_values;
 	};
 
-	typedef std::map<std::string, Property*> StrPropertyMap;
+	typedef std::map<std::string, Property> PropertyMap;
 
 	class Feature
 	{
@@ -53,16 +53,16 @@ namespace Adobe {
 
 		Property* FindProperty(const std::string& inPropertyName);
 
-		bool AddProperty(const std::string& name, Property* pProperty);
+		bool AddProperty(const std::string& name, Property property);
 
 		bool IsSupported();
 
 	private:
 
-		bool mbSupported;
+		bool m_supported;
 
-		StrPropertyMap mProperties;
+		PropertyMap m_properties;
 	};
 
-	typedef std::map<std::string, Feature*> StrFeatureMap;
+	typedef std::map<std::string, Feature> FeatureMap;
 }

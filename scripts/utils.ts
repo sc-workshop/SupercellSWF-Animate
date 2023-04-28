@@ -2,7 +2,7 @@ import pc from "picocolors";
 
 import { join } from "path";
 import { userInfo, homedir } from "os";
-import { copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
+import { symlinkSync, copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
 import { Colors, type Formatter } from "picocolors/types";
 
 export const processPath = process.cwd();
@@ -53,7 +53,7 @@ export function copyDir(src: string, dst: string) {
     }
 
     if (!existsSync(dst) || !lstatSync(dst).isDirectory()) {
-        mkdirSync(dst, {recursive: true});
+        mkdirSync(dst, { recursive: true });
     }
 
     for (const name of readdirSync(src)) {
@@ -83,7 +83,7 @@ export function processExecError(err: any): Error {
     if (err.stderr.length !== 0) {
         console.log(err.stderr.toString());
     }
-    
+
     console.log(err.message);
 
     return new Error(errorMessage)
@@ -114,4 +114,10 @@ export function extensionsFolder() {
         return join(homedir(), 'Library/Application Support/Adobe/CEP/extensions')
     }
 
+}
+
+export function makeLink(src: string, dst: string) {
+    const type = isWindows ? 'junction' : 'dir'
+
+    symlinkSync(src, dst, type)
 }
