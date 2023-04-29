@@ -254,7 +254,7 @@
 	},
 	{
 		"name": "Components",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Debug",
@@ -606,6 +606,21 @@
 				"name": "Scale",
 				"supported": true,
 				"default": "true"
+			},
+			{
+				"name": "ColorAlongPath",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "OrientToPath",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "Snap",
+				"supported": false,
+				"default": "false"
 			}
 		]
 	},
