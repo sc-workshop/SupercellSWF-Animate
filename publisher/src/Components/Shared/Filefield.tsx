@@ -4,7 +4,7 @@ import { Stylefield } from "./Stylefield";
 import { getInterface, isCEP } from "../../CEP";
 
 export function Filefield(name: string, ext: string, callback: (value: any) => void, defaultValue: string = "") {
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState(defaultValue);
 
     const outputLabel = Stylefield(
         `${name} :`,
@@ -22,8 +22,8 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
     const filepath = createElement("input", {
         key: `Filefield_${name}_filepath`,
         type: "text",
-        defaultValue: defaultValue,
         value: input,
+        readOnly: true,
         style: {
             background: "#c6c6c6",
             border: "1px solid #070707",

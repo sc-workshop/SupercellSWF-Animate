@@ -22,6 +22,7 @@ includedirs {
     "ThirdParty/SC/SupercellFlash/include",
     "ThirdParty/SC/SupercellBytestream/include",
     "ThirdParty/SC/SupercellCompression/include",
+    "ThirdParty/AtlasGenerator/include",
 }
 
 links {
@@ -30,7 +31,20 @@ links {
     "LZMA",
     "LZHAM",
     "Zstandard",
-    "libjson"
+    "libjson",
+    "AtlasGenerator"
+}
+
+defines { "LIBNEST2D_GEOMETRIES_clipper", "LIBNEST2D_OPTIMIZER_nlopt" }
+
+filter {"system:windows", "configurations:Debug"}
+links {
+	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
+}
+
+filter {"system:windows", "configurations:Release"}
+links {
+	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
 }
 
 filter "system:windows"

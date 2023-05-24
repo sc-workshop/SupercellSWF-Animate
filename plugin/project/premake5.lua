@@ -8,6 +8,7 @@ configurations {
 
 group "Main"
 include "../"
+include "../ThirdParty/AtlasGenerator"
 
 group "Compression"
 include "../ThirdParty/SC/external/lzma"

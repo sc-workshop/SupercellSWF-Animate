@@ -7,93 +7,87 @@
 
 #include "Utils.h"
 #include "Ids.h"
+#include "Localization.h"
 
-namespace Adobe
-{
-    BEGIN_MODULE(Module)
+namespace sc {
+	namespace Adobe
+	{
+		BEGIN_MODULE(ModuleInterface)
 
-        BEGIN_CLASS_ENTRY
+		BEGIN_CLASS_ENTRY
 
-        CLASS_ENTRY(CLSID_DocType, ModuleDocumentType)
-        CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-        CLASS_ENTRY(CLSID_Publisher, sc::Adobe::Publisher)
+			CLASS_ENTRY(CLSID_DocType, DocumentType)
+			CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
+			CLASS_ENTRY(CLSID_Publisher, Publisher)
 
-        END_CLASS_ENTRY
+		END_CLASS_ENTRY
 
-public:
-    void SetResPath(const std::string& resPath) { m_resPath = resPath; }
-    const std::string& GetResPath() { return m_resPath; }
+		END_MODULE
 
-private:
-    std::string m_resPath;
+		ModuleInterface Module;
 
-    END_MODULE
+		extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback callback)
+		{
+			FCM::Result res;
+			std::string langCode;
+			std::string modulePath;
 
+			res = Module.Init(callback);
 
-        Module module;
+			Utils::GetModuleFilePath(modulePath, callback);
+			Utils::GetLanguageCode(langCode, callback);
 
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginBoot(FCM::PIFCMCallback callback)
-    {
-        FCM::Result res;
-        std::string langCode;
-        std::string modulePath;
+			Locale.Load(Utils::GetPath(modulePath), langCode);
 
-        res = module.Init(callback);
+			return res;
+		}
 
-        Utils::GetModuleFilePath(modulePath, callback);
-        Utils::GetLanguageCode(callback, langCode);
+		extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassInfo(
+			FCM::PIFCMCalloc pCalloc,
+			FCM::PFCMClassInterfaceInfo * ppClassInfo)
+		{
+			return Module.getClassInfo(pCalloc, ppClassInfo);
+		}
 
-        module.SetResPath(modulePath + "../res/" + langCode + "/");
-        return res;
-    }
+		extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassObject(
+			FCM::PIFCMUnknown pUnkOuter,
+			FCM::ConstRefFCMCLSID clsid,
+			FCM::ConstRefFCMIID iid,
+			FCM::PPVoid pAny)
+		{
+			return Module.getClassObject(pUnkOuter, clsid, iid, pAny);
+		}
 
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassInfo(
-        FCM::PIFCMCalloc pCalloc,
-        FCM::PFCMClassInterfaceInfo * ppClassInfo)
-    {
-        return module.getClassInfo(pCalloc, ppClassInfo);
-    }
+		extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginRegister(FCM::PIFCMPluginDictionary pPluginDict)
+		{
+			FCM::Result res = FCM_SUCCESS;
 
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginGetClassObject(
-        FCM::PIFCMUnknown pUnkOuter,
-        FCM::ConstRefFCMCLSID clsid,
-        FCM::ConstRefFCMIID iid,
-        FCM::PPVoid pAny)
-    {
-        return module.getClassObject(pUnkOuter, clsid, iid, pAny);
-    }
+			AutoPtr<IFCMDictionary> dict = pPluginDict;
 
-    // Register the plugin - Register plugin as both DocType and Publisher
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginRegister(FCM::PIFCMPluginDictionary pPluginDict)
-    {
-        FCM::Result res = FCM_SUCCESS;
+			AutoPtr<IFCMDictionary> plugins;
+			dict->AddLevel((const FCM::StringRep8)kFCMComponent, plugins.m_Ptr);
 
-        AutoPtr<IFCMDictionary> dict = pPluginDict;
+			res = RegisterDocType(plugins);
+			if (FCM_FAILURE_CODE(res))
+			{
+				return res;
+			}
 
-        AutoPtr<IFCMDictionary> plugins;
-        dict->AddLevel((const FCM::StringRep8)kFCMComponent, plugins.m_Ptr);
+			res = sc::Adobe::RegisterPublisher(plugins, CLSID_DocType);
 
-        res = RegisterDocType(plugins, module.GetResPath());
-        if (FCM_FAILURE_CODE(res))
-        {
-            return res;
-        }
+			return res;
+		}
 
-        res = sc::Adobe::RegisterPublisher(plugins, CLSID_DocType);
+		extern "C" FCMPLUGIN_IMP_EXP FCM::U_Int32 PluginCanUnloadNow(void)
+		{
+			return Module.canUnloadNow();
+		}
 
-        return res;
-    }
+		extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginShutdown()
+		{
+			Module.finalize();
 
-    extern "C" FCMPLUGIN_IMP_EXP FCM::U_Int32 PluginCanUnloadNow(void)
-    {
-        return module.canUnloadNow();
-    }
-
-    extern "C" FCMPLUGIN_IMP_EXP FCM::Result PluginShutdown()
-    {
-        module.finalize();
-
-        return FCM_SUCCESS;
-    }
-
-};
+			return FCM_SUCCESS;
+		}
+	};
+}

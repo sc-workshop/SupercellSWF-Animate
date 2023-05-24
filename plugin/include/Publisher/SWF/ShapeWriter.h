@@ -1,29 +1,30 @@
 #pragma once
 
 #include "Publisher/Shared/SharedShapeWriter.h"
-
+#include "Macros.h"
 #include "ApplicationFCMPublicIDs.h"
 #include "DOM/Service/Image/IBitmapExportService.h"
-
-#include <filesystem>
-namespace fs = std::filesystem;
-
-#include "libjson.h"
+#include "string"
 
 namespace sc {
 	namespace Adobe {
-		class JSONWriter;
+		class Writer;
 
-		class JSONShapeWriter : public SharedShapeWriter {
+		class ShapeWriter : public SharedShapeWriter {
 			PIFCMCallback m_callback = nullptr;
-			JSONWriter* m_writer = nullptr;
+			Writer* m_writer = nullptr;
+			uint16_t m_bitmapCount = 0;
 
 			AutoPtr<DOM::Service::Image::IBitmapExportService> m_bitmapExportService = nullptr;
 
-			JSONNode m_bitmaps = JSONNode(JSON_ARRAY);
+			const std::string tempFile = std::string(tmpnam(nullptr)) + ".png";
 
 		public:
-			Result Init(JSONWriter* writer, PIFCMCallback callback);
+			~ShapeWriter() {
+				remove(tempFile.c_str());
+			};
+
+			Result Init(Writer* writer, PIFCMCallback callback);
 			Result AddGraphic(DOM::LibraryItem::IMediaItem* image, DOM::Utils::MATRIX2D matrix);
 
 			void Finalize(U_Int16 id);

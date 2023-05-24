@@ -14,7 +14,10 @@ export const State: PublisherState = {
     PublishSettings: {
         SupercellSWF: {
             output: "",
-            debug: "1"
+            debug: "0",
+
+            hasTexture: "0",
+            compression: "LZMA"
         }
     }
 
@@ -58,6 +61,7 @@ export function restoreState(event: CSEvent) {
 }
 
 export function saveState() {
+    console.log(State);
     if (!isCEP()) {
         return;
     }

@@ -8,7 +8,6 @@
 #include "libjson.h"
 
 using namespace FCM;
-using namespace Adobe;
 
 namespace sc {
 	namespace Adobe {
@@ -16,32 +15,26 @@ namespace sc {
 			Console console;
 			PIFCMCallback m_callback = nullptr;
 
-			JSONNode* m_movieclips;
+			JSONNode m_movieclips = JSONNode(JSON_ARRAY);
 			JSONNode m_shapes = JSONNode(JSON_ARRAY);
+
+			fs::path outputFolder;
+			fs::path outputFilepath;
 			
 		public:
 			fs::path imageFolder;
 			U_Int32 imageCount = 0;
 
-			JSONWriter() {
-				m_movieclips = new JSONNode(JSON_ARRAY);
-				m_movieclips->set_name("MovieClips");
-
-			}
-			~JSONWriter() {
-				delete m_movieclips;
-			}
-
-			Result Init(PIFCMCallback callback, fs::path folder) {
+			Result Init(PIFCMCallback callback, const PublisherConfig& config) {
 				if (!callback) {
 					return FCM_EXPORT_FAILED;
 				}
 				m_callback = callback;
-				baseFolder = folder;
+				outputFilepath = config.output;
+				outputFolder = config.output.parent_path();
+				imageFolder = fs::path(outputFolder) / "images";
 
 				console.Init("JSONWriter", m_callback);
-
-				imageFolder = baseFolder / "images";
 
 				Result res = Utils::CreateDir(imageFolder.string(), m_callback);
 
@@ -60,7 +53,7 @@ namespace sc {
 			}
 
 			void AddMovieclip(JSONNode movieclip) {
-				m_movieclips->push_back(movieclip);
+				m_movieclips.push_back(movieclip);
 			}
 
 			SharedShapeWriter* AddShape() {
@@ -74,21 +67,20 @@ namespace sc {
 				m_shapes.push_back(shape);
 			}
 
-			void Finalize(std::string filename) {
+			void Finalize() {
 				JSONNode root;
 
-				root.push_back(
-					*m_movieclips
-				);
-
-				m_shapes.set_name("Shapes");
+				m_shapes.set_name("shapes");
 				root.push_back(
 					m_shapes
 				);
 
-				std::fstream file;
-				Utils::OpenFStream((baseFolder / filename).string(), file, std::ios_base::trunc | std::ios_base::out, m_callback);
+				m_movieclips.set_name("movieclips");
+				root.push_back(
+					m_movieclips
+				);
 
+				std::fstream file(outputFilepath, std::ios_base::trunc | std::ios_base::out);
 				file << root.write_formatted();
 				file.close();
 			}

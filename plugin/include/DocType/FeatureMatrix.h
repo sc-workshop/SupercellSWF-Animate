@@ -12,68 +12,70 @@
 using namespace FCM;
 using namespace DocType;
 
-namespace Adobe {
-	class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
-	{
-		BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)
-			INTERFACE_ENTRY(IFeatureMatrix)
-			END_INTERFACE_MAP
+namespace sc {
+	namespace Adobe {
+		class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
+		{
+			BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)
+				INTERFACE_ENTRY(IFeatureMatrix)
+				END_INTERFACE_MAP
 
-	public:
+		public:
 
-		virtual FCM::Result _FCMCALL IsSupported(
-			CStringRep16 inFeatureName,
-			FCM::Boolean& isSupported);
+			virtual FCM::Result _FCMCALL IsSupported(
+				CStringRep16 inFeatureName,
+				FCM::Boolean& isSupported);
 
-		virtual FCM::Result _FCMCALL IsSupported(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
-			FCM::Boolean& isSupported);
+			virtual FCM::Result _FCMCALL IsSupported(
+				CStringRep16 inFeatureName,
+				CStringRep16 inPropName,
+				FCM::Boolean& isSupported);
 
-		virtual FCM::Result _FCMCALL IsSupported(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
-			CStringRep16 inValName,
-			FCM::Boolean& isSupported);
+			virtual FCM::Result _FCMCALL IsSupported(
+				CStringRep16 inFeatureName,
+				CStringRep16 inPropName,
+				CStringRep16 inValName,
+				FCM::Boolean& isSupported);
 
-		virtual FCM::Result _FCMCALL GetDefaultValue(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
-			FCM::VARIANT& outDefVal);
+			virtual FCM::Result _FCMCALL GetDefaultValue(
+				CStringRep16 inFeatureName,
+				CStringRep16 inPropName,
+				FCM::VARIANT& outDefVal);
 
-		FeatureMatrix();
+			FeatureMatrix();
 
-		~FeatureMatrix();
+			~FeatureMatrix();
 
-		FCM::Result Init(FCM::PIFCMCallback pCallback);
+			FCM::Result Init(FCM::PIFCMCallback pCallback);
 
-	private:
+		private:
 
-		FCM::Result StartElement(
-			const std::string name,
-			const std::map<std::string, std::string>& attrs);
+			FCM::Result StartElement(
+				const std::string name,
+				const std::map<std::string, std::string>& attrs);
 
-		FCM::Result EndElement(const std::string name);
+			FCM::Result EndElement(const std::string name);
 
-		Feature* FindFeature(const std::string& inFeatureName);
+			Feature* FindFeature(const std::string& inFeatureName);
 
-		Feature* UpdateFeature(const std::map<std::string, std::string>& inAttrs);
+			Feature* UpdateFeature(const std::map<std::string, std::string>& inAttrs);
 
-		Property* UpdateProperty(Feature* inFeature, const std::map<std::string, std::string>& inAttrs);
+			Property* UpdateProperty(Feature* inFeature, const std::map<std::string, std::string>& inAttrs);
 
-		Value* UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs);
+			Value* UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs);
 
-		void ReadFeature(JSONNode& feature);
-		void ReadProperty(Feature& feature, JSONNode& property);
-		void ReadValue(Property& property, JSONNode& value);
+			void ReadFeature(JSONNode& feature);
+			void ReadProperty(Feature& feature, JSONNode& property);
+			void ReadValue(Property& property, JSONNode& value);
 
-	private:
-		Console console;
+		private:
+			Console console;
 
-		FeatureMap m_features;
-		Feature* m_currentFeature;
-		Property* m_currentProperty;
+			FeatureMap m_features;
+			Feature* m_currentFeature;
+			Property* m_currentProperty;
 
-		friend class FeatureDocumentHandler;
-	};
+			friend class FeatureDocumentHandler;
+		};
+	}
 }

@@ -17,20 +17,18 @@
 #include "Utils.h"
 #include "ResourcePublisher.h"
 #include "Macros.h"
+#include "PublisherConfig.h"
 
 #include "Publisher/JSON/JSONWriter.h"
+#include "Publisher/SWF/Writer.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
 using namespace FCM;
 using namespace Publisher;
-using namespace Adobe;
 using namespace Exporter::Service;
 using namespace DOM::Service::Tween;
-
-#define PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"
-#define PUBLISHER_DEBUG "PublishSettings.SupercellSWF.debug"
 
 namespace sc {
 	namespace Adobe {
@@ -40,17 +38,12 @@ namespace sc {
 				INTERFACE_ENTRY(IPublisher)
 			END_INTERFACE_MAP
 
-			std::string m_outputPath;
-			Boolean m_debug = false;
-
+			PublisherConfig m_config;
 			ResourcePublisher m_resources;
 
 			Console console;
 
 		public:
-			Publisher() { }
-			~Publisher() { }
-
 			Result _FCMCALL Publish(
 				DOM::PIFLADocument document,
 				const PIFCMDictionary publishSettings,
@@ -60,39 +53,25 @@ namespace sc {
 				FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
 				FCM::AutoPtr<FCM::IFCMCalloc> calloc;
 
-				res = Init(publishSettings);
-				if (FCM_FAILURE_CODE(res))
-				{
-					return res;
+				console.Init("Publisher", GetCallback());
+				m_config = PublisherConfig::FromDict(publishSettings);
+
+				if (m_config.output.empty()) {
+					console.log("Error. Failed to get output path");
+					return FCM_EXPORT_FAILED;
 				}
 
 				calloc = Utils::GetCallocService(GetCallback());
 				ASSERT(calloc.m_Ptr != NULL);
 
-				console.log("Creating output file : %s", m_outputPath.c_str());
-
-				DOM::Utils::COLOR color;
-				FCM::U_Int32 stageHeight;
-				FCM::U_Int32 stageWidth;
-
 				FCM::Double fps;
 				FCM::U_Int8 framesPerSec;
 
-				res = document->GetBackgroundColor(color);
-				ASSERT(FCM_SUCCESS_CODE(res));
-
-				res = document->GetStageHeight(stageHeight);
-				ASSERT(FCM_SUCCESS_CODE(res));
-
-				res = document->GetStageWidth(stageWidth);
-				ASSERT(FCM_SUCCESS_CODE(res));
-
 				res = document->GetFrameRate(fps);
-				ASSERT(FCM_SUCCESS_CODE(res));
+				FCM_CHECK;
 
-				framesPerSec = (FCM::U_Int8)fps;
-
-				ASSERT(FCM_SUCCESS_CODE(res));
+				framesPerSec = (FCM::U_Int8)fps;	
+				FCM_CHECK;
 
 				FCM::FCMListPtr libraryItems;
 				res = document->GetLibraryItems(libraryItems.m_Ptr);
@@ -102,19 +81,23 @@ namespace sc {
 					return res;
 				}
 
-				fs::path outputPath = fs::path(m_outputPath);
-				std::string outputFolder = outputPath.parent_path().string();
-				std::string outputName = outputPath.filename().string();
+				SharedWriter* writer;
 
-				//if (m_debug) {
-				JSONWriter writer;
-				writer.Init(GetCallback(), outputFolder);
-				//}
-				m_resources.Init(&writer, GetCallback());
+				if (m_config.debug) {
+					writer = new JSONWriter();
+				}
+				else {
+					writer = new Writer();
+				}
+
+				res = writer->Init(GetCallback(), m_config);
+				FCM_CHECK;
+
+				m_resources.Init(writer, GetCallback());
 
 				ExportLibraryItems(libraryItems);
 
-				res = m_resources.Finalize(outputName);
+				res = m_resources.Finalize();
 				FCM_CHECK;
 
 				return FCM_SUCCESS;
@@ -134,27 +117,6 @@ namespace sc {
 			}
 
 		private:
-			FCM::Result Init(const PIFCMDictionary config) {
-				console.Init("Publisher", GetCallback());
-
-				// Initialization of class members
-				Utils::ReadString(config, PUBLISHER_OUTPUT, m_outputPath);
-				if (m_outputPath.empty())
-				{
-					console.log("Failed to get output path");
-					return FCM_INVALID_PARAM;
-				}
-
-				std::string debugMode = "0";
-				Utils::ReadString(config, PUBLISHER_DEBUG, debugMode);
-				if (!debugMode.empty() && debugMode == "1")
-				{
-					m_debug = true;
-				}
-
-				return FCM_SUCCESS;
-			}
-
 			FCM::Result ExportLibraryItems(FCM::FCMListPtr libraryItems) {
 				FCM::U_Int32 count = 0;
 				FCM::U_Int32 id = 0;

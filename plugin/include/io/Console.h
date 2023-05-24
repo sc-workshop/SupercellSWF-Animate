@@ -14,8 +14,6 @@
 #include <string>
 #include <stdarg.h>
 
-using namespace Adobe;
-
 struct Console {
 	Console() {};
 	~Console() {};
@@ -50,11 +48,11 @@ private:
 			char buffer[1024];
 			vsnprintf(buffer, 1024, fmt, args);
 
-			FCM::AutoPtr<FCM::IFCMCalloc> calloc = Utils::GetCallocService(m_callback);
+			FCM::AutoPtr<FCM::IFCMCalloc> calloc = sc::Adobe::Utils::GetCallocService(m_callback);
 			ASSERT(calloc.m_Ptr != NULL);
 
 			std::string string = "[" + m_name + "] " + std::string(buffer) + "\n";
-			FCM::StringRep16 outputString = Utils::ToString16(string, m_callback);
+			FCM::StringRep16 outputString = sc::Adobe::Utils::ToString16(string, m_callback);
 			outputConsoleService->Trace(outputString);
 			calloc->Free(outputString);
 		}

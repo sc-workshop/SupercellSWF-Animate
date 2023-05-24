@@ -1,6 +1,7 @@
 #include "Publisher/JSON/JSONShapeWriter.h"
 
 #include "Publisher/JSON/JSONWriter.h"
+#include "Utils.h"
 
 namespace sc {
 	namespace Adobe {
@@ -15,11 +16,11 @@ namespace sc {
 			return FCM_SUCCESS;
 		}
 
-		Result JSONShapeWriter::AddGraphic(DOM::LibraryItem::IMediaItem* image) {
+		Result JSONShapeWriter::AddGraphic(DOM::LibraryItem::IMediaItem* image, DOM::Utils::MATRIX2D matrix) {
 			U_Int32 imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
 			
-			std::string bitmapBasename = std::to_string(imageIndex) + ".PNG";
+			std::string bitmapBasename = std::to_string(imageIndex) + ".png";
 			fs::path bitmapOutputPath = m_writer->imageFolder / bitmapBasename;
 
 			m_bitmapExportService->ExportToFile(
@@ -32,6 +33,10 @@ namespace sc {
 
 			bitmap.push_back(
 				JSONNode("path", bitmapBasename)
+			);
+
+			bitmap.push_back(
+				JSONNode("matrix", Utils::ToString(matrix))
 			);
 
 			m_bitmaps.push_back(bitmap);

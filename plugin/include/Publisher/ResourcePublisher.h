@@ -64,7 +64,7 @@ namespace sc {
                     return AddSymbol(itemNameStr, symbolItem);
                 }
                 else if (mediaItem) {
-                    return AddBitmap(itemNameStr, mediaItem);
+                    return AddSingleBitmapObject(itemNameStr, mediaItem);
                 }
 
                 return UINT16_MAX;
@@ -191,10 +191,17 @@ namespace sc {
                     shapeElements->Count(elementsCount);
 
                     for (U_Int32 elementIndex = 0; elementsCount > elementIndex; elementIndex++) {
-                        AutoPtr<DOM::FrameElement::IInstance> frameElement = shapeElements[elementIndex];
+                        // Bitmap transform
+                        AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = shapeElements[elementIndex];
+
+                        DOM::Utils::MATRIX2D transformMatrix;
+                        frameElement->GetMatrix(transformMatrix);
+
+                        // Bitmap itself
+                        AutoPtr<DOM::FrameElement::IInstance> instance = shapeElements[elementIndex];
 
                         AutoPtr<DOM::ILibraryItem> item;
-                        frameElement->GetLibraryItem(item.m_Ptr);
+                        instance->GetLibraryItem(item.m_Ptr);
 
                         AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
@@ -203,12 +210,7 @@ namespace sc {
 
                         AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmapInfo = unknownMedia;
 
-                        if (!bitmapInfo) {
-                            console.log("Detected audio in %s. Skip.");
-                            continue;
-                        }
-
-                        shape->AddGraphic(media);
+                        shape->AddGraphic(media, transformMatrix);
                     }
                 }
 
@@ -224,9 +226,9 @@ namespace sc {
                 return symbolIdentifer;
             }
 
-            U_Int16 AddBitmap(std::string name, DOM::LibraryItem::IMediaItem* item) {
+            U_Int16 AddSingleBitmapObject(std::string name, DOM::LibraryItem::IMediaItem* item) {
                 SharedShapeWriter* shape = m_writer->AddShape();
-                shape->AddGraphic(item);
+                shape->AddGraphic(item, DOM::Utils::MATRIX2D());
 
                 U_Int16 symbolIdentifer = m_id;
                 m_id++;
@@ -251,9 +253,9 @@ namespace sc {
                 return FCM_SUCCESS;
             }
 
-            Result Finalize(std::string path) {
+            Result Finalize() {
 
-                m_writer->Finalize(path);
+                m_writer->Finalize();
 
                 return FCM_SUCCESS;
             }

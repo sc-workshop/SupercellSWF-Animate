@@ -1,5 +1,5 @@
 import which from "which";
-import { join } from "path";
+import { join, basename } from "path";
 import { copyDir, isMac, isWindows, processExecError, progress, makeLink } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, copyFileSync, writeFileSync, existsSync } from "fs";
@@ -28,8 +28,17 @@ const doctypeId = "com.scwmake.SupercellSWF";
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 function buildWindows() {
+    const sharedLibs = !isDev ?
+        [
+            "ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/x86_64/windows/shared/opencv_world470.dll"
+        ]
+        :
+        [
+            "ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/x86_64/windows/shared/opencv_world470d.dll"
+        ]
+
     const msBuildPath = which.sync("msbuild");
-    if (msBuildPath.length <= 0 ) {
+    if (msBuildPath.length <= 0) {
         throw new Error("Failed to find MSBuild executable");
     }
 
@@ -37,7 +46,7 @@ function buildWindows() {
 
     if (!existsSync(winSolution)) {
         const premakePath = which.sync("premake5");
-        if (premakePath.length <= 0 ) {
+        if (premakePath.length <= 0) {
             throw new Error("Failed to find premake5 executable");
         }
 
@@ -57,6 +66,10 @@ function buildWindows() {
     const fcmOutputFolder = join(libPath, "win");
     mkdirSync(fcmOutputFolder, { recursive: true });
     copyFileSync("project/win/Plugin.fcm", join(fcmOutputFolder, "plugin.fcm"));
+
+    for (const filepath of sharedLibs) {
+        copyFileSync(join(__dirname, filepath), join(fcmOutputFolder, basename(filepath)))
+    }
 }
 
 function buildMac() {

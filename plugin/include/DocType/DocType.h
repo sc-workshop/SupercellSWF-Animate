@@ -10,26 +10,28 @@
 using namespace FCM;
 using namespace DocType;
 
-namespace Adobe
-{
-	class ModuleDocumentType : public DocType::IDocType, public FCMObjectBase
+namespace sc {
+	namespace Adobe
 	{
-		BEGIN_INTERFACE_MAP(ModuleDocumentType, PLUGIN_VERSION)
-			INTERFACE_ENTRY(IDocType)
-		END_INTERFACE_MAP
+		class DocumentType : public DocType::IDocType, public FCMObjectBase
+		{
+			BEGIN_INTERFACE_MAP(DocumentType, PLUGIN_VERSION)
+				INTERFACE_ENTRY(IDocType)
+			END_INTERFACE_MAP
 
-	public:
+		public:
 
-		virtual Result _FCMCALL GetFeatureMatrix(DocType::PIFeatureMatrix& pFeatureMatrix);
+			virtual Result _FCMCALL GetFeatureMatrix(DocType::PIFeatureMatrix& pFeatureMatrix);
 
-		ModuleDocumentType();
+			DocumentType();
 
-		~ModuleDocumentType();
+			~DocumentType();
 
-	private:
+		private:
 
-		DocType::PIFeatureMatrix m_featureMatrix;
-	};
+			DocType::PIFeatureMatrix m_featureMatrix;
+		};
 
-	FCM::Result RegisterDocType(FCM::PIFCMDictionary pPlugins, const std::string& resPath);
+		FCM::Result RegisterDocType(FCM::PIFCMDictionary pPlugins);
+	}
 }

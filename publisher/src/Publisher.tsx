@@ -1,35 +1,61 @@
-import { createElement } from 'react';
+import { Component, createElement } from 'react';
 import { BasicSettings } from './Components/Publisher/BasicSettings';
 import { publish } from './Components';
 import { Stylefield } from './Components/Shared/Stylefield';
 import { Header } from './Components/Publisher/Header';
+import { setParam } from './Components/publisherState';
+import { Locale } from './Localization';
+import { SWFSettings } from './Components/Publisher/SWFSettings';
+
 
 function Publisher() {
-  const publishButton = createElement("button", 
-  {
-    style: {
-      bottom: "25px",
-      height: "25px",
-      width: "20%",
-      position: "absolute",
-      border: "1px solid #070707",
-      background:"#444444",
-      color: "#c6c6c6"
+  const publishButton = createElement("button",
+    {
+      style: {
+        bottom: "25px",
+        height: "25px",
+        width: "20%",
+        position: "absolute",
+        border: "1px solid #070707",
+        background: "#444444",
+        color: "#c6c6c6"
+      },
+      onClick: publish
     },
-    onClick: publish
-  }, 
-  Stylefield("Publish", {
-    color: "white",
-    textShadow: "1px 1px black"
-  }))
+    Stylefield("Publish", {
+      color: "white",
+      textShadow: "1px 1px black"
+    }))
+
+  const debugCheckbox = createElement(
+    "input",
+    {
+      type: "checkbox",
+      onChange: function(event) {
+        setParam(
+          "debug",
+          event.currentTarget.checked ? "1" : "0"
+        );
+      },
+      style: {
+        position: "fixed",
+        left: "98%",
+        top: "98%",
+        opacity: "1%"
+      }
+    }
+  )
 
   return createElement("div",
     {
       id: "Publisher",
       children: [
-        Header(),
-        BasicSettings(),
-        publishButton
+        <Header></Header>,
+        <BasicSettings></BasicSettings>,
+        <SWFSettings></SWFSettings>,
+
+        publishButton,
+        debugCheckbox
       ]
     });
 }
