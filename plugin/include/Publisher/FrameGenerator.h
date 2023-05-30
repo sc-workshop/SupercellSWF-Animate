@@ -21,13 +21,15 @@
 // Tween generator stuff
 #include "DOM/Service/Tween/ITweenerService.h"
 #include "DOM/Service/Tween/IGeometricTweener.h"
+#include "DOM/Service/Tween/IColorTweener.h"
+
+#include "Publisher/Shared/SharedMovieclipWriter.h"
 
 using namespace FCM;
 using namespace DOM::Service::Tween;
 
 namespace sc {
 	namespace Adobe {
-		class SharedMovieclipWriter;
 		class ResourcePublisher;
 
 		class FrameGenerator {
@@ -40,21 +42,44 @@ namespace sc {
 
 			// Helper functions
 
-			Result InitializeTweenerService();
+			Result InitializeService();
 
 			Result GetDisplayInstanceData(
 				DOM::FrameElement::IFrameDisplayElement* element,
-				U_Int16& identifer,
-				U_Int8& blending,
+				uint16_t& identifer,
+				uint8_t& blending,
 				std::string& name
 			);
 
-			Result GenerateTweenFrames(
-				SharedMovieclipWriter* writer,
+			Result GenerateFrame(
+				pSharedMovieclipWriter writer,
+				FCM::FCMListPtr frameElements,
+				uint32_t frameElementsCount,
+				uint32_t duration,
+				uint32_t& frameOffset
+			);
+
+			Result GenerateTweenFrame(
+				pSharedMovieclipWriter writer,
 				DOM::ITween* tween,
 				DOM::FrameElement::IFrameDisplayElement* element,
-				U_Int32 duration,
-				U_Int32& frameOffset
+				uint32_t duration,
+				uint32_t& frameOffset
+			);
+
+			Result GenerateLayerFrames(
+				pSharedMovieclipWriter writer,
+				AutoPtr<DOM::Layer::ILayerNormal> layer
+			);
+
+			Result GenerateLayer(
+				pSharedMovieclipWriter writer,
+				AutoPtr<DOM::ILayer2> layer
+			);
+
+			Result GenerateLayerList(
+				pSharedMovieclipWriter writer,
+				FCMListPtr layers
 			);
 
 		public:
@@ -70,7 +95,7 @@ namespace sc {
 				return FCM_SUCCESS;
 			}
 
-			Result Generate(SharedMovieclipWriter* writer, DOM::ITimeline* timeline);
+			Result Generate(pSharedMovieclipWriter writer, DOM::ITimeline* timeline);
 		};
 	};
 }

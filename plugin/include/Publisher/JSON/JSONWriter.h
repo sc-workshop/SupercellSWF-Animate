@@ -45,22 +45,22 @@ namespace sc {
 				return FCM_SUCCESS;
 			}
 
-			SharedMovieclipWriter* AddMovieclip() {
+			pSharedMovieclipWriter AddMovieclip() {
 				JSONMovieclipWriter* builder = new JSONMovieclipWriter();
 				builder->Init(this, m_callback);
 
-				return builder;
+				return pSharedMovieclipWriter(builder);
 			}
 
 			void AddMovieclip(JSONNode movieclip) {
 				m_movieclips.push_back(movieclip);
 			}
 
-			SharedShapeWriter* AddShape() {
+			pSharedShapeWriter AddShape() {
 				JSONShapeWriter* builder = new JSONShapeWriter();
 				builder->Init(this, m_callback);
 
-				return builder;
+				return pSharedShapeWriter(builder);
 			}
 
 			void AddShape(JSONNode shape) {

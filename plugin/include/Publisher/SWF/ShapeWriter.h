@@ -3,7 +3,7 @@
 #include "Publisher/Shared/SharedShapeWriter.h"
 #include "Macros.h"
 #include "ApplicationFCMPublicIDs.h"
-#include "DOM/Service/Image/IBitmapExportService.h"
+
 #include "string"
 
 namespace sc {
@@ -15,17 +15,12 @@ namespace sc {
 			Writer* m_writer = nullptr;
 			uint16_t m_bitmapCount = 0;
 
-			AutoPtr<DOM::Service::Image::IBitmapExportService> m_bitmapExportService = nullptr;
-
-			const std::string tempFile = std::string(tmpnam(nullptr)) + ".png";
-
 		public:
-			~ShapeWriter() {
-				remove(tempFile.c_str());
-			};
+			ShapeWriter() {};
+			~ShapeWriter() {};
 
 			Result Init(Writer* writer, PIFCMCallback callback);
-			Result AddGraphic(DOM::LibraryItem::IMediaItem* image, DOM::Utils::MATRIX2D matrix);
+			Result AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
 			void Finalize(U_Int16 id);
 		};

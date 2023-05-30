@@ -14,8 +14,8 @@ namespace sc {
         class SharedWriter {
         public:
             virtual Result Init(PIFCMCallback callback, const PublisherConfig& config) = 0;
-            virtual SharedMovieclipWriter* _FCMCALL AddMovieclip() = 0;
-            virtual SharedShapeWriter* _FCMCALL AddShape() = 0;
+            virtual pSharedMovieclipWriter _FCMCALL AddMovieclip() = 0;
+            virtual pSharedShapeWriter _FCMCALL AddShape() = 0;
 
             virtual void Finalize() = 0;
         };

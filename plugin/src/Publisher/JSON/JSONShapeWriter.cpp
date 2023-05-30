@@ -9,25 +9,17 @@ namespace sc {
 			m_writer = writer;
 			m_callback = callback;
 
-			AutoPtr<IFCMUnknown> unknownService = nullptr;
-			m_callback->GetService(DOM::FLA_BITMAP_SERVICE, unknownService.m_Ptr);
-			m_bitmapExportService = unknownService;
-
 			return FCM_SUCCESS;
 		}
 
-		Result JSONShapeWriter::AddGraphic(DOM::LibraryItem::IMediaItem* image, DOM::Utils::MATRIX2D matrix) {
+		Result JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
 			U_Int32 imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
 			
 			std::string bitmapBasename = std::to_string(imageIndex) + ".png";
 			fs::path bitmapOutputPath = m_writer->imageFolder / bitmapBasename;
 
-			m_bitmapExportService->ExportToFile(
-				image,
-				Utils::ToString16(bitmapOutputPath.string(), m_callback),
-				100
-			);
+			cv::imwrite(bitmapOutputPath.string(), image);
 
 			JSONNode bitmap;
 
@@ -58,7 +50,6 @@ namespace sc {
 
 			m_writer->AddShape(root);
 
-			delete this;
 		}
 	}
 }

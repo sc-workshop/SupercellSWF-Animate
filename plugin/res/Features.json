@@ -374,19 +374,19 @@
 					},
 					{
 						"name": "Brightness",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Tint",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Alpha",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Advanced",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
@@ -580,6 +580,42 @@
 		"supported": true,
 		"properties": [
 			{
+				"name": "Sync",
+				"supported": true
+			},
+			{
+				"name": "ScaleAlongPath",
+				"supported": true
+			},
+			{
+				"name": "PropertyEasingType",
+				"supported": true,
+				"values": [
+					{
+						"name": "AllPropertiesSameEase",
+						"supported": true
+					},
+					{
+						"name": "EachPropertyDifferentEase",
+						"supported": true
+					}
+				]
+			},
+			{
+				"name": "EaseTypes",
+				"supported": true,
+				"values": [
+					{
+						"name": "EaseTypeCustom",
+						"supported": true
+					},
+					{
+						"name": "EaseTypeClassic",
+						"supported": true
+					}
+				]
+			},
+			{
 				"name": "Rotate",
 				"supported": true,
 				"default": "Auto",
@@ -609,17 +645,17 @@
 			},
 			{
 				"name": "ColorAlongPath",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "OrientToPath",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "Snap",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			}
 		]
@@ -678,6 +714,10 @@
 	},
 	{
 		"name": "Stage",
+		"supported": false
+	},
+	{
+		"name": "GraphicLoop",
 		"supported": false
 	}
 ]

@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include <filesystem>
+#include <Macros.h>
 namespace fs = std::filesystem;
 
 namespace sc {
@@ -172,7 +173,7 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
 				isSupported = false;
 			}
 			else
@@ -197,7 +198,7 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
 				isSupported = false;
 			}
 			else
@@ -211,7 +212,7 @@ namespace sc {
 					Property* property = feature->FindProperty(propertyName);
 					if (property == NULL)
 					{
-						console.log("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+						debugLog("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
 						isSupported = false;
 					}
 					else
@@ -240,7 +241,7 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				console.log("Failed to get info about \"%s\" feature", featureName.c_str());
+				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
 				isSupported = false;
 			}
 			else
@@ -254,7 +255,7 @@ namespace sc {
 					Property* property = feature->FindProperty(propertyName);
 					if (property == NULL)
 					{
-						console.log("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+						debugLog("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
 						isSupported = false;
 					}
 					else
@@ -268,7 +269,7 @@ namespace sc {
 							Value* value = property->FindValue(valueName);
 							if (!valueName.empty() && value == NULL)
 							{
-								console.log("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
+								debugLog("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
 								isSupported = false;
 							}
 							else

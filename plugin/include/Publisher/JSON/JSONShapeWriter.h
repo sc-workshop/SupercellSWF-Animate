@@ -18,13 +18,11 @@ namespace sc {
 			PIFCMCallback m_callback = nullptr;
 			JSONWriter* m_writer = nullptr;
 
-			AutoPtr<DOM::Service::Image::IBitmapExportService> m_bitmapExportService = nullptr;
-
 			JSONNode m_bitmaps = JSONNode(JSON_ARRAY);
 
 		public:
 			Result Init(JSONWriter* writer, PIFCMCallback callback);
-			Result AddGraphic(DOM::LibraryItem::IMediaItem* image, DOM::Utils::MATRIX2D matrix);
+			Result AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
 			void Finalize(U_Int16 id);
 		};

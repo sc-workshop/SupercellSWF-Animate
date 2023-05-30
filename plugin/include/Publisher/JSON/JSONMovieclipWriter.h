@@ -41,8 +41,8 @@ namespace sc {
 				U_Int16 id,
 				U_Int8 blending,
 				std::string name,
-				DOM::Utils::MATRIX2D* matrix,
-				DOM::Utils::COLOR_MATRIX* color);
+				DOM::Utils::MATRIX2D& matrix,
+				DOM::Utils::COLOR_MATRIX& color);
 
 			void Finalize(U_Int16 id, U_Int8 fps, std::string name);
 		};

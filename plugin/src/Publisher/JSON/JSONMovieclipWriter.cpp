@@ -56,8 +56,8 @@ namespace sc {
 			U_Int16 id,
 			U_Int8 blending,
 			std::string name,
-			DOM::Utils::MATRIX2D* matrix,
-			DOM::Utils::COLOR_MATRIX* color
+			DOM::Utils::MATRIX2D& matrix,
+			DOM::Utils::COLOR_MATRIX& color
 		) {
 			JSONNode frameElement;
 
@@ -65,13 +65,22 @@ namespace sc {
 				JSONNode("id", id)
 			);
 
-			if (matrix) {
-				frameElement.push_back(JSONNode("matrix", Utils::ToString(*matrix)));
-			}
+			frameElement.push_back(JSONNode("matrix", Utils::ToString(matrix)));
 
-			if (color) {
-				
-			}
+			JSONNode colorNode;
+			colorNode.set_name("color");
+
+			colorNode.push_back(JSONNode("rMul", color.matrix[0][0]));
+			colorNode.push_back(JSONNode("gMul", color.matrix[1][1]));
+			colorNode.push_back(JSONNode("bMul", color.matrix[2][2]));
+			colorNode.push_back(JSONNode("aMul", color.matrix[3][3]));
+
+			colorNode.push_back(JSONNode("rAdd", color.matrix[0][4]));
+			colorNode.push_back(JSONNode("gAdd", color.matrix[1][4]));
+			colorNode.push_back(JSONNode("bAdd", color.matrix[2][4]));
+			colorNode.push_back(JSONNode("aAdd", color.matrix[3][4]));
+
+			frameElement.push_back(colorNode);
 
 			if (m_frames->size() < (frameIndex + 1)) {
 				console.log("Failed to get frame %d", frameIndex);
@@ -105,7 +114,6 @@ namespace sc {
 
 			m_writer->AddMovieclip(root);
 
-			delete this;
 		}
 	}
 }
