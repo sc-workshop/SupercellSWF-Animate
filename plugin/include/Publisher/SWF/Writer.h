@@ -30,15 +30,21 @@ namespace sc {
 			PublisherConfig m_config;
 
 		public:
-
 			std::vector<Sprite> sprites;
 
 			SupercellSWF swf;
 
-			Result Init(PIFCMCallback callback, const PublisherConfig& config);
+			void Init(PIFCMCallback callback, const PublisherConfig& config);
 
 			pSharedMovieclipWriter AddMovieclip();
 			pSharedShapeWriter AddShape();
+
+			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) {
+				pMovieClipModifier modifier = pMovieClipModifier(new MovieClipModifier());
+				modifier->id(id);
+				modifier->type(type);
+				swf.movieClipModifiers.push_back(modifier);
+			}
 
 			void FinalizeAtlas();
 

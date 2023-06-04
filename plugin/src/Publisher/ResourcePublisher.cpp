@@ -3,164 +3,150 @@
 namespace sc {
 	namespace Adobe {
         
-        Result ResourcePublisher::AddLibraryItem(
+        uint16_t ResourcePublisher::AddLibraryItem(
             DOM::ILibraryItem* item,
-            uint16_t& identifer,
-            bool addExportName
+            bool hasName
         ) {
-            Result res = FCM_SUCCESS;
-
-            StringRep16 itemName;
-            res = item->GetName(&itemName);
-            FCM_SUCCESS;
-
-            std::string itemNameStr = Utils::ToString(itemName, m_callback);
+            StringRep16 itemNamePtr;
+            item->GetName(&itemNamePtr);
+            u16string itemName = (const char16_t*)itemNamePtr;
+            GetCallocService()->Free(itemNamePtr);
 
             AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
             AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
 
             if (symbolItem) {
-                return AddSymbol(itemNameStr, symbolItem, identifer, addExportName);
+                return AddSymbol(itemName, symbolItem, hasName);
             }
             else if (mediaItem) {
                 pSharedShapeWriter shape = m_writer->AddShape();
                 cv::Mat image;
-                res = shapeGenerator.GetImage(mediaItem, image);
-                FCM_CHECK;
+                shapeGenerator.GetImage(mediaItem, image);
 
-                res = shape->AddGraphic(image, { 1, 0, 0, 1, 0, 0 });
-                FCM_CHECK;
+                shape->AddGraphic(image, { 1, 0, 0, 1, 0, 0 });
 
-                identifer = m_id;
-                m_id++;
+                uint16_t identifer = m_id++;
                 shape->Finalize(identifer);
 
                 m_symbolsDict.push_back(
-                    std::pair(itemNameStr, identifer)
+                    { itemName, identifer }
                 );
 
-                return res;
+                return identifer;
             }
 
             // In cases where item is not media and not symbol
             return FCM_EXPORT_FAILED;
         }
 
-        Result ResourcePublisher::AddSymbol(
-            std::string name,
+        uint16_t ResourcePublisher::AddSymbol(
+            u16string name,
             DOM::LibraryItem::ISymbolItem* item,
-            uint16_t& identifer,
-            bool addExportName
+            bool hasName
         ) {
-            Result res;
 
-            debugLog("Symbol: %s", name.c_str());
+#ifdef DEBUG
+            console.log("Symbol: %s", fs::path(name).string().c_str());
+#endif // DEBUG
 
             AutoPtr<DOM::ITimeline> timeline;
-            res = item->GetTimeLine(timeline.m_Ptr);
-            FCM_CHECK;
+            item->GetTimeLine(timeline.m_Ptr);
 
-            bool isShape = false;
-            ShapeGenerator::Validate(timeline, isShape);
-
-            if (addExportName) {
-                return AddMovieclip(name, timeline, identifer);
+            if (hasName) {
+                return AddMovieclip(name, timeline, hasName);
             }
             else {
-                return AddShape(name, timeline, identifer);
+                return AddShape(name, timeline);
             }
 
         };
 
-        Result ResourcePublisher::AddMovieclip(
-            std::string name,
-            DOM::ITimeline* timeline,
-            uint16_t& identifer
+        uint16_t ResourcePublisher::AddMovieclip(
+            u16string name,
+            AutoPtr<DOM::ITimeline> timeline,
+            bool hasName
         ) {
-            Result res = FCM_SUCCESS;
-
             pSharedMovieclipWriter movieclip = m_writer->AddMovieclip();
+            timelineBuilder.Generate(movieclip, timeline);
 
-            res = frameGenerator.Generate(
-                movieclip,
-                timeline
-            );
-            FCM_CHECK;
-
-            identifer = m_id;
-            m_id++;
-
-            movieclip->Finalize(identifer, 24, name);
-
+            uint16_t identifer = m_id++;
             m_symbolsDict.push_back(
-                std::pair(name, identifer)
+                { name, identifer }
             );
 
-            return res;
+            if (hasName) {
+                movieclip->Finalize(identifer, 24, name);
+            }
+            else {
+                movieclip->Finalize(identifer, 24, u"");
+            }
+
+            return identifer;
         };
 
-        Result ResourcePublisher::AddShape(
-            std::string name,
-            DOM::ITimeline* timeline,
-            uint16_t& identifer
+        uint16_t ResourcePublisher::AddShape(
+            u16string name,
+            DOM::ITimeline* timeline
         ) {
-            Result res = FCM_SUCCESS;
-
-            bool isShape = true;
-            res = ShapeGenerator::Validate(timeline, isShape);
-            FCM_CHECK;
-
+            bool isShape = ShapeGenerator::Validate(timeline);
+            
             if (!isShape) {
-                return AddMovieclip(name, timeline, identifer);
+                return AddMovieclip(name, timeline, false);
             }
 
             pSharedShapeWriter shape = m_writer->AddShape();
 
-            res = shapeGenerator.Generate(shape, timeline);
-            FCM_CHECK;
+            shapeGenerator.Generate(shape, timeline);
 
-            identifer = m_id;
-            m_id++;
+            uint16_t identifer = m_id++;
 
             shape->Finalize(identifer);
-
             m_symbolsDict.push_back(
-                std::pair(name, identifer)
+                { name, identifer }
             );
 
-            return res;
+            return identifer;
         }
 
-        Result ResourcePublisher::GetIdentifer(std::string name, uint16_t& identifer) {
-            for (std::pair<std::string, U_Int16> item : m_symbolsDict) {
+        uint16_t ResourcePublisher::AddModifier(
+            sc::MovieClipModifier::Type type
+        ) {
+            uint16_t identifer = m_id++;
+
+            m_writer->AddModifier(identifer, type);
+            m_modifierDict.push_back({ type, identifer });
+
+            return identifer;
+        }
+
+        uint16_t ResourcePublisher::GetIdentifer(u16string name) {
+            for (auto item : m_symbolsDict) {
                 if (item.first == name) {
-                    identifer = item.second;
-                    return FCM_SUCCESS;
+                    return item.second;
                 }
             }
 
-            identifer = UINT16_MAX;
-            return FCM_SUCCESS;
+            return UINT16_MAX;
         }
 
-        Result ResourcePublisher::Finalize() {
+        uint16_t ResourcePublisher::GetIdentifer(
+            sc::MovieClipModifier::Type type
+        ) {
+            for (uint16_t i = 0; m_modifierDict.size() > i; i++) {
+                if (m_modifierDict[i].first == type) {
+                    return m_modifierDict[i].second;
+                }
+            }
+
+            return UINT16_MAX;
+        }
+
+        void ResourcePublisher::Finalize() {
+            m_id = 0;
+            m_symbolsDict.clear();
+            m_modifierDict.clear();
 
             m_writer->Finalize();
-
-            return FCM_SUCCESS;
-        }
-
-        Result ResourcePublisher::Init(SharedWriter* writer, PIFCMCallback callback) {
-            m_symbolsDict.clear();
-            m_id = 0;
-            m_callback = callback;
-            m_writer = writer;
-
-            console.Init("ResourcePublisher", m_callback);
-            frameGenerator.Init(m_callback, this);
-            shapeGenerator.Init(m_callback, this);
-
-            return FCM_SUCCESS;
         }
 	}
 }

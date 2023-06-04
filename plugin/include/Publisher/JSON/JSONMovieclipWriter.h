@@ -1,8 +1,8 @@
 #pragma once
 
+#include <string>
 #include "Publisher/Shared/SharedMovieclipWriter.h"
 #include "io/Console.h"
-
 
 #include "libjson.h"
 
@@ -16,35 +16,25 @@ namespace sc {
 			PIFCMCallback m_callback = nullptr;
 			JSONWriter* m_writer = nullptr;
 
-			JSONNode* m_frames;
+			JSONNode m_frames = JSONNode(JSON_ARRAY);
 
 			Console console;
 
 		public:
-			JSONMovieclipWriter() {
+			void Init(JSONWriter* writer, PIFCMCallback callback);
 
-				m_frames = new JSONNode(JSON_ARRAY);
-				m_frames->set_name("frames");
-			}
-			~JSONMovieclipWriter() {
-				delete m_frames;
-			};
+			void InitTimeline(uint32_t frameCount);
 
-			Result Init(JSONWriter* writer, PIFCMCallback callback);
+			void SetLabel(std::string label);
 
-			Result InitTimeline(U_Int32 frameCount);
-
-			Result SetLabel(U_Int32 frameIndex, std::string label);
-
-			Result AddFrameElement(
-				U_Int32 frameIndex,
-				U_Int16 id,
-				U_Int8 blending,
+			void AddFrameElement(
+				uint16_t id,
+				uint8_t blending,
 				std::string name,
-				DOM::Utils::MATRIX2D& matrix,
-				DOM::Utils::COLOR_MATRIX& color);
+				DOM::Utils::MATRIX2D* matrix,
+				DOM::Utils::COLOR_MATRIX* color);
 
-			void Finalize(U_Int16 id, U_Int8 fps, std::string name);
+			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
 		};
 	}
 }

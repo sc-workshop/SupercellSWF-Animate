@@ -5,14 +5,12 @@
 
 namespace sc {
 	namespace Adobe {
-		Result JSONShapeWriter::Init(JSONWriter* writer, PIFCMCallback callback) {
+		void JSONShapeWriter::Init(JSONWriter* writer, PIFCMCallback callback) {
 			m_writer = writer;
 			m_callback = callback;
-
-			return FCM_SUCCESS;
 		}
 
-		Result JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
+		void JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
 			U_Int32 imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
 			
@@ -32,8 +30,6 @@ namespace sc {
 			);
 
 			m_bitmaps.push_back(bitmap);
-
-			return FCM_SUCCESS;
 		}
 
 		void JSONShapeWriter::Finalize(U_Int16 id) {

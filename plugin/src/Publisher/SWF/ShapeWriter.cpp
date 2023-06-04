@@ -7,22 +7,18 @@ using namespace sc;
 
 namespace sc {
 	namespace Adobe {
-		Result ShapeWriter::Init(Writer* writer, PIFCMCallback callback) {
+		void ShapeWriter::Init(Writer* writer, PIFCMCallback callback) {
 			m_writer = writer;
 			m_callback = callback;
-
-			return FCM_SUCCESS;
 		}
 
-		Result ShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
+		void ShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
 			Sprite sprite;
 			sprite.image = image.clone();
 			sprite.matrix = matrix;
 
 			m_writer->sprites.push_back(sprite);
 			m_bitmapCount++;
-
-			return FCM_SUCCESS;
 		}
 
 		void ShapeWriter::Finalize(U_Int16 id) {

@@ -1,55 +1,39 @@
 #include "Publisher/ShapeGenerator.h"
-
-#include <DOM/ILibraryItem.h>
-#include <Utils/DOMTypes.h>
-#include <DOM/FrameElement/IInstance.h>
-#include <DOM/LibraryItem/IMediaItem.h>
-#include <DOM/MediaInfo/IBitmapInfo.h>
+#include "Publisher/ResourcePublisher.h"
 
 namespace sc {
 	namespace Adobe {
-		Result ShapeGenerator::InitializeService() {
-			Result res = FCM_SUCCESS;
-
+		void ShapeGenerator::InitializeService() {
 			if (!BitmapExportService)
 			{
 				FCM::AutoPtr<FCM::IFCMUnknown> unk;
-				res = m_callback->GetService(DOM::FLA_BITMAP_SERVICE, unk.m_Ptr);
-				FCM_CHECK;
+				m_callback->GetService(DOM::FLA_BITMAP_SERVICE, unk.m_Ptr);
 
 				BitmapExportService = unk;
 				if (!BitmapExportService) {
-					return FCM_SERVICE_NOT_FOUND;
+					throw exception("Failed to initialize BitmapGeneratorService");
 				}
 			}
-
-			return res;
 		};
 
 		
-		Result ShapeGenerator::GenerateLayerShapes(
+		void ShapeGenerator::GenerateLayerShapes(
 			pSharedShapeWriter writer,
 			AutoPtr<DOM::Layer::ILayerNormal> layer
 		) {
-			Result res = FCM_SUCCESS;
-
 			FCM::FCMListPtr keyframes;
-			res = layer->GetKeyFrames(keyframes.m_Ptr);
-			FCM_CHECK;
+			layer->GetKeyFrames(keyframes.m_Ptr);
 
 			uint32_t keyframesCount = 0;
-			res = keyframes->Count(keyframesCount);
-			FCM_CHECK;
+			keyframes->Count(keyframesCount);
 
 			AutoPtr<DOM::IFrame> keyframe = keyframes[0];
 
 			FCM::FCMListPtr frameElements;
-			res = keyframe->GetFrameElements(frameElements.m_Ptr);
-			FCM_CHECK;
+			keyframe->GetFrameElements(frameElements.m_Ptr);
 
 			uint32_t frameElementsCount = 0;
-			res = frameElements->Count(frameElementsCount);
-			FCM_CHECK;
+			frameElements->Count(frameElementsCount);
 
 			uint32_t frameElementIndex = frameElementsCount;
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
@@ -76,35 +60,30 @@ namespace sc {
 
 						if (bitmap) {
 							cv::Mat bitmapImage;
-							res = GetImage(media, bitmapImage);
-							FCM_CHECK;
+							GetImage(media, bitmapImage);
 
 							writer->AddGraphic(bitmapImage, transformMatrix);
 						}
 						else {
-							return FCM_EXPORT_FAILED;
+							throw exception("Failed to get media type");
 						}
 						
 					}
 					else {
-						return FCM_EXPORT_FAILED;
+						throw exception("Failed to get media type");
 					}
 				}
 				else {
-					return FCM_EXPORT_FAILED;
+					throw exception("Failed to get FrameElement type");
 				}
 
 			}
-
-			return res;
 		}
 
-		Result ShapeGenerator::GenerateLayer(
+		void ShapeGenerator::GenerateLayer(
 			pSharedShapeWriter writer,
 			AutoPtr<DOM::ILayer2> layer
 		) {
-			Result res = FCM_SUCCESS;
-
 			AutoPtr<IFCMUnknown> unknownLayer;
 			layer->GetLayerType(unknownLayer.m_Ptr);
 
@@ -115,130 +94,98 @@ namespace sc {
 
 			if (folderLayer) {
 				FCM::FCMListPtr folderLayers;
-				res = folderLayer->GetChildren(folderLayers.m_Ptr);
-				FCM_CHECK;
-				res = GenerateLayerList(writer, folderLayers);
-				return res;
+				folderLayer->GetChildren(folderLayers.m_Ptr);
+				GenerateLayerList(writer, folderLayers);
+				return;
 			}
 			else if (guideLayer) {
-				return res;
+				return;
 			}
 			else if (maskLayer) {
 				// TODO: masks ?
 
-				if (!normalLayer) {
-					return FCM_EXPORT_FAILED;
-				}
-				else {
-					res = GenerateLayer(writer, normalLayer);
-					FCM_CHECK;
-				}
+				GenerateLayer(writer, normalLayer);
 
 				FCM::FCMListPtr maskedLayers;
-				res = maskLayer->GetChildren(maskedLayers.m_Ptr);
-				FCM_CHECK;
+				maskLayer->GetChildren(maskedLayers.m_Ptr);
 
-				return GenerateLayerList(writer, maskedLayers);;
+				GenerateLayerList(writer, maskedLayers);
+				return;
 			}
 			else if (normalLayer) {
-				return GenerateLayerShapes(writer, normalLayer);;
+				GenerateLayerShapes(writer, normalLayer);
+				return;
 			}
 
-			// Layer must pass at least one of conditions above
-			return FCM_EXPORT_FAILED;
+			throw exception("Failed to get layer type");
 		}
 
-		Result ShapeGenerator::GenerateLayerList(
+		void ShapeGenerator::GenerateLayerList(
 			pSharedShapeWriter writer,
 			FCMListPtr layers
 		) {
-			Result res = FCM_SUCCESS;
-
 			U_Int32 layerCount = 0;
-			res = layers->Count(layerCount);
-			FCM_CHECK;
+			layers->Count(layerCount);
 
 			uint32_t i = layerCount;
 			for (U_Int32 layerIndex = 0; layerCount > layerIndex; layerIndex++) {
 				AutoPtr<DOM::ILayer2> layer = layers[--i];
 
-#ifdef DEBUG
-				StringRep16 layerName;
-				layer->GetName(&layerName);
-				debugLog("|------------------------------ %s -------------------------------|", Utils::ToString(layerName, m_callback).c_str());
-#endif // DEBUG
-
-				res = GenerateLayer(writer, layer);
-				FCM_CHECK;
+				GenerateLayer(writer, layer);
 			};
-
-			return res;
 		}
 
-		Result ShapeGenerator::GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
+		void ShapeGenerator::GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
 			Result res = BitmapExportService->ExportToFile(
 				media,
 				Utils::ToString16(tempFile.string(), m_callback),
 				100
 			);
-			FCM_CHECK;
+			if (FCM_FAILURE_CODE(res)) {
+				throw exception("Failed to export image");
+			}
 
 			image = cv::imread(tempFile.string(), cv::IMREAD_UNCHANGED);
-
-			return res;
 		}
 		
 
-		Result ShapeGenerator::Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline) {
-			Result res;
-
-			res = InitializeService();
-			FCM_CHECK;
+		void ShapeGenerator::Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline) {
+			InitializeService();
 
 			FCM::FCMListPtr layers;
-			res = timeline->GetLayers(layers.m_Ptr);
-			FCM_CHECK;
+			timeline->GetLayers(layers.m_Ptr);
 
-			return GenerateLayerList(writer, layers);
+			GenerateLayerList(writer, layers);
 		}
 
 		// Validate stuff
 
-		Result ShapeGenerator::ValidateLayerItems(
-			AutoPtr<DOM::Layer::ILayerNormal> layer,
-			bool& result
+		bool ShapeGenerator::ValidateLayerItems(
+			AutoPtr<DOM::Layer::ILayerNormal> layer
 		) {
-			Result res = FCM_SUCCESS;
-
 			FCM::FCMListPtr keyframes;
-			res = layer->GetKeyFrames(keyframes.m_Ptr);
-			FCM_CHECK;
+			layer->GetKeyFrames(keyframes.m_Ptr);
 
 			uint32_t keyframesCount = 0;
-			res = keyframes->Count(keyframesCount);
-			FCM_CHECK;
+			keyframes->Count(keyframesCount);
 
 			if (keyframesCount != 1) {
-				result = false;
-				return res;
+				return false;
 			}
 
 			AutoPtr<DOM::IFrame> keyframe = keyframes[0];
 
 			FCM::FCMListPtr frameElements;
-			res = keyframe->GetFrameElements(frameElements.m_Ptr);
-			FCM_CHECK;
+			keyframe->GetFrameElements(frameElements.m_Ptr);
 
 			uint32_t frameElementsCount = 0;
-			res = frameElements->Count(frameElementsCount);
-			FCM_CHECK;
+			frameElements->Count(frameElementsCount);
 
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
 				AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
 
 				if (!instance) {
-					result = false;
-					return res;
+					return false;
 				}
 
 				AutoPtr<DOM::ILibraryItem> item;
@@ -247,20 +194,16 @@ namespace sc {
 				AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
 				if (!media) {
-					result = false;
-					return res;
+					return false;
 				}
 			}
 
-			return res;
+			return true;
 		}
 
-		Result ShapeGenerator::ValidateLayer(
-			AutoPtr<DOM::ILayer2> layer,
-			bool& result
+		bool ShapeGenerator::ValidateLayer(
+			AutoPtr<DOM::ILayer2> layer
 		) {
-			Result res = FCM_SUCCESS;
-
 			AutoPtr<IFCMUnknown> unknownLayer;
 			layer->GetLayerType(unknownLayer.m_Ptr);
 
@@ -271,74 +214,59 @@ namespace sc {
 
 			if (folderLayer) {
 				FCM::FCMListPtr folderLayers;
-				res = folderLayer->GetChildren(folderLayers.m_Ptr);
-				FCM_CHECK;
-				res = ValidateLayerList(folderLayers, result);
-				return res;
+				folderLayer->GetChildren(folderLayers.m_Ptr);
+
+				return ValidateLayerList(folderLayers);
 			}
 			else if (guideLayer) {
-				return res;
+				return true;
 			}
 			else if (maskLayer) {
-				if (!normalLayer) {
-					return FCM_EXPORT_FAILED;
-				}
-				else {
-					res = ValidateLayer(normalLayer, result);
-					FCM_CHECK;
-				}
+				return ValidateLayer(normalLayer);
 
 				FCM::FCMListPtr maskedLayers;
-				res = maskLayer->GetChildren(maskedLayers.m_Ptr);
-				FCM_CHECK;
+				maskLayer->GetChildren(maskedLayers.m_Ptr);
 
-				return ValidateLayerList(maskedLayers, result);
+				return ValidateLayerList(maskedLayers);
 			}
 			else if (normalLayer) {
-				return ValidateLayerItems(normalLayer, result);
+				return ValidateLayerItems(normalLayer);
 			}
 
-			return FCM_EXPORT_FAILED;
+			return false;
 		}
 
-		Result ShapeGenerator::ValidateLayerList(
-			FCMListPtr layers,
-			bool& result
+		bool ShapeGenerator::ValidateLayerList(
+			FCMListPtr layers
 		) {
-			Result res = FCM_SUCCESS;
 
 			U_Int32 layerCount = 0;
-			res = layers->Count(layerCount);
-			FCM_CHECK;
+			layers->Count(layerCount);
 
-			uint32_t i = layerCount;
-			for (U_Int32 layerIndex = 0; layerCount > layerIndex; layerIndex++) {
-				AutoPtr<DOM::ILayer2> layer = layers[--i];
+			for (uint32_t i = 0; layerCount > i; i++) {
+				AutoPtr<DOM::ILayer2> layer = layers[i];
 
-				res = ValidateLayer(layer, result);
-				FCM_CHECK;
+				if (!ValidateLayer(layer)) {
+					return false;
+				}
 			};
 
-			return res;
+			return true;
 		}
 
-		Result ShapeGenerator::Validate(DOM::ITimeline* timeline, bool& result) {
-			Result res = FCM_SUCCESS;
+		bool ShapeGenerator::Validate(DOM::ITimeline* timeline) {
 
 			FCM::FCMListPtr layers;
-			res = timeline->GetLayers(layers.m_Ptr);
-			FCM_CHECK;
+			timeline->GetLayers(layers.m_Ptr);
 
 			uint32_t timelineDuration;
-			res = timeline->GetMaxFrameCount(timelineDuration);
-			FCM_CHECK;
+			timeline->GetMaxFrameCount(timelineDuration);
 
 			if (timelineDuration > 1) {
-				result = false;
-				return FCM_SUCCESS;
+				return false;
 			}
 
-			return ValidateLayerList(layers, result);
+			return ValidateLayerList(layers);
 		}
 	}
 }

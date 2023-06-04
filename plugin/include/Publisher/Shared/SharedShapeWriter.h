@@ -15,7 +15,7 @@ namespace sc {
 	namespace Adobe {
 		class SharedShapeWriter {
 		public:
-			virtual Result AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) = 0;
+			virtual void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) = 0;
 
 			virtual void Finalize(U_Int16 id) = 0;
 		};

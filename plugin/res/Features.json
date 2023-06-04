@@ -563,7 +563,7 @@
 		"properties": [
 			{
 				"name": "MaskLayer",
-				"supported": false
+				"supported": true
 			},
 			{
 				"name": "GuideLayer",

@@ -1,34 +1,35 @@
 #pragma once
 
+#include "io/Console.h"
+#include "PluginConfiguration.h"
+#include "Ids.h"
+#include "Version.h"
+
+// FCM stuff
 #include <FCMTypes.h>
-#include <Utils/DOMTypes.h>
-#include <PluginConfiguration.h>
+
+// Publisher interface
 #include <Publisher/IPublisher.h>
 
+// Export config
+#include "Publisher/PublisherConfig.h"
+
+// Writers
+#include "Publisher/JSON/JSONWriter.h"
+#include "Publisher/SWF/Writer.h"
+
+// Symbol
 #include "DOM/ILibraryItem.h"
 #include "DOM/LibraryItem/IFolderItem.h"
 #include "DOM/LibraryItem/ISymbolItem.h"
 
-#include <string>
-
-#include "Version.h"
-#include "io/Console.h"
-#include "Ids.h"
-#include "Utils.h"
-#include "ResourcePublisher.h"
-#include "Macros.h"
-#include "PublisherConfig.h"
-
-#include "Publisher/JSON/JSONWriter.h"
-#include "Publisher/SWF/Writer.h"
+#include "Publisher/ResourcePublisher.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
 using namespace FCM;
 using namespace Publisher;
-using namespace Exporter::Service;
-using namespace DOM::Service::Tween;
 
 namespace sc {
 	namespace Adobe {
@@ -39,19 +40,26 @@ namespace sc {
 			END_INTERFACE_MAP
 
 			PublisherConfig m_config;
-			ResourcePublisher m_resources;
 
 			Console console;
 
 		public:
 			Result _FCMCALL Publish(DOM::PIFLADocument document, const PIFCMDictionary publishSettings, const PIFCMDictionary config); 
 
-			Result _FCMCALL Publish(DOM::PIFLADocument document, DOM::PITimeline pTimeline, const Exporter::Service::RANGE& frameRange, const PIFCMDictionary publishSettings, const PIFCMDictionary config);
+			Result _FCMCALL Publish(
+				DOM::PIFLADocument document,
+				DOM::PITimeline pTimeline,
+				const Exporter::Service::RANGE& frameRange,
+				const PIFCMDictionary publishSettings,
+				const PIFCMDictionary config
+			) { 
+				return FCM_SERVICE_NOT_FOUND;
+			}
 
-			FCM::Result _FCMCALL ClearCache() { return FCM_SUCCESS; }\
+			Result _FCMCALL ClearCache() { return FCM_SERVICE_NOT_FOUND; };
 
 		private:
-			FCM::Result ExportLibraryItems(FCM::FCMListPtr libraryItems);
+			void ExportLibraryItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
 		};
 
 		FCM::Result RegisterPublisher(PIFCMDictionary plugins, FCM::FCMCLSID docId);

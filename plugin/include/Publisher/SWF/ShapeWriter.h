@@ -16,11 +16,8 @@ namespace sc {
 			uint16_t m_bitmapCount = 0;
 
 		public:
-			ShapeWriter() {};
-			~ShapeWriter() {};
-
-			Result Init(Writer* writer, PIFCMCallback callback);
-			Result AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
+			void Init(Writer* writer, PIFCMCallback callback);
+			void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
 			void Finalize(U_Int16 id);
 		};

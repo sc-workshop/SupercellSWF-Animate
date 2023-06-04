@@ -20,25 +20,21 @@ namespace sc {
 			FCM_RELEASE(m_featureMatrix);
 		}
 
-		FCM::Result DocumentType::GetFeatureMatrix(PIFeatureMatrix& matrix)
+		Result DocumentType::GetFeatureMatrix(PIFeatureMatrix& matrix)
 		{
-			FCM::Result res = FCM_SUCCESS;
-
 			if (m_featureMatrix == NULL)
 			{
-				res = GetCallback()->CreateInstance(
+				GetCallback()->CreateInstance(
 					NULL,
 					CLSID_FeatureMatrix,
 					ID_IFEATURE_MATRIX,
 					(FCM::PPVoid)&m_featureMatrix);
-				FCM_CHECK;
 
-				res = ((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
-				FCM_CHECK;
+				((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
 			}
 
 			matrix = m_featureMatrix;
-			return res;
+			return FCM_SUCCESS;
 		}
 
 		FCM::Result RegisterDocType(FCM::PIFCMDictionary pPlugins)

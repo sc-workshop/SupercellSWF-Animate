@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Publisher/Shared/SharedShapeWriter.h"
+#include "io/Console.h"
+#include "Macros.h"
 
 // FCM stuff
 #include "FCMTypes.h"
-#include "Macros.h"
-
-// Logger
-#include "io/Console.h"
+#include "DOM/Service/Image/IBitmapExportService.h"
 
 // Timeline stuff
 #include <ITimeline.h>
@@ -15,59 +13,68 @@
 #include <DOM/IFrame.h>
 #include "DOM/ITween.h"
 
-// Image export service
-#include "DOM/Service/Image/IBitmapExportService.h"
+// Symbol
+#include <DOM/ILibraryItem.h>
+#include <DOM/MediaInfo/IBitmapInfo.h>
+#include <DOM/FrameElement/IInstance.h>
+
+// Writer
+#include "Publisher/Shared/SharedShapeWriter.h"
 
 using namespace FCM;
+using namespace std;
 
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
 
 		class ShapeGenerator {
-			PIFCMCallback m_callback = nullptr;
-			ResourcePublisher* m_resources = nullptr;
+			PIFCMCallback m_callback;
+			ResourcePublisher& m_resources;
 
 			Console console;
 
 			AutoPtr<DOM::Service::Image::IBitmapExportService> BitmapExportService = nullptr;
 
-			Result InitializeService();
+			void InitializeService();
 
-			Result GenerateLayerShapes(
+			void GenerateLayerShapes(
 				pSharedShapeWriter writer,
 				AutoPtr<DOM::Layer::ILayerNormal> layer
 			);
 
-			Result GenerateLayer(
+			void GenerateLayer(
 				pSharedShapeWriter writer,
 				AutoPtr<DOM::ILayer2> layer
 			);
 
-			Result GenerateLayerList(
+			void GenerateLayerList(
 				pSharedShapeWriter writer,
 				FCMListPtr layers
 			);
 
 			// Validate Stuff
 
-			static Result ValidateLayerItems(
-				AutoPtr<DOM::Layer::ILayerNormal> layer,
-				bool& result
+			static bool ValidateLayerItems(
+				AutoPtr<DOM::Layer::ILayerNormal> layer
 			);
 
-			static Result ValidateLayer(
-				AutoPtr<DOM::ILayer2> layer,
-				bool& result
+			static bool ValidateLayer(
+				AutoPtr<DOM::ILayer2> layer
 			);
 
-			static Result ValidateLayerList(
-				FCMListPtr layers,
-				bool& result
+			static bool ValidateLayerList(
+				FCMListPtr layers
 			);
 
 		public:
-			ShapeGenerator() { };
+			ShapeGenerator(PIFCMCallback callback, ResourcePublisher& resources):
+			m_callback(callback),
+			m_resources(resources)
+			{
+				console.Init("ShapeGenerator", m_callback);
+				InitializeService();
+			};
 			~ShapeGenerator() {
 				if (fs::exists(tempFile)) {
 					remove(tempFile);
@@ -76,20 +83,11 @@ namespace sc {
 
 			const fs::path tempFile = fs::path(tmpnam(nullptr)).concat(".png");
 
-			Result GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
+			void GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
 
-			Result Init(PIFCMCallback callback, ResourcePublisher* resources) {
-				m_callback = callback;
-				m_resources = resources;
+			void Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline);
 
-				console.Init("ShapeGenerator", m_callback);
-
-				return FCM_SUCCESS;
-			}
-
-			Result Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline);
-
-			static Result Validate(DOM::ITimeline* timeline, bool& result);
+			static bool Validate(DOM::ITimeline* timeline);
 		};
 	}
 }

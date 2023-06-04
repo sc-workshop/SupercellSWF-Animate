@@ -1,96 +1,126 @@
 #pragma once
 
-#include <FCMTypes.h>
-#include <FCMPluginInterface.h>
-
-#include <FillStyle/ISolidFillStyle.h>
-#include <FillStyle/IBitmapFillStyle.h>
-#include <FrameElement/ITextStyle.h>
-#include <Service/Shape/IPath.h>
-#include <Utils/DOMTypes.h>
-
-#include "DOM/ILibraryItem.h"
-#include "DOM/ILayer2.h"
-#include <DOM/LibraryItem/ISymbolItem.h>
-#include <DOM/LibraryItem/IMediaItem.h>
-#include <DOM/MediaInfo/IBitmapInfo.h>
-
-#include "io/Console.h"
-#include "Shared/SharedWriter.h"
-#include "FrameGenerator.h"
-#include "ShapeGenerator.h"
-
 #include <vector>
 #include <string>
 
-using namespace FCM;
+#include "io/Console.h"
 
-namespace DOM
-{
-    namespace FrameElement
-    {
-        FORWARD_DECLARE_INTERFACE(IShape);
-        FORWARD_DECLARE_INTERFACE(IClassicText);
-    }
-}
+// FCM stuff
+#include <FCMTypes.h>
+
+// Timeline
+#include <DOM/ILayer2.h>
+
+// Symbol
+#include <DOM/ILibraryItem.h>
+#include <DOM/LibraryItem/ISymbolItem.h>
+#include <DOM/LibraryItem/IMediaItem.h>
+
+// Image processing
+#include <opencv2/opencv.hpp>
+
+// Modifier
+#include <SupercellFlash/objects/MovieClipModifier.h>
+
+// Generators
+#include "Publisher/ShapeGenerator.h"
+#include "Publisher/TimelineBuilder/Builder.h"
+
+// Writer
+#include "Publisher/Shared/SharedWriter.h"
+
+using namespace FCM;
+using namespace std;
 
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher {
-            PIFCMCallback m_callback = nullptr;
-            SharedWriter* m_writer = nullptr;
+            PIFCMCallback m_callback;
+            SharedWriter* m_writer;
 
-            FrameGenerator frameGenerator;
+            TimelineBuilder timelineBuilder;
             ShapeGenerator shapeGenerator;
 
                                     // Name  /  Id
-            std::vector<std::pair<std::string, U_Int16>> m_symbolsDict;
+            vector<pair<u16string, uint16_t>> m_symbolsDict;
+                                            // Type / Id
+            vector< pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
 
-            U_Int16 m_id = 0;
+            uint32_t m_id = 0;
 
             Console console;
 
+            // Services
+            AutoPtr<IFCMCalloc> m_calloc;
+            AutoPtr<DOM::Service::Tween::ITweenerService> m_tweener;
+
         public:
-            ResourcePublisher() { }
+            ResourcePublisher(PIFCMCallback callback, SharedWriter* writer):
+                m_callback(callback),
+                timelineBuilder(callback, *this),
+                shapeGenerator(callback, *this),
+                m_writer(writer)
+            {
+                console.Init("ResourcePublisher", m_callback);
+            }
+
             ~ResourcePublisher() { }
 
-            Result AddLibraryItem(
+            uint16_t AddLibraryItem(
                 DOM::ILibraryItem* item,
-                uint16_t& identifer,
-                bool addExportName = false
+                bool hasName = false
             );
 
-            Result AddSymbol(
-                std::string name,
+            uint16_t AddSymbol(
+                u16string name,
                 DOM::LibraryItem::ISymbolItem* item,
-                uint16_t& identifer,
-                bool addExportName = false
+                bool hasName = false
             );
 
-            Result AddMovieclip(
-                std::string name,
-                DOM::ITimeline* timeline,
-                uint16_t& identifer
+            uint16_t AddMovieclip(
+                u16string name,
+                AutoPtr<DOM::ITimeline> timeline,
+                bool hasName
             );
 
-            Result AddShape(
-                std::string name,
-                DOM::ITimeline* timeline,
-                uint16_t& identifer
+            uint16_t AddShape(
+                u16string name,
+                DOM::ITimeline* timeline
             );
 
-            Result GetIdentifer(
-                std::string name,
-                uint16_t& identifer
+            uint16_t AddModifier(
+                sc::MovieClipModifier::Type type
             );
 
-            Result Init(
-                SharedWriter* writer,
-                PIFCMCallback callback
+            uint16_t GetIdentifer(
+                u16string name
             );
 
-            Result Finalize();
+            uint16_t GetIdentifer(
+                sc::MovieClipModifier::Type type
+            );
 
+            void Finalize();
+
+            // Services
+            AutoPtr<DOM::Service::Tween::ITweenerService> GetTweenerService() {
+                if (!m_tweener) {
+                    FCM::AutoPtr<FCM::IFCMUnknown> unk;
+                    m_callback->GetService(TWEENER_SERVICE, unk.m_Ptr);
+
+                    m_tweener = unk;
+                }
+
+                return m_tweener;
+            }
+
+            AutoPtr<IFCMCalloc> GetCallocService() {
+                if (!m_calloc) {
+                    m_calloc = Utils::GetCallocService(m_callback);
+                }
+
+                return m_calloc;
+            }
 		};
 	}
 }

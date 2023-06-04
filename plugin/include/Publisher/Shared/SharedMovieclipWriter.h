@@ -12,14 +12,20 @@ using namespace FCM;
 namespace sc {
 	namespace Adobe {
 		class SharedMovieclipWriter {
+		protected:
+			uint32_t m_position = 0;
 		public:
-			virtual Result InitTimeline(U_Int32 frameCount) = 0;
+			void next() {
+				m_position++;
+			}
 
-			virtual Result SetLabel(U_Int32 frameIndex, std::string label) = 0;
+			virtual void InitTimeline(uint32_t frameCount) = 0;
 
-			virtual Result AddFrameElement(U_Int32 frameIndex, U_Int16 id, U_Int8 blending, std::string name, DOM::Utils::MATRIX2D& matrix, DOM::Utils::COLOR_MATRIX& color) = 0;
+			virtual void SetLabel(std::string label) = 0;
 
-			virtual void Finalize(U_Int16 id, U_Int8 fps, std::string name) = 0;
+			virtual void AddFrameElement(uint16_t id, uint8_t blending, std::string name, DOM::Utils::MATRIX2D* matrix, DOM::Utils::COLOR_MATRIX* color) = 0;
+
+			virtual void Finalize(uint16_t id, uint8_t fps, std::u16string name) = 0;
 		};
 
 		typedef std::shared_ptr<SharedMovieclipWriter> pSharedMovieclipWriter;

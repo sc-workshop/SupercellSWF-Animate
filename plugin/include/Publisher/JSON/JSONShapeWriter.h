@@ -21,8 +21,8 @@ namespace sc {
 			JSONNode m_bitmaps = JSONNode(JSON_ARRAY);
 
 		public:
-			Result Init(JSONWriter* writer, PIFCMCallback callback);
-			Result AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
+			void Init(JSONWriter* writer, PIFCMCallback callback);
+			void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
 			void Finalize(U_Int16 id);
 		};

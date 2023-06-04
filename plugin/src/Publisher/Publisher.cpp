@@ -1,4 +1,5 @@
 #include "Publisher/Publisher.h"
+#include <chrono>
 
 namespace sc {
 	namespace Adobe {
@@ -7,11 +8,16 @@ namespace sc {
 			const PIFCMDictionary publishSettings,
 			const PIFCMDictionary config)
 		{
-			FCM::Result res;
-			FCM::AutoPtr<FCM::IFCMUnknown> pUnk;
-			FCM::AutoPtr<FCM::IFCMCalloc> calloc;
-
 			console.Init("Publisher", GetCallback());
+
+			/*StringRep16 documentPath;
+			document->GetPath(&documentPath);
+
+			if (documentPath == NULL) {
+				console.log("Document not saved. Please save document before exporting.");
+				return FCM_EXPORT_FAILED;
+			}*/
+			
 			m_config = PublisherConfig::FromDict(publishSettings);
 
 			if (m_config.output.empty()) {
@@ -19,28 +25,16 @@ namespace sc {
 				return FCM_EXPORT_FAILED;
 			}
 
-			calloc = Utils::GetCallocService(GetCallback());
-			ASSERT(calloc.m_Ptr != NULL);
-
 			FCM::Double fps;
 			FCM::U_Int8 framesPerSec;
 
-			res = document->GetFrameRate(fps);
-			FCM_CHECK;
-
+			document->GetFrameRate(fps);
 			framesPerSec = (FCM::U_Int8)fps;
-			FCM_CHECK;
 
 			FCM::FCMListPtr libraryItems;
-			res = document->GetLibraryItems(libraryItems.m_Ptr);
-			if (FCM_FAILURE_CODE(res))
-			{
-				console.log("Failed to get library items");
-				return res;
-			}
+			document->GetLibraryItems(libraryItems.m_Ptr);
 
 			SharedWriter* writer;
-
 			if (m_config.debug) {
 				writer = new JSONWriter();
 			}
@@ -48,59 +42,49 @@ namespace sc {
 				writer = new Writer();
 			}
 
-			res = writer->Init(GetCallback(), m_config);
-			FCM_CHECK;
+			auto start = chrono::high_resolution_clock::now();
 
-			res = m_resources.Init(writer, GetCallback());
-			FCM_CHECK;
+			try {
+				writer->Init(GetCallback(), m_config);
+				ResourcePublisher resources(GetCallback(), writer);
 
-			res = ExportLibraryItems(libraryItems);
-			FCM_CHECK;
+				ExportLibraryItems(libraryItems, resources);
 
-			res = m_resources.Finalize();
+				resources.Finalize();
+			}
+			catch (const exception& err) {
+				console.log("Error: %s", err.what());
+			}
 
-			return res;
+			auto end = chrono::high_resolution_clock::now();
+
+			long long executionTime = chrono::duration_cast<chrono::seconds>(end - start).count();
+			console.log("Export done by %llu second(-s)", executionTime);
+
+			return FCM_SUCCESS;
 		}
 
-		Result Publisher::Publish(DOM::PIFLADocument, DOM::PITimeline, const Exporter::Service::RANGE&, const PIFCMDictionary, const PIFCMDictionary) {
-			return FCM_SERVICE_NOT_FOUND;
-		};
+		void Publisher::ExportLibraryItems(FCMListPtr libraryItems, ResourcePublisher& resources) {
+			uint32_t itemCount = 0;
+			libraryItems->Count(itemCount);
 
-		FCM::Result Publisher::ExportLibraryItems(FCM::FCMListPtr libraryItems) {
-			U_Int32 itemCount = 0;
-			Result res;
-
-			res = libraryItems->Count(itemCount);
-			FCM_CHECK;
-
-			AutoPtr<FCM::IFCMUnknown> unknownService;
-			res = GetCallback()->GetService(SRVCID_Core_Memory, unknownService.m_Ptr);
-			AutoPtr<IFCMCalloc> callocService = unknownService;
-			FCM_CHECK;
-
-			for (FCM::U_Int32 i = 0; i < itemCount; i++)
+			for (uint32_t i = 0; i < itemCount; i++)
 			{
-				FCM::StringRep16 itemName;
-				std::string itemNameStr;
-
 				AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
 
-				res = item->GetName(&itemName);
-				FCM_CHECK;
-
-				itemNameStr = Utils::ToString(itemName, GetCallback());
+				StringRep16 itemNamePtr;
+				item->GetName(&itemNamePtr);
+				u16string itemName = (const char16_t*)itemNamePtr;
+				resources.GetCallocService()->Free(itemNamePtr);
 
 				AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
 				if (folderItem)
 				{
-					FCM::FCMListPtr childrens;
-
-					res = folderItem->GetChildren(childrens.m_Ptr);
-					FCM_CHECK;
+					FCMListPtr childrens;
+					folderItem->GetChildren(childrens.m_Ptr);
 
 					// Export all its children
-					res = ExportLibraryItems(childrens);
-					FCM_CHECK;
+					ExportLibraryItems(childrens, resources);
 				}
 				else
 				{
@@ -108,27 +92,20 @@ namespace sc {
 					if (!symbolItem) continue;
 
 					AutoPtr<IFCMDictionary> dict;
-					res = item->GetProperties(dict.m_Ptr);
-					FCM_CHECK;
+					item->GetProperties(dict.m_Ptr);
 
 					std::string symbolType;
 					Utils::ReadString(dict, kLibProp_SymbolType_DictKey, symbolType);
 
 					if (symbolType != "MovieClip") continue;
 
-					uint16_t symbolIdentifer;
-					res = m_resources.GetIdentifer(itemNameStr, symbolIdentifer);
-					FCM_CHECK;
+					uint16_t symbolIdentifer = resources.GetIdentifer(itemName);
 
 					if (symbolIdentifer != UINT16_MAX) continue;
 
-					res = m_resources.AddSymbol(itemNameStr, symbolItem, symbolIdentifer, true);
-					FCM_CHECK;
+					resources.AddSymbol(itemName, symbolItem, true);
 				}
-
-				callocService->Free((FCM::PVoid)itemName);
 			}
-			return FCM_SUCCESS;
 		};
 
 		FCM::Result RegisterPublisher(PIFCMDictionary plugins, FCM::FCMCLSID docId)

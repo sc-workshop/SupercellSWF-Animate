@@ -15,6 +15,7 @@ namespace sc {
 			Console console;
 			PIFCMCallback m_callback = nullptr;
 
+			JSONNode m_modifiers = JSONNode(JSON_ARRAY);
 			JSONNode m_movieclips = JSONNode(JSON_ARRAY);
 			JSONNode m_shapes = JSONNode(JSON_ARRAY);
 
@@ -25,10 +26,7 @@ namespace sc {
 			fs::path imageFolder;
 			U_Int32 imageCount = 0;
 
-			Result Init(PIFCMCallback callback, const PublisherConfig& config) {
-				if (!callback) {
-					return FCM_EXPORT_FAILED;
-				}
+			void Init(PIFCMCallback callback, const PublisherConfig& config) {
 				m_callback = callback;
 				outputFilepath = config.output;
 				outputFolder = config.output.parent_path();
@@ -41,8 +39,6 @@ namespace sc {
 				if (FCM_FAILURE_CODE(res)) {
 					console.log("Failed to create output directory with images: %s", imageFolder.c_str());
 				}
-
-				return FCM_SUCCESS;
 			}
 
 			pSharedMovieclipWriter AddMovieclip() {
@@ -67,6 +63,13 @@ namespace sc {
 				m_shapes.push_back(shape);
 			}
 
+			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) {
+				JSONNode modifier;
+				modifier.push_back(JSONNode("id", id));
+				modifier.push_back(JSONNode("type", (uint8_t)type));
+				m_modifiers.push_back(modifier);
+			}
+
 			void Finalize() {
 				JSONNode root;
 
@@ -75,10 +78,16 @@ namespace sc {
 					m_shapes
 				);
 
+				m_modifiers.set_name("modifiers");
+				root.push_back(
+					m_modifiers
+				);
+
 				m_movieclips.set_name("movieclips");
 				root.push_back(
 					m_movieclips
 				);
+
 
 				std::fstream file(outputFilepath, std::ios_base::trunc | std::ios_base::out);
 				file << root.write_formatted();

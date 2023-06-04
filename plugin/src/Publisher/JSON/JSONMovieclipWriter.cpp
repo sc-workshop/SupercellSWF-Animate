@@ -7,27 +7,23 @@ using namespace FCM;
 
 namespace sc {
 	namespace Adobe {
-		Result JSONMovieclipWriter::Init(JSONWriter* writer, PIFCMCallback callback) {
-			Result res = FCM_SUCCESS;
-
+		void JSONMovieclipWriter::Init(JSONWriter* writer, PIFCMCallback callback) {
 			m_callback = callback;
 
 			if (writer) {
 				m_writer = writer;
 			}
 			else {
-				return FCM_EXPORT_FAILED;
+				return;
 			}
 
-			console.Init("MovieClip Writer", m_callback);
-
-			return FCM_SUCCESS;
+			console.Init("[JSON] MovieClip", m_callback);
 		}
 
-		Result JSONMovieclipWriter::InitTimeline(U_Int32 frameCount) {
-			m_frames->clear();
+		void JSONMovieclipWriter::InitTimeline(uint32_t frameCount) {
+			m_frames.clear();
 
-			for (U_Int32 i = 0; frameCount > i; i++) {
+			for (uint32_t i = 0; frameCount > i; i++) {
 				JSONNode frame;
 
 				JSONNode frameName("label", "");
@@ -38,26 +34,20 @@ namespace sc {
 				frame.push_back(frameName);
 				frame.push_back(frameElements);
 
-				m_frames->push_back(frame);
+				m_frames.push_back(frame);
 			}
-
-			return FCM_SUCCESS;
 		}
 
-		Result JSONMovieclipWriter::SetLabel(U_Int32 frameIndex, std::string label) {
-			m_frames->at(frameIndex)[0] = JSONNode("label", label);
-
-			return FCM_SUCCESS;
-
+		void JSONMovieclipWriter::SetLabel(std::string label) {
+			m_frames.at(m_position)[0] = JSONNode("label", label);
 		}
 
-		Result JSONMovieclipWriter::AddFrameElement(
-			U_Int32 frameIndex,
-			U_Int16 id,
-			U_Int8 blending,
+		void JSONMovieclipWriter::AddFrameElement(
+			uint16_t id,
+			uint8_t blending,
 			std::string name,
-			DOM::Utils::MATRIX2D& matrix,
-			DOM::Utils::COLOR_MATRIX& color
+			DOM::Utils::MATRIX2D* matrix,
+			DOM::Utils::COLOR_MATRIX* color
 		) {
 			JSONNode frameElement;
 
@@ -65,51 +55,58 @@ namespace sc {
 				JSONNode("id", id)
 			);
 
-			frameElement.push_back(JSONNode("matrix", Utils::ToString(matrix)));
+			if (matrix != nullptr) {
+				JSONNode matrixNode;
+				matrixNode.set_name("matrix");
+				matrixNode.push_back(JSONNode("a", matrix->a));
+				matrixNode.push_back(JSONNode("b", matrix->b));
+				matrixNode.push_back(JSONNode("c", matrix->c));
+				matrixNode.push_back(JSONNode("d", matrix->d));
+				matrixNode.push_back(JSONNode("tx", matrix->tx));
+				matrixNode.push_back(JSONNode("ty", matrix->ty));
+				frameElement.push_back(matrixNode);
+			}
+			
+			if (color != nullptr) {
+				JSONNode colorNode;
+				colorNode.set_name("color");
 
-			JSONNode colorNode;
-			colorNode.set_name("color");
+				colorNode.push_back(JSONNode("rMul", color->matrix[0][0]));
+				colorNode.push_back(JSONNode("gMul", color->matrix[1][1]));
+				colorNode.push_back(JSONNode("bMul", color->matrix[2][2]));
+				colorNode.push_back(JSONNode("aMul", color->matrix[3][3]));
 
-			colorNode.push_back(JSONNode("rMul", color.matrix[0][0]));
-			colorNode.push_back(JSONNode("gMul", color.matrix[1][1]));
-			colorNode.push_back(JSONNode("bMul", color.matrix[2][2]));
-			colorNode.push_back(JSONNode("aMul", color.matrix[3][3]));
+				colorNode.push_back(JSONNode("rAdd", color->matrix[0][4]));
+				colorNode.push_back(JSONNode("gAdd", color->matrix[1][4]));
+				colorNode.push_back(JSONNode("bAdd", color->matrix[2][4]));
+				colorNode.push_back(JSONNode("aAdd", color->matrix[3][4]));
 
-			colorNode.push_back(JSONNode("rAdd", color.matrix[0][4]));
-			colorNode.push_back(JSONNode("gAdd", color.matrix[1][4]));
-			colorNode.push_back(JSONNode("bAdd", color.matrix[2][4]));
-			colorNode.push_back(JSONNode("aAdd", color.matrix[3][4]));
-
-			frameElement.push_back(colorNode);
-
-			if (m_frames->size() < (frameIndex + 1)) {
-				console.log("Failed to get frame %d", frameIndex);
-				return FCM_EXPORT_FAILED;
+				frameElement.push_back(colorNode);
 			}
 
 			// Pushing to "elements"
-			m_frames->at(frameIndex)[1].push_back(frameElement);
-
-			return FCM_SUCCESS;
+			m_frames.at(m_position)[1].push_back(frameElement);
 		}
 
-		void JSONMovieclipWriter::Finalize(U_Int16 id, U_Int8 fps, std::string name) {
+		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps, u16string name) {
 			JSONNode root;
 
 			root.push_back(
 				JSONNode("id", id)
 			);
 
+			fs::path symbolPath(name);
 			root.push_back(
-				JSONNode("name", name)
+				JSONNode("name", symbolPath.filename().string())
 			);
 
 			root.push_back(
 				JSONNode("fps", fps)
 			);
 
+			m_frames.set_name("frames");
 			root.push_back(
-				*m_frames
+				m_frames
 			);
 
 			m_writer->AddMovieclip(root);

@@ -7,34 +7,24 @@ using namespace FCM;
 
 namespace sc {
 	namespace Adobe {
-		Result MovieclipWriter::Init(Writer* writer, PIFCMCallback callback) {
-			Result res = FCM_SUCCESS;
-
+		void MovieclipWriter::Init(Writer* writer, PIFCMCallback callback) {
 			m_callback = callback;
-
-			if (writer) {
-				m_writer = writer;
-			}
-			else {
-				return FCM_EXPORT_FAILED;
-			}
+			m_writer = writer;
 
 			console.Init("Timeline", m_callback);
-
-			return FCM_SUCCESS;
 		}
 
 		uint16_t MovieclipWriter::GetInstanceIndex(
-			U_Int32 elementsOffset,
-			U_Int16 elementsCount,
-			U_Int16 id,
-			U_Int8 blending,
+			uint16_t elementsCount,
+			uint16_t id,
+			uint8_t blending,
 			std::string name
 		) {
 
 			uint16_t frameInstancesOffset = 0;
+			uint32_t frameElementsLastIndex = (uint32_t)m_object->frameElements.size() - 1;
 			for (uint32_t i = 0; elementsCount > i; i++) {
-				uint16_t& instanceIndex = m_object->frameElements[elementsOffset + i]->instanceIndex;
+				uint16_t& instanceIndex = m_object->frameElements[frameElementsLastIndex - i]->instanceIndex;
 				pDisplayObjectInstance& instance = m_object->instances[instanceIndex];
 
 				if (
@@ -73,46 +63,31 @@ namespace sc {
 			return instancesCount;
 		}
 
-		Result MovieclipWriter::InitTimeline(U_Int32 frameCount) {
-			for (U_Int32 i = 0; frameCount > i; i++) {
+		void MovieclipWriter::InitTimeline(uint32_t frameCount) {
+			for (uint32_t i = 0; frameCount > i; i++) {
 				m_object->frames.push_back(
 					pMovieClipFrame(new MovieClipFrame())
 				);
 			}
-			return FCM_SUCCESS;
 		}
 
-		Result MovieclipWriter::SetLabel(U_Int32 frameIndex, std::string label) {
-			if (m_object->frames.size() > frameIndex) return FCM_EXPORT_FAILED;
-
-			m_object->frames[frameIndex]->label(label);
-			return FCM_SUCCESS;
+		void MovieclipWriter::SetLabel(std::string label) {
+			m_object->frames[m_position]->label(label);
 		}
 
-		Result MovieclipWriter::AddFrameElement(
-			U_Int32 frameIndex,
+		void MovieclipWriter::AddFrameElement(
+			uint16_t id,
+			uint8_t blending,
+			string name,
 
-			U_Int16 id,
-			U_Int8 blending,
-			std::string name,
-
-			DOM::Utils::MATRIX2D& matrix,
-			DOM::Utils::COLOR_MATRIX& color
+			DOM::Utils::MATRIX2D* matrix,
+			DOM::Utils::COLOR_MATRIX* color
 		) {
-			if (m_object->frames.size() < frameIndex) return FCM_EXPORT_FAILED;
-
-			// Frame elements offset in flat vector
-			uint32_t elementsOffset = 0;
-			for (uint16_t i = 0; frameIndex > i; i++) {
-				elementsOffset += m_object->frames[i]->elementsCount();
-			}
-
-			pMovieClipFrame& frame = m_object->frames[frameIndex];
+			pMovieClipFrame& frame = m_object->frames[m_position];
 			uint16_t elementsCount = frame->elementsCount();
 
 			// Index of bind element
-			U_Int16 instanceIndex = GetInstanceIndex(
-				elementsOffset,
+			uint16_t instanceIndex = GetInstanceIndex(
 				elementsCount,
 				id, blending, name);
 
@@ -120,48 +95,44 @@ namespace sc {
 			pMovieClipFrameElement element = pMovieClipFrameElement(new MovieClipFrameElement());
 			element->instanceIndex = instanceIndex;
 
-			m_object->frameElements.insert(
-				m_object->frameElements.begin() + (elementsOffset + elementsCount),
-				element
-			);
+			m_object->frameElements.push_back(element);
 			frame->elementsCount(elementsCount + 1);
 
 			// matrices.size = colors.size = object.frameElements.size
 
 			// May be unsafe but this cast must be faster
-			Matrix2D* movieMatrix = new Matrix2D();
-			memcpy(movieMatrix, &matrix, sizeof(*movieMatrix));
+			pMatrix2D transformMatrix;
+			pColorTransform transformColor;
 
-			m_matrices.insert(
-				m_matrices.begin() + (elementsOffset + elementsCount),
-				pMatrix2D(movieMatrix)
-			);
+			if (matrix != nullptr) {
+				transformMatrix = 
+					pMatrix2D( // I know it's a bullshit
+						new Matrix2D(*((Matrix2D*)matrix))
+				);
+			}
+			
+			if (color != nullptr) {
+				transformColor = pColorTransform(new ColorTransform());
 
-			// Color
-			pColorTransform movieColor(new ColorTransform());
+				transformColor->alpha = (uint8_t)clamp(
+					(int)((color->matrix[3][3] * 255) + color->matrix[3][4]),
+					0, 255
+				);
 
-			movieColor->alpha = (uint8_t)clamp(
-				(int)((color.matrix[3][3] * 255) + color.matrix[3][4]),
-				0, 255
-			);
+				transformColor->redMul = (uint8_t)clamp(int(color->matrix[0][0] * 255), 0, 255);
+				transformColor->greenMul = (uint8_t)clamp(int(color->matrix[1][1] * 255), 0, 255);
+				transformColor->blueMul = (uint8_t)clamp(int(color->matrix[2][2] * 255), 0, 255);
 
-			movieColor->redMul = (uint8_t)clamp(int(color.matrix[0][0] * 255), 0, 255);
-			movieColor->greenMul = (uint8_t)clamp(int(color.matrix[1][1] * 255), 0, 255);
-			movieColor->blueMul = (uint8_t)clamp(int(color.matrix[2][2] * 255), 0, 255);
+				transformColor->redAdd = (uint8_t)clamp(int(color->matrix[0][4]), 0, 255);
+				transformColor->greenAdd = (uint8_t)clamp(int(color->matrix[1][4]), 0, 255);
+				transformColor->blueAdd = (uint8_t)clamp(int(color->matrix[2][4]), 0, 255);
+			}
 
-			movieColor->redAdd = (uint8_t)clamp(int(color.matrix[0][4]), 0, 255);
-			movieColor->greenAdd = (uint8_t)clamp(int(color.matrix[1][4]), 0, 255);
-			movieColor->blueAdd = (uint8_t)clamp(int(color.matrix[2][4]), 0, 255);
-
-			m_colors.insert(
-				m_colors.begin() + (elementsOffset + elementsCount),
-				movieColor
-			);
-
-			return FCM_SUCCESS;
+			m_matrices.push_back(transformMatrix);
+			m_colors.push_back(transformColor);
 		}
 
-		void MovieclipWriter::Finalize(U_Int16 id, U_Int8 fps, std::string name) {
+		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps, u16string name) {
 			//TODO: export name filtering
 			m_object->id(id);
 			m_object->frameRate(fps);
@@ -169,7 +140,10 @@ namespace sc {
 			if (!name.empty()) {
 				pExportName exportName = pExportName(new ExportName());
 				exportName->id(id);
-				exportName->name(name);
+
+				fs::path symbolPath(name);
+				exportName->name(symbolPath.filename().string());
+
 				m_writer->swf.exports.push_back(exportName);
 			}
 
@@ -218,16 +192,20 @@ namespace sc {
 				uint16_t matrixIndex = 0xFFFF;
 				uint16_t colorIndex = 0xFFFF;
 
-				if (!bankCopy->getMatrixIndex(m_matrices[i].get(), matrixIndex)) {
-					matrixIndex = (uint16_t)bankCopy->matrices.size();
-					bankCopy->matrices.push_back(m_matrices[i]);
+				if (m_matrices[i]) {
+					if (!bankCopy->getMatrixIndex(m_matrices[i].get(), matrixIndex)) {
+						matrixIndex = (uint16_t)bankCopy->matrices.size();
+						bankCopy->matrices.push_back(m_matrices[i]);
+					}
 				}
 
-				if (!bankCopy->getColorTransformIndex(m_colors[i].get(), colorIndex)) {
-					colorIndex = (uint16_t)bankCopy->colorTransforms.size();
-					bankCopy->colorTransforms.push_back(m_colors[i]);
+				if (m_colors[i]) {
+					if (!bankCopy->getColorTransformIndex(m_colors[i].get(), colorIndex)) {
+						colorIndex = (uint16_t)bankCopy->colorTransforms.size();
+						bankCopy->colorTransforms.push_back(m_colors[i]);
+					}
 				}
-			
+
 				m_object->frameElements[i]->matrixIndex = matrixIndex;
 				m_object->frameElements[i]->colorTransformIndex = colorIndex;
 			}

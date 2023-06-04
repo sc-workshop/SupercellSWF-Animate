@@ -21,7 +21,7 @@ namespace sc {
 
 		public:
 
-			virtual Result _FCMCALL GetFeatureMatrix(DocType::PIFeatureMatrix& pFeatureMatrix);
+			virtual Result GetFeatureMatrix(DocType::PIFeatureMatrix& pFeatureMatrix);
 
 			DocumentType();
 

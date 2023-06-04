@@ -2,16 +2,11 @@
 
 namespace sc {
 	namespace Adobe {
-		Result Writer::Init(PIFCMCallback callback, const PublisherConfig& config) {
-			if (!callback) {
-				return FCM_EXPORT_FAILED;
-			}
+		void Writer::Init(PIFCMCallback callback, const PublisherConfig& config) {
 			m_callback = callback;
 			m_config = config;
 
 			console.Init("Writer", m_callback);
-
-			return FCM_SUCCESS;
 		}
 
 		pSharedMovieclipWriter Writer::AddMovieclip() {
