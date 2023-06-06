@@ -38,11 +38,15 @@ namespace sc {
 				}
 
 				uint16_t id = 0xFFFF;
-				// If frame element is Symbol or Bitmap
-				AutoPtr<DOM::FrameElement::IInstance> libraryItemElement = frameElement;
-				if (libraryItemElement) {
+				MATRIX2D* matrix = NULL;
+				COLOR_MATRIX* color = NULL;
+
+				AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
+				AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
+
+				if (libraryElement) {
 					DOM::PILibraryItem libraryItem;
-					libraryItemElement->GetLibraryItem(libraryItem);
+					libraryElement->GetLibraryItem(libraryItem);
 
 					StringRep16 itemNamePtr;
 					libraryItem->GetName(&itemNamePtr);
@@ -55,6 +59,15 @@ namespace sc {
 					if (id == UINT16_MAX) {
 						id = m_resources.AddLibraryItem(libraryItem);
 					}
+
+					// Transform 
+					matrix = new MATRIX2D();
+					frameElement->GetMatrix(*matrix);
+
+					if (symbolItem) {
+						color = new COLOR_MATRIX();
+						symbolItem->GetColorMatrix(*color);
+					}
 				}
 
 				if (id == 0xFFFF) {
@@ -66,19 +79,6 @@ namespace sc {
 					0,
 					"" // TODO Blending / Element names
 				});
-
-				// Element transformation processing
-				MATRIX2D* matrix = NULL;
-				COLOR_MATRIX* color = NULL;
-
-				AutoPtr<DOM::FrameElement::ISymbolInstance> symbol = frameElement;
-				if (symbol) {
-					matrix = new MATRIX2D();
-					color = new COLOR_MATRIX();
-
-					frameElement->GetMatrix(*matrix);
-					symbol->GetColorMatrix(*color);
-				}
 
 				m_matrices.push_back(
 					shared_ptr<MATRIX2D>(matrix)

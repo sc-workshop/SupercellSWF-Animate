@@ -32,7 +32,17 @@ namespace sc {
 
 			AtlasGeneratorConfig config;
 			vector<cv::Mat> textures;
-			AtlasGenerator::Generate(items, textures, config);
+			AtlasGeneratorResult packageResult =  AtlasGenerator::Generate(items, textures, config);
+			switch (packageResult) {
+			case AtlasGeneratorResult::BAD_POLYGON:
+				throw exception("[AtlasGenerator] Failed to generate polygon");
+			case AtlasGeneratorResult::TOO_MANY_IMAGES:
+				throw exception("[AtlasGenerator] Too many image for one sheet");
+			case AtlasGeneratorResult::OK:
+				break;
+			default:
+				throw exception("[AtlasGenerator] Unknown error");
+			}
 
 			uint16_t itemIndex = 0;
 			for (pShape& shape : swf.shapes) {
