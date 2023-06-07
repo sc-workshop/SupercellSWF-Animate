@@ -141,6 +141,21 @@ namespace sc {
             return UINT16_MAX;
         }
 
+        void ResourcePublisher::AddCachedBitmap(u16string name, cv::Mat image) {
+            m_imageSymbolsDataDict.push_back({ name, image });
+        }
+
+        bool ResourcePublisher::GetCachedBitmap(u16string name, cv::Mat& result) {
+            for (pair<u16string, cv::Mat>& bitmap : m_imageSymbolsDataDict) {
+                if (name == bitmap.first) {
+                    result = bitmap.second;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         void ResourcePublisher::Finalize() {
             m_id = 0;
             m_symbolsDict.clear();

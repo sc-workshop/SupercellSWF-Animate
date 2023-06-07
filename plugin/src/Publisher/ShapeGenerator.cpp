@@ -42,13 +42,16 @@ namespace sc {
 				DOM::Utils::MATRIX2D transformMatrix;
 				frameElement->GetMatrix(transformMatrix);
 
-				//TODO: Color transform for bitmaps?
-
 				AutoPtr<DOM::FrameElement::IInstance> instance = frameElement.m_Ptr;
 
 				if (instance) {
 					AutoPtr<DOM::ILibraryItem> item;
 					instance->GetLibraryItem(item.m_Ptr);
+
+					StringRep16 itemNamePtr;
+					item->GetName(&itemNamePtr);
+					u16string itemName = (const char16_t*)itemNamePtr;
+					m_resources.GetCallocService()->Free(itemNamePtr);
 
 					AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
@@ -60,7 +63,10 @@ namespace sc {
 
 						if (bitmap) {
 							cv::Mat bitmapImage;
-							GetImage(media, bitmapImage);
+							if (!m_resources.GetCachedBitmap(itemName, bitmapImage)) {
+								GetImage(media, bitmapImage);
+								m_resources.AddCachedBitmap(itemName, bitmapImage);
+							}
 
 							writer->AddGraphic(bitmapImage, transformMatrix);
 						}

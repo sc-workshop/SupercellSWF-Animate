@@ -43,8 +43,12 @@ namespace sc {
 
                                     // Name  /  Id
             vector<pair<u16string, uint16_t>> m_symbolsDict;
+
+                         // Name / Image
+            vector<pair<u16string, cv::Mat>> m_imageSymbolsDataDict;
+
                                             // Type / Id
-            vector< pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
+            vector<pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
 
             uint32_t m_id = 0;
 
@@ -99,6 +103,10 @@ namespace sc {
             uint16_t GetIdentifer(
                 sc::MovieClipModifier::Type type
             );
+
+            void AddCachedBitmap(u16string name, cv::Mat image);
+
+            bool GetCachedBitmap(u16string name, cv::Mat& result);
 
             void Finalize();
 
