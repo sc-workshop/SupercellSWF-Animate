@@ -8,7 +8,7 @@ namespace sc {
 			//Basic
 			std::string output;
 			Utils::ReadString(dict, PUBLISHER_OUTPUT, output);
-			result.output = Utils::GetPath(output);
+			result.output = fs::path(Utils::ToUtf16(output));
 
 			std::string debugMode = "0";
 			Utils::ReadString(dict, PUBLISHER_DEBUG, debugMode);

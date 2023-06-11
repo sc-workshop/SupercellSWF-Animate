@@ -1,24 +1,31 @@
-import { Component, createElement } from 'react';
+import { createElement } from 'react';
 import { BasicSettings } from './Components/Publisher/BasicSettings';
 import { publish } from './Components';
 import { Stylefield } from './Components/Shared/Stylefield';
 import { Header } from './Components/Publisher/Header';
-import { setParam } from './Components/publisherState';
-import { Locale } from './Localization';
-import { SWFSettings } from './Components/Publisher/SWFSettings';
-
 
 function Publisher() {
+  const headerLine = createElement("hr",
+    {
+      key: "HeaderLine",
+      style: {
+        width: "99%",
+        display: "block",
+        border: "2px solid #484848",
+      }
+    }
+  )
+
   const publishButton = createElement("button",
     {
       style: {
         bottom: "25px",
-        height: "25px",
-        width: "20%",
+        width: "100px",
+        height: "35px",
         position: "absolute",
-        border: "1px solid #070707",
-        background: "#444444",
-        color: "#c6c6c6"
+        border: "3px solid white",
+        borderRadius: "20px",
+        background: "rgba(0,0,0,0.0)",
       },
       onClick: publish
     },
@@ -27,35 +34,18 @@ function Publisher() {
       textShadow: "1px 1px black"
     }))
 
-  const debugCheckbox = createElement(
-    "input",
-    {
-      type: "checkbox",
-      onChange: function(event) {
-        setParam(
-          "debug",
-          event.currentTarget.checked ? "1" : "0"
-        );
-      },
-      style: {
-        position: "fixed",
-        left: "98%",
-        top: "98%",
-        opacity: "1%"
-      }
-    }
-  )
-
   return createElement("div",
     {
       id: "Publisher",
+      style: {
+        display: 'block'
+      },
       children: [
-        <Header></Header>,
-        <BasicSettings></BasicSettings>,
-        <SWFSettings></SWFSettings>,
+        Header(),
+        headerLine,
+        BasicSettings(),
 
-        publishButton,
-        debugCheckbox
+        publishButton
       ]
     });
 }

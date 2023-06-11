@@ -2,7 +2,8 @@
 
 #include "FCMTypes.h"
 #include "DocType/IDocType.h"
-#include "Version.h"
+#include "Module/Version.h"
+#include "Module/FCM_Identifiers.h"
 
 #include <map>
 #include <string>

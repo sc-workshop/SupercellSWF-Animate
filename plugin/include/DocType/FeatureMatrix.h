@@ -3,22 +3,22 @@
 #include "FCMTypes.h"
 #include "DocType/IFeatureMatrix.h"
 #include "DataTypes.h"
+#include "Module/Version.h"
+#include "Module/AppContext.h"
 
-#include "libjson.h"
-
-#include "Version.h"
-#include "io/Console.h"
+#include "JSON.hpp"
 
 using namespace FCM;
 using namespace DocType;
+using namespace nlohmann;
 
 namespace sc {
 	namespace Adobe {
-		class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
+		class FeatureMatrix : public IFeatureMatrix, public FCMObjectBase
 		{
 			BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)
 				INTERFACE_ENTRY(IFeatureMatrix)
-				END_INTERFACE_MAP
+			END_INTERFACE_MAP
 
 		public:
 
@@ -42,11 +42,11 @@ namespace sc {
 				CStringRep16 inPropName,
 				FCM::VARIANT& outDefVal);
 
-			FeatureMatrix();
+			FCM::Result Init(FCM::PIFCMCallback callback);
 
-			~FeatureMatrix();
-
-			FCM::Result Init(FCM::PIFCMCallback pCallback);
+			void UpdateContext(FCM::PIFCMCallback callback) {
+				m_context = shared_ptr<AppContext>(new AppContext(callback, nullptr));
+			}
 
 		private:
 
@@ -64,16 +64,16 @@ namespace sc {
 
 			Value* UpdateValue(Property* inProperty, const std::map<std::string, std::string>& inAttrs);
 
-			void ReadFeature(JSONNode& feature);
-			void ReadProperty(Feature& feature, JSONNode& property);
-			void ReadValue(Property& property, JSONNode& value);
+			void ReadFeature(json& feature);
+			void ReadProperty(Feature& feature, json& property);
+			void ReadValue(Property& property, json& value);
 
 		private:
-			Console console;
-
 			FeatureMap m_features;
 			Feature* m_currentFeature;
 			Property* m_currentProperty;
+
+			shared_ptr<AppContext> m_context;
 
 			friend class FeatureDocumentHandler;
 		};

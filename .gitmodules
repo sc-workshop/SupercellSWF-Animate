@@ -1,6 +1,6 @@
 [submodule "plugin/ThirdParty/SC"]
 	path = plugin/ThirdParty/SC
-	url = https://github.com/scwmake/Supercell-Tools
+	url = https://github.com/scwmake/SupercellFlash
 [submodule "plugin/ThirdParty/AtlasGenerator"]
 	path = plugin/ThirdParty/AtlasGenerator
 	url = https://github.com/Daniil-SV/Atlas-Generator

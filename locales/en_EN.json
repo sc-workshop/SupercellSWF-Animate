@@ -1,8 +1,7 @@
 {
-    "TID_HEADER": "SCSWF Publisher",
-    "TID_OUTPUT": "Output: ",
+    "TID_VERSION": "Version",
+    "TID_OUTPUT": "Output",
 
-    "TID_SWF_SETTINGS_LABEL": "SWF Settings",
-    "TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture: ",
-    "TID_SWF_SETTINGS_COMPRESSION": "Compression method: "
+    "TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
+    "TID_SWF_SETTINGS_COMPRESSION": "Compression method"
 }

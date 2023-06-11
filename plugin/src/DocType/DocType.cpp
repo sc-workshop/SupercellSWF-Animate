@@ -4,9 +4,6 @@
 
 #include "DocType/FeatureMatrix.h"
 #include "Utils.h"
-#include "Ids.h"
-
-#include "Macros.h"
 
 namespace sc {
 	namespace Adobe {
@@ -31,6 +28,9 @@ namespace sc {
 					(FCM::PPVoid)&m_featureMatrix);
 
 				((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
+			}
+			else {
+				((FeatureMatrix*)m_featureMatrix)->UpdateContext(GetCallback());
 			}
 
 			matrix = m_featureMatrix;
@@ -72,49 +72,46 @@ namespace sc {
 			 *  been added. Here, the 1st, 2nd and 3rd level dictionaries are being added.
 			 */
 
-			{
-				// Level 1 Dictionary
-				AutoPtr<IFCMDictionary> pPlugin;
-				res = pPlugins->AddLevel(
-					(const FCM::StringRep8)Utils::ToString(CLSID_DocType).c_str(),
-					pPlugin.m_Ptr);
+			 // Level 1 Dictionary
+			AutoPtr<IFCMDictionary> pPlugin;
+			res = pPlugins->AddLevel(
+				(const FCM::StringRep8)Utils::ToString(CLSID_DocType).c_str(),
+				pPlugin.m_Ptr
+			);
 
-				{
-					// Level 2 Dictionary
-					AutoPtr<IFCMDictionary> pCategory;
-					res = pPlugin->AddLevel((const FCM::StringRep8)kApplicationCategoryKey_DocType, pCategory.m_Ptr);
+			// Level 2 Dictionary
+			AutoPtr<IFCMDictionary> pCategory;
+			res = pPlugin->AddLevel((const FCM::StringRep8)kApplicationCategoryKey_DocType, pCategory.m_Ptr);
 
-					{
-						// Level 3 Dictionary
+			// Level 3 Dictionary
 
-						// Add short name - Used in the "New Document Dialog" / "Start Page".
-						std::string documentName = DOCTYPE_NAME;
-						res = pCategory->Add(
-							(const FCM::StringRep8)kApplicationCategoryKey_Name,
-							kFCMDictType_StringRep8,
-							(FCM::PVoid)documentName.c_str(),
-							(FCM::U_Int32)documentName.length() + 1);
+			// Add short name - Used in the "New Document Dialog" / "Start Page".
+			std::string documentName = DOCTYPE_NAME;
+			res = pCategory->Add(
+				(const FCM::StringRep8)kApplicationCategoryKey_Name,
+				kFCMDictType_StringRep8,
+				(FCM::PVoid)documentName.c_str(),
+				(FCM::U_Int32)documentName.length() + 1
+			);
 
-						// Add universal name - Used to refer to it from JSFL and used in error messages
-						std::string documentUniversalName = DOCTYPE_UNIVERSAL_NAME;
-						res = pCategory->Add(
-							(const FCM::StringRep8)kApplicationCategoryKey_UniversalName,
-							kFCMDictType_StringRep8,
-							(FCM::PVoid)documentUniversalName.c_str(),
-							(FCM::U_Int32)documentUniversalName.length() + 1);
+			// Add universal name - Used to refer to it from JSFL and used in error messages
+			std::string documentUniversalName = DOCTYPE_UNIVERSAL_NAME;
+			res = pCategory->Add(
+				(const FCM::StringRep8)kApplicationCategoryKey_UniversalName,
+				kFCMDictType_StringRep8,
+				(FCM::PVoid)documentUniversalName.c_str(),
+				(FCM::U_Int32)documentUniversalName.length() + 1
+			);
 
-						// Add plugin description - Appears in the "New Document Dialog"
-						// Plugin description can be localized depending on the languageCode.
-						std::string documentDescription = "";//Locale.Get("TID_DOCTYPE_DESCRIPTION");
+			// Add plugin description - Appears in the "New Document Dialog"
+			std::string documentDescription = "";
 
-						res = pCategory->Add(
-							(const FCM::StringRep8)kApplicationDocTypeKey_Desc,
-							kFCMDictType_StringRep8,
-							(FCM::PVoid)documentDescription.c_str(),
-							(FCM::U_Int32)documentDescription.length() + 1);
-					}
-				}
-			}
+			res = pCategory->Add(
+				(const FCM::StringRep8)kApplicationDocTypeKey_Desc,
+				kFCMDictType_StringRep8,
+				(FCM::PVoid)documentDescription.c_str(),
+				(FCM::U_Int32)documentDescription.length() + 1
+			);
 
 			return res;
 		}

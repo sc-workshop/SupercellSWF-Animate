@@ -1,24 +1,15 @@
 
 import { getInterface, isCEP } from "../CEP";
-import { restoreState, saveState } from "./publisherState";
-import { refreshTheme } from "./themes";
+import { State } from "./publisherState";
 
 export function publish() {
     if (!isCEP) {
         return;
     }
 
-    saveState();
+    State.save();
     const CSInterface = getInterface();
     CSInterface.evalScript("fl.getDocumentDOM().publish()", function() {
         CSInterface.closeExtension();
     })
-}
-
-export function onLoad() {
-    if (isCEP()) {
-        refreshTheme();
-        const CSInterface = getInterface();
-        CSInterface.addEventListener("com.adobe.events.flash.extension.setstate", restoreState);
-    }
 }

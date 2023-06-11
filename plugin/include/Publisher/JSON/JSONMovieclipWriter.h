@@ -2,39 +2,37 @@
 
 #include <string>
 #include "Publisher/Shared/SharedMovieclipWriter.h"
-#include "io/Console.h"
 
-#include "libjson.h"
+#include "JSON.hpp"
 
 using namespace FCM;
+using namespace nlohmann;
+using namespace std;
 
 namespace sc {
 	namespace Adobe {
 		class JSONWriter;
 
 		class JSONMovieclipWriter: public SharedMovieclipWriter {
-			PIFCMCallback m_callback = nullptr;
 			JSONWriter* m_writer = nullptr;
 
-			JSONNode m_frames = JSONNode(JSON_ARRAY);
-
-			Console console;
+			json m_frames = json::array();
 
 		public:
-			void Init(JSONWriter* writer, PIFCMCallback callback);
+			void Init(JSONWriter* writer);
 
 			void InitTimeline(uint32_t frameCount);
 
-			void SetLabel(std::string label);
+			void SetLabel(u16string label);
 
 			void AddFrameElement(
 				uint16_t id,
 				uint8_t blending,
-				std::string name,
+				u16string name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color);
 
-			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
+			void Finalize(uint16_t id, uint8_t fps, u16string name);
 		};
 	}
 }

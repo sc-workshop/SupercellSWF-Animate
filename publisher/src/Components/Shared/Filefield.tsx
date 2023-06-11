@@ -5,17 +5,15 @@ import { getInterface, isCEP } from "../../CEP";
 
 export function Filefield(name: string, ext: string, callback: (value: any) => void, defaultValue: string = "") {
     const [input, setInput] = useState(defaultValue);
+    const [isFocus, setIsFocus] = useState(false);
 
     const outputLabel = Stylefield(
         `${name} :`,
         {
-            width: "70px",
-            textAlign: "right",
-            display: "block",
-            float: "left",
-            color: "white",
+            color: "#727776",
             paddingTop: "4px",
-            paddingRight: "11px"
+            paddingRight: "11px",
+            margin: "auto"
         }
     );
 
@@ -23,15 +21,27 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
         key: `Filefield_${name}_filepath`,
         type: "text",
         value: input,
-        readOnly: true,
         style: {
             background: "#c6c6c6",
-            border: "1px solid #070707",
-            float: "left",
-            display: "block",
-            width: "350px",
-            color: "#444444",
-            borderColor: "solid #D49B00"
+            width: "275px",
+            color: "white",
+            border: isFocus ? "4px solid #337ed4" : "3px solid #363636",
+            borderRadius: "5px",
+            outline: "none",
+            height: "30px",
+            backgroundColor: "black",
+            margin: isFocus ? "-4px" : "-3px"
+        },
+        onChange: function (event) {
+            const value = event.target.value;
+            setInput(value);
+            callback(value);
+        },
+        onFocus: function () {
+            setIsFocus(true);
+        },
+        onBlur: function () {
+            setIsFocus(false);
         }
     });
 
@@ -40,37 +50,47 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
         type: "image",
         src: "folderOpen.png",
         style: {
-            width: "16px",
-            height: "16px",
-            borderWidth: "1px",
-            borderColor: "solid #070707",
-            marginLeft: "5px",
-            marginTop: "3px",
-            left: "10px"
+            width: "20px",
+            height: "20px",
+            position: 'relative',
+            top: "3px",
+            left: "4px"
         },
-        onClick: function () {
+        onClick: async function (event: React.MouseEvent<HTMLElement>) {
             if (!isCEP()) {
                 return;
             }
             const CSInterface = getInterface();
 
-            CSInterface.evalScript(`fl.browseForFileURL('save','Publish to ${ext}', 'SWF','${ext}');`,
-                function (path: string) {
-                    CSInterface.evalScript(
-                        `FLfile.uriToPlatformPath('${path}');`,
-                        function (normalized: string) {
-                            setInput(normalized)
-                            callback(normalized);
-                        }
-                    )
-                }
-            );
+            const selectFileEvent = new Promise((resolve, reject) => {
+                CSInterface.evalScript(`fl.browseForFileURL('save','Publish to ${ext}', 'SWF','${ext}');`,
+                    function (path: string) {
+                        const outputPath = path
+                            .replace('file:///', '')
+                            .replace(/(^[a-z])\|/i, '$1:')
+                            .replace(/(^[a-z ]{2,}):\/?/i, '$1/')
+                            .replace(/\\/g, '/')
+                            .replace(/%20/g, ' ');
+
+                        resolve(outputPath);
+                    }
+                );
+            })
+
+            const outputPath = await selectFileEvent as string;
+            setInput(outputPath)
+            callback(outputPath);
         }
     });
 
     return createElement(
-        "p",
-        { key: `Filefield_${name}` },
-        outputLabel, filepath, openFileButton,
-        <br />);
+        "div",
+        {
+            key: `Filefield_${name}`
+        },
+        outputLabel,
+        filepath,
+        openFileButton
+
+    );
 }

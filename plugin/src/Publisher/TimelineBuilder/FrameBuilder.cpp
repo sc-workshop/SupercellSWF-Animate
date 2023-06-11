@@ -51,7 +51,7 @@ namespace sc {
 					StringRep16 itemNamePtr;
 					libraryItem->GetName(&itemNamePtr);
 					u16string itemName = (const char16_t*)itemNamePtr;
-					m_resources.GetCallocService()->Free(itemNamePtr);
+					m_resources.context.falloc->Free(itemNamePtr);
 
 					id = m_resources.GetIdentifer(itemName);
 
@@ -77,7 +77,7 @@ namespace sc {
 				m_elementsData.push_back({
 					id,
 					0,
-					"" // TODO Blending / Element names
+					u"" // TODO Blending / Element names
 				});
 
 				m_matrices.push_back(
@@ -101,7 +101,7 @@ namespace sc {
 				bool hasMatrixTweener = Utils::ReadGUID(tweenerDict, kDOMGeometricProperty, matrixGuid);
 				bool hasColorTweener = Utils::ReadGUID(tweenerDict, kDOMColorProperty, colorGuid);
 
-				AutoPtr<ITweenerService> TweenerService = m_resources.GetTweenerService();
+				AutoPtr<ITweenerService> TweenerService = m_resources.context.getService<ITweenerService>(TWEENER_SERVICE);
 
 				FCM::AutoPtr<FCM::IFCMUnknown> unknownTweener;
 				if (hasMatrixTweener) {

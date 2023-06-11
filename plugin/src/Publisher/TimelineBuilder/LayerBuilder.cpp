@@ -26,7 +26,7 @@ namespace sc {
 			writer->AddFrameElement(
 				identifer,
 				0,
-				"",
+				u"",
 				nullptr,
 				nullptr
 			);

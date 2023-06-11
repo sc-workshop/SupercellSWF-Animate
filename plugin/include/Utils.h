@@ -31,7 +31,9 @@ namespace sc {
         class Utils
         {
         public:
-            static fs::path GetPath(const std::string in);
+            static std::u16string ToUtf16(std::string string);
+
+            static std::string ToUtf8(std::u16string string);
 
             static std::string ToString(const FCM::FCMGUID& in);
 
@@ -49,17 +51,9 @@ namespace sc {
 
             static std::string ToString(const DOM::Utils::JoinType& joinType);
 
-            static std::string ToString(FCM::CStringRep16 pStr16, FCM::PIFCMCallback pCallback);
-
-            static std::string ToString(FCM::CStringRep8 pStr8);
-
-            static FCM::StringRep16 ToString16(const std::string& str, FCM::PIFCMCallback pCallback);
-
             static std::string ToString(const DOM::FillStyle::GradientSpread& spread);
 
             static std::string ToString(const DOM::Utils::COLOR& color);
-
-            // static std::string ToString(const DOM::Utils::COLOR_MATRIX& color);
 
             static bool ReadString(
                 const FCM::PIFCMDictionary pDict,
@@ -94,36 +88,12 @@ namespace sc {
                 return true;
             }
 
+            static fs::path CurrentPath();
+
             static void TransformPoint(
                 const DOM::Utils::MATRIX2D& matrix,
                 DOM::Utils::POINT2D& inPoint,
                 DOM::Utils::POINT2D& outPoint);
-
-            static void GetParent(const std::string& path, std::string& parent);
-
-            static void GetFileName(const std::string& path, std::string& fileName);
-
-            static void GetFileNameWithoutExtension(const std::string& path, std::string& fileName);
-
-            static void GetFileExtension(const std::string& path, std::string& extension);
-
-            static void GetModuleFilePath(std::string& path, FCM::PIFCMCallback pCallback);
-
-            static FCM::Result CreateDir(const std::string& path, FCM::PIFCMCallback pCallback);
-
-            static FCM::AutoPtr<FCM::IFCMCalloc> GetCallocService(FCM::PIFCMCallback pCallback);
-
-            static FCM::AutoPtr<FCM::IFCMStringUtils> GetStringUtilsService(FCM::PIFCMCallback pCallback);
-
-            static void GetLanguageCode(std::string& langCode, FCM::PIFCMCallback pCallback );
-
-            static void GetAppVersion(FCM::PIFCMCallback pCallback, FCM::U_Int32& version);
-
-            static void OpenFStream(const std::string& outputFileName, std::fstream& file, std::ios_base::openmode mode, FCM::PIFCMCallback pCallback);
-
-            static FCM::Result CopyDir(const std::string& srcFolder, const std::string& dstFolder, FCM::PIFCMCallback pCallback);
-
-            static FCM::Result Remove(const std::string& folder, FCM::PIFCMCallback pCallback);
         };
     };
 };

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "io/Console.h"
 #include "PluginConfiguration.h"
-#include "Ids.h"
-#include "Version.h"
+#include "Module/FCM_Identifiers.h"
+#include "Module/Version.h"
 
 // FCM stuff
 #include <FCMTypes.h>
@@ -38,11 +37,6 @@ namespace sc {
 			BEGIN_INTERFACE_MAP(Publisher, PLUGIN_VERSION)
 				INTERFACE_ENTRY(IPublisher)
 			END_INTERFACE_MAP
-
-			PublisherConfig m_config;
-
-			Console console;
-
 		public:
 			Result _FCMCALL Publish(DOM::PIFLADocument document, const PIFCMDictionary publishSettings, const PIFCMDictionary config); 
 

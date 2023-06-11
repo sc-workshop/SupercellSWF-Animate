@@ -12,46 +12,55 @@ files {
 }
 
 includedirs {
-    "include",
+    -- Animate SDK
     "include/AnimateSDK/app/include/interfaces/DOM",
     "include/AnimateSDK/app/include/common",
     "include/AnimateSDK/core/include/common",
     "include/AnimateSDK/app/include/interfaces",
     "include/AnimateSDK/core/include/interfaces",
-    "ThirdParty/libjson",
-    "ThirdParty/SC/SupercellFlash/include",
-    "ThirdParty/SC/SupercellBytestream/include",
-    "ThirdParty/SC/SupercellCompression/include",
+
+    -- ScAnimate
+    "include",
     "ThirdParty/AtlasGenerator/include",
+
+    -- SC
+    "ThirdParty/SC/dependencies/Bytestream",
+    "ThirdParty/SC/dependencies/Compression/include",
+    "ThirdParty/SC/include",
+
 }
 
 links {
+    -- SC
     "SupercellFlash",
     "SupercellCompression",
     "LZMA",
     "LZHAM",
     "Zstandard",
-    "libjson",
-    "AtlasGenerator"
+
+    -- ScAnimate libs
+    "AtlasGenerator",
+
+    -- ZIP
+
+    -- FLA
 }
 
 filter {"system:windows", "configurations:Debug"}
 links {
 	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
 }
+targetdir "../dist/com.scwmake.SupercellSWF/Plugin/lib/win"
 
 filter {"system:windows", "configurations:Release"}
 links {
 	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
 }
+targetdir "build/win/"
 
 filter "system:windows"
-defines { "_WINDOWS" }
-targetdir "project/win/"
+defines { "_WINDOWS", "_WIN32", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 targetextension ".fcm"
-
-filter "system:macosx"
-targetdir "project/mac/"
 
 filter "configurations:Debug"
 defines { "DEBUG" }

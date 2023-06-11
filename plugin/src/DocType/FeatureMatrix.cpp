@@ -10,7 +10,6 @@
 #include <sstream>
 
 #include <filesystem>
-#include <Macros.h>
 namespace fs = std::filesystem;
 
 namespace sc {
@@ -25,146 +24,74 @@ namespace sc {
 		static const std::string kValue_true("true");
 		static const std::string kValue_false("false");
 
-		FeatureMatrix::FeatureMatrix()
-		{
-		}
-
-		FeatureMatrix::~FeatureMatrix()
-		{
-		}
-
 		Result FeatureMatrix::Init(FCM::PIFCMCallback callback)
 		{
-			std::string modulePath;
-			sc::Adobe::Utils::GetModuleFilePath(modulePath, callback);
+			UpdateContext(callback);
 
-			console.Init("Features", callback);
-
-			std::string libPath;
-			sc::Adobe::Utils::GetParent(modulePath, libPath);
-
-			fs::path featuresPath(libPath);
-			featuresPath /= "res";
+			fs::path featuresPath = Utils::CurrentPath();
+			featuresPath /= "../res";
 			featuresPath /= "Features.json";
 
 			std::ifstream file(featuresPath);
-
-			size_t fileSize = 0;
-
-			file.seekg(0, file.end);
-			fileSize = file.tellg();
-			file.seekg(0, file.beg);
-
-			if (fileSize <= 0) {
-				console.log("Failed to get feature list. All scene features are disabled.");
-				return FCM_GENERAL_ERROR;
-			};
-
-			std::string featureListBuffer(fileSize, ' ');
-
-			file.read(featureListBuffer.data(), fileSize);
+			json features = json::parse(file);
 			file.close();
 
-			JSONNode features = libjson::parse(featureListBuffer);
-			for (JSONNode feature : features) {
-				ReadFeature(feature);
+			if (features.is_array()) {
+				for (auto feature : features) {
+					ReadFeature(feature);
+				}
 			}
 
 			return FCM_SUCCESS;
 		}
 
-		void FeatureMatrix::ReadFeature(JSONNode& feature) {
-			std::string featureName = "";
-			bool featureSupported = false;
-			JSONNode propertiesNode;
+		void FeatureMatrix::ReadFeature(json& feature) {
+			Feature featureItem(feature["supported"]);
+			std::string featureName = feature["name"];
+			auto featureProperties = feature["properties"];
 
-			for (JSONNode featureVariable : feature) {
-				std::string featureVariableName = featureVariable.name();
-
-				if (featureVariableName == "name") {
-					featureName = featureVariable.as_string();
-				}
-				else if (featureVariableName == "supported") {
-					featureSupported = featureVariable.as_bool();
-				}
-				else if (featureVariableName == "properties") {
-					propertiesNode = featureVariable.as_array();
-				}
-			}
-
-			if (featureName.empty()) return;
-
-			Feature featureItem(featureSupported);
-
-			if (!propertiesNode.empty()) {
-				for (JSONNode property : propertiesNode) {
-					ReadProperty(featureItem, property);
+			if (featureProperties.is_array()) {
+				for (auto& featureProperty : featureProperties) {
+					if (featureProperty.is_object()) {
+						ReadProperty(featureItem, featureProperty);
+					}
 				}
 			}
 
 			m_features.insert(std::pair(featureName, featureItem));
 		}
 
-		void FeatureMatrix::ReadProperty(Feature& feature, JSONNode& property) {
-			std::string propertyName = "";
+		void FeatureMatrix::ReadProperty(Feature& feature, json& property) {
 			std::string propertyDefault = "";
-			bool propertySupported = false;
+			bool isSupported = false;
 
-			JSONNode valuesNode;
-
-			for (JSONNode propertyVariable : property) {
-				std::string propertyVariableName = propertyVariable.name();
-
-				if (propertyVariableName == "name") {
-					propertyName = propertyVariable.as_string();
-				}
-				else if (propertyVariableName == "supported") {
-					propertySupported = propertyVariable.as_bool();
-				}
-				else if (propertyVariableName == "default") {
-					propertyDefault = propertyVariable.as_string();
-				}
-				else if (propertyVariableName == "values") {
-					valuesNode = propertyVariable.as_array();
-				}
+			if (property["default"].is_string()) {
+				propertyDefault = property["default"];
 			}
 
-			Property propertyItem(propertyDefault, propertySupported);
+			if (property["supported"].is_boolean()) {
+				isSupported = property["supported"];
+			}
 
-			if (!valuesNode.empty()) {
-				for (JSONNode value : valuesNode) {
+			Property propertyItem(propertyDefault, isSupported);
+
+			if (property["values"].is_array()) {
+				for (auto value : property["values"]) {
 					ReadValue(propertyItem, value);
 				}
 			}
-
-			if (!propertyName.empty()) {
-				feature.AddProperty(propertyName, propertyItem);
-			}
+			
+			std::string propertyName = property["name"];
+			feature.AddProperty(propertyName, propertyItem);
 		}
 
-		void FeatureMatrix::ReadValue(Property& property, JSONNode& value) {
-			std::string valueName = "";
-			bool valueSupported = false;
-
-			for (JSONNode valueVariable : value) {
-				std::string valueVariableName = valueVariable.name();
-
-				if (valueVariableName == "name") {
-					valueName = valueVariable.as_string();
-				}
-				else if (valueVariableName == "supported") {
-					valueSupported = valueVariable.as_bool();
-				}
-			}
-
-			if (!valueName.empty()) {
-				property.AddValue(valueName, Value(valueSupported));
-			}
+		void FeatureMatrix::ReadValue(Property& property, json& value) {
+			property.AddValue(value["name"], Value(value["supported"]));
 		}
 
 		FCM::Result FeatureMatrix::IsSupported(CStringRep16 inFeatureName, FCM::Boolean& isSupported)
 		{
-			std::string featureName = sc::Adobe::Utils::ToString(inFeatureName, GetCallback());
+			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
 
 			if (featureName.empty()) {
 				return true;
@@ -173,7 +100,9 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
+#ifdef DEBUG
+				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
+#endif // DEBUG
 				isSupported = false;
 			}
 			else
@@ -188,8 +117,8 @@ namespace sc {
 			CStringRep16 inPropName,
 			FCM::Boolean& isSupported)
 		{
-			std::string featureName = sc::Adobe::Utils::ToString(inFeatureName, GetCallback());
-			std::string propertyName = sc::Adobe::Utils::ToString(inPropName, GetCallback());
+			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
+			std::string propertyName = Utils::ToUtf8(std::u16string((const char16_t*)inPropName));
 
 			if (featureName.empty() || propertyName.empty()) {
 				return true;
@@ -198,7 +127,9 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
+#ifdef DEBUG
+				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
+#endif // DEBUG
 				isSupported = false;
 			}
 			else
@@ -212,7 +143,10 @@ namespace sc {
 					Property* property = feature->FindProperty(propertyName);
 					if (property == NULL)
 					{
-						debugLog("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+#ifdef DEBUG
+						m_context->trace("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+#endif // DEBUG
+
 						isSupported = false;
 					}
 					else
@@ -230,9 +164,10 @@ namespace sc {
 			CStringRep16 inValName,
 			FCM::Boolean& isSupported)
 		{
-			std::string featureName = sc::Adobe::Utils::ToString(inFeatureName, GetCallback());
-			std::string propertyName(sc::Adobe::Utils::ToString(inPropName, GetCallback()));
-			std::string valueName(sc::Adobe::Utils::ToString(inValName, GetCallback()));
+			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
+			std::string propertyName = Utils::ToUtf8(std::u16string((const char16_t*)inPropName));
+			std::string valueName = Utils::ToUtf8(std::u16string((const char16_t*)inValName));
+
 
 			if (featureName.empty() || propertyName.empty() || valueName.empty()) {
 				return true;
@@ -241,7 +176,9 @@ namespace sc {
 			Feature* feature = FindFeature(featureName);
 			if (feature == NULL)
 			{
-				debugLog("Failed to get info about \"%s\" feature", featureName.c_str());
+#ifdef DEBUG
+				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
+#endif // DEBUG
 				isSupported = false;
 			}
 			else
@@ -255,7 +192,9 @@ namespace sc {
 					Property* property = feature->FindProperty(propertyName);
 					if (property == NULL)
 					{
-						debugLog("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+#ifdef DEBUG
+						m_context->trace("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
+#endif // DEBUG
 						isSupported = false;
 					}
 					else
@@ -269,7 +208,9 @@ namespace sc {
 							Value* value = property->FindValue(valueName);
 							if (!valueName.empty() && value == NULL)
 							{
-								debugLog("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
+#ifdef DEBUG
+								m_context->trace("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
+#endif // DEBUG
 								isSupported = false;
 							}
 							else
@@ -283,31 +224,42 @@ namespace sc {
 			return FCM_SUCCESS;
 		}
 
-		FCM::Result FeatureMatrix::GetDefaultValue(CStringRep16 inFeatureName,
+		FCM::Result FeatureMatrix::GetDefaultValue(
+			CStringRep16 inFeatureName,
 			CStringRep16 inPropName,
 			FCM::VARIANT& outDefVal)
 		{
 			// Any boolean value retuened as string should be "true" or "false"
 			FCM::Result res = FCM_INVALID_PARAM;
-			std::string featureName = sc::Adobe::Utils::ToString(inFeatureName, GetCallback());
-			std::string propName = sc::Adobe::Utils::ToString(inPropName, GetCallback());
+			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
+			std::string propName = Utils::ToUtf8(std::u16string((const char16_t*)inPropName));
 
 			Property* pProperty = NULL;
 			Feature* pFeature = FindFeature(featureName);
 			if (pFeature != NULL && pFeature->IsSupported())
 			{
 				pProperty = pFeature->FindProperty(propName);
-				if (pProperty != NULL /*&& pProperty->IsSupported()*/)
+				if (pProperty != NULL)
 				{
 					std::string strVal = pProperty->GetDefault();
 					std::istringstream iss(strVal);
 					res = FCM_SUCCESS;
 					switch (outDefVal.m_type) {
-					case kFCMVarype_UInt32: iss >> outDefVal.m_value.uVal; break;
-					case kFCMVarype_Float: iss >> outDefVal.m_value.fVal; break;
-					case kFCMVarype_Bool: outDefVal.m_value.bVal = (kValue_true == strVal); break;
-					case kFCMVarype_CString: outDefVal.m_value.strVal = sc::Adobe::Utils::ToString16(strVal, GetCallback()); break;
-					case kFCMVarype_Double: iss >> outDefVal.m_value.dVal; break;
+					case kFCMVarype_UInt32: 
+						iss >> outDefVal.m_value.uVal; 
+						break;
+					case kFCMVarype_Float: 
+						iss >> outDefVal.m_value.fVal;
+						break;
+					case kFCMVarype_Bool:
+						outDefVal.m_value.bVal = (kValue_true == strVal);
+						break;
+					case kFCMVarype_CString: 
+						outDefVal.m_value.strVal = (StringRep16)Utils::ToUtf16(strVal).c_str();
+						break;
+					case kFCMVarype_Double: 
+						iss >> outDefVal.m_value.dVal;
+						break;
 					default:
 						ASSERT(0);
 						res = FCM_INVALID_PARAM;

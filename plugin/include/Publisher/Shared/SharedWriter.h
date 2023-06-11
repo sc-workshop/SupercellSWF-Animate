@@ -2,7 +2,7 @@
 
 #include "SharedMovieclipWriter.h"
 #include "SharedShapeWriter.h"
-#include "Publisher/PublisherConfig.h"
+#include "Module/AppContext.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -12,10 +12,16 @@ using namespace FCM;
 namespace sc {
     namespace Adobe {
         class SharedWriter {
+        protected:
+            AppContext& m_context;
+
         public:
-            virtual void Init(PIFCMCallback callback, const PublisherConfig& config) = 0;
+            SharedWriter(AppContext& context): m_context(context) {}
+
+            virtual void Init() = 0;
 
             virtual pSharedMovieclipWriter AddMovieclip() = 0;
+
             virtual pSharedShapeWriter AddShape() = 0;
 
             virtual void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) = 0;

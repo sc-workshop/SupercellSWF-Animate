@@ -40,8 +40,6 @@ namespace sc {
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
 
-			debugLog("Symbol duration: %d", duration);
-
 			writer->InitTimeline(duration);
 
 			FCM::FCMListPtr layers;

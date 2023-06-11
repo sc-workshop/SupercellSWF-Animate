@@ -1,3 +1,7 @@
 {
-    "TID_OUTPUT": "Выход: "
+    "TID_VERSION": "Версия",
+    "TID_OUTPUT": "Имя вывода",
+
+    "TID_SWF_SETTINGS_HAS_TEXTURE": "Записать внешнюю текстуру",
+    "TID_SWF_SETTINGS_COMPRESSION": "Метод сжатия"
 }

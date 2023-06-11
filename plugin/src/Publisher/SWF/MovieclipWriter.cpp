@@ -1,24 +1,23 @@
 #include "Publisher/SWF/Writer.h"
 #include "Publisher/SWF/MovieclipWriter.h"
-
-#include "Macros.h"
-
-using namespace FCM;
+#include "Utils.h"
 
 namespace sc {
 	namespace Adobe {
-		void MovieclipWriter::Init(Writer* writer, PIFCMCallback callback) {
-			m_callback = callback;
-			m_writer = writer;
-
-			console.Init("Timeline", m_callback);
+		void MovieclipWriter::Init(Writer* writer) {
+			if (writer) {
+				m_writer = writer;
+			}
+			else {
+				throw exception("Failed to get writer");
+			}
 		}
 
 		uint16_t MovieclipWriter::GetInstanceIndex(
 			uint16_t elementsCount,
 			uint16_t id,
 			uint8_t blending,
-			std::string name
+			string name
 		) {
 
 			uint16_t frameInstancesOffset = 0;
@@ -71,14 +70,16 @@ namespace sc {
 			}
 		}
 
-		void MovieclipWriter::SetLabel(std::string label) {
-			m_object->frames[m_position]->label(label);
+		void MovieclipWriter::SetLabel(u16string label) {
+			m_object->frames[m_position]->label(
+				Utils::ToUtf8(label)
+			);
 		}
 
 		void MovieclipWriter::AddFrameElement(
 			uint16_t id,
 			uint8_t blending,
-			string name,
+			u16string name,
 
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
@@ -89,7 +90,8 @@ namespace sc {
 			// Index of bind element
 			uint16_t instanceIndex = GetInstanceIndex(
 				elementsCount,
-				id, blending, name);
+				id, blending, Utils::ToUtf8(name)
+			);
 
 			// New frame element
 			pMovieClipFrameElement element = pMovieClipFrameElement(new MovieClipFrameElement());

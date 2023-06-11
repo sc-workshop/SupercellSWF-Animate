@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Publisher/Shared/SharedShapeWriter.h"
-#include "Macros.h"
 #include "ApplicationFCMPublicIDs.h"
 
 #include "string"
@@ -11,15 +10,14 @@ namespace sc {
 		class Writer;
 
 		class ShapeWriter : public SharedShapeWriter {
-			PIFCMCallback m_callback = nullptr;
 			Writer* m_writer = nullptr;
 			uint16_t m_bitmapCount = 0;
 
 		public:
-			void Init(Writer* writer, PIFCMCallback callback);
+			void Init(Writer* writer);
 			void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
-			void Finalize(U_Int16 id);
+			void Finalize(uint16_t id);
 		};
 	}
 }

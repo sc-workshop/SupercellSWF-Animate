@@ -5,9 +5,13 @@
 
 namespace sc {
 	namespace Adobe {
-		void JSONShapeWriter::Init(JSONWriter* writer, PIFCMCallback callback) {
-			m_writer = writer;
-			m_callback = callback;
+		void JSONShapeWriter::Init(JSONWriter* writer) {
+			if (writer) {
+				m_writer = writer;
+			}
+			else {
+				throw exception("Failed to get writer");
+			}
 		}
 
 		void JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
@@ -19,30 +23,17 @@ namespace sc {
 
 			cv::imwrite(bitmapOutputPath.string(), image);
 
-			JSONNode bitmap;
-
-			bitmap.push_back(
-				JSONNode("path", bitmapBasename)
-			);
-
-			bitmap.push_back(
-				JSONNode("matrix", Utils::ToString(matrix))
-			);
-
-			m_bitmaps.push_back(bitmap);
+			m_bitmaps.push_back({
+				{"path", bitmapBasename},
+				{"matrix", Utils::ToString(matrix)}
+			});
 		}
 
-		void JSONShapeWriter::Finalize(U_Int16 id) {
-			JSONNode root;
-
-			root.push_back(
-				JSONNode("id", id)
-			);
-
-			m_bitmaps.set_name("bitmaps");
-			root.push_back(
-				m_bitmaps
-			);
+		void JSONShapeWriter::Finalize(uint16_t id) {
+			json root = {
+				{"id", id},
+				{"bitmaps", m_bitmaps}
+			};
 
 			m_writer->AddShape(root);
 

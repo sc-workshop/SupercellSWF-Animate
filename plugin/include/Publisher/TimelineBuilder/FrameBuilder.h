@@ -53,7 +53,7 @@ namespace sc {
 			string m_name = "";
 
 			// Frane symbols data in resource palette
-			vector<tuple<uint16_t, uint8_t, string>> m_elementsData;
+			vector<tuple<uint16_t, uint8_t, u16string>> m_elementsData;
 
 			// Transforms for each frame element
 			vector<shared_ptr<MATRIX2D>> m_matrices;

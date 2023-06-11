@@ -1,9 +1,9 @@
 import which from "which";
 import { join, basename } from "path";
-import { copyDir, isMac, isWindows, processExecError, progress, makeLink } from "../scripts/utils";
+import { copyDir, isMac, isWindows, makeLink, processExecError, progress } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, copyFileSync, writeFileSync, existsSync } from "fs";
-import { version, description } from "./package.json"
+import { version } from "./package.json"
 
 if (!isWindows && !isMac) {
     throw new Error("Unsupported platform");
@@ -16,7 +16,7 @@ const outputPath = args[3];
 const libPath = join(outputPath, "lib");
 mkdirSync(libPath, { recursive: true });
 
-const winSolution = "project/ScAnimate.sln";
+const winSolution = "ScAnimate.sln";
 
 const publisherName = "SupercellSWF"
 const publisherId = "com.scwmake.SupercellSWF.Publisher";
@@ -50,7 +50,7 @@ function buildWindows() {
             throw new Error("Failed to find premake5 executable");
         }
 
-        execSync(`generate_solution.bat`);
+        execSync(`scripts/generate.bat`);
     }
 
     progress("Building with MSBuild...");
@@ -86,11 +86,10 @@ const config =
     '\n' +
     `#define DOCTYPE_NAME						"${doctypeName}"\n` +
     `#define DOCTYPE_UNIVERSAL_NAME				"${doctypeId}"\n` +
-    `#define DOCTYPE_DESCRIPTION				"${description}"\n` +
     '\n' +
     `#define PLUGIN_VERSION_MAJOR				${MAJOR}\n` +
     `#define PLUGIN_VERSION_MINOR				${MINOR}\n` +
-    `#define PLUGIN_VERSION_MAINTENANCE				${MAINTENANCE}\n`
+    `#define PLUGIN_VERSION_MAINTENANCE			${MAINTENANCE}\n`
 
 writeFileSync(
     "include/PluginConfiguration.h",

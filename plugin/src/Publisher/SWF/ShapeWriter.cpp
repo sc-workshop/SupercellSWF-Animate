@@ -7,9 +7,13 @@ using namespace sc;
 
 namespace sc {
 	namespace Adobe {
-		void ShapeWriter::Init(Writer* writer, PIFCMCallback callback) {
-			m_writer = writer;
-			m_callback = callback;
+		void ShapeWriter::Init(Writer* writer) {
+			if (writer) {
+				m_writer = writer;
+			}
+			else {
+				throw exception("Failed to get writer");
+			}			
 		}
 
 		void ShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
@@ -21,7 +25,7 @@ namespace sc {
 			m_bitmapCount++;
 		}
 
-		void ShapeWriter::Finalize(U_Int16 id) {
+		void ShapeWriter::Finalize(uint16_t id) {
 			pShape shape = pShape(new Shape());
 			shape->id(id);
 			shape->commands.resize(m_bitmapCount);

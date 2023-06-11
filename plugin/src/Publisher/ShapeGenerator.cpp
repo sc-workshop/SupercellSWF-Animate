@@ -3,20 +3,17 @@
 
 namespace sc {
 	namespace Adobe {
-		void ShapeGenerator::InitializeService() {
-			if (!BitmapExportService)
-			{
-				FCM::AutoPtr<FCM::IFCMUnknown> unk;
-				m_callback->GetService(DOM::FLA_BITMAP_SERVICE, unk.m_Ptr);
+		ShapeGenerator::ShapeGenerator(ResourcePublisher& resources) :
+			m_resources(resources) {
+			BitmapExportService = resources.context.getService<IBitmapExportService>(DOM::FLA_BITMAP_SERVICE);
+		};
 
-				BitmapExportService = unk;
-				if (!BitmapExportService) {
-					throw exception("Failed to initialize BitmapGeneratorService");
-				}
+		ShapeGenerator::~ShapeGenerator() {
+			if (fs::exists(tempFile)) {
+				remove(tempFile);
 			}
 		};
 
-		
 		void ShapeGenerator::GenerateLayerShapes(
 			pSharedShapeWriter writer,
 			AutoPtr<DOM::Layer::ILayerNormal> layer
@@ -51,7 +48,7 @@ namespace sc {
 					StringRep16 itemNamePtr;
 					item->GetName(&itemNamePtr);
 					u16string itemName = (const char16_t*)itemNamePtr;
-					m_resources.GetCallocService()->Free(itemNamePtr);
+					m_resources.context.falloc->Free(itemNamePtr);
 
 					AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
@@ -144,7 +141,7 @@ namespace sc {
 		void ShapeGenerator::GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
 			Result res = BitmapExportService->ExportToFile(
 				media,
-				Utils::ToString16(tempFile.string(), m_callback),
+				(CStringRep16)tempFile.u16string().c_str(),
 				100
 			);
 			if (FCM_FAILURE_CODE(res)) {
@@ -156,8 +153,6 @@ namespace sc {
 		
 
 		void ShapeGenerator::Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline) {
-			InitializeService();
-
 			FCM::FCMListPtr layers;
 			timeline->GetLayers(layers.m_Ptr);
 

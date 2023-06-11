@@ -1,8 +1,5 @@
 #pragma once
 
-#include "io/Console.h"
-#include "Macros.h"
-
 // FCM stuff
 #include "FCMTypes.h"
 #include "DOM/Service/Image/IBitmapExportService.h"
@@ -21,22 +18,20 @@
 // Writer
 #include "Publisher/Shared/SharedShapeWriter.h"
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 using namespace FCM;
 using namespace std;
+using namespace DOM::Service::Image;
 
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
 
 		class ShapeGenerator {
-			PIFCMCallback m_callback;
 			ResourcePublisher& m_resources;
-
-			Console console;
-
-			AutoPtr<DOM::Service::Image::IBitmapExportService> BitmapExportService = nullptr;
-
-			void InitializeService();
+			AutoPtr<IBitmapExportService> BitmapExportService;
 
 			void GenerateLayerShapes(
 				pSharedShapeWriter writer,
@@ -68,18 +63,9 @@ namespace sc {
 			);
 
 		public:
-			ShapeGenerator(PIFCMCallback callback, ResourcePublisher& resources):
-			m_callback(callback),
-			m_resources(resources)
-			{
-				console.Init("ShapeGenerator", m_callback);
-				InitializeService();
-			};
-			~ShapeGenerator() {
-				if (fs::exists(tempFile)) {
-					remove(tempFile);
-				}
-			};
+			ShapeGenerator(ResourcePublisher& resources);;
+
+			~ShapeGenerator();
 
 			const fs::path tempFile = fs::path(tmpnam(nullptr)).concat(".png");
 

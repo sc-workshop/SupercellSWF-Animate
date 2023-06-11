@@ -17,7 +17,7 @@ namespace sc {
 		public:
 			virtual void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) = 0;
 
-			virtual void Finalize(U_Int16 id) = 0;
+			virtual void Finalize(uint16_t id) = 0;
 		};
 
 		typedef std::shared_ptr<SharedShapeWriter> pSharedShapeWriter;

@@ -1,26 +1,24 @@
 #pragma once
 
 #include "Publisher/Shared/SharedMovieclipWriter.h"
-#include "io/Console.h"
+#include "Module/AppContext.h"
 
 #include <memory>
 #include <SupercellFlash.h>
 
 using namespace FCM;
+using namespace std;
 
 namespace sc {
 	namespace Adobe {
 		class Writer;
 
 		class MovieclipWriter : public SharedMovieclipWriter {
-			PIFCMCallback m_callback = nullptr;
 			Writer* m_writer = nullptr;
 			pMovieClip m_object = pMovieClip(new MovieClip());
 
-			std::vector<pMatrix2D> m_matrices;
-			std::vector<pColorTransform> m_colors;
-
-			Console console;
+			vector<pMatrix2D> m_matrices;
+			vector<pColorTransform> m_colors;
 
 			// Helper functions
 
@@ -28,7 +26,7 @@ namespace sc {
 				uint16_t elementsCount,
 				uint16_t id,
 				uint8_t blending,
-				std::string name
+				string name
 			);
 
 			void FinalizeTransforms();
@@ -36,16 +34,16 @@ namespace sc {
 			bool FinalizeElementsTransform(uint8_t& bankIndex);
 
 		public:
-			void Init(Writer* writer, PIFCMCallback callback);
+			void Init(Writer* writer);
 
 			void InitTimeline(uint32_t frameCount);
 
-			void SetLabel(string label);
+			void SetLabel(u16string label);
 
 			void AddFrameElement(
 				uint16_t id,
 				uint8_t blending,
-				std::string name,
+				u16string name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color
 			);

@@ -5,14 +5,11 @@
 #include "Publisher/SWF/MovieclipWriter.h"
 #include "Publisher/SWF/ShapeWriter.h"
 
-#include "io/Console.h"
+#include "Module/AppContext.h"
 
 #include "SupercellFlash.h"
 #include "AtlasGenerator.h"
 #include "opencv2/opencv.hpp"
-
-#include <locale> 
-#include <codecvt> 
 
 using namespace FCM;
 
@@ -25,28 +22,19 @@ namespace sc {
 		};
 
 		class Writer : public SharedWriter {
-			Console console;
-			PIFCMCallback m_callback = nullptr;
-			PublisherConfig m_config;
-
 		public:
-			std::vector<Sprite> sprites;
+			using SharedWriter::SharedWriter;
 
+			std::vector<Sprite> sprites;
 			SupercellSWF swf;
 
-			void Init(PIFCMCallback callback, const PublisherConfig& config);
+			void Init() {};
 
 			pSharedMovieclipWriter AddMovieclip();
+
 			pSharedShapeWriter AddShape();
 
-			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) {
-				pMovieClipModifier modifier = pMovieClipModifier(new MovieClipModifier());
-				modifier->id(id);
-				modifier->type(type);
-				swf.movieClipModifiers.push_back(modifier);
-			}
-
-			void FinalizeAtlas();
+			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type);
 
 			void Finalize();
 		};

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "io/Console.h"
+#include "module/AppContext.h"
 
 // FCM stuff
 #include <FCMTypes.h>
@@ -35,13 +35,12 @@ using namespace std;
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher {
-            PIFCMCallback m_callback;
             SharedWriter* m_writer;
 
-            TimelineBuilder timelineBuilder;
-            ShapeGenerator shapeGenerator;
+            shared_ptr<TimelineBuilder> timelineBuilder;
+            shared_ptr<ShapeGenerator> shapeGenerator;
 
-                                    // Name  /  Id
+                         // Name  /  Id
             vector<pair<u16string, uint16_t>> m_symbolsDict;
 
                          // Name / Image
@@ -52,23 +51,20 @@ namespace sc {
 
             uint32_t m_id = 0;
 
-            Console console;
-
             // Services
             AutoPtr<IFCMCalloc> m_calloc;
             AutoPtr<DOM::Service::Tween::ITweenerService> m_tweener;
 
         public:
-            ResourcePublisher(PIFCMCallback callback, SharedWriter* writer):
-                m_callback(callback),
-                timelineBuilder(callback, *this),
-                shapeGenerator(callback, *this),
+            AppContext& context;
+
+            ResourcePublisher(AppContext& app, SharedWriter* writer):
+                context(app),
                 m_writer(writer)
             {
-                console.Init("ResourcePublisher", m_callback);
+                timelineBuilder = shared_ptr<TimelineBuilder>(new TimelineBuilder(*this));
+                shapeGenerator = shared_ptr<ShapeGenerator>(new ShapeGenerator(*this));
             }
-
-            ~ResourcePublisher() { }
 
             uint16_t AddLibraryItem(
                 DOM::ILibraryItem* item,
@@ -109,26 +105,6 @@ namespace sc {
             bool GetCachedBitmap(u16string name, cv::Mat& result);
 
             void Finalize();
-
-            // Services
-            AutoPtr<DOM::Service::Tween::ITweenerService> GetTweenerService() {
-                if (!m_tweener) {
-                    FCM::AutoPtr<FCM::IFCMUnknown> unk;
-                    m_callback->GetService(TWEENER_SERVICE, unk.m_Ptr);
-
-                    m_tweener = unk;
-                }
-
-                return m_tweener;
-            }
-
-            AutoPtr<IFCMCalloc> GetCallocService() {
-                if (!m_calloc) {
-                    m_calloc = Utils::GetCallocService(m_callback);
-                }
-
-                return m_calloc;
-            }
 		};
 	}
 }

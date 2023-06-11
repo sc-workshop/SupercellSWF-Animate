@@ -1,95 +1,117 @@
 import { CSEvent, getInterface, isCEP } from "../CEP"
 
-interface ModuleState {
-    [key: string]: string
+interface ModuleStateInterface {
+    output: string,
+    debug: boolean,
+    hasTexture: boolean,
+    compression: string
 }
 
-interface PublisherState {
+interface PublisherStateInterface {
     PublishSettings: {
-        SupercellSWF: ModuleState
+        SupercellSWF: ModuleStateInterface
     }
 }
 
-export const State: PublisherState = {
-    PublishSettings: {
-        SupercellSWF: {
-            output: "",
-            debug: "0",
-
-            hasTexture: "0",
-            compression: "LZMA"
-        }
-    }
-
-}
-
-export function getParam(name: keyof ModuleState): any {
-    return State.PublishSettings.SupercellSWF[name];
-}
-
-export function setParam(name: keyof ModuleState, value: any) {
-    State.PublishSettings.SupercellSWF[name] = value;
-
-}
-
-export function restoreState(event: CSEvent) {
-    const data: { [key: string]: any } = JSON.parse(event.data);
-
-    function setKeys(key: string, value: any) {
-        const obj: { [key: string]: any } = {};
-
-        const keys = key.split('.');
-        if (keys.length === 1) {
-            obj[keys[0]] = value;
-        } else if (keys.length > 1) {
-            obj[keys[0]] = setKeys(
-                keys.slice(1, keys.length).join('.'),
-                value
-            );
-        }
-
-        return obj
+export class PublisherState {
+    data: PublisherStateInterface = {
+        PublishSettings: {
+            SupercellSWF: {
+                output: "",
+                debug: false,
+                hasTexture: true,
+                compression: "LZMA"
+            }
+        },
     };
 
-    for (const key of Object.keys(data)) {
-        if (Object.keys(State).includes(key)) {
-            Object.assign(State[key as keyof PublisherState], setKeys(key, data[key]));
+    getParam(name: keyof ModuleStateInterface): any {
+        return this.data.PublishSettings.SupercellSWF[name];
+    }
+
+    setParam(name: keyof ModuleStateInterface, value: any) {
+        this.data.PublishSettings.SupercellSWF[name] = value as never;
+    }
+
+    save() {
+        if (!isCEP()) {
+            return;
         }
-    }
+        const CSInterface = getInterface();
 
-    Object.assign(State, data);
-}
+        const event = new CSEvent(
+            "com.adobe.events.flash.extension.savestate",
+            "APPLICATION"
+        );
 
-export function saveState() {
-    console.log(State);
-    if (!isCEP()) {
-        return;
-    }
-    const CSInterface = getInterface();
+        const data: { [name: string]: any } = {};
 
-    const event = new CSEvent(
-        "com.adobe.events.flash.extension.savestate",
-        "APPLICATION"
-    );
+        function setKeys(key: string, object: any) {
+            if (object instanceof Object) {
+                for (const objKey of Object.keys(object)) {
+                    setKeys(`${key}.${objKey}`, object[objKey]);
+                }
+            } else {
+                switch (typeof object) {
+                    case "string":
+                        data[key] = object;
+                        break;
 
-    const data: { [name: string]: any } = {};
+                    case "boolean":
+                        data["key"] = object ? "1" : "0"
+                        break;
 
-    function setKeys(key: string, object: any) {
-        if (object instanceof Object) {
-            for (const objKey of Object.keys(object)) {
-                setKeys(`${key}.${objKey}`, object[objKey]);
+                    case "undefined":
+                        break;
+
+                    default:
+                        console.log(key, object)
+                        throw new Error("unknown type")
+                }
+
             }
-        } else {
-            data[key] = object;
+        }
+
+        for (const key of Object.keys(this.data)) {
+            setKeys(key, this.data[key as keyof PublisherStateInterface]);
+        }
+
+        event.data = JSON.stringify(data);
+        event.appId = CSInterface.getApplicationID();
+        event.extensionId = "com.scwmake.SupercellSWF.PublishSettings";
+        CSInterface.dispatchEvent(event);
+    }
+
+    restore(data: any) {
+        function setKeys(obj: any, key: string, value: any) {
+            const keys = key.split('.');
+            if (keys.length === 1) {
+                switch (typeof obj[keys[0]]) {
+                    case "string":
+                        obj[keys[0]] = value;
+                        break;
+                    case "boolean":
+                        obj[keys[0]] = value === "1";
+                        break;
+                    case "undefined":
+                        break;
+                    default:
+                        console.log(keys[0], value)
+                        throw new Error("unknown data type");
+                }
+                
+            } else if (keys.length > 1) {
+                setKeys(
+                    obj[keys[0]], keys.slice(1, keys.length).join('.'),
+                    value
+                );
+            }
+        };
+    
+        for (const key of Object.keys(data)) {
+            setKeys(this.data, key, data[key as any]);
         }
     }
-
-    for (const key of Object.keys(State)) {
-        setKeys(key, State[key as keyof PublisherState]);
-    }
-
-    event.data = JSON.stringify(data);
-    event.appId = CSInterface.getApplicationID();
-    event.extensionId = "com.scwmake.SupercellSWF.PublishSettings";
-    CSInterface.dispatchEvent(event);
 }
+
+export const State = new PublisherState();

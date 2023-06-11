@@ -10,7 +10,7 @@ namespace sc {
             StringRep16 itemNamePtr;
             item->GetName(&itemNamePtr);
             u16string itemName = (const char16_t*)itemNamePtr;
-            GetCallocService()->Free(itemNamePtr);
+            context.falloc->Free(itemNamePtr);
 
             AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
             AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
@@ -21,7 +21,7 @@ namespace sc {
             else if (mediaItem) {
                 pSharedShapeWriter shape = m_writer->AddShape();
                 cv::Mat image;
-                shapeGenerator.GetImage(mediaItem, image);
+                shapeGenerator->GetImage(mediaItem, image);
 
                 shape->AddGraphic(image, { 1, 0, 0, 1, 0, 0 });
 
@@ -46,7 +46,7 @@ namespace sc {
         ) {
 
 #ifdef DEBUG
-            console.log("Symbol: %s", fs::path(name).string().c_str());
+            context.trace("Symbol: %s", Utils::ToUtf8(name).c_str());
 #endif // DEBUG
 
             AutoPtr<DOM::ITimeline> timeline;
@@ -67,7 +67,7 @@ namespace sc {
             bool hasName
         ) {
             pSharedMovieclipWriter movieclip = m_writer->AddMovieclip();
-            timelineBuilder.Generate(movieclip, timeline);
+            timelineBuilder->Generate(movieclip, timeline);
 
             uint16_t identifer = m_id++;
             m_symbolsDict.push_back(
@@ -96,7 +96,7 @@ namespace sc {
 
             pSharedShapeWriter shape = m_writer->AddShape();
 
-            shapeGenerator.Generate(shape, timeline);
+            shapeGenerator->Generate(shape, timeline);
 
             uint16_t identifer = m_id++;
 

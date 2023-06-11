@@ -1,4 +1,5 @@
 #include "Publisher/Publisher.h"
+#include "Module/AppContext.h"
 #include <chrono>
 
 namespace sc {
@@ -8,20 +9,9 @@ namespace sc {
 			const PIFCMDictionary publishSettings,
 			const PIFCMDictionary config)
 		{
-			console.Init("Publisher", GetCallback());
-
-			/*StringRep16 documentPath;
-			document->GetPath(&documentPath);
-
-			if (documentPath == NULL) {
-				console.log("Document not saved. Please save document before exporting.");
-				return FCM_EXPORT_FAILED;
-			}*/
-			
-			m_config = PublisherConfig::FromDict(publishSettings);
-
-			if (m_config.output.empty()) {
-				console.log("Error. Failed to get output path");
+			AppContext app(GetCallback(), publishSettings);
+			if (app.config.output.empty()) {
+				app.trace("Failed to get output path");
 				return FCM_EXPORT_FAILED;
 			}
 
@@ -34,32 +24,35 @@ namespace sc {
 			FCM::FCMListPtr libraryItems;
 			document->GetLibraryItems(libraryItems.m_Ptr);
 
-			SharedWriter* writer;
-			if (m_config.debug) {
-				writer = new JSONWriter();
-			}
-			else {
-				writer = new Writer();
-			}
-
 			auto start = chrono::high_resolution_clock::now();
 
+#ifndef DEBUG
 			try {
-				writer->Init(GetCallback(), m_config);
-				ResourcePublisher resources(GetCallback(), writer);
+#endif
+				shared_ptr<SharedWriter> writer;
 
+				if (app.config.debug) {
+					writer = shared_ptr<SharedWriter>(new JSONWriter(app));
+				}
+				else {
+					writer = shared_ptr<SharedWriter>(new Writer(app));
+				}
+
+				ResourcePublisher resources(app, writer.get());
 				ExportLibraryItems(libraryItems, resources);
 
 				resources.Finalize();
+#ifndef DEBUG
 			}
 			catch (const exception& err) {
-				console.log("Error: %s", err.what());
+				app.trace("Error: %s", err.what());
 			}
+#endif
 
 			auto end = chrono::high_resolution_clock::now();
 
 			long long executionTime = chrono::duration_cast<chrono::seconds>(end - start).count();
-			console.log("Export done by %llu second(-s)", executionTime);
+			app.trace("Export done by %llu second(-s)", executionTime);
 
 			return FCM_SUCCESS;
 		}
@@ -75,7 +68,7 @@ namespace sc {
 				StringRep16 itemNamePtr;
 				item->GetName(&itemNamePtr);
 				u16string itemName = (const char16_t*)itemNamePtr;
-				resources.GetCallocService()->Free(itemNamePtr);
+				resources.context.falloc->Free(itemNamePtr);
 
 				AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
 				if (folderItem)
@@ -96,6 +89,10 @@ namespace sc {
 
 					std::string symbolType;
 					Utils::ReadString(dict, kLibProp_SymbolType_DictKey, symbolType);
+
+					FCM::U_Int32 valueLen;
+					FCM::FCMDictRecTypeID type;
+					FCM::Result res = dict->GetInfo("SourceFilePath", type, valueLen);
 
 					if (symbolType != "MovieClip") continue;
 

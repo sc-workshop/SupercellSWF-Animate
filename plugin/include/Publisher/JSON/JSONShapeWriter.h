@@ -8,23 +8,23 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-#include "libjson.h"
+#include "JSON.hpp"
+using namespace nlohmann;
 
 namespace sc {
 	namespace Adobe {
 		class JSONWriter;
 
 		class JSONShapeWriter : public SharedShapeWriter {
-			PIFCMCallback m_callback = nullptr;
 			JSONWriter* m_writer = nullptr;
 
-			JSONNode m_bitmaps = JSONNode(JSON_ARRAY);
+			json m_bitmaps = json::array();
 
 		public:
-			void Init(JSONWriter* writer, PIFCMCallback callback);
+			void Init(JSONWriter* writer);
 			void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
 
-			void Finalize(U_Int16 id);
+			void Finalize(uint16_t id);
 		};
 	}
 }

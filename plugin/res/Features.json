@@ -40,6 +40,7 @@
 			},
 			{
 				"name": "Scale",
+				"supported": false,
 				"default": "Normal",
 				"values": [
 					{
@@ -71,6 +72,25 @@
 		"supported": false,
 		"properties": [
 			{
+				"name": "GradientFlow",
+				"supported": false,
+				"default": "Extend",
+				"values": [
+					{
+						"name": "Extend",
+						"supported": false
+					},
+					{
+						"name": "Reflect",
+						"supported": false
+					},
+					{
+						"name": "Repeat",
+						"supported": false
+					}
+				]
+			},
+			{
 				"name": "Filltype",
 				"supported": false,
 				"default": "Solid",
@@ -93,25 +113,6 @@
 					},
 					{
 						"name": "BitmapFill",
-						"supported": false
-					}
-				]
-			},
-			{
-				"name": "GradientFlow",
-				"supported": false,
-				"default": "Extend",
-				"values": [
-					{
-						"name": "Extend",
-						"supported": false
-					},
-					{
-						"name": "Reflect",
-						"supported": false
-					},
-					{
-						"name": "Repeat",
 						"supported": false
 					}
 				]
@@ -147,6 +148,24 @@
 				]
 			},
 			{
+				"name": "TextLinkage",
+				"supported": false
+			},
+			{
+				"name": "FontEmbed",
+				"supported": false
+			}
+		]
+	},
+	{
+		"name": "StaticText",
+		"supported": false,
+		"properties": [
+			{
+				"name": "RenderAsHTML",
+				"supported": false
+			},
+			{
 				"name": "TextFormat",
 				"supported": false,
 				"default": "LeftAlign",
@@ -174,14 +193,13 @@
 				"supported": false
 			},
 			{
-				"name": "LetterSpacing",
-				"supported": false,
-				"default": "0.0"
+				"name": "WebFont",
+				"supported": false
 			},
 			{
 				"name": "LetterSpacing",
 				"supported": false,
-				"default": "false"
+				"default": "0.0"
 			},
 			{
 				"name": "AutoKern",
@@ -196,7 +214,116 @@
 			{
 				"name": "Selectable",
 				"supported": false,
-				"default": "true"
+				"default": false
+			},
+			{
+				"name": "RenderAsHtml",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "Border",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "SuperScript",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "SubScript",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "Margins",
+				"supported": false,
+				"default": "0.0"
+			},
+			{
+				"name": "LineType",
+				"supported": false,
+				"default": "SingleLine",
+				"values": [
+					{
+						"name": "SingleLine",
+						"supported": false
+					},
+					{
+						"name": "MultiLine",
+						"supported": false
+					},
+					{
+						"name": "MultiLineNoWrap",
+						"supported": false
+					}
+				]
+			},
+			{
+				"name": "Filter",
+				"supported": false
+			}
+		]
+	},
+	{
+		"name": "DynamicText",
+		"supported": false,
+		"properties": [
+			{
+				"name": "RenderAsHTML",
+				"supported": false
+			},
+			{
+				"name": "TextFormat",
+				"supported": false,
+				"default": "LeftAlign",
+				"values": [
+					{
+						"name": "LeftAlign",
+						"supported": false
+					},
+					{
+						"name": "Justify",
+						"supported": false
+					},
+					{
+						"name": "RightAlign",
+						"supported": false
+					},
+					{
+						"name": "CentreAlign",
+						"supported": false
+					}
+				]
+			},
+			{
+				"name": "FontEmbed",
+				"supported": false
+			},
+			{
+				"name": "WebFont",
+				"supported": false
+			},
+			{
+				"name": "LetterSpacing",
+				"supported": false,
+				"default": "0.0"
+			},
+			{
+				"name": "AutoKern",
+				"supported": false,
+				"default": "false"
+			},
+			{
+				"name": "AntiAlias",
+				"supported": false,
+				"default": "DeviceFonts"
+			},
+			{
+				"name": "Selectable",
+				"supported": false,
+				"default": false
 			},
 			{
 				"name": "RenderAsHtml",
@@ -245,6 +372,10 @@
 						"supported": false
 					}
 				]
+			},
+			{
+				"name": "Filter",
+				"supported": false
 			}
 		]
 	},
@@ -262,8 +393,7 @@
 	},
 	{
 		"name": "SwfObjects",
-		"supported": false,
-		"properties": []
+		"supported": false
 	},
 	{
 		"name": "3D",
@@ -549,13 +679,11 @@
 	},
 	{
 		"name": "Sound",
-		"supported": false,
-		"properties": []
+		"supported": false
 	},
 	{
 		"name": "ActionScript",
-		"supported": false,
-		"properties": []
+		"supported": false
 	},
 	{
 		"name": "Layer",
