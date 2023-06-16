@@ -24,8 +24,6 @@ namespace sc {
 		}
 
 		void Writer::Finalize() {
-			PublisherConfig& config = m_context.config;
-
 			// Atlas processing
 			{
 				std::vector<AtlasGeneratorItem> items;
@@ -35,6 +33,9 @@ namespace sc {
 				}
 
 				AtlasGeneratorConfig config;
+				config.maxSize = { m_context.config.textureMaxWidth, m_context.config.textureMaxHeight };
+				config.scaleFactor = m_context.config.textureScaleFactor;
+
 				vector<cv::Mat> textures;
 				AtlasGeneratorResult packageResult = AtlasGenerator::Generate(items, textures, config);
 				switch (packageResult) {
@@ -42,6 +43,8 @@ namespace sc {
 					throw exception("[AtlasGenerator] Failed to generate polygon");
 				case AtlasGeneratorResult::TOO_MANY_IMAGES:
 					throw exception("[AtlasGenerator] Too many image for one sheet");
+				case AtlasGeneratorResult::TOO_BIG_IMAGE:
+					throw exception("[AtlasGenerator] Some of images are too big. Try increasing texture size to fix error");
 				case AtlasGeneratorResult::OK:
 					break;
 				default:
@@ -99,8 +102,10 @@ namespace sc {
 				}
 			}
 
-			swf.useExternalTexture(config.hasTexture);
-			swf.save(config.output, config.compression);
+			swf.useExternalTexture(m_context.config.hasTexture);
+			swf.useLowResTexture(false);
+			swf.useMultiResTexture(false);
+			swf.save(m_context.config.output, m_context.config.compression);
 		}
 	}
 }

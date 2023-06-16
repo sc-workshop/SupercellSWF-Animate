@@ -10,7 +10,7 @@ namespace sc {
 		void LayerBuilder::UpdateFrame() {
 			AutoPtr<DOM::IFrame> frame;
 			m_layer->GetFrameAtIndex(m_position, frame.m_Ptr);
-			m_frameBuilder.update(frame);
+			m_frameBuilder.Update(frame);
 		}
 
 		void LayerBuilder::AddModifier(

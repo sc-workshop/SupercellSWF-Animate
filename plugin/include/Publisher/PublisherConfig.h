@@ -10,21 +10,23 @@ namespace fs = std::filesystem;
 
 #include <SupercellFlash.h>
 
-#define PUBLISHER_OUTPUT "PublishSettings.SupercellSWF.output"
-#define PUBLISHER_DEBUG "PublishSettings.SupercellSWF.debug"
-#define PUBLISHER_SWF_HAS_TEXTURE "PublishSettings.SupercellSWF.hasTexture"
-#define PUBLISHER_SWF_COMPRESSION "PublishSettings.SupercellSWF.compression"
-
 namespace sc {
 	namespace Adobe {
-		struct PublisherConfig {
-			// Basic
-			fs::path output = "";
-			bool debug = 0;
+		enum class PublisherMethod {
+			JSON,
+			SWF
+		};
 
-			// SWF
-			bool hasTexture = 0;
+		struct PublisherConfig {
+			fs::path output = "";
+			PublisherMethod method = PublisherMethod::SWF;
+
 			sc::CompressionSignature compression = sc::CompressionSignature::LZMA;
+
+			bool hasTexture = 0;
+			uint8_t textureScaleFactor = 1;
+			uint32_t textureMaxWidth = 2048;
+			uint32_t textureMaxHeight = 2048;
 
 			static PublisherConfig FromDict(const FCM::PIFCMDictionary dict);
 		};

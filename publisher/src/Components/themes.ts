@@ -1,6 +1,6 @@
-import { getInterface, isCEP } from "../CEP";
+import { isCEP } from "../CEP";
 
-export enum themes {
+export enum AppThemes {
     Dark,
     Light
 }
@@ -13,6 +13,6 @@ export function refreshTheme() {
     //const hostEnv = CSInterface.getHostEnvironment();
 }
 
-export let theme: themes = themes.Dark;
+export let AppTheme: AppThemes = AppThemes.Dark;
 
-export let themeColor = theme === themes.Dark ? 0x333333 : 0xf1f1f;
+export let AppColor = AppTheme === AppThemes.Dark ? 0x333333 : 0xf1f1f;

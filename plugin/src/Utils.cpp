@@ -242,30 +242,90 @@ namespace sc {
         }
 
         bool Utils::ReadString(
-            const FCM::PIFCMDictionary pDict,
+            const FCM::PIFCMDictionary dict,
             FCM::StringRep8 key,
-            std::string& retString)
+            std::string& result)
         {
             FCM::U_Int32 valueLen;
             FCM::FCMDictRecTypeID type;
 
-            FCM::Result res = pDict->GetInfo(key, type, valueLen);
-            if (FCM_FAILURE_CODE(res))
+            FCM::Result res = dict->GetInfo(key, type, valueLen);
+            if (FCM_FAILURE_CODE(res) || type != FCM::FCMDictRecTypeID::kFCMDictType_StringRep8)
             {
                 return false;
             }
 
             FCM::StringRep8 strValue = new char[valueLen];
-            res = pDict->Get(key, type, (FCM::PVoid)strValue, valueLen);
+            res = dict->Get(key, type, (FCM::PVoid)strValue, valueLen);
             if (FCM_FAILURE_CODE(res))
             {
                 delete[] strValue;
                 return false;
             }
 
-            retString = strValue;
+            result = strValue;
 
             delete[] strValue;
+            return true;
+        }
+
+        bool Utils::ReadBoolean(
+            const FCM::PIFCMDictionary dict,
+            FCM::StringRep8 key,
+            bool& result)
+        {
+            FCM::U_Int32 valueLen;
+            FCM::FCMDictRecTypeID type;
+
+            FCM::Result res = dict->GetInfo(key, type, valueLen);
+            if (FCM_FAILURE_CODE(res))
+            {
+                return false;
+            }
+
+            if (type == FCM::FCMDictRecTypeID::kFCMDictType_Long) {
+                res = dict->Get(key, type, (FCM::PVoid)(&result), valueLen);
+                if (FCM_FAILURE_CODE(res))
+                {
+                    return false;
+                }
+            }
+            else if (type == FCM::FCMDictRecTypeID::kFCMDictType_StringRep8) {
+                std::string value;
+                ReadString(dict, key, value);
+                result = value == "true";
+            }
+
+            return true;
+        }
+
+        bool Utils::ReadInteger(
+            const FCM::PIFCMDictionary dict,
+            FCM::StringRep8 key,
+            int& result)
+        {
+            FCM::U_Int32 valueLen;
+            FCM::FCMDictRecTypeID type;
+
+            FCM::Result res = dict->GetInfo(key, type, valueLen);
+            if (FCM_FAILURE_CODE(res))
+            {
+                return false;
+            }
+
+            if (type == FCM::FCMDictRecTypeID::kFCMDictType_Long) {
+                res = dict->Get(key, type, (FCM::PVoid)(&result), valueLen);
+                if (FCM_FAILURE_CODE(res))
+                {
+                    return false;
+                }
+            }
+            else if (type == FCM::FCMDictRecTypeID::kFCMDictType_StringRep8) {
+                std::string number;
+                ReadString(dict, key, number);
+                result = std::stoi(number);
+            }
+
             return true;
         }
 

@@ -1,7 +1,15 @@
 {
     "TID_VERSION": "Version",
+	
     "TID_OUTPUT": "Output",
+	"TID_PUBLISH_METHOD": "Output type",
 
-    "TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
-    "TID_SWF_SETTINGS_COMPRESSION": "Compression method"
+	"TID_ADDITIONAL_SETTINGS_LABEL": "Additional",
+    "TID_SWF_SETTINGS_COMPRESSION": "Compression method",
+	
+	"TID_TEXTURES_LABEL": "Textures",
+	"TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
+	"TID_SWF_SETTINGS_SCALE_FACTOR": "Reduction factor",
+	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Texture width",
+	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Texture height"
 }

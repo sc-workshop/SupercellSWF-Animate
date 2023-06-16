@@ -26,6 +26,9 @@ namespace sc {
 
 			void Init() {
 				imageFolder = m_context.config.output.parent_path() / "images";
+				if (fs::exists(imageFolder)) {
+					fs::remove_all(imageFolder);
+				}
 				fs::create_directory(imageFolder);
 			}
 

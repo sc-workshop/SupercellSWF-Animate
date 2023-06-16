@@ -135,7 +135,6 @@ namespace sc {
 		}
 
 		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps, u16string name) {
-			//TODO: export name filtering
 			m_object->id(id);
 			m_object->frameRate(fps);
 			

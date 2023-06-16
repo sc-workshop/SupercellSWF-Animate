@@ -9,6 +9,7 @@
 
 // Timeline
 #include <DOM/ILayer2.h>
+#include <DOM/FrameElement/IMovieClip.h>
 
 // Modifier
 #include <SupercellFlash/objects/MovieClipModifier.h>

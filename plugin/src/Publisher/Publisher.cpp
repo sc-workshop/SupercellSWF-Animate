@@ -26,28 +26,32 @@ namespace sc {
 
 			auto start = chrono::high_resolution_clock::now();
 
-#ifndef DEBUG
 			try {
-#endif
 				shared_ptr<SharedWriter> writer;
-
-				if (app.config.debug) {
-					writer = shared_ptr<SharedWriter>(new JSONWriter(app));
-				}
-				else {
+				switch (app.config.method) {
+				case PublisherMethod::SWF:
 					writer = shared_ptr<SharedWriter>(new Writer(app));
+					break;
+				case PublisherMethod::JSON:
+					writer = shared_ptr<SharedWriter>(new JSONWriter(app));
+					break;
+				default:
+					throw exception("Failed to get writer");
 				}
+
+				writer->Init();
 
 				ResourcePublisher resources(app, writer.get());
+				resources.InitDocument(framesPerSec);
+
 				ExportLibraryItems(libraryItems, resources);
 
 				resources.Finalize();
-#ifndef DEBUG
+
 			}
 			catch (const exception& err) {
 				app.trace("Error: %s", err.what());
 			}
-#endif
 
 			auto end = chrono::high_resolution_clock::now();
 

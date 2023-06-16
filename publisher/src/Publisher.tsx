@@ -3,6 +3,7 @@ import { BasicSettings } from './Components/Publisher/BasicSettings';
 import { publish } from './Components';
 import { Stylefield } from './Components/Shared/Stylefield';
 import { Header } from './Components/Publisher/Header';
+import { Settings } from './Components/Publisher/settings';
 
 function Publisher() {
   const headerLine = createElement("hr",
@@ -44,6 +45,7 @@ function Publisher() {
         Header(),
         headerLine,
         BasicSettings(),
+        Settings(),
 
         publishButton
       ]

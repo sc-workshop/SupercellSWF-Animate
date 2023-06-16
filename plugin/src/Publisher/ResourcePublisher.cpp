@@ -75,10 +75,10 @@ namespace sc {
             );
 
             if (hasName) {
-                movieclip->Finalize(identifer, 24, name);
+                movieclip->Finalize(identifer, m_fps, name);
             }
             else {
-                movieclip->Finalize(identifer, 24, u"");
+                movieclip->Finalize(identifer, m_fps, u"");
             }
 
             return identifer;
@@ -156,11 +156,15 @@ namespace sc {
             return false;
         }
 
-        void ResourcePublisher::Finalize() {
-            m_id = 0;
+        void ResourcePublisher::InitDocument(uint8_t fps) {
+            m_fps = fps;
+
             m_symbolsDict.clear();
             m_modifierDict.clear();
+            m_imageSymbolsDataDict.clear();
+        }
 
+        void ResourcePublisher::Finalize() {
             m_writer->Finalize();
         }
 	}

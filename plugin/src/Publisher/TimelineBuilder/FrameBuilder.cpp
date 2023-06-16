@@ -4,7 +4,7 @@
 
 namespace sc {
 	namespace Adobe {
-		void FrameBuilder::update(AutoPtr<DOM::IFrame>& frame) {
+		void FrameBuilder::Update(AutoPtr<DOM::IFrame>& frame) {
 			if (!frame) {
 				throw exception("Failed to get NULL frame");
 			}
@@ -12,7 +12,7 @@ namespace sc {
 			// cleaning
 			m_duration = 0;
 			m_position = 0;
-			m_name = "";
+			m_label = u"";
 			m_elementsData.clear();
 			m_matrices.clear();
 			m_colors.clear();
@@ -20,7 +20,14 @@ namespace sc {
 			m_matrixTweener = nullptr;
 			m_colorTweener = nullptr;
 
-			// Frame processing
+			DOM::KeyFrameLabelType labelType = DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NONE;
+			frame->GetLabelType(labelType);
+			if (labelType == DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NAME) {
+				StringRep16 frameNamePtr;
+				frame->GetLabel(&frameNamePtr);
+				m_label = (const char16_t*)frameNamePtr;
+				m_resources.context.falloc->Free(frameNamePtr);
+			}
 
 			frame->GetDuration(m_duration);
 
@@ -42,8 +49,10 @@ namespace sc {
 				COLOR_MATRIX* color = NULL;
 
 				AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
-				AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
+				AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
 
+				AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
+				
 				if (libraryElement) {
 					DOM::PILibraryItem libraryItem;
 					libraryElement->GetLibraryItem(libraryItem);
@@ -74,10 +83,19 @@ namespace sc {
 					throw exception("Failed to get frame element id");
 				}
 
+				u16string name = u"";
+				uint8_t blendMode = 0;
+				if (movieClipElement) {
+					StringRep16 elementNamePtr;
+					movieClipElement->GetName(&elementNamePtr);
+					name = (const char16_t*)elementNamePtr;
+					m_resources.context.falloc->Free(elementNamePtr);
+				}
+
 				m_elementsData.push_back({
 					id,
 					0,
-					u"" // TODO Blending / Element names
+					name // TODO Blending
 				});
 
 				m_matrices.push_back(
@@ -118,6 +136,10 @@ namespace sc {
 		}
 
 		void FrameBuilder::operator()(pSharedMovieclipWriter writer) {
+			if (!m_label.empty()) {
+				writer->SetLabel(m_label);
+			}
+
 			uint32_t i = (uint32_t)m_elementsData.size();
 			for (uint32_t elementIndex = 0; m_elementsData.size() > elementIndex; elementIndex++) {
 				i--;

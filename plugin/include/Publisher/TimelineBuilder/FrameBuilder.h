@@ -50,7 +50,7 @@ namespace sc {
 			// Local frame position
 			uint32_t m_position = 0;
 			// Frame name
-			string m_name = "";
+			u16string m_label = u"";
 
 			// Frane symbols data in resource palette
 			vector<tuple<uint16_t, uint8_t, u16string>> m_elementsData;
@@ -67,7 +67,7 @@ namespace sc {
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
 
-			void update(AutoPtr<DOM::IFrame>& frame);
+			void Update(AutoPtr<DOM::IFrame>& frame);
 
 			void operator()(pSharedMovieclipWriter writer);
 

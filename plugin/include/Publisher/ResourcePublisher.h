@@ -50,6 +50,7 @@ namespace sc {
             vector<pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
 
             uint32_t m_id = 0;
+            uint8_t m_fps = 24;
 
             // Services
             AutoPtr<IFCMCalloc> m_calloc;
@@ -65,6 +66,7 @@ namespace sc {
                 timelineBuilder = shared_ptr<TimelineBuilder>(new TimelineBuilder(*this));
                 shapeGenerator = shared_ptr<ShapeGenerator>(new ShapeGenerator(*this));
             }
+
 
             uint16_t AddLibraryItem(
                 DOM::ILibraryItem* item,
@@ -103,6 +105,8 @@ namespace sc {
             void AddCachedBitmap(u16string name, cv::Mat image);
 
             bool GetCachedBitmap(u16string name, cv::Mat& result);
+
+            void InitDocument(uint8_t fps);
 
             void Finalize();
 		};

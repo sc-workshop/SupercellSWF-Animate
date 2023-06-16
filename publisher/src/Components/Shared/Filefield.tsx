@@ -2,6 +2,7 @@ import { createElement, useState } from "react";
 
 import { Stylefield } from "./Stylefield";
 import { getInterface, isCEP } from "../../CEP";
+import { AppTheme, AppThemes } from "../themes";
 
 export function Filefield(name: string, ext: string, callback: (value: any) => void, defaultValue: string = "") {
     const [input, setInput] = useState(defaultValue);
@@ -48,7 +49,7 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
     const openFileButton = createElement("input", {
         key: `Filefield_${name}_openFileButton`,
         type: "image",
-        src: "folderOpen.png",
+        src: `${AppThemes[AppTheme]}/folderOpen.png`,
         style: {
             width: "20px",
             height: "20px",
@@ -77,16 +78,21 @@ export function Filefield(name: string, ext: string, callback: (value: any) => v
                 );
             })
 
-            const outputPath = await selectFileEvent as string;
-            setInput(outputPath)
-            callback(outputPath);
+            const outputPath = await selectFileEvent;
+            if (typeof outputPath === "string" && outputPath != "null") {
+                setInput(outputPath)
+                callback(outputPath);
+            }
         }
     });
 
     return createElement(
         "div",
         {
-            key: `Filefield_${name}`
+            key: `Filefield_${name}`,
+            style: {
+                paddingBottom: "10px"
+            }
         },
         outputLabel,
         filepath,

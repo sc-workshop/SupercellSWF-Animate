@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import Publisher from './Publisher';
 import React, { useState, createElement, useEffect } from 'react';
-import { themeColor } from './Components/themes';
+import { AppColor } from './Components/themes';
 import { getInterface, CSEvent, isCEP } from './CEP';
 import { State } from './Components/publisherState';
 
@@ -46,7 +46,7 @@ function App() {
     return createElement("body",
       {
         style: {
-          backgroundColor: `#${themeColor.toString(16)}`
+          backgroundColor: `#${AppColor.toString(16)}`
         }
       },
       <Publisher></Publisher>

@@ -1,10 +1,41 @@
 import { CSEvent, getInterface, isCEP } from "../CEP"
 
+export enum PublisherMethods {
+    JSON,
+    SWF
+}
+
+export enum CompressionMethods {
+    LZMA,
+    LZHAM,
+    ZSTD
+}
+
+export enum TextureScaleFactor {
+    None,
+    Half,
+    Quarter
+
+}
+
+export const TextureDimensions = [
+    512,
+    1024, 
+    2048,
+    4096
+]
+
 interface ModuleStateInterface {
     output: string,
-    debug: boolean,
+    method: PublisherMethods,
+
+    compression: string,
+
     hasTexture: boolean,
-    compression: string
+    textureScaleFactor: TextureScaleFactor
+    textureMaxWidth: number,
+    textureMaxHeight: number
+    
 }
 
 interface PublisherStateInterface {
@@ -18,9 +49,15 @@ export class PublisherState {
         PublishSettings: {
             SupercellSWF: {
                 output: "",
-                debug: false,
+                method: PublisherMethods.SWF,
+                
+                compression: "LZMA",
+
+                // Textures
                 hasTexture: true,
-                compression: "LZMA"
+                textureScaleFactor: TextureScaleFactor.None,
+                textureMaxWidth: 2048,
+                textureMaxHeight: 2048
             }
         },
     };
@@ -34,16 +71,6 @@ export class PublisherState {
     }
 
     save() {
-        if (!isCEP()) {
-            return;
-        }
-        const CSInterface = getInterface();
-
-        const event = new CSEvent(
-            "com.adobe.events.flash.extension.savestate",
-            "APPLICATION"
-        );
-
         const data: { [name: string]: any } = {};
 
         function setKeys(key: string, object: any) {
@@ -52,22 +79,7 @@ export class PublisherState {
                     setKeys(`${key}.${objKey}`, object[objKey]);
                 }
             } else {
-                switch (typeof object) {
-                    case "string":
-                        data[key] = object;
-                        break;
-
-                    case "boolean":
-                        data["key"] = object ? "1" : "0"
-                        break;
-
-                    case "undefined":
-                        break;
-
-                    default:
-                        console.log(key, object)
-                        throw new Error("unknown type")
-                }
+                data[key] = object;
 
             }
         }
@@ -76,9 +88,21 @@ export class PublisherState {
             setKeys(key, this.data[key as keyof PublisherStateInterface]);
         }
 
+        console.log(data);
+
+        if (!isCEP()) {
+            return;
+        }
+        const CSInterface = getInterface();
+
+        const event = new CSEvent(
+            "com.adobe.events.flash.extension.savestate",
+            "APPLICATION",
+            CSInterface.getApplicationID(),
+            "com.scwmake.SupercellSWF.PublishSettings"
+        );
+
         event.data = JSON.stringify(data);
-        event.appId = CSInterface.getApplicationID();
-        event.extensionId = "com.scwmake.SupercellSWF.PublishSettings";
         CSInterface.dispatchEvent(event);
     }
 
@@ -86,19 +110,7 @@ export class PublisherState {
         function setKeys(obj: any, key: string, value: any) {
             const keys = key.split('.');
             if (keys.length === 1) {
-                switch (typeof obj[keys[0]]) {
-                    case "string":
-                        obj[keys[0]] = value;
-                        break;
-                    case "boolean":
-                        obj[keys[0]] = value === "1";
-                        break;
-                    case "undefined":
-                        break;
-                    default:
-                        console.log(keys[0], value)
-                        throw new Error("unknown data type");
-                }
+                obj[keys[0]] = value;
                 
             } else if (keys.length > 1) {
                 setKeys(
