@@ -2,14 +2,13 @@
   "name": "SupercellSWF",
   "private": true,
   "version": "1.0.0",
-  "description": "Plugin for Adobe Animate",
+  "description": "Custom platfrom plugin for Adobe Animate",
   "main": "build.ts",
   "scripts": {
     "build:dev": "ts-node scripts/build.ts development",
     "build:prod": "ts-node scripts/build.ts production",
     "deploy:dev": "ts-node scripts/deploy.ts development",
-    "deploy:prod": "ts-node scripts/deploy.ts production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy:prod": "ts-node scripts/deploy.ts production"
   },
   "author": "DaniilSV",
   "license": "MIT",

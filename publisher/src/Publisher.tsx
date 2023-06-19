@@ -1,24 +1,30 @@
 import { createElement } from 'react';
-import { BasicSettings } from './Components/Publisher/BasicSettings';
 import { publish } from './Components';
-import { Stylefield } from './Components/Shared/Stylefield';
+import TextField from './Components/Shared/TextField';
 import { Header } from './Components/Publisher/Header';
-import { Settings } from './Components/Publisher/settings';
+import Settings from './Components/Publisher/Settings';
+import BasicSettings from './Components/Publisher/BasicSettings';
+import Locale from './Localization';
+import FileField from './Components/Shared/FileField';
+import { State } from './Components/publisherState';
 
 function Publisher() {
-  const headerLine = createElement("hr",
+  const delim = <hr key="header_delin" style={{
+    width: "99%",
+    border: "2px solid #484848",
+  }} />;
+
+  const publishButtonLabel = TextField(
+    "Publish",
     {
-      key: "HeaderLine",
-      style: {
-        width: "99%",
-        display: "block",
-        border: "2px solid #484848",
-      }
+      color: "white",
+      textShadow: "1px 1px black"
     }
-  )
+  );
 
   const publishButton = createElement("button",
     {
+      key: "publish_button",
       style: {
         bottom: "25px",
         width: "100px",
@@ -30,20 +36,20 @@ function Publisher() {
       },
       onClick: publish
     },
-    Stylefield("Publish", {
-      color: "white",
-      textShadow: "1px 1px black"
-    }))
+    publishButtonLabel
+  )
 
   return createElement("div",
     {
-      id: "Publisher",
+      id: "publisher",
       style: {
-        display: 'block'
+
       },
       children: [
         Header(),
-        headerLine,
+
+        delim,
+
         BasicSettings(),
         Settings(),
 

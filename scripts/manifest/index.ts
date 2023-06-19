@@ -106,7 +106,7 @@ export function generateCSXS(config: ConfigInterface) {
 
         const resources = extensionNode.ele("Resources");
 
-        resources.ele("MainPath").txt( "./" +
+        resources.ele("MainPath").txt("./" +
             posix.relative(
                 extensionDistRoot,
                 posix.join(extensionDistRoot, extensionName, extension.path)
@@ -134,7 +134,10 @@ export function generateCSXS(config: ConfigInterface) {
         const ui = extensionNode.ele("UI")
 
         ui.ele("Type").txt(extension.ui.type);
-        ui.ele("Menu").txt(extension.ui.name);
+
+        if (extension.ui.name) {
+            ui.ele("Menu").txt(extension.ui.name);
+        }
 
         const geometry = ui.ele("Geometry");
 

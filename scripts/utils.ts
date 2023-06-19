@@ -76,16 +76,6 @@ export function processExecError(err: any): Error {
         errorMessage = "Process exit with code " + err.status;
     }
 
-    if (err.stdout.length !== 0) {
-        console.log(err.stdout.toString());
-    }
-
-    if (err.stderr.length !== 0) {
-        console.log(err.stderr.toString());
-    }
-
-    console.log(err.message);
-
     return new Error(errorMessage)
 }
 

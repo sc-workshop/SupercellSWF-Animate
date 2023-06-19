@@ -12,6 +12,7 @@ if (!isWindows && !isMac) {
 const args = process.argv;
 const isDev = args[2] == "development";
 const outputPath = args[3];
+mkdirSync(outputPath, { recursive: true });
 
 const libPath = join(outputPath, "lib");
 mkdirSync(libPath, { recursive: true });
@@ -50,26 +51,38 @@ function buildWindows() {
             throw new Error("Failed to find premake5 executable");
         }
 
-        execSync(`scripts/generate.bat`);
+        execSync(`scripts/generate.bat`, {stdio: [0, 1, 2]});
     }
 
     progress("Building with MSBuild...");
 
+    if (!existsSync(solutionPath)) {
+        throw new Error("Failed to get solution");
+    }
+
     try {
-        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`)
+        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`, {stdio: [0, 1, 2]})
     } catch (err) {
         throw processExecError(err);
     }
 
     progress("Done");
 
-    const fcmOutputFolder = join(libPath, "win");
-    mkdirSync(fcmOutputFolder, { recursive: true });
-    copyFileSync("project/win/Plugin.fcm", join(fcmOutputFolder, "plugin.fcm"));
+    if (!isDev) {
+        const binaryPath = "bin/win/Plugin.fcm";
+        if (!binaryPath) {
+            throw new Error("Failed to get binary");
+        }
 
-    for (const filepath of sharedLibs) {
-        copyFileSync(join(__dirname, filepath), join(fcmOutputFolder, basename(filepath)))
+        const fcmOutputFolder = join(libPath, "win");
+        mkdirSync(fcmOutputFolder, { recursive: true });
+        copyFileSync(binaryPath, join(fcmOutputFolder, "plugin.fcm"));
+
+        for (const filepath of sharedLibs) {
+            copyFileSync(join(__dirname, filepath), join(fcmOutputFolder, basename(filepath)))
+        }
     }
+
 }
 
 function buildMac() {

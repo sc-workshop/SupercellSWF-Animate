@@ -29,8 +29,7 @@ namespace sc {
 			UpdateContext(callback);
 
 			fs::path featuresPath = Utils::CurrentPath();
-			featuresPath /= "../res";
-			featuresPath /= "Features.json";
+			featuresPath /= "../res/Features.json";
 
 			std::ifstream file(featuresPath);
 			json features = json::parse(file);
@@ -103,7 +102,7 @@ namespace sc {
 #ifdef DEBUG
 				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
 #endif // DEBUG
-				isSupported = false;
+				isSupported = true;
 			}
 			else
 			{
@@ -130,7 +129,7 @@ namespace sc {
 #ifdef DEBUG
 				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
 #endif // DEBUG
-				isSupported = false;
+				isSupported = true;
 			}
 			else
 			{
@@ -147,7 +146,7 @@ namespace sc {
 						m_context->trace("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
 #endif // DEBUG
 
-						isSupported = false;
+						isSupported = true;
 					}
 					else
 					{
@@ -179,7 +178,7 @@ namespace sc {
 #ifdef DEBUG
 				m_context->trace("Failed to get info about \"%s\" feature", featureName.c_str());
 #endif // DEBUG
-				isSupported = false;
+				isSupported = true;
 			}
 			else
 			{
@@ -195,7 +194,7 @@ namespace sc {
 #ifdef DEBUG
 						m_context->trace("Failed to get property \"%s\" from \"%s\" feature", propertyName.c_str(), featureName.c_str());
 #endif // DEBUG
-						isSupported = false;
+						isSupported = true;
 					}
 					else
 					{
@@ -211,7 +210,7 @@ namespace sc {
 #ifdef DEBUG
 								m_context->trace("Failed to get value \"%s\" from \"%s\" property in \"%s\" feature", valueName.c_str(), propertyName.c_str(), featureName.c_str());
 #endif // DEBUG
-								isSupported = false;
+								isSupported = true;
 							}
 							else
 							{

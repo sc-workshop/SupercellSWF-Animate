@@ -56,7 +56,7 @@ filter {"system:windows", "configurations:Release"}
 links {
 	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
 }
-targetdir "build/win/"
+targetdir "bin/win/"
 
 filter "system:windows"
 defines { "_WINDOWS", "_WIN32", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }

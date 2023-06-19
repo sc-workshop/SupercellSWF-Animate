@@ -1,52 +1,41 @@
 {
   "name": "sc-animate-publisher",
   "version": "1.0.0",
-  "private": true,
-  "homepage": "./",
+  "description": "",
+  "main": "src/index.tsx",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack",
+    "build:prod": "npm run build && ts-node build.ts production ",
+    "build:dev": "npm run build && ts-node build.ts development"
+  },
+  "keywords": [],
+  "author": "DaniilSV",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.13.8",
+    "@babel/preset-env": "^7.13.9",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/react": "^18.2.12",
+    "@types/react-dom": "^18.2.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.1.1",
+    "css-modules-typescript-loader": "^4.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.2.0",
+    "path": "^0.12.7",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.17",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1",
-    "styled-components": "^5.3.9",
-    "typescript": "^4.9.5"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build:prod": "npm run build && ts-node build.ts production",
-    "build:dev": "npm run build && ts-node build.ts development"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "browser": {
-    "fs": false,
-    "path": false,
-    "os": false
-  },
-  "description": "Publisher dialog for SC-Animate",
-  "main": "build.ts",
-  "author": "DaniilSV",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.32",
-    "@types/react-dom": "^18.0.11",
-    "@types/styled-components": "^5.1.26"
+    "typescript": "^4.2.2",
+    "typescript-plugin-css-modules": "^5.0.1"
   }
 }

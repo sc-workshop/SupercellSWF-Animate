@@ -1,53 +1,54 @@
 import { createElement } from "react";
-import { Stylefield } from "../Shared/Stylefield";
-import { Locale } from "../../Localization";
+import TextField from "../Shared/TextField";
+import Locale from "../../Localization";
 
 const Version = require("../../../package.json").version;
 
 export function Header() {
 
-    const headerLine = createElement("vr",
-    {
-      key: "HeaderInfoLine",
-      style: {
-        position: "absolute",
-        marginLeft: "50%",
-        height: "50px",
-        borderLeft: "4px solid #484848"
-      }
-    }
-  )
-
-    return createElement("div",
+    const delim = createElement("vr",
         {
-            key: "PublisherHeader",
+            key: "header_info_delim",
             style: {
-                height: "45px"
+                position: "absolute",
+                marginLeft: "50%",
+                height: "60px",
+                borderLeft: "4px solid #484848"
+            }
+        }
+    )
+
+    const label = TextField(
+        `SC`,
+        {
+            color: "white",
+            fontSize: "30px",
+            position: "absolute"
+        },
+        "header_info_title"
+    )
+
+    const versionLabel = TextField(
+        `${Locale.Get("TID_VERSION")} ${Version}`,
+        {
+            color: "white",
+            fontSize: "20px",
+            marginTop: "45px",
+            position: "absolute"
+        },
+        "header_info_version"
+    )
+
+    return createElement(
+        "div",
+        {
+            key: "publisher_info",
+            style: {
+                height: "60px"
             }
         },
-
-        Stylefield("SC",
-            {
-                color: "white",
-                fontSize: "25px",
-                fontWeight: "bolder",
-                position: "absolute"
-            }
-        ),
-
-        Stylefield(
-            `${Locale.Get("TID_VERSION")} ${Version}`,
-            {
-                color: "white",
-                fontSize: "15px",
-                fontWeight: "bolder",
-                marginTop: "35px",
-                position: "absolute"
-            }
-        ),
-
-        headerLine,
-
-        
+        label,
+        versionLabel,
+        delim
     )
 }

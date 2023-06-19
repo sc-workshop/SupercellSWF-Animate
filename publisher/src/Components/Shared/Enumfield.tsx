@@ -1,5 +1,5 @@
 import { CSSProperties, createElement, useState } from "react";
-import { Stylefield } from "./Stylefield";
+import TextField from "./TextField";
 
 interface Enum {
     [id: number]: any;
@@ -8,8 +8,9 @@ interface Enum {
 
 type EnumArray = string[] | number[];
 
-export function Enumfield(
+export default function EnumField(
     name: string,
+    keyName: string,
     enumeration: Enum | EnumArray,
     defaultValue: string,
     style: CSSProperties,
@@ -28,7 +29,7 @@ export function Enumfield(
             }
 
             options.push(
-                <option value={i}>{key}</option>
+                <option key={`enumfield_${keyName}_${key}`} value={i}>{key}</option>
             );
         }
     } else {
@@ -45,32 +46,27 @@ export function Enumfield(
             }
 
             options.push(
-                <option value={enumValue}>{enumKey}</option>
+                <option key={`enumfield_${keyName}_${enumValue}`} value={enumValue}>{enumKey}</option>
             );
         }
     }
 
-    const label = Stylefield(
+    const label = TextField(
         `${name} :`,
         {
-            textAlign: "match-parent",
-            display: "block",
-            float: "left",
             color: "#727776",
-            paddingTop: "4px",
-            paddingRight: "11px",
-            margin: "auto",
         }
-    );
+    )
 
     const selector = createElement(
         "select",
         {
+            key: `enumfield_${keyName}_input`,
             style: {
                 width: `${maxEnumSize * 15}px`,
                 height: "35px",
                 color: "white",
-                marginTop: "-5px",
+                marginLeft: "5px",
                 background: "#1a1a1a",
                 borderRadius: "5px",
                 outline: isFocus ? "2px solid #337ed4" : "none",
@@ -88,11 +84,12 @@ export function Enumfield(
             }
         },
         options
-    );
+    )
 
     return createElement(
         "div",
         {
+            key: `enumfield_${keyName}`,
             style: style
         },
         label,

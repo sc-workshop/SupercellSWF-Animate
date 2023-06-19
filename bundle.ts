@@ -5,7 +5,7 @@ export const config: ConfigInterface = {
     cep_version: "9.0",
     environment: {
         apps: {
-            FLPR: "15.0",
+            FLPR: "[20.0,99.0]",
         },
         locales: ["All"],
         runtimes: {
@@ -13,27 +13,29 @@ export const config: ConfigInterface = {
         }
     },
     extensions: {
-        Plugin: {
-            root: "./plugin",
-            path: "./fcm.xml",
-            ui: {
-                name: "SC Plugin",
-                type: "ModalDialog",
-                size: {width: 1, height: 1}
-            }
-        },
         PublishSettings: {
             root: "./publisher",
             path: "./index.html",
             params: [
-                "--enable-nodejs", 
-                "--allow-file-access",
-                 "--allow-file-access-from-files"
+                "--enable-nodejs",
+                "--mixed-context"
             ],
+            lifecycle: {
+                auto_visible: true
+            },
             ui: {
-                name: "SCSWF Publisher",
+                //name: "SCSWF Publisher",
                 type: "ModalDialog",
-                size: {width: 500, height: 700}
+                size: { width: 500, height: 700 }
+            }
+        },
+        Plugin: {
+            root: "./plugin",
+            path: "./fcm.xml",
+            ui: {
+                //name: "SC Plugin",
+                type: "ModalDialog",
+                size: { width: 1, height: 1 }
             }
         }
     }

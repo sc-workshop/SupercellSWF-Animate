@@ -22,7 +22,7 @@ namespace sc {
 
 		public:
 			void Load(string languageCode) { 
-				fs::path localePath = Utils::CurrentPath() / ("../../../locales/" + languageCode + ".json");
+				/*fs::path localePath = Utils::CurrentPath() / ("../../../locales/" + languageCode + ".json");
 
 				if (!fs::exists(localePath)) {
 					localePath = Utils::CurrentPath() / "../../../locales/" DefaultLanguageCode ".json";
@@ -30,7 +30,7 @@ namespace sc {
 
 				ifstream file(localePath);
 				locale = json::parse(file);
-				file.close();
+				file.close();*/
 			};
 
 			u16string Get(string TID) {

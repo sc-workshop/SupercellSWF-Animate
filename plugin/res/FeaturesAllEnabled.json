@@ -1,125 +1,125 @@
 [
 	{
 		"name": "Stroke",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "Style",
-				"supported": false,
+				"supported": true,
 				"default": "Solid",
 				"values": [
 					{
 						"name": "Hairline",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Dashed",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Dotted",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Ragged",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Stippled",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Hatched",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "PaintBrushed",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "Scale",
-				"supported": false,
+				"supported": true,
 				"default": "Normal",
 				"values": [
 					{
 						"name": "Normal",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Horizontal",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Vertical",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "None",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "VariableWidth",
-				"supported": false
+				"supported": true
 			}
 		]
 	},
 	{
 		"name": "Fill",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "GradientFlow",
-				"supported": false,
+				"supported": true,
 				"default": "Extend",
 				"values": [
 					{
 						"name": "Extend",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Reflect",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Repeat",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "FillType",
-				"supported": false,
+				"supported": true,
 				"default": "Solid",
 				"values": [
 					{
 						"name": "NoFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "SolidFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "LinearGradientFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "RadialGradientFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "BitmapFill",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "LinearRGB",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			}
 		]
@@ -135,7 +135,7 @@
 				"values": [
 					{
 						"name": "StaticText",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "DynamicText",
@@ -143,13 +143,13 @@
 					},
 					{
 						"name": "InputText",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "TextLinkage",
-				"supported": false
+				"supported": true
 			},
 			{
 				"name": "FontEmbed",
@@ -157,21 +157,7 @@
 			},
 			{
 				"name": "TextOrientation",
-				"supported": true,
-				"values": [
-					{
-						"name": "TextHorizontal",
-						"supported": true
-					},
-					{
-						"name": "TextVerticalRightToLeft",
-						"supported": true
-					},
-					{
-						"name": "TextVerticalLeftToRight",
-						"supported": false
-					}
-				]
+				"supported": false
 			}
 		]
 	},
@@ -222,7 +208,7 @@
 			{
 				"name": "AutoKern",
 				"supported": true,
-				"default": "false"
+				"default": "true"
 			},
 			{
 				"name": "AntiAlias",
@@ -246,12 +232,12 @@
 			},
 			{
 				"name": "SuperScript",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "SubScript",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
@@ -270,7 +256,7 @@
 					},
 					{
 						"name": "MultiLine",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "MultiLineNoWrap",
@@ -283,10 +269,6 @@
 				"supported": true
 			}
 		]
-	},
-	{
-		"name": "InputText",
-		"supported": false
 	},
 	{
 		"name": "DynamicText",
@@ -383,7 +365,7 @@
 					},
 					{
 						"name": "MultiLine",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "MultiLineNoWrap",
@@ -391,7 +373,7 @@
 					},
 					{
 						"name": "Password",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
@@ -407,31 +389,31 @@
 	},
 	{
 		"name": "Components",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "HTML5Components",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Debug",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "SwfObjects",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "3D",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "ScriptLinkage",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "9Slice",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Symbol",
@@ -447,12 +429,12 @@
 						"supported": true
 					},
 					{
-						"name": "Graphic",
+						"name": "Button",
 						"supported": true
 					},
 					{
-						"name": "Button",
-						"supported": false
+						"name": "Graphic",
+						"supported": true
 					}
 				]
 			},
@@ -467,55 +449,55 @@
 					},
 					{
 						"name": "Layer",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Darken",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Add",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Multiply",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Lighten",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Screen",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Overlay",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "HardLight",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Subtract",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Difference",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Invert",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Alpha",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Erase",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
@@ -561,7 +543,7 @@
 					},
 					{
 						"name": "ExportAsBitmap",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
@@ -582,14 +564,8 @@
 			},
 			{
 				"name": "Tracking",
-				"supported": false,
-				"default": "TrackAsButton"
-			},
-			{
-				"name": "visibility",
 				"supported": true,
-				"default": "true"
-				
+				"default": "TrackAsButton"
 			}
 		]
 	},
@@ -599,11 +575,11 @@
 	},
 	{
 		"name": "DropShadowFilter",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "Quality",
-				"supported": false,
+				"supported": true,
 				"default": "High"
 			},
 			{
@@ -613,22 +589,22 @@
 			},
 			{
 				"name": "Distance",
-				"supported": false,
+				"supported": true,
 				"default": "0"
 			},
 			{
 				"name": "Knockout",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "Inner",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "HideObject",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			}
 		]
@@ -640,28 +616,7 @@
 			{
 				"name": "Quality",
 				"supported": true,
-				"default": "High"
-			},
-			{
-				"name": "Knockout",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "Inner",
-				"supported": true,
-				"default": "false"
-			}
-		]
-	},
-	{
-		"name": "glowFilter",
-		"supported": true,
-		"properties": [
-			{
-				"name": "Quality",
-				"supported": true,
-				"default": "High"
+				"default": "Low"
 			},
 			{
 				"name": "Knockout",
@@ -677,39 +632,39 @@
 	},
 	{
 		"name": "BlurFilter",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "BevelFilter",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "GradientGlowFilter",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "GradientBevelFilter",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "AdjustColorFilter",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Compiler",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Video",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "FrameScript",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "RuntimeSharedLibraries",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Accessibility",
@@ -717,11 +672,11 @@
 	},
 	{
 		"name": "Sound",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "ActionScript",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Layer",
@@ -828,7 +783,7 @@
 	},
 	{
 		"name": "LayerDepth",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "ActionsWizard",
@@ -840,31 +795,31 @@
 	},
 	{
 		"name": "PaintBrush",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "GPUBrush",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Camera",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Parenting",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "VR",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "JavaScript",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "ShapeTween",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Alpha",
@@ -872,11 +827,11 @@
 	},
 	{
 		"name": "GlobalScript",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Stage",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "Transparency",
@@ -886,6 +841,6 @@
 	},
 	{
 		"name": "GraphicLoop",
-		"supported": false
+		"supported": true
 	}
 ]

@@ -135,11 +135,11 @@
 				"values": [
 					{
 						"name": "StaticText",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "DynamicText",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "InputText",
@@ -153,25 +153,11 @@
 			},
 			{
 				"name": "FontEmbed",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "TextOrientation",
-				"supported": true,
-				"values": [
-					{
-						"name": "TextHorizontal",
-						"supported": true
-					},
-					{
-						"name": "TextVerticalRightToLeft",
-						"supported": true
-					},
-					{
-						"name": "TextVerticalLeftToRight",
-						"supported": false
-					}
-				]
+				"supported": true
 			}
 		]
 	},
@@ -208,11 +194,11 @@
 			},
 			{
 				"name": "FontEmbed",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "WebFont",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "LetterSpacing",
@@ -222,7 +208,7 @@
 			{
 				"name": "AutoKern",
 				"supported": true,
-				"default": "false"
+				"default": "true"
 			},
 			{
 				"name": "AntiAlias",
@@ -231,7 +217,7 @@
 			},
 			{
 				"name": "Selectable",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
@@ -246,12 +232,12 @@
 			},
 			{
 				"name": "SuperScript",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "SubScript",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
@@ -270,116 +256,112 @@
 					},
 					{
 						"name": "MultiLine",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "MultiLineNoWrap",
-						"supported": true
+						"supported": false
 					}
 				]
 			},
 			{
 				"name": "Filter",
-				"supported": true
+				"supported": false
 			}
 		]
 	},
 	{
-		"name": "InputText",
-		"supported": false
-	},
-	{
 		"name": "DynamicText",
-		"supported": true,
+		"supported": false,
 		"properties": [
 			{
 				"name": "RenderAsHTML",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "TextFormat",
-				"supported": true,
+				"supported": false,
 				"default": "LeftAlign",
 				"values": [
 					{
 						"name": "LeftAlign",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "Justify",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "RightAlign",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "CentreAlign",
-						"supported": true
+						"supported": false
 					}
 				]
 			},
 			{
 				"name": "FontEmbed",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "WebFont",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "LetterSpacing",
-				"supported": true,
+				"supported": false,
 				"default": "0.0"
 			},
 			{
 				"name": "AutoKern",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "AntiAlias",
-				"supported": true,
+				"supported": false,
 				"default": "DeviceFonts"
 			},
 			{
 				"name": "Selectable",
-				"supported": true,
+				"supported": false,
 				"default": false
 			},
 			{
 				"name": "RenderAsHtml",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "Border",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "SuperScript",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "SubScript",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "Margins",
-				"supported": true,
+				"supported": false,
 				"default": "0.0"
 			},
 			{
 				"name": "LineType",
-				"supported": true,
+				"supported": false,
 				"default": "SingleLine",
 				"values": [
 					{
 						"name": "SingleLine",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "MultiLine",
@@ -387,7 +369,7 @@
 					},
 					{
 						"name": "MultiLineNoWrap",
-						"supported": true
+						"supported": false
 					},
 					{
 						"name": "Password",
@@ -397,7 +379,7 @@
 			},
 			{
 				"name": "Filter",
-				"supported": true
+				"supported": false
 			}
 		]
 	},
@@ -447,12 +429,12 @@
 						"supported": true
 					},
 					{
-						"name": "Graphic",
-						"supported": true
-					},
-					{
 						"name": "Button",
 						"supported": false
+					},
+					{
+						"name": "Graphic",
+						"supported": true
 					}
 				]
 			},
@@ -584,18 +566,12 @@
 				"name": "Tracking",
 				"supported": false,
 				"default": "TrackAsButton"
-			},
-			{
-				"name": "visibility",
-				"supported": true,
-				"default": "true"
-				
 			}
 		]
 	},
 	{
 		"name": "Filters",
-		"supported": true
+		"supported": false
 	},
 	{
 		"name": "DropShadowFilter",
@@ -635,42 +611,21 @@
 	},
 	{
 		"name": "GlowFilter",
-		"supported": true,
+		"supported": false,
 		"properties": [
 			{
 				"name": "Quality",
-				"supported": true,
-				"default": "High"
+				"supported": false,
+				"default": "Low"
 			},
 			{
 				"name": "Knockout",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			},
 			{
 				"name": "Inner",
-				"supported": true,
-				"default": "false"
-			}
-		]
-	},
-	{
-		"name": "glowFilter",
-		"supported": true,
-		"properties": [
-			{
-				"name": "Quality",
-				"supported": true,
-				"default": "High"
-			},
-			{
-				"name": "Knockout",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "Inner",
-				"supported": true,
+				"supported": false,
 				"default": "false"
 			}
 		]

@@ -1,8 +1,8 @@
 {
-  "name": "sc-animate-native",
+  "name": "sc-animate-plugin",
   "version": "1.0.0",
   "private": "true",
-  "description": "Native exporter for Adobe Animate",
+  "description": "Native plugin for Adobe Animate",
   "main": "build.ts",
   "scripts": {
     "build:dev": "ts-node build.ts development",

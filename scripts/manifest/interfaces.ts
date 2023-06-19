@@ -4,7 +4,7 @@ interface EnvironmentInterface {
     runtimes: { [name: string]: string }
 }
 
-type UiType = "Panel" | "Modeless" | "ModalDialog"
+type UiType = "Panel" | "Modeless" | "ModalDialog" | "Custom"
 
 interface Size {
     width: number
@@ -26,7 +26,7 @@ export interface Extension {
         //events: any,
     }
     ui: {
-        name: string
+        name?: string
         type: UiType
         size: Size
         maxSize?: Size,

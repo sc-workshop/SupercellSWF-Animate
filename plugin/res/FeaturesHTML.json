@@ -1,0 +1,901 @@
+[
+    {
+        "name": "Stroke",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Style",
+                "supported": true,
+                "default": "Solid",
+                "values": [
+                    {
+                        "name": "Solid",
+                        "supported": true
+                    },
+                    {
+                        "name": "Hairline",
+                        "supported": true
+                    },
+                    {
+                        "name": "Dashed",
+                        "supported": true
+                    },
+                    {
+                        "name": "Dotted",
+                        "supported": true
+                    },
+                    {
+                        "name": "Ragged",
+                        "supported": true
+                    },
+                    {
+                        "name": "Stippled",
+                        "supported": true
+                    },
+                    {
+                        "name": "Hatched",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "Scale",
+                "supported": true,
+                "default": "Normal",
+                "values": [
+                    {
+                        "name": "Normal",
+                        "supported": true
+                    },
+                    {
+                        "name": "Horizontal",
+                        "supported": false
+                    },
+                    {
+                        "name": "Vertical",
+                        "supported": false
+                    },
+                    {
+                        "name": "None",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "VariableWidth",
+                "supported": true
+            }
+        ]
+    },
+    {
+        "name": "Fill",
+        "supported": true,
+        "properties": [
+            {
+                "name": "GradientFlow",
+                "supported": true,
+                "default": "Extend",
+                "values": [
+                    {
+                        "name": "Extend",
+                        "supported": true
+                    },
+                    {
+                        "name": "Reflect",
+                        "supported": false
+                    },
+                    {
+                        "name": "Repeat",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "LinearRGB",
+                "supported": false,
+                "default": "false"
+            }
+        ]
+    },
+    {
+        "name": "Text",
+        "supported": true,
+        "properties": [
+            {
+                "name": "TextType",
+                "supported": true,
+                "default": "DynamicText",
+                "values": [
+                    {
+                        "name": "StaticText",
+                        "supported": true
+                    },
+                    {
+                        "name": "DynamicText",
+                        "supported": true
+                    },
+                    {
+                        "name": "InputText",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "TextLinkage",
+                "supported": false
+            },
+            {
+                "name": "FontEmbed",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "StaticText",
+        "supported": true,
+        "properties": [
+            {
+                "name": "RenderAsHTML",
+                "supported": true
+            },
+            {
+                "name": "TextFormat",
+                "supported": true,
+                "default": "LeftAlign",
+                "values": [
+                    {
+                        "name": "LeftAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "Justify",
+                        "supported": true
+                    },
+                    {
+                        "name": "RightAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "CentreAlign",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "FontEmbed",
+                "supported": false
+            },
+            {
+                "name": "WebFont",
+                "supported": false
+            },
+            {
+                "name": "LetterSpacing",
+                "supported": true,
+                "default": "0.0"
+            },
+            {
+                "name": "AutoKern",
+                "supported": true,
+                "default": "true"
+            },
+            {
+                "name": "AntiAlias",
+                "supported": false,
+                "default": "CanvasFonts"
+            },
+            {
+                "name": "Selectable",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "RenderAsHtml",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "Border",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "SuperScript",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "SubScript",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "Margins",
+                "supported": true,
+                "default": "0.0"
+            },
+            {
+                "name": "LineType",
+                "supported": false,
+                "default": "MultiLine"
+            },
+            {
+                "name": "Scrollable",
+                "supported": true
+            },
+            {
+                "name": "Filter",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "DynamicText",
+        "supported": true,
+        "properties": [
+            {
+                "name": "RenderAsHTML",
+                "supported": false
+            },
+            {
+                "name": "TextFormat",
+                "supported": true,
+                "default": "LeftAlign",
+                "values": [
+                    {
+                        "name": "LeftAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "Justify",
+                        "supported": false
+                    },
+                    {
+                        "name": "RightAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "CentreAlign",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "FontEmbed",
+                "supported": false
+            },
+            {
+                "name": "WebFont",
+                "supported": true
+            },
+            {
+                "name": "LetterSpacing",
+                "supported": false,
+                "default": "0.0"
+            },
+            {
+                "name": "AutoKern",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "AntiAlias",
+                "supported": false,
+                "default": "CanvasFonts"
+            },
+            {
+                "name": "Selectable",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "RenderAsHtml",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "Border",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "SuperScript",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "SubScript",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "Margins",
+                "supported": false
+            },
+            {
+                "name": "LineType",
+                "supported": true,
+                "default": "MultiLine",
+                "values": [
+                    {
+                        "name": "SingleLine",
+                        "supported": false
+                    },
+                    {
+                        "name": "MultiLine",
+                        "supported": true
+                    },
+                    {
+                        "name": "MultiLineNoWrap",
+                        "supported": false
+                    },
+                    {
+                        "name": "Password",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "Scrollable",
+                "supported": false
+            },
+            {
+                "name": "Filter",
+                "supported": true
+            }
+        ]
+    },
+    {
+        "name": "InputText",
+        "supported": false
+    },
+    {
+        "name": "Parenting",
+        "supported": false
+    },
+    {
+        "name": "Webfont",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Typekit",
+                "supported": true
+            }
+        ]
+    },
+    {
+        "name": "Scene",
+        "supported": false
+    },
+    {
+        "name": "Components",
+        "supported": false
+    },
+    {
+        "name": "HTML5Components",
+        "supported": true
+    },
+    {
+        "name": "Debug",
+        "supported": false
+    },
+    {
+        "name": "SwfObjects",
+        "supported": false,
+        "properties": [
+            {
+                "name": "ImportEmbeddedSWF",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "3D",
+        "supported": false
+    },
+    {
+        "name": "Bone",
+        "supported": true
+    },
+    {
+        "name": "IKRuntime",
+        "supported": false
+    },
+    {
+        "name": "ScriptLinkage",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Declaration",
+                "supported": true
+            },
+            {
+                "name": "Definition",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "9Slice",
+        "supported": false
+    },
+    {
+        "name": "Symbol",
+        "supported": true,
+        "properties": [
+            {
+                "name": "BlendModes",
+                "supported": true,
+                "default": "Normal",
+                "values": [
+                    {
+                        "name": "Normal",
+                        "supported": true
+                    },
+                    {
+                        "name": "Layer",
+                        "supported": false
+                    },
+                    {
+                        "name": "Darken",
+                        "supported": true
+                    },
+                    {
+                        "name": "Add",
+                        "supported": true
+                    },
+                    {
+                        "name": "Multiply",
+                        "supported": true
+                    },
+                    {
+                        "name": "Lighten",
+                        "supported": true
+                    },
+                    {
+                        "name": "Screen",
+                        "supported": true
+                    },
+                    {
+                        "name": "Overlay",
+                        "supported": true
+                    },
+                    {
+                        "name": "HardLight",
+                        "supported": true
+                    },
+                    {
+                        "name": "Subtract",
+                        "supported": false
+                    },
+                    {
+                        "name": "Difference",
+                        "supported": true
+                    },
+                    {
+                        "name": "Invert",
+                        "supported": false
+                    },
+                    {
+                        "name": "Alpha",
+                        "supported": false
+                    },
+                    {
+                        "name": "Erase",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "ColorEffect",
+                "supported": true,
+                "default": "None",
+                "values": [
+                    {
+                        "name": "None",
+                        "supported": true
+                    },
+                    {
+                        "name": "Brightness",
+                        "supported": true
+                    },
+                    {
+                        "name": "Tint",
+                        "supported": true
+                    },
+                    {
+                        "name": "Alpha",
+                        "supported": true
+                    },
+                    {
+                        "name": "Advanced",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "Render",
+                "supported": true,
+                "default": "Original",
+                "values": [
+                    {
+                        "name": "Original",
+                        "supported": true
+                    },
+                    {
+                        "name": "CacheAsBitmap",
+                        "supported": true
+                    },
+                    {
+                        "name": "ExportAsBitmap",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "BitmapBackground",
+                "supported": true,
+                "default": "Transparent",
+                "values": [
+                    {
+                        "name": "Transparent",
+                        "supported": true
+                    },
+                    {
+                        "name": "Opaque",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "Tracking",
+                "supported": false,
+                "default": "TrackAsButton"
+            }
+        ]
+    },
+    {
+        "name": "Filters",
+        "supported": true
+    },
+    {
+        "name": "DropShadowFilter",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Quality",
+                "supported": false,
+                "default": "Medium"
+            },
+            {
+                "name": "Angle",
+                "supported": true,
+                "default": "0"
+            },
+            {
+                "name": "Distance",
+                "supported": true,
+                "default": "0"
+            },
+            {
+                "name": "Knockout",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "Inner",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "HideObject",
+                "supported": false,
+                "default": "false"
+            }
+        ]
+    },
+    {
+        "name": "GlowFilter",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Quality",
+                "supported": false,
+                "default": "Low"
+            },
+            {
+                "name": "Knockout",
+                "supported": false,
+                "default": "false"
+            },
+            {
+                "name": "Inner",
+                "supported": false,
+                "default": "false"
+            }
+        ]
+    },
+    {
+        "name": "BlurFilter",
+        "supported": true
+    },
+    {
+        "name": "BevelFilter",
+        "supported": false
+    },
+    {
+        "name": "GradientGlowFilter",
+        "supported": false
+    },
+    {
+        "name": "GradientBevelFilter",
+        "supported": false
+    },
+    {
+        "name": "AdjustColorFilter",
+        "supported": true
+    },
+    {
+        "name": "Compiler",
+        "supported": false
+    },
+    {
+        "name": "Video",
+        "supported": false
+    },
+    {
+        "name": "GlobalScript",
+        "supported": true
+    },
+    {
+        "name": "RuntimeSharedLibraries",
+        "supported": false
+    },
+    {
+        "name": "Accessibility",
+        "supported": false
+    },
+    {
+        "name": "Sound",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Effect",
+                "supported": false
+            },
+            {
+                "name": "Sync",
+                "supported": true,
+                "default": "Event",
+                "values": [
+                    {
+                        "name": "Event",
+                        "supported": true
+                    },
+                    {
+                        "name": "Start",
+                        "supported": false
+                    },
+                    {
+                        "name": "Stop",
+                        "supported": false
+                    },
+                    {
+                        "name": "Stream",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "FileFormat",
+                "supported": true,
+                "values": [
+                    {
+                        "name": "AIF",
+                        "supported": false
+                    },
+                    {
+                        "name": "WAV",
+                        "supported": true
+                    },
+                    {
+                        "name": "MP3",
+                        "supported": true
+                    },
+                    {
+                        "name": "ASND",
+                        "supported": false
+                    },
+                    {
+                        "name": "SND",
+                        "supported": false
+                    },
+                    {
+                        "name": "AU",
+                        "supported": false
+                    },
+                    {
+                        "name": "SD2",
+                        "supported": false
+                    },
+                    {
+                        "name": "OGG",
+                        "supported": false
+                    },
+                    {
+                        "name": "OGA",
+                        "supported": false
+                    },
+                    {
+                        "name": "FLAC",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "Compression",
+                "supported": true,
+                "default": "Default",
+                "values": [
+                    {
+                        "name": "Default",
+                        "supported": true
+                    },
+                    {
+                        "name": "ADPCM",
+                        "supported": false
+                    },
+                    {
+                        "name": "MP3",
+                        "supported": true
+                    },
+                    {
+                        "name": "Raw",
+                        "supported": false
+                    },
+                    {
+                        "name": "Speech",
+                        "supported": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "ActionScript",
+        "supported": false
+    },
+    {
+        "name": "ClassicTween",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Rotate",
+                "supported": true,
+                "default": "Auto",
+                "values": [
+                    {
+                        "name": "None",
+                        "supported": false
+                    },
+                    {
+                        "name": "Auto",
+                        "supported": true
+                    },
+                    {
+                        "name": "CW",
+                        "supported": true
+                    },
+                    {
+                        "name": "CCW",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "Scale",
+                "supported": false,
+                "default": "true"
+            }
+        ]
+    },
+    {
+        "name": "Stage",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Transparency",
+                "supported": true
+            }
+        ]
+    },
+    {
+        "name": "Camera",
+        "supported": true,
+        "properties": [
+            {
+                "name": "ColorEffect",
+                "supported": false
+            },
+            {
+                "name": "Filter",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "LayerDepth",
+        "supported": true,
+        "properties": [
+            {
+                "name": "Tint",
+                "supported": false
+            },
+            {
+                "name": "AdjustColorFilter",
+                "supported": false
+            }
+        ]
+    },
+    {
+        "name": "ActionsWizard",
+        "supported": true
+    },
+    {
+        "name": "Media3D",
+        "supported": false,
+        "properties": [
+            {
+                "name": "FileFormat",
+                "supported": false,
+                "values": [
+                    {
+                        "name": "glTF",
+                        "supported": false
+                    },
+                    {
+                        "name": "GLB",
+                        "supported": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "GraphicLoop",
+        "supported": true,
+        "properties": [
+            {
+                "name": "LoopOptions",
+                "supported": true,
+                "default": "Loop",
+                "values": [
+                    {
+                        "name": "Loop",
+                        "supported": true
+                    },
+                    {
+                        "name": "PlayOnce",
+                        "supported": true
+                    },
+                    {
+                        "name": "PlaySingleFrame",
+                        "supported": true
+                    },
+                    {
+                        "name": "LoopReverse",
+                        "supported": false
+                    },
+                    {
+                        "name": "PlayOnceReverse",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "LastFrame",
+                "supported": false
+            }
+        ]
+    }
+]

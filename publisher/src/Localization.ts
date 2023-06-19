@@ -1,25 +1,32 @@
 import { getInterface, isCEP } from "./CEP"
-const defaultLocaleCode = 'en_EN';
+
+enum Locales {
+    en_EN = "LilitaOne.ttf",
+    ru_RU = "Pusia-Bold.otf"
+}
+
+function isSupportedLocale(value: string): value is Locales {
+    return Object.keys(Locales).includes(value);
+}
 
 class LocaleInterface {
     constructor() {
-        let localeCode = defaultLocaleCode;
-
         if (isCEP()) {
             const cep = getInterface()
             const hostInfo = cep.getHostEnvironment();
-            localeCode = hostInfo.appLocale;
+            const hostLocale = hostInfo.appLocale as Locales;
+
+            if (isSupportedLocale(hostLocale)) {
+                this.code = Object.values(Locales)[Object.keys(Locales).indexOf(hostLocale)];
+            }
         }
 
-        try {
-            this.locale = require(`../../locales/${localeCode}.json`);
-        } catch(_) {
-            console.error(`Failed to get locale for "${localeCode}"`);
-            this.locale = require(`../../locales/${defaultLocaleCode}.json`)
-        }
+        this.locale = require(`./locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`);
     }
 
-    locale: {[TID: string]: any} = {};
+    locale: { [TID: string]: any } = {};
+
+    code: Locales = Locales.en_EN;
 
     Get(TID: string): any {
         const value = this.locale[TID];
@@ -31,4 +38,5 @@ class LocaleInterface {
     }
 }
 
-export const Locale = new LocaleInterface();
+const Locale = new LocaleInterface();
+export default Locale

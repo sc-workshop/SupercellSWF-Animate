@@ -1,26 +1,32 @@
 import { createElement, useState } from "react";
 import { State } from "../publisherState";
-import { Filefield } from "../Shared/Filefield";
-import { Locale } from "../../Localization";
-import { Enumfield } from "../Shared/Enumfield";
+import Locale from "../../Localization";
 import { PublisherMethods } from "../publisherState";
 
-export function BasicSettings() {
+import EnumField from "../Shared/EnumField";
+import FileField from "../Shared/FileField";
+
+export default function BasicSettings() {
     const [fileExtension, setFileExtension] = useState("sc");
 
-    const outputPath = Filefield(
+    const output = FileField(
         Locale.Get("TID_OUTPUT"),
+        "publisher_output_path",
         fileExtension,
+        {
+            marginBottom: "6px"
+        },
         value => (State.setParam("output", value)),
         State.getParam("output")
     )
 
-    const publishMethod = Enumfield(
+    const method = EnumField(
         Locale.Get("TID_PUBLISH_METHOD"),
+        "publisher_method",
         PublisherMethods,
         PublisherMethods[State.getParam("method")],
         {
-
+            marginBottom: "6px"
         },
         function (value) {
             const key: PublisherMethods = parseInt(value);
@@ -33,20 +39,19 @@ export function BasicSettings() {
                     break
             }
             State.setParam("method", PublisherMethods[value as any])
-        });
+        }
+    );
 
     return createElement(
         "div",
         {
-            id: "BasicSettings",
+            key: "publisher_basic_settings",
             style: {
-                width: "100%",
-                paddingBottom: "10px"
+                width: "100%"
             }
         },
-        outputPath,
-        publishMethod
+        output,
+        method
 
     )
-
 }

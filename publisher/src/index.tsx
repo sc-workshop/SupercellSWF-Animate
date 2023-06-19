@@ -4,12 +4,28 @@ import React, { useState, createElement, useEffect } from 'react';
 import { AppColor } from './Components/themes';
 import { getInterface, CSEvent, isCEP } from './CEP';
 import { State } from './Components/publisherState';
+import Locale from './Localization';
 
 function App() {
   const [publisherStateData, setPublisherStateData] = useState(undefined);
+  const [isFontLoaded, setIsFontLoaded] = useState(false);
 
   useEffect(() => {
-    if (!isCEP()){setPublisherStateData({} as any); return;};
+    const loadFont = async () => {
+      // Font
+      const font = new FontFace("PublisherFont", `url(${require("./fonts/" + Locale.code)})`, {
+        style: "normal",
+      });
+      await font.load();
+      if (font.status == "loaded") {
+        document.fonts.add(font);
+      }
+      setIsFontLoaded(true);
+    }
+    loadFont();
+
+    // Publisher Data
+    if (!isCEP()) { setPublisherStateData({} as any); return; };
 
     const CSInterface = getInterface();
     const getData = async () => {
@@ -21,7 +37,7 @@ function App() {
           } else {
             setPublisherStateData(event.data as any);
           }
-          
+
           resolve(undefined);
         });
       });
@@ -38,14 +54,17 @@ function App() {
       await publisherData;
     };
     getData();
+
   }, []);
 
-  if (publisherStateData !== undefined) {
+  if (publisherStateData !== undefined && isFontLoaded) {
     State.restore(publisherStateData);
-    
+
     return createElement("body",
       {
+        key: "publisher_body",
         style: {
+          fontFamily: "PublisherFont",
           backgroundColor: `#${AppColor.toString(16)}`
         }
       },
@@ -61,5 +80,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <App></App>
+  <React.StrictMode>
+    <App></App>
+  </React.StrictMode>
 )
