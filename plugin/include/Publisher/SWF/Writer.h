@@ -36,6 +36,8 @@ namespace sc {
 
 			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type);
 
+			void AddTextField(uint16_t id, TextFieldInfo field);
+
 			void Finalize();
 		};
 	}

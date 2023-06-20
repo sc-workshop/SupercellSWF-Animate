@@ -119,6 +119,17 @@ namespace sc {
             return identifer;
         }
 
+        uint16_t ResourcePublisher::AddTextField(
+            TextFieldInfo field
+        ) {
+            uint16_t identifer = m_id++;
+
+            m_writer->AddTextField(identifer, field);
+            m_textfieldDict.push_back({ field, identifer });
+
+            return identifer;
+        }
+
         uint16_t ResourcePublisher::GetIdentifer(u16string name) {
             for (auto item : m_symbolsDict) {
                 if (item.first == name) {
@@ -132,9 +143,21 @@ namespace sc {
         uint16_t ResourcePublisher::GetIdentifer(
             sc::MovieClipModifier::Type type
         ) {
-            for (uint16_t i = 0; m_modifierDict.size() > i; i++) {
-                if (m_modifierDict[i].first == type) {
-                    return m_modifierDict[i].second;
+            for (auto modifier : m_modifierDict) {
+                if (modifier.first == type) {
+                    return modifier.second;
+                }
+            }
+
+            return UINT16_MAX;
+        }
+
+        uint16_t ResourcePublisher::GetIdentifer(
+            TextFieldInfo field
+        ) {
+            for (auto textfield : m_textfieldDict) {
+                if (textfield.first == field) {
+                    return textfield.second;
                 }
             }
 

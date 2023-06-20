@@ -153,7 +153,7 @@
 			},
 			{
 				"name": "FontEmbed",
-				"supported": true
+				"supported": false
 			},
 			{
 				"name": "TextOrientation",
@@ -169,7 +169,7 @@
 					},
 					{
 						"name": "TextVerticalLeftToRight",
-						"supported": false
+						"supported": true
 					}
 				]
 			}
@@ -177,230 +177,128 @@
 	},
 	{
 		"name": "StaticText",
-		"supported": true,
-		"properties": [
-			{
-				"name": "RenderAsHTML",
-				"supported": true
-			},
-			{
-				"name": "TextFormat",
-				"supported": true,
-				"default": "LeftAlign",
-				"values": [
-					{
-						"name": "LeftAlign",
-						"supported": true
-					},
-					{
-						"name": "Justify",
-						"supported": true
-					},
-					{
-						"name": "RightAlign",
-						"supported": true
-					},
-					{
-						"name": "CentreAlign",
-						"supported": true
-					}
-				]
-			},
-			{
-				"name": "FontEmbed",
-				"supported": true
-			},
-			{
-				"name": "WebFont",
-				"supported": true
-			},
-			{
-				"name": "LetterSpacing",
-				"supported": true,
-				"default": "0.0"
-			},
-			{
-				"name": "AutoKern",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "AntiAlias",
-				"supported": true,
-				"default": "CanvasFonts"
-			},
-			{
-				"name": "Selectable",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "RenderAsHtml",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "Border",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "SuperScript",
-				"supported": false,
-				"default": "false"
-			},
-			{
-				"name": "SubScript",
-				"supported": false,
-				"default": "false"
-			},
-			{
-				"name": "Margins",
-				"supported": true,
-				"default": "0.0"
-			},
-			{
-				"name": "LineType",
-				"supported": true,
-				"default": "SingleLine",
-				"values": [
-					{
-						"name": "SingleLine",
-						"supported": true
-					},
-					{
-						"name": "MultiLine",
-						"supported": false
-					},
-					{
-						"name": "MultiLineNoWrap",
-						"supported": true
-					}
-				]
-			},
-			{
-				"name": "Filter",
-				"supported": true
-			}
-		]
+		"supported": false
 	},
 	{
 		"name": "InputText",
 		"supported": false
 	},
 	{
-		"name": "DynamicText",
-		"supported": true,
-		"properties": [
-			{
-				"name": "RenderAsHTML",
-				"supported": true
-			},
-			{
-				"name": "TextFormat",
-				"supported": true,
-				"default": "LeftAlign",
-				"values": [
-					{
-						"name": "LeftAlign",
-						"supported": true
-					},
-					{
-						"name": "Justify",
-						"supported": true
-					},
-					{
-						"name": "RightAlign",
-						"supported": true
-					},
-					{
-						"name": "CentreAlign",
-						"supported": true
-					}
-				]
-			},
-			{
-				"name": "FontEmbed",
-				"supported": true
-			},
-			{
-				"name": "WebFont",
-				"supported": true
-			},
-			{
-				"name": "LetterSpacing",
-				"supported": true,
-				"default": "0.0"
-			},
-			{
-				"name": "AutoKern",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "AntiAlias",
-				"supported": true,
-				"default": "DeviceFonts"
-			},
-			{
-				"name": "Selectable",
-				"supported": true,
-				"default": false
-			},
-			{
-				"name": "RenderAsHtml",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "Border",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "SuperScript",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "SubScript",
-				"supported": true,
-				"default": "false"
-			},
-			{
-				"name": "Margins",
-				"supported": true,
-				"default": "0.0"
-			},
-			{
-				"name": "LineType",
-				"supported": true,
-				"default": "SingleLine",
-				"values": [
-					{
-						"name": "SingleLine",
-						"supported": true
-					},
-					{
-						"name": "MultiLine",
-						"supported": false
-					},
-					{
-						"name": "MultiLineNoWrap",
-						"supported": true
-					},
-					{
-						"name": "Password",
-						"supported": false
-					}
-				]
-			},
-			{
-				"name": "Filter",
-				"supported": true
-			}
-		]
-	},
+        "name": "DynamicText",
+        "supported": true,
+        "properties": [
+            {
+                "name": "RenderAsHTML",
+                "supported": true
+            },
+            {
+                "name": "TextFormat",
+                "supported": true,
+                "default": "LeftAlign",
+                "values": [
+                    {
+                        "name": "LeftAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "Justify",
+                        "supported": true
+                    },
+                    {
+                        "name": "RightAlign",
+                        "supported": true
+                    },
+                    {
+                        "name": "CentreAlign",
+                        "supported": true
+                    }
+                ]
+            },
+            {
+                "name": "FontEmbed",
+                "supported": true
+            },
+            {
+                "name": "WebFont",
+                "supported": true
+            },
+            {
+                "name": "LetterSpacing",
+                "supported": true,
+                "default": "0.0"
+            },
+            {
+                "name": "AutoKern",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "AntiAlias",
+                "supported": true,
+                "default": "CanvasFonts"
+            },
+            {
+                "name": "Selectable",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "RenderAsHtml",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "Border",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "SuperScript",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "SubScript",
+                "supported": true,
+                "default": "false"
+            },
+            {
+                "name": "Margins",
+                "supported": true
+            },
+            {
+                "name": "LineType",
+                "supported": true,
+                "default": "MultiLine",
+                "values": [
+                    {
+                        "name": "SingleLine",
+                        "supported": true
+                    },
+                    {
+                        "name": "MultiLine",
+                        "supported": false
+                    },
+                    {
+                        "name": "MultiLineNoWrap",
+                        "supported": true
+                    },
+                    {
+                        "name": "Password",
+                        "supported": false
+                    }
+                ]
+            },
+            {
+                "name": "Scrollable",
+                "supported": true
+            },
+            {
+                "name": "Filter",
+                "supported": true
+            }
+        ]
+    },
 	{
 		"name": "Scene",
 		"supported": true

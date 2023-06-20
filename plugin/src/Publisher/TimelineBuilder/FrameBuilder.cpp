@@ -2,6 +2,14 @@
 
 #include "Publisher/ResourcePublisher.h"
 
+// Textfields
+#include "DOM/FrameElement/IClassicText.h"
+#include "DOM/FrameElement/ITextStyle.h"
+
+// Filters
+#include "DOM/IFilterable.h"
+#include "DOM/GraphicFilter/IGlowFilter.h"
+
 namespace sc {
 	namespace Adobe {
 		void FrameBuilder::Update(AutoPtr<DOM::IFrame>& frame) {
@@ -44,15 +52,24 @@ namespace sc {
 					throw exception("Failed to get frame element");
 				}
 
+				// Symbol info
 				uint16_t id = 0xFFFF;
+				u16string name = u"";
+				uint8_t blendMode = 0; // TODO
+
+				// Base transform
 				MATRIX2D* matrix = NULL;
 				COLOR_MATRIX* color = NULL;
 
+				// Game "guess who i am"
 				AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
-				AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
+				AutoPtr<DOM::IFilterable> filterableElement = frameElement;
+				AutoPtr<DOM::FrameElement::IClassicText> textfieldElement = frameElement;
 
+				AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
 				AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
-				
+
+				// Symbol
 				if (libraryElement) {
 					DOM::PILibraryItem libraryItem;
 					libraryElement->GetLibraryItem(libraryItem);
@@ -69,7 +86,7 @@ namespace sc {
 						id = m_resources.AddLibraryItem(libraryItem);
 					}
 
-					// Transform 
+					// Transform
 					matrix = new MATRIX2D();
 					frameElement->GetMatrix(*matrix);
 
@@ -77,25 +94,129 @@ namespace sc {
 						color = new COLOR_MATRIX();
 						symbolItem->GetColorMatrix(*color);
 					}
+
+					if (movieClipElement) {
+						// Instance name
+						StringRep16 instanceNamePtr;
+						movieClipElement->GetName(&instanceNamePtr);
+						name = (const char16_t*)instanceNamePtr;
+						m_resources.context.falloc->Free(instanceNamePtr);
+					}
+				}
+
+				// Textfield
+				else if (textfieldElement) {
+					matrix = new MATRIX2D();
+					frameElement->GetMatrix(*matrix);
+
+					TextFieldInfo textfield;
+
+					{
+						frameElement->GetObjectSpaceBounds(textfield.bound);
+
+						StringRep16 text;
+						textfieldElement->GetText(&text);
+						textfield.text = u16string((const char16_t*)text);
+						m_resources.context.falloc->Free(text);
+
+						textfield.renderingMode.structSize = sizeof(textfield.renderingMode);
+						textfieldElement->GetAntiAliasModeProp(textfield.renderingMode);
+
+						AutoPtr<DOM::FrameElement::ITextBehaviour> textfieldElementBehaviour;
+						textfieldElement->GetTextBehaviour(textfieldElementBehaviour.m_Ptr);
+
+						// Instance name
+
+						AutoPtr<DOM::FrameElement::IModifiableTextBehaviour> modifiableTextfieldBehaviour = textfieldElementBehaviour;
+						if (modifiableTextfieldBehaviour) {
+							StringRep16 instanceName;
+							modifiableTextfieldBehaviour->GetInstanceName(&instanceName);
+							name = (const char16_t*)instanceName;
+							m_resources.context.falloc->Free(instanceName);
+
+							modifiableTextfieldBehaviour->GetLineMode(textfield.lineMode);
+						}
+
+						// Textfields properties
+
+						FCMListPtr paragraphs;
+						uint32_t paragraphsCount = 0;
+						textfieldElement->GetParagraphs(paragraphs.m_Ptr);
+						paragraphs->Count(paragraphsCount);
+
+						ASSERT(paragraphsCount >= 1);
+						if (paragraphsCount > 1) {
+							m_resources.context.trace("Warning. Some of TextField has multiple paragraph");
+						}
+
+						AutoPtr<DOM::FrameElement::IParagraph> paragraph = paragraphs[0];
+						textfield.style.structSize = sizeof(textfield.style);
+						paragraph->GetParagraphStyle(textfield.style);
+
+						FCMListPtr textRuns;
+						uint32_t textRunCount = 0;
+						paragraph->GetTextRuns(textRuns.m_Ptr);
+						textRuns->Count(textRunCount);
+
+						ASSERT(textRunCount >= 1);
+						if (textRunCount > 1) {
+							m_resources.context.trace("Warning. Some of TextField has multiple textRun");
+						}
+
+						AutoPtr<DOM::FrameElement::ITextRun> textRun = textRuns[0];
+						AutoPtr<DOM::FrameElement::ITextStyle> textStyle;
+						textRun->GetTextStyle(textStyle.m_Ptr);
+
+						textStyle->GetFontColor(textfield.fontColor);
+						textStyle->GetFontSize(textfield.fontSize);
+						textStyle->IsAutoKernEnabled(textfield.autoKern);
+
+						StringRep16 fontNamePtr;
+						textStyle->GetFontName(&fontNamePtr);
+						textfield.fontName = u16string((const char16_t*)fontNamePtr);
+						m_resources.context.falloc->Free(fontNamePtr);
+
+						StringRep8 fontStylePtr;
+						textStyle->GetFontStyle(&fontStylePtr);
+						textfield.fontStyle = string((const char*)fontStylePtr);
+						m_resources.context.falloc->Free(fontStylePtr);
+					}
+
+					// Textfield filters
+					if (filterableElement) {
+						FCMListPtr filters;
+						filterableElement->GetGraphicFilters(filters.m_Ptr);
+						uint32_t filterCount = 0;
+						filters->Count(filterCount);
+						
+						for (uint32_t i = 0; filterCount > i; i++) {
+							// And again game "guess who i am"
+							AutoPtr<DOM::GraphicFilter::IGlowFilter> glowFilter = filters[i];
+
+							if (glowFilter) {
+								textfield.isOutlined = true;
+								glowFilter->GetShadowColor(textfield.outlineColor);
+							}
+						}
+					}
+
+					id = m_resources.GetIdentifer(textfield);
+					if (id == UINT16_MAX) {
+						id = m_resources.AddTextField(textfield);
+					}
+				}
+				else {
+					m_resources.context.trace("Unknown resource in scene");
 				}
 
 				if (id == 0xFFFF) {
 					throw exception("Failed to get frame element id");
 				}
 
-				u16string name = u"";
-				uint8_t blendMode = 0;
-				if (movieClipElement) {
-					StringRep16 elementNamePtr;
-					movieClipElement->GetName(&elementNamePtr);
-					name = (const char16_t*)elementNamePtr;
-					m_resources.context.falloc->Free(elementNamePtr);
-				}
-
 				m_elementsData.push_back({
 					id,
-					0,
-					name // TODO Blending
+					blendMode,
+					name
 				});
 
 				m_matrices.push_back(

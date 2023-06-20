@@ -26,6 +26,8 @@
 #include "Publisher/ShapeGenerator.h"
 #include "Publisher/TimelineBuilder/Builder.h"
 
+#include "Publisher/TimelineBuilder/TextField.h"
+
 // Writer
 #include "Publisher/Shared/SharedWriter.h"
 
@@ -48,6 +50,9 @@ namespace sc {
 
                                             // Type / Id
             vector<pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
+
+                             // Info / Id
+            vector<pair<TextFieldInfo, uint16_t>> m_textfieldDict;
 
             uint32_t m_id = 0;
             uint8_t m_fps = 24;
@@ -94,12 +99,20 @@ namespace sc {
                 sc::MovieClipModifier::Type type
             );
 
+            uint16_t AddTextField(
+                TextFieldInfo field
+            );
+
             uint16_t GetIdentifer(
                 u16string name
             );
 
             uint16_t GetIdentifer(
                 sc::MovieClipModifier::Type type
+            );
+
+            uint16_t GetIdentifer(
+                TextFieldInfo field
             );
 
             void AddCachedBitmap(u16string name, cv::Mat image);

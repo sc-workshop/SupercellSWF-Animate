@@ -1,5 +1,7 @@
 #include "Publisher/SWF/Writer.h"
 
+#include "DOM/FrameElement/ITextStyle.h"
+
 namespace sc {
 	namespace Adobe {
 		pSharedMovieclipWriter Writer::AddMovieclip() {
@@ -21,6 +23,70 @@ namespace sc {
 			modifier->id(id);
 			modifier->type(type);
 			swf.movieClipModifiers.push_back(modifier);
+		}
+
+		void Writer::AddTextField(uint16_t id, TextFieldInfo field) {
+			pTextField textfield = pTextField(new TextField());
+
+			textfield->id(id);
+
+			textfield->text(Utils::ToUtf8(field.text));
+
+			textfield->fontName(Utils::ToUtf8(field.fontName));
+			textfield->fontColor(*(uint32_t*)&field.fontColor);
+			textfield->fontSize(
+				(uint8_t)clamp(field.fontSize, (uint16_t)0, (uint16_t)UINT8_MAX)
+			);
+
+			switch (field.style.alignment)
+			{
+			case DOM::FrameElement::AlignMode::ALIGN_MODE_CENTER:
+				textfield->fontAlign(sc::TextField::Align::Center);
+				break;
+			case DOM::FrameElement::AlignMode::ALIGN_MODE_JUSTIFY:
+				textfield->fontAlign(sc::TextField::Align::Justify);
+				break;
+			case DOM::FrameElement::AlignMode::ALIGN_MODE_LEFT:
+				textfield->fontAlign(sc::TextField::Align::Left);
+				break;
+			case DOM::FrameElement::AlignMode::ALIGN_MODE_RIGHT:
+				textfield->fontAlign(sc::TextField::Align::Right);
+				break;
+			default:
+				break;
+			}
+
+			textfield->left((int16_t)ceil(field.bound.topLeft.x));
+			textfield->top((int16_t)ceil(field.bound.topLeft.y));
+
+			textfield->right((int16_t)ceil(field.bound.bottomRight.x));
+			textfield->bottom((int16_t)ceil(field.bound.bottomRight.y));
+
+			if (field.fontStyle != DOM::FrameElement::REGULAR_STYLE_STR) {
+				if (field.fontStyle != DOM::FrameElement::ITALIC_STYLE_STR) {
+					textfield->isItalic(true);
+				}
+				else if (field.fontStyle != DOM::FrameElement::BOLD_STYLE_STR) {
+					textfield->isBold(true);
+				}
+				else if (field.fontStyle != DOM::FrameElement::BOLD_ITALIC_STYLE_STR) {
+					textfield->isBold(true);
+					textfield->isItalic(true);
+				}
+			}
+
+			if (field.renderingMode.aaMode == DOM::FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
+				textfield->useDeviceFont(true);
+			}
+
+			textfield->isOutlined(field.isOutlined);
+			textfield->outlineColor(*(uint32_t*)&field.outlineColor);
+			textfield->autoKern(field.autoKern);
+			textfield->isMultiline(
+				field.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true
+			);
+			
+			swf.textFields.push_back(textfield);
 		}
 
 		void Writer::Finalize() {

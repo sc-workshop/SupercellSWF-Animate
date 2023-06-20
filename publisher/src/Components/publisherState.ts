@@ -27,7 +27,7 @@ export const TextureDimensions = [
 
 interface ModuleStateInterface {
     output: string,
-    method: PublisherMethods,
+    method: keyof PublisherMethods,
 
     compression: string,
 
@@ -49,7 +49,7 @@ export class PublisherState {
         PublishSettings: {
             SupercellSWF: {
                 output: "",
-                method: PublisherMethods.SWF,
+                method: PublisherMethods[PublisherMethods.SWF] as keyof PublisherMethods,
                 
                 compression: "LZMA",
 

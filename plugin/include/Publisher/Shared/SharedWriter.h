@@ -3,6 +3,7 @@
 #include "SharedMovieclipWriter.h"
 #include "SharedShapeWriter.h"
 #include "Module/AppContext.h"
+#include "Publisher/TimelineBuilder/TextField.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -25,6 +26,8 @@ namespace sc {
             virtual pSharedShapeWriter AddShape() = 0;
 
             virtual void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) = 0;
+
+            virtual void AddTextField(uint16_t id, TextFieldInfo field) = 0;
 
             virtual void Finalize() = 0;
         };
