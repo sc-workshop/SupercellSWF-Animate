@@ -60,16 +60,6 @@ namespace sc {
                 FCM::StringRep8 key,
                 std::string& retString);
 
-            static bool ReadBoolean(
-                const FCM::PIFCMDictionary pDict,
-                FCM::StringRep8 key,
-                bool& result);
-
-            static bool ReadInteger(
-                const FCM::PIFCMDictionary pDict,
-                FCM::StringRep8 key,
-                int& result);
-
             static bool ReadGUID(
                 const FCM::PIFCMDictionary pDict,
                 FCM::StringRep8 key,

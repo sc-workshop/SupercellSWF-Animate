@@ -83,7 +83,7 @@ namespace sc {
 				}
 
 
-				m_textfields.push_back({
+				m_textfields.push_back(json::object({
 					{"id", id},
 					{"bound", json::array({
 						field.bound.bottomRight.x,
@@ -104,7 +104,7 @@ namespace sc {
 					{"fontStyle", field.fontStyle},
 					{"fontName", Utils::ToUtf8(field.fontName)},
 					{"autoKern", field.autoKern},
-				});
+				}));
 			}
 
 			void Finalize() {

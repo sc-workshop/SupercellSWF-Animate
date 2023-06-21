@@ -20,76 +20,57 @@ export enum TextureScaleFactor {
 
 export const TextureDimensions = [
     512,
-    1024, 
+    1024,
     2048,
     4096
 ]
 
-interface ModuleStateInterface {
+interface PublisherStateData {
+    //Basic settings
     output: string,
-    method: keyof PublisherMethods,
+    method: PublisherMethods,
 
-    compression: string,
+    // Additional settings
+    compressionMethod: CompressionMethods,
 
-    hasTexture: boolean,
+    // Export to another file settings
+    exportToExternal: boolean,
+    exportToExternalPath: string,
+
+    // Texture category
+    hasExternalTexture: boolean,
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
     textureMaxHeight: number
-    
-}
 
-interface PublisherStateInterface {
-    PublishSettings: {
-        SupercellSWF: ModuleStateInterface
-    }
 }
 
 export class PublisherState {
-    data: PublisherStateInterface = {
-        PublishSettings: {
-            SupercellSWF: {
-                output: "",
-                method: PublisherMethods[PublisherMethods.SWF] as keyof PublisherMethods,
-                
-                compression: "LZMA",
+    data: PublisherStateData = {
+        output: "",
+        method: PublisherMethods.SWF,
 
-                // Textures
-                hasTexture: true,
-                textureScaleFactor: TextureScaleFactor.None,
-                textureMaxWidth: 2048,
-                textureMaxHeight: 2048
-            }
-        },
+        compressionMethod: CompressionMethods.LZMA,
+
+        exportToExternal: false,
+        exportToExternalPath: "",
+
+        // Textures
+        hasExternalTexture: true,
+        textureScaleFactor: TextureScaleFactor.None,
+        textureMaxWidth: 2048,
+        textureMaxHeight: 2048
     };
 
-    getParam(name: keyof ModuleStateInterface): any {
-        return this.data.PublishSettings.SupercellSWF[name];
+    getParam(name: keyof PublisherStateData): any {
+        return this.data[name];
     }
 
-    setParam(name: keyof ModuleStateInterface, value: any) {
-        this.data.PublishSettings.SupercellSWF[name] = value as never;
+    setParam(name: keyof PublisherStateData, value: any) {
+        this.data[name] = value as never;
     }
 
     save() {
-        const data: { [name: string]: any } = {};
-
-        function setKeys(key: string, object: any) {
-            if (object instanceof Object) {
-                for (const objKey of Object.keys(object)) {
-                    setKeys(`${key}.${objKey}`, object[objKey]);
-                }
-            } else {
-                data[key] = object;
-
-            }
-        }
-
-        for (const key of Object.keys(this.data)) {
-            setKeys(key, this.data[key as keyof PublisherStateInterface]);
-        }
-
-        console.log(data);
-
         if (!isCEP()) {
             return;
         }
@@ -102,27 +83,22 @@ export class PublisherState {
             "com.scwmake.SupercellSWF.PublishSettings"
         );
 
-        event.data = JSON.stringify(data);
+        event.data = JSON.stringify({
+            SupercellSWF: JSON.stringify(this.data)
+        });
         CSInterface.dispatchEvent(event);
     }
-
-    restore(data: any) {
-        function setKeys(obj: any, key: string, value: any) {
-            const keys = key.split('.');
-            if (keys.length === 1) {
-                obj[keys[0]] = value;
-                
-            } else if (keys.length > 1) {
-                setKeys(
-                    obj[keys[0]], keys.slice(1, keys.length).join('.'),
-                    value
-                );
-            }
-        };
     
-        for (const key of Object.keys(data)) {
-            setKeys(this.data, key, data[key as any]);
+    restore(data: any) {
+
+        try {
+            if (data.SupercellSWF) {
+                Object.assign(this.data, JSON.parse(data.SupercellSWF));
+            }
+        } catch (error) {
+            alert("Failed to load publisher settings");
         }
+
     }
 }
 

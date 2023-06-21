@@ -153,7 +153,7 @@
 			},
 			{
 				"name": "FontEmbed",
-				"supported": false
+				"supported": true
 			},
 			{
 				"name": "TextOrientation",
@@ -277,7 +277,7 @@
                     },
                     {
                         "name": "MultiLine",
-                        "supported": false
+                        "supported": true
                     },
                     {
                         "name": "MultiLineNoWrap",

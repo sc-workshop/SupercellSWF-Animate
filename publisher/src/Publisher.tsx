@@ -22,7 +22,8 @@ function Publisher() {
     }
   );
 
-  const publishButton = createElement("button",
+  const publishButton = createElement(
+    "button",
     {
       key: "publish_button",
       style: {

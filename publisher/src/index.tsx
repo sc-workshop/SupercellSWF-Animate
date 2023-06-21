@@ -7,7 +7,7 @@ import { State } from './Components/publisherState';
 import Locale from './Localization';
 
 function App() {
-  const [publisherStateData, setPublisherStateData] = useState(undefined);
+  const [publisherStateData, setPublisherStateData] = useState<string | undefined>(undefined);
   const [isFontLoaded, setIsFontLoaded] = useState(false);
 
   useEffect(() => {
@@ -25,7 +25,10 @@ function App() {
     loadFont();
 
     // Publisher Data
-    if (!isCEP()) { setPublisherStateData({} as any); return; };
+    if (!isCEP()) {
+      setPublisherStateData("{}");
+      return;
+    };
 
     const CSInterface = getInterface();
     const getData = async () => {

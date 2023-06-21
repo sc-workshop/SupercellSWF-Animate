@@ -1,15 +1,17 @@
-import { CSSProperties, Component, createElement, useState } from "react";
+import { CSSProperties, Dispatch, SetStateAction, createElement, useState } from "react";
 import TextField from "./TextField";
 
-let id = 0;
+type callback = (value: boolean) => void;
+type state = [boolean, Dispatch<SetStateAction<boolean>>];
+
 export default function BoolField(
     name: string,
+    keyName: string,
     defaultValue: boolean,
     style: CSSProperties,
-    onChange: (value: boolean
-    ) => void) {
+    callback: callback | state
+    )  {
     const [isFocus, setIsFocus] = useState(false);
-    const fieldId = id++;
 
     const label = TextField(
         `${name} :`,
@@ -22,10 +24,14 @@ export default function BoolField(
     const checkbox = createElement(
         "input",
         {
-            key: `boolfield_${fieldId}_input`,
+            key: `boolfield_${keyName}_input`,
             type: "checkbox",
             onChange: function (event: React.FormEvent<HTMLInputElement>) {
-                onChange(event.currentTarget.checked);
+                if (typeof callback == "function") {
+                    callback(event.currentTarget.checked);
+                } else {
+                    callback[1](event.currentTarget.checked);
+                }
             },
             style: {
                 width: `15px`,
@@ -51,7 +57,7 @@ export default function BoolField(
     return createElement(
         "div",
         {
-            key: `boolfield_${fieldId}`,
+            key: `boolfield_${keyName}`,
             style: style
         },
         label,

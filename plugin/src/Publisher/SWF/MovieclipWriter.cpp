@@ -145,21 +145,21 @@ namespace sc {
 				fs::path symbolPath(name);
 				exportName->name(symbolPath.filename().string());
 
-				m_writer->swf.exports.push_back(exportName);
+				m_writer->m_swf.exports.push_back(exportName);
 			}
 
 			FinalizeTransforms();
 
-			m_writer->swf.movieClips.push_back(m_object);
+			m_writer->m_swf.movieClips.push_back(m_object);
 		}
 
 		void MovieclipWriter::FinalizeTransforms() {
 			// TODO: Rework this..?
 
 			// Transforms packing
-			uint8_t matrixBanksCount = (uint8_t)m_writer->swf.matrixBanks.size();
+			uint8_t matrixBanksCount = (uint8_t)m_writer->m_swf.matrixBanks.size();
 			if (matrixBanksCount == 0) {
-				m_writer->swf.matrixBanks.push_back(pMatrixBank(new MatrixBank()));
+				m_writer->m_swf.matrixBanks.push_back(pMatrixBank(new MatrixBank()));
 				matrixBanksCount++;
 			}
 
@@ -171,7 +171,7 @@ namespace sc {
 			}
 
 			// If all banks is full then create new
-			m_writer->swf.matrixBanks.push_back(pMatrixBank(new MatrixBank()));
+			m_writer->m_swf.matrixBanks.push_back(pMatrixBank(new MatrixBank()));
 			if (!FinalizeElementsTransform(matrixBanksCount)) {
 				// and even if the new bank cannot cope with all transformations, then we just give up and delete everything
 				m_object->frames.clear();
@@ -184,7 +184,7 @@ namespace sc {
 		bool MovieclipWriter::FinalizeElementsTransform(uint8_t& bankIndex) {
 			uint32_t frameElementsCount = (uint32_t)m_object->frameElements.size();
 
-			pMatrixBank& bankOrig = m_writer->swf.matrixBanks[bankIndex];
+			pMatrixBank& bankOrig = m_writer->m_swf.matrixBanks[bankIndex];
 			pMatrixBank& bankCopy = pMatrixBank(new MatrixBank(*bankOrig.get()));
 
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
@@ -212,7 +212,7 @@ namespace sc {
 			}
 
 			m_object->matrixBankIndex(bankIndex);
-			m_writer->swf.matrixBanks[bankIndex] = bankCopy;
+			m_writer->m_swf.matrixBanks[bankIndex] = bankCopy;
 			return true;
 		}
 	}

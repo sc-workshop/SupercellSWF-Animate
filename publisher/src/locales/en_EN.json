@@ -6,6 +6,8 @@
 
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Additional",
     "TID_SWF_SETTINGS_COMPRESSION": "Compression method",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Export document to external file",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "External file",
 	
 	"TID_TEXTURES_LABEL": "Textures",
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",

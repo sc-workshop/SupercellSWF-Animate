@@ -30,7 +30,7 @@ namespace sc {
 			shape->id(id);
 			shape->commands.resize(m_bitmapCount);
 
-			m_writer->swf.shapes.push_back(shape);
+			m_writer->m_swf.shapes.push_back(shape);
 		}
 	}
 }

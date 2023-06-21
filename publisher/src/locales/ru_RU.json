@@ -6,6 +6,8 @@
 
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Дополнительно",
     "TID_SWF_SETTINGS_COMPRESSION": "Тип сжатия",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Экспортировать во внешний файл",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Внешний файл",
 	
 	"TID_TEXTURES_LABEL": "Текстуры",
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Записать внешнюю текстуру",

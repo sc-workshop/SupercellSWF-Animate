@@ -25,8 +25,9 @@ namespace sc {
 			document->GetLibraryItems(libraryItems.m_Ptr);
 
 			auto start = chrono::high_resolution_clock::now();
-
+#ifndef DEBUG
 			try {
+#endif
 				shared_ptr<SharedWriter> writer;
 				switch (app.config.method) {
 				case PublisherMethod::SWF:
@@ -47,11 +48,12 @@ namespace sc {
 				ExportLibraryItems(libraryItems, resources);
 
 				resources.Finalize();
-
+#ifndef DEBUG
 			}
 			catch (const exception& err) {
 				app.trace("Error: %s", err.what());
 			}
+#endif
 
 			auto end = chrono::high_resolution_clock::now();
 

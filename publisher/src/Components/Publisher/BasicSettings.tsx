@@ -24,7 +24,7 @@ export default function BasicSettings() {
         Locale.Get("TID_PUBLISH_METHOD"),
         "publisher_method",
         PublisherMethods,
-        PublisherMethods[State.getParam("method")],
+        State.getParam("method"),
         {
             marginBottom: "6px"
         },
@@ -38,7 +38,7 @@ export default function BasicSettings() {
                     setFileExtension("json")
                     break
             }
-            State.setParam("method", PublisherMethods[value as any])
+            State.setParam("method", key)
         }
     );
 

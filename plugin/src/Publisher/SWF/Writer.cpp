@@ -22,7 +22,7 @@ namespace sc {
 			pMovieClipModifier modifier = pMovieClipModifier(new MovieClipModifier());
 			modifier->id(id);
 			modifier->type(type);
-			swf.movieClipModifiers.push_back(modifier);
+			m_swf.movieClipModifiers.push_back(modifier);
 		}
 
 		void Writer::AddTextField(uint16_t id, TextFieldInfo field) {
@@ -86,7 +86,94 @@ namespace sc {
 				field.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true
 			);
 			
-			swf.textFields.push_back(textfield);
+			m_swf.textFields.push_back(textfield);
+		}
+
+		void Writer::LoadExternal() {
+			if (!fs::exists(m_context.config.exportToExternalPath)) {
+				m_context.trace("External file does not exist");
+				return;
+			}
+
+			SupercellSWF swf;
+			swf.load(m_context.config.exportToExternalPath);
+
+			uint16_t idOffset = 0;
+			{
+				for (auto object : swf.movieClips) {
+					if (object->id() > idOffset) {
+						idOffset = object->id();
+					}
+				}
+
+				for (auto object : swf.movieClipModifiers) {
+					if (object->id() > idOffset) {
+						idOffset = object->id();
+					}
+				}
+
+				for (auto object : swf.textFields) {
+					if (object->id() > idOffset) {
+						idOffset = object->id();
+					}
+				}
+
+				for (auto object : swf.shapes) {
+					if (object->id() > idOffset) {
+						idOffset = object->id();
+					}
+				}
+			}
+			idOffset++;
+
+			// Display object processing
+			for (auto object : m_swf.movieClips) {
+				object->id(object->id() + idOffset);
+
+				for (auto bind : object->instances) {
+					bind->id += idOffset;
+				}
+
+				object->matrixBankIndex(object->matrixBankIndex() + (uint8_t)swf.matrixBanks.size());
+
+				swf.movieClips.push_back(object);
+			}
+
+			for (auto object : m_swf.movieClipModifiers) {
+				object->id(object->id() + idOffset);
+
+				swf.movieClipModifiers.push_back(object);
+			}
+
+			for (auto object : m_swf.textFields) {
+				object->id(object->id() + idOffset);
+
+				swf.textFields.push_back(object);
+			}
+
+			for (auto object : m_swf.shapes) {
+				object->id(object->id() + idOffset);
+
+				for (auto bitmap : object->commands) {
+					bitmap->textureIndex(bitmap->textureIndex() + (uint8_t)swf.textures.size());
+				}
+
+				swf.shapes.push_back(object);
+			}
+
+			// Common resources processing
+			for (auto bank : m_swf.matrixBanks) {
+				swf.matrixBanks.push_back(bank);
+			}
+			for (auto texture : m_swf.textures) {
+				swf.textures.push_back(texture);
+			}
+			for (auto exportName : m_swf.exports) {
+				exportName->id(exportName->id() + idOffset);
+				swf.exports.push_back(exportName);
+			}
+
+			m_swf = swf;
 		}
 
 		void Writer::Finalize() {
@@ -118,7 +205,7 @@ namespace sc {
 				}
 
 				uint16_t itemIndex = 0;
-				for (pShape& shape : swf.shapes) {
+				for (pShape& shape : m_swf.shapes) {
 					for (uint16_t i = 0; shape->commands.size() > i; i++) {
 						ShapeDrawBitmapCommand* command = new ShapeDrawBitmapCommand();
 						AtlasGeneratorItem& item = items[itemIndex];
@@ -164,14 +251,18 @@ namespace sc {
 
 					texture->data = std::vector<uint8_t>(atlas.datastart, atlas.dataend);
 
-					swf.textures.push_back(pSWFTexture(texture));
+					m_swf.textures.push_back(pSWFTexture(texture));
 				}
 			}
 
-			swf.useExternalTexture(m_context.config.hasTexture);
-			swf.useLowResTexture(false);
-			swf.useMultiResTexture(false);
-			swf.save(m_context.config.output, m_context.config.compression);
+			if (m_context.config.exportToExternal) {
+				LoadExternal();
+			}
+
+			m_swf.useExternalTexture(m_context.config.hasExternalTexture);
+			m_swf.useLowResTexture(false);
+			m_swf.useMultiResTexture(false);
+			m_swf.save(m_context.config.output, m_context.config.compression);
 		}
 	}
 }

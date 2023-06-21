@@ -26,9 +26,15 @@ namespace sc {
 			using SharedWriter::SharedWriter;
 
 			std::vector<Sprite> sprites;
-			SupercellSWF swf;
+			SupercellSWF m_swf;
 
-			void Init() {};
+			void Init() {
+				if (m_context.config.exportToExternal) {
+					if (m_context.config.exportToExternalPath.empty()) {
+						throw exception("Failed to get external file path");
+					}
+				}
+			};
 
 			pSharedMovieclipWriter AddMovieclip();
 
@@ -37,6 +43,8 @@ namespace sc {
 			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type);
 
 			void AddTextField(uint16_t id, TextFieldInfo field);
+
+			void LoadExternal();
 
 			void Finalize();
 		};

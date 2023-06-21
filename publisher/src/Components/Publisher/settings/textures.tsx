@@ -4,15 +4,17 @@ import { State, TextureDimensions, TextureScaleFactor } from "../../publisherSta
 import BoolField from "../../Shared/BoolField";
 import SubMenu from "../../Shared/SubMenu";
 import EnumField from "../../Shared/EnumField";
+import { useState } from "react";
 
 export default function TextureSettings() {
     const exportToExternal = BoolField(
         Locale.Get("TID_SWF_SETTINGS_HAS_TEXTURE"),
-        State.getParam("hasTexture"),
+        "external_texture_select",
+        State.getParam("hasExternalTexture"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("hasTexture", value)),
+        value => (State.setParam("hasExternalTexture", value)),
     );
 
     const scaleFactor = EnumField(

@@ -269,66 +269,6 @@ namespace sc {
             return true;
         }
 
-        bool Utils::ReadBoolean(
-            const FCM::PIFCMDictionary dict,
-            FCM::StringRep8 key,
-            bool& result)
-        {
-            FCM::U_Int32 valueLen;
-            FCM::FCMDictRecTypeID type;
-
-            FCM::Result res = dict->GetInfo(key, type, valueLen);
-            if (FCM_FAILURE_CODE(res))
-            {
-                return false;
-            }
-
-            if (type == FCM::FCMDictRecTypeID::kFCMDictType_Long) {
-                res = dict->Get(key, type, (FCM::PVoid)(&result), valueLen);
-                if (FCM_FAILURE_CODE(res))
-                {
-                    return false;
-                }
-            }
-            else if (type == FCM::FCMDictRecTypeID::kFCMDictType_StringRep8) {
-                std::string value;
-                ReadString(dict, key, value);
-                result = value == "true";
-            }
-
-            return true;
-        }
-
-        bool Utils::ReadInteger(
-            const FCM::PIFCMDictionary dict,
-            FCM::StringRep8 key,
-            int& result)
-        {
-            FCM::U_Int32 valueLen;
-            FCM::FCMDictRecTypeID type;
-
-            FCM::Result res = dict->GetInfo(key, type, valueLen);
-            if (FCM_FAILURE_CODE(res))
-            {
-                return false;
-            }
-
-            if (type == FCM::FCMDictRecTypeID::kFCMDictType_Long) {
-                res = dict->Get(key, type, (FCM::PVoid)(&result), valueLen);
-                if (FCM_FAILURE_CODE(res))
-                {
-                    return false;
-                }
-            }
-            else if (type == FCM::FCMDictRecTypeID::kFCMDictType_StringRep8) {
-                std::string number;
-                ReadString(dict, key, number);
-                result = std::stoi(number);
-            }
-
-            return true;
-        }
-
         fs::path Utils::CurrentPath() {
 #ifdef _WINDOWS
             char16_t* pathPtr = new char16_t[MAX_PATH];

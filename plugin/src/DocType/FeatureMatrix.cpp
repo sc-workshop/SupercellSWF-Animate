@@ -32,7 +32,7 @@ namespace sc {
 			featuresPath /= "../res/Features.json";
 
 			std::ifstream file(featuresPath);
-			json features = json::parse(file);
+			json features = json::parse(file, nullptr, true, true);
 			file.close();
 
 			if (features.is_array()) {

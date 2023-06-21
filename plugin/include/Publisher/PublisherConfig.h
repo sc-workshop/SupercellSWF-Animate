@@ -8,7 +8,11 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
+#include "JSON.hpp"
 #include <SupercellFlash.h>
+
+using namespace std;
+using namespace nlohmann;
 
 namespace sc {
 	namespace Adobe {
@@ -22,8 +26,10 @@ namespace sc {
 			PublisherMethod method = PublisherMethod::SWF;
 
 			sc::CompressionSignature compression = sc::CompressionSignature::LZMA;
+			bool exportToExternal = false;
+			fs::path exportToExternalPath = "";
 
-			bool hasTexture = 0;
+			bool hasExternalTexture = 0;
 			uint8_t textureScaleFactor = 1;
 			uint32_t textureMaxWidth = 2048;
 			uint32_t textureMaxHeight = 2048;
