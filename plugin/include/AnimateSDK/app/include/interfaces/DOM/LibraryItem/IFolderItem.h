@@ -82,7 +82,7 @@ namespace DOM
              *
              * @see    DOM::ILibraryItem
              */
-            virtual FCM::Result _FCMCALL GetChildren(PIFCMList& pChildList) = 0;
+            virtual FCM::Result _FCMCALL GetChildren(FCM::PIFCMList& pChildList) = 0;
         
         END_DECLARE_INTERFACE
 

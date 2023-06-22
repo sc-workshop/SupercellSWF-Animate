@@ -154,7 +154,7 @@ namespace DOM
          *
          * @see    DOM::FrameElement::IMovieClip
          */    
-        virtual FCM::Result _FCMCALL GetFrameElements(PIFCMList& pFrameElementsList) = 0;
+        virtual FCM::Result _FCMCALL GetFrameElements(FCM::PIFCMList& pFrameElementsList) = 0;
 
 
         /**
@@ -178,8 +178,8 @@ namespace DOM
          * @return On success, FCM_SUCCESS is returned, else an error code is returned.
          */
         virtual FCM::Result _FCMCALL GetFrameElementsByType(
-            ConstFCMIID& iid, 
-            PIFCMList& pFrameElementsList) = 0; 
+            FCM::ConstFCMIID& iid,
+            FCM::PIFCMList& pFrameElementsList) = 0;
 
 
         /**

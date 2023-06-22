@@ -114,7 +114,7 @@ namespace DOM
                  *
                  * @see    DOM::Service::Shape::IPath
                  */
-                virtual FCM::Result _FCMCALL GetHoles(PIFCMList& pHoleList) = 0;
+                virtual FCM::Result _FCMCALL GetHoles(FCM::PIFCMList& pHoleList) = 0;
 
 
                 /**
@@ -133,7 +133,7 @@ namespace DOM
                  *
                  * @see    DOM::FillStyle::IGradientFillStyle
                  */
-                virtual FCM::Result _FCMCALL GetFillStyle(PIFCMUnknown& pFillStyle) = 0;
+                virtual FCM::Result _FCMCALL GetFillStyle(FCM::PIFCMUnknown& pFillStyle) = 0;
 
             END_DECLARE_INTERFACE
         }

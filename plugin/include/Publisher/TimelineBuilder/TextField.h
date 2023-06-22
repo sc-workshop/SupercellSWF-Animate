@@ -9,7 +9,6 @@
 #include <DOM/FrameElement/ITextRun.h>
 #include <DOM/FrameElement/ITextBehaviour.h>
 
-using namespace std;
 using namespace DOM::FrameElement;
 
 #include <math.h>

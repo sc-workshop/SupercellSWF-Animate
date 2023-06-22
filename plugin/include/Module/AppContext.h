@@ -4,46 +4,33 @@
 
 #include <string>
 #include <stdarg.h>
+#include <exception>
 
 #include "Localization.h"
 #include "Publisher/PublisherConfig.h"
 
+#include "FCMPluginInterface.h"
 #include "Application/Service/IApplicationService.h"
 #include "Application/Service/IOutputConsoleService.h"
-#include <ApplicationFCMPublicIDs.h>
+#include "ApplicationFCMPublicIDs.h"
 
-using namespace std;
-using namespace FCM;
-using namespace Application::Service;
+#include "Module/Window.h"
 
 namespace sc {
 	namespace Adobe {
 		class AppContext {
-			PIFCMCallback m_callback;
+			FCM::PIFCMCallback m_callback;
 
 		public:
-			AppContext(PIFCMCallback callback, const PIFCMDictionary settings) {
-				if (!callback) {
-					throw exception("Failed to initialize app interface");
-				}
-				else {
-					m_callback = callback;
-				}
-				falloc = getService<IFCMCalloc>(SRVCID_Core_Memory);
+			AppContext(FCM::PIFCMCallback callback, const FCM::PIFCMDictionary settings);
 
-				locale.Load(languageCode());
-				if (settings) {
-					config = PublisherConfig::FromDict(settings);
-				}
-			};
-
-			~AppContext() {}
+			~AppContext();
 
 		public:
 			// Public properties
 
 			// FCM memory control
-			AutoPtr<IFCMCalloc> falloc;
+			FCM::AutoPtr<FCM::IFCMCalloc> falloc;
 
 			// Module localization
 			LocaleInterface locale;
@@ -51,25 +38,34 @@ namespace sc {
 			// Publish settings
 			PublisherConfig config;
 
+			// Import / export window
+			Window* window = nullptr;
+
 		public:
 			// Functions
 
 			template<typename T>
-			AutoPtr<T> getService(SRVCID id) {
-				AutoPtr<IFCMUnknown> unknownService;
+			FCM::AutoPtr<T> getService(FCM::SRVCID id) {
+				FCM::AutoPtr<FCM::IFCMUnknown> unknownService;
 
-				Result res = m_callback->GetService(id, unknownService.m_Ptr);
+				FCM::Result res = m_callback->GetService(id, unknownService.m_Ptr);
 				if (FCM_FAILURE_CODE(res)) {
 					throw exception("Failed to initialize service");
 				}
 
-				AutoPtr<T> service = unknownService;
+				FCM::AutoPtr<T> service = unknownService;
 				return service;
 			};
 
-			string languageCode();
+			std::string languageCode();
 
 			void trace(const char* fmt, ...);
+
+			// Publish modes
+
+			//void startExport(DOM::PIFLADocument document);
+
+			//void startImport();
 		};
 	}
 }

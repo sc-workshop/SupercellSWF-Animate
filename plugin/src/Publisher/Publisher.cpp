@@ -4,10 +4,10 @@
 
 namespace sc {
 	namespace Adobe {
-		Result Publisher::Publish(
+		FCM::Result Publisher::Publish(
 			DOM::PIFLADocument document,
-			const PIFCMDictionary publishSettings,
-			const PIFCMDictionary config)
+			const FCM::PIFCMDictionary publishSettings,
+			const FCM::PIFCMDictionary config)
 		{
 			AppContext app(GetCallback(), publishSettings);
 			if (app.config.output.empty()) {
@@ -63,23 +63,23 @@ namespace sc {
 			return FCM_SUCCESS;
 		}
 
-		void Publisher::ExportLibraryItems(FCMListPtr libraryItems, ResourcePublisher& resources) {
+		void Publisher::ExportLibraryItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources) {
 			uint32_t itemCount = 0;
 			libraryItems->Count(itemCount);
 
 			for (uint32_t i = 0; i < itemCount; i++)
 			{
-				AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
+				FCM::AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
 
-				StringRep16 itemNamePtr;
+				FCM::StringRep16 itemNamePtr;
 				item->GetName(&itemNamePtr);
 				u16string itemName = (const char16_t*)itemNamePtr;
 				resources.context.falloc->Free(itemNamePtr);
 
-				AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
+				FCM::AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
 				if (folderItem)
 				{
-					FCMListPtr childrens;
+					FCM::FCMListPtr childrens;
 					folderItem->GetChildren(childrens.m_Ptr);
 
 					// Export all its children
@@ -87,10 +87,10 @@ namespace sc {
 				}
 				else
 				{
-					AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
+					FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
 					if (!symbolItem) continue;
 
-					AutoPtr<IFCMDictionary> dict;
+					FCM::AutoPtr<FCM::IFCMDictionary> dict;
 					item->GetProperties(dict.m_Ptr);
 
 					std::string symbolType;
@@ -111,7 +111,7 @@ namespace sc {
 			}
 		};
 
-		FCM::Result RegisterPublisher(PIFCMDictionary plugins, FCM::FCMCLSID docId)
+		FCM::Result RegisterPublisher(FCM::PIFCMDictionary plugins, FCM::FCMCLSID docId)
 		{
 			FCM::Result res;
 
@@ -155,14 +155,14 @@ namespace sc {
 
 			{
 				// Level 1 Dictionary
-				AutoPtr<IFCMDictionary> plugin;
+				FCM::AutoPtr<FCM::IFCMDictionary> plugin;
 				res = plugins->AddLevel(
 					(const FCM::StringRep8)Utils::ToString(CLSID_Publisher).c_str(),
 					plugin.m_Ptr
 				);
 
 				// Level 2 Dictionary
-				AutoPtr<IFCMDictionary> category;
+				FCM::AutoPtr<FCM::IFCMDictionary> category;
 				res = plugin->AddLevel(
 					(const FCM::StringRep8)kApplicationCategoryKey_Publisher,
 					category.m_Ptr
@@ -172,32 +172,32 @@ namespace sc {
 				std::string name = PUBLISHER_NAME;
 				res = category->Add(
 					(const FCM::StringRep8)kApplicationCategoryKey_Name,
-					kFCMDictType_StringRep8,
+					FCM::kFCMDictType_StringRep8,
 					(FCM::PVoid)name.c_str(),
 					(FCM::U_Int32)name.length() + 1);
 
 				std::string identifer = PUBLISHER_UNIVERSAL_NAME;
 				res = category->Add(
 					(const FCM::StringRep8)kApplicationCategoryKey_UniversalName,
-					kFCMDictType_StringRep8,
+					FCM::kFCMDictType_StringRep8,
 					(FCM::PVoid)identifer.c_str(),
 					(FCM::U_Int32)identifer.length() + 1);
 
 				std::string ui = PUBLISH_SETTINGS_UI_ID;
 				res = category->Add(
 					(const FCM::StringRep8)kApplicationPublisherKey_UI,
-					kFCMDictType_StringRep8,
+					FCM::kFCMDictType_StringRep8,
 					(FCM::PVoid)ui.c_str(),
 					(FCM::U_Int32)ui.length() + 1);
 
-				AutoPtr<IFCMDictionary> pDocs;
+				FCM::AutoPtr<FCM::IFCMDictionary> pDocs;
 				res = category->AddLevel((const FCM::StringRep8)kApplicationPublisherKey_TargetDocs, pDocs.m_Ptr);
 
 				// Level 4 Dictionary
 				std::string empytString = ""; // TODO: ???
 				res = pDocs->Add(
 					(const FCM::StringRep8)Utils::ToString(docId).c_str(),
-					kFCMDictType_StringRep8,
+					FCM::kFCMDictType_StringRep8,
 					(FCM::PVoid)empytString.c_str(),
 					(FCM::U_Int32)empytString.length() + 1
 				);

@@ -28,6 +28,7 @@
 
 #include "FCMPreConfig.h"
 #include "FCMPluginInterface.h"
+#include "DOM/Utils/DOMTypes.h"
 
 
 /* -------------------------------------------------- Forward Decl */
@@ -99,7 +100,7 @@ namespace DOM
 
 
             /** Type of cap */
-            Utils::CapType type;
+            DOM::Utils::CapType type;
         };
 
 
@@ -170,7 +171,7 @@ namespace DOM
              *
              * @see    DOM::FillStyle::IBitmapFillStyle
              */
-            virtual FCM::Result _FCMCALL GetFillStyle(PIFCMUnknown& pFillStyle) = 0;
+            virtual FCM::Result _FCMCALL GetFillStyle(FCM::PIFCMUnknown& pFillStyle) = 0;
 
 
             /**

@@ -15,7 +15,7 @@ namespace sc {
 		}
 
 		void JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
-			U_Int32 imageIndex = m_writer->imageCount;
+			uint32_t imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
 			
 			std::string bitmapBasename = std::to_string(imageIndex) + ".png";

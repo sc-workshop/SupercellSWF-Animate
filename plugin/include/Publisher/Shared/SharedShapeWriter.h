@@ -9,8 +9,6 @@
 
 #include <opencv2/opencv.hpp>
 
-using namespace FCM;
-
 namespace sc {
 	namespace Adobe {
 		class SharedShapeWriter {

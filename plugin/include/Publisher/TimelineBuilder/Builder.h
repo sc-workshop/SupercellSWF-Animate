@@ -15,8 +15,6 @@
 
 #include "LayerBuilder.h"
 
-using namespace FCM;
-
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
@@ -25,11 +23,11 @@ namespace sc {
 			ResourcePublisher& m_resources;
 
 		public:
-			static void GetLayerBuilder(FCMListPtr& layers, ResourcePublisher& resources, vector<LayerBuilder>& result);
+			static void GetLayerBuilder(FCM::FCMListPtr& layers, ResourcePublisher& resources, std::vector<LayerBuilder>& result);
 
 			TimelineBuilder(ResourcePublisher& resources): m_resources(resources) {}
 
-			void Generate(pSharedMovieclipWriter writer, AutoPtr<DOM::ITimeline> timeline);
+			void Generate(pSharedMovieclipWriter writer, FCM::AutoPtr<DOM::ITimeline> timeline);
 		};
 	}
 }

@@ -11,7 +11,6 @@ namespace fs = std::filesystem;
 #include "JSON.hpp"
 #include <SupercellFlash.h>
 
-using namespace std;
 using namespace nlohmann;
 
 namespace sc {
@@ -21,7 +20,14 @@ namespace sc {
 			SWF
 		};
 
+		enum class PublisherMode {
+			Import,
+			Export
+		};
+
 		struct PublisherConfig {
+			PublisherMode mode = PublisherMode::Export;
+
 			fs::path output = "";
 			PublisherMethod method = PublisherMethod::SWF;
 

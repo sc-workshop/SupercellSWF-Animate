@@ -28,7 +28,7 @@
 
 #include "FCMPreConfig.h"
 #include "FCMPluginInterface.h"
-
+#include "DOM/Utils/DOMTypes.h"
 
 
 /* -------------------------------------------------- Forward Decl */
@@ -116,7 +116,7 @@ namespace DOM
              *
              * @return On success, FCM_SUCCESS is returned, else an error code is returned.
              */
-            virtual FCM::Result _FCMCALL GetQuality(Utils::FilterQualityType& qualityType) = 0;
+            virtual FCM::Result _FCMCALL GetQuality(DOM::Utils::FilterQualityType& qualityType) = 0;
 
 
             /**
@@ -162,7 +162,7 @@ namespace DOM
              *
              * @return On success, FCM_SUCCESS is returned, else an error code is returned.
              */
-            virtual FCM::Result _FCMCALL GetFilterType(Utils::FilterType& filterType) = 0;
+            virtual FCM::Result _FCMCALL GetFilterType(DOM::Utils::FilterType & filterType) = 0;
 
             
             /**

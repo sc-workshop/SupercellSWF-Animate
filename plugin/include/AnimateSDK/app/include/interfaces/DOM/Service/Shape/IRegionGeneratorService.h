@@ -105,7 +105,7 @@ namespace DOM
                  */
                 virtual FCM::Result _FCMCALL GetFilledRegions(
                     DOM::FrameElement::PIShape pShape, 
-                    PIFCMList& pFilledRegionList) = 0;
+                    FCM::PIFCMList& pFilledRegionList) = 0;
 
 
                 /**
@@ -126,7 +126,7 @@ namespace DOM
                  */
                 virtual FCM::Result _FCMCALL GetStrokeGroups(
                     DOM::FrameElement::PIShape pShape, 
-                    PIFCMList& pStrokeGroupList) = 0;
+                    FCM::PIFCMList& pStrokeGroupList) = 0;
 
             END_DECLARE_INTERFACE
         }

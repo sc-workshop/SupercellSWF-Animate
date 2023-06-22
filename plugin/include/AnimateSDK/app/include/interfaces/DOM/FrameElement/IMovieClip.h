@@ -88,7 +88,7 @@ namespace DOM
              *
              * @return On success, FCM_SUCCESS is returned, else an error code is returned.
              */
-            virtual FCM::Result _FCMCALL GetBlendMode(BlendMode& blendMode) = 0;
+            virtual FCM::Result _FCMCALL GetBlendMode(FCM::BlendMode& blendMode) = 0;
 
 
             /**

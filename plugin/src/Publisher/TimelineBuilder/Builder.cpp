@@ -2,22 +2,22 @@
 
 namespace sc {
 	namespace Adobe {
-		void TimelineBuilder::GetLayerBuilder(FCMListPtr& layers, ResourcePublisher& resources, vector<LayerBuilder>& result) {
+		void TimelineBuilder::GetLayerBuilder(FCM::FCMListPtr& layers, ResourcePublisher& resources, vector<LayerBuilder>& result) {
 			uint32_t layerCount = 0;
 			layers->Count(layerCount);
 
 			for (uint32_t i = 0; layerCount > i; i++) {
-				AutoPtr<DOM::ILayer2> layer = layers[i];
+				FCM::AutoPtr<DOM::ILayer2> layer = layers[i];
 				if (!layer) {
 					throw exception("Failed to get layer");
 				}
 
-				AutoPtr<IFCMUnknown> unknownLayer;
+				FCM::AutoPtr<FCM::IFCMUnknown> unknownLayer;
 				layer->GetLayerType(unknownLayer.m_Ptr);
 
-				AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
-				AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
-				AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
+				FCM::AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
+				FCM::AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
+				FCM::AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
 
 				if (folderLayer) {
 					FCM::FCMListPtr folderLayers;
@@ -36,7 +36,7 @@ namespace sc {
 			}
 		};
 
-		void TimelineBuilder::Generate(pSharedMovieclipWriter writer, AutoPtr<DOM::ITimeline> timeline) {
+		void TimelineBuilder::Generate(pSharedMovieclipWriter writer, FCM::AutoPtr<DOM::ITimeline> timeline) {
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
 

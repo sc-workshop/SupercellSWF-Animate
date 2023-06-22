@@ -8,7 +8,7 @@
 namespace sc {
 	namespace Adobe {
 		void LayerBuilder::UpdateFrame() {
-			AutoPtr<DOM::IFrame> frame;
+			FCM::AutoPtr<DOM::IFrame> frame;
 			m_layer->GetFrameAtIndex(m_position, frame.m_Ptr);
 			m_frameBuilder.Update(frame);
 		}
@@ -33,16 +33,16 @@ namespace sc {
 		}
 
 		LayerBuilder::LayerBuilder(
-			AutoPtr<DOM::Layer::ILayerNormal> layer,
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer,
 			ResourcePublisher& resources
 		) : m_layer(layer), m_resources(resources), m_frameBuilder(resources)
 		{
 			m_layer->GetTotalDuration(m_duration);
 			UpdateFrame();
 
-			AutoPtr<DOM::Layer::ILayerMask> maskLayer = m_layer;
+			FCM::AutoPtr<DOM::Layer::ILayerMask> maskLayer = m_layer;
 			if (maskLayer) {
-				FCMListPtr maskedLayers;
+				FCM::FCMListPtr maskedLayers;
 				maskLayer->GetChildren(maskedLayers.m_Ptr);
 
 				TimelineBuilder::GetLayerBuilder(maskedLayers, resources, m_maskedLayers);

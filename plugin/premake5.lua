@@ -22,12 +22,15 @@ includedirs {
     -- ScAnimate
     "include",
     "ThirdParty/AtlasGenerator/include",
+	"ThirdParty/OpenCV/include",
 
     -- SC
     "ThirdParty/SC/dependencies/Bytestream",
     "ThirdParty/SC/dependencies/Compression/include",
     "ThirdParty/SC/include",
-
+	
+	-- GUI
+	"ThirdParty/wxWidget/include"
 }
 
 links {
@@ -46,20 +49,24 @@ links {
     -- FLA
 }
 
+
+
 filter {"system:windows", "configurations:Debug"}
 links {
-	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
+	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
 }
 targetdir "../dist/com.scwmake.SupercellSWF/Plugin/lib/win"
 
 filter {"system:windows", "configurations:Release"}
 links {
-	"ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
+	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
 }
 targetdir "bin/win/"
 
 filter "system:windows"
-defines { "_WINDOWS", "_WIN32", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
+includedirs { "ThirdParty/wxWidget/include/msvc" }
+libdirs { "ThirdParty/wxWidget/lib/vc_x64_lib" }
+defines { "_WINDOWS", "_WIN32", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS", "WIN32_LEAN_AND_MEAN" }
 targetextension ".fcm"
 
 filter "configurations:Debug"

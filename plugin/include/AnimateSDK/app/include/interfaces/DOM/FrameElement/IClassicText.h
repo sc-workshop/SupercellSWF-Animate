@@ -196,7 +196,7 @@ namespace DOM
              *         list with one paragraph in it which in turn contains only 
              *         one text run.
              */
-            virtual FCM::Result _FCMCALL GetParagraphs(PIFCMList& pParagraphList) = 0;
+            virtual FCM::Result _FCMCALL GetParagraphs(FCM::PIFCMList& pParagraphList) = 0;
             
 
             /**

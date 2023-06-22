@@ -4,3 +4,6 @@
 [submodule "plugin/ThirdParty/AtlasGenerator"]
 	path = plugin/ThirdParty/AtlasGenerator
 	url = https://github.com/Daniil-SV/Atlas-Generator
+[submodule "plugin/ThirdParty/OpenCV"]
+	path = plugin/ThirdParty/OpenCV
+	url = https://github.com/Daniil-SV/OpenCV-Binaries.git

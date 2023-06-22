@@ -96,7 +96,7 @@ namespace DOM
              *
              * @see    DOM::FillStyle::IBitmapFillStyle
              */
-            virtual FCM::Result _FCMCALL GetFillStyle(PIFCMUnknown& pFillStyle) = 0;
+            virtual FCM::Result _FCMCALL GetFillStyle(FCM::PIFCMUnknown& pFillStyle) = 0;
 
 
             /**

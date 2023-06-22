@@ -140,7 +140,7 @@ namespace Exporter
             virtual FCM::Result _FCMCALL GenerateFrameCommands(
                 DOM::PITimeline pTimeline, 
                 const RANGE& frameRange, 
-                const PIFCMDictionary pDictPublishSettings, 
+                const FCM::PIFCMDictionary pDictPublishSettings,
                 PIResourcePalette pResourcePalette, 
                 PITimelineBuilderFactory pTimelineBuilderFactory, 
                 PITimelineBuilder& pTimelineBuilder) = 0;

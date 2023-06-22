@@ -6,9 +6,6 @@
 #include <memory>
 #include <SupercellFlash.h>
 
-using namespace FCM;
-using namespace std;
-
 namespace sc {
 	namespace Adobe {
 		class Writer;
@@ -17,8 +14,8 @@ namespace sc {
 			Writer* m_writer = nullptr;
 			pMovieClip m_object = pMovieClip(new MovieClip());
 
-			vector<pMatrix2D> m_matrices;
-			vector<pColorTransform> m_colors;
+			std::vector<pMatrix2D> m_matrices;
+			std::vector<pColorTransform> m_colors;
 
 			// Helper functions
 
@@ -26,7 +23,7 @@ namespace sc {
 				uint16_t elementsCount,
 				uint16_t id,
 				uint8_t blending,
-				string name
+				std::string name
 			);
 
 			void FinalizeTransforms();
@@ -43,12 +40,12 @@ namespace sc {
 			void AddFrameElement(
 				uint16_t id,
 				uint8_t blending,
-				u16string name,
+				std::u16string name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color
 			);
 
-			void Finalize(uint16_t id, uint8_t fps, u16string name);
+			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
 		};
 	}
 }

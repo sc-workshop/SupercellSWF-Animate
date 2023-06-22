@@ -102,7 +102,7 @@ namespace DOM
                  */
                 virtual FCM::Result _FCMCALL GetTextLines(
                     const FrameElement::PIClassicText& pClassicText, 
-                    PIFCMList& pTextLineList) = 0;
+                    FCM::PIFCMList& pTextLineList) = 0;
             
             END_DECLARE_INTERFACE 
         }

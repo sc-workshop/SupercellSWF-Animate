@@ -7,13 +7,13 @@ namespace sc {
             DOM::ILibraryItem* item,
             bool hasName
         ) {
-            StringRep16 itemNamePtr;
+            FCM::StringRep16 itemNamePtr;
             item->GetName(&itemNamePtr);
             u16string itemName = (const char16_t*)itemNamePtr;
             context.falloc->Free(itemNamePtr);
 
-            AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
-            AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
+            FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
+            FCM::AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
 
             if (symbolItem) {
                 return AddSymbol(itemName, symbolItem, hasName);
@@ -49,7 +49,7 @@ namespace sc {
             context.trace("Symbol: %s", Utils::ToUtf8(name).c_str());
 #endif // DEBUG
 
-            AutoPtr<DOM::ITimeline> timeline;
+            FCM::AutoPtr<DOM::ITimeline> timeline;
             item->GetTimeLine(timeline.m_Ptr);
 
             if (hasName) {
@@ -63,7 +63,7 @@ namespace sc {
 
         uint16_t ResourcePublisher::AddMovieclip(
             u16string name,
-            AutoPtr<DOM::ITimeline> timeline,
+            FCM::AutoPtr<DOM::ITimeline> timeline,
             bool hasName
         ) {
             pSharedMovieclipWriter movieclip = m_writer->AddMovieclip();

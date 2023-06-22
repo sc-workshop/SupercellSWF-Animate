@@ -173,7 +173,7 @@ namespace DOM
              *
              * @see    DOM::FrameElement::ITextRun
              */
-            virtual FCM::Result _FCMCALL GetTextRuns(PIFCMList& pTextRunList) = 0;
+            virtual FCM::Result _FCMCALL GetTextRuns(FCM::PIFCMList& pTextRunList) = 0;
                 
 
             /**

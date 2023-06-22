@@ -1,14 +1,36 @@
 #include "Module/AppContext.h"
 
+//#include "Module/Window.h"
+
 namespace sc {
 	namespace Adobe {
-		string AppContext::languageCode() {
-			AutoPtr<IApplicationService> appService = getService<IApplicationService>(APP_SERVICE);
+		AppContext::AppContext(FCM::PIFCMCallback callback, const FCM::PIFCMDictionary settings) {
+			if (!callback) {
+				throw std::exception("Failed to initialize app interface"); // TODO: replace all throw exception to Window::ThrowException
+			}
+			else {
+				m_callback = callback;
+			}
+			falloc = getService<FCM::IFCMCalloc>(FCM::SRVCID_Core_Memory);
 
-			StringRep8 languageCodePtr;
+			locale.Load(languageCode());
+			if (settings) {
+				config = PublisherConfig::FromDict(settings);
+			}
+		};
+
+		AppContext::~AppContext(){
+
+		}
+
+		std::string AppContext::languageCode() {
+			FCM::AutoPtr<Application::Service::IApplicationService> appService =
+				getService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
+
+			FCM::StringRep8 languageCodePtr;
 			appService->GetLanguageCode(&languageCodePtr);
 
-			string languageCode((const char*)languageCodePtr);
+			std::string languageCode((const char*)languageCodePtr);
 
 			falloc->Free(languageCodePtr);
 
@@ -16,7 +38,8 @@ namespace sc {
 		}
 
 		void AppContext::trace(const char* fmt, ...) {
-			AutoPtr<IOutputConsoleService> console = getService<IOutputConsoleService>(APP_OUTPUT_CONSOLE_SERVICE);
+			FCM::AutoPtr<Application::Service::IOutputConsoleService> console =
+				getService<Application::Service::IOutputConsoleService>(Application::Service::APP_OUTPUT_CONSOLE_SERVICE);
 
 			va_list args;
 			va_start(args, fmt);
@@ -26,7 +49,7 @@ namespace sc {
 
 			string message(buffer);
 
-			console->Trace((CStringRep16)Utils::ToUtf16(message + "\n").c_str());
+			console->Trace((FCM::CStringRep16)Utils::ToUtf16(message + "\n").c_str());
 		}
 	}
 }

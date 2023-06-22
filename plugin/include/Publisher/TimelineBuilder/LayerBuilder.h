@@ -19,9 +19,6 @@
 
 #include "FrameBuilder.h"
 
-using namespace FCM;
-using namespace std;
-
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
@@ -30,7 +27,7 @@ namespace sc {
 			uint32_t m_duration = 0;
 			uint32_t m_position = 0;
 			
-			AutoPtr<DOM::Layer::ILayerNormal> m_layer;
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> m_layer;
 			ResourcePublisher& m_resources;
 
 			FrameBuilder m_frameBuilder;
@@ -44,7 +41,7 @@ namespace sc {
 			);
 
 		public:
-			LayerBuilder(AutoPtr<DOM::Layer::ILayerNormal> layer, ResourcePublisher& resources);
+			LayerBuilder(FCM::AutoPtr<DOM::Layer::ILayerNormal> layer, ResourcePublisher& resources);
 
 			void next();
 

@@ -2,8 +2,6 @@
 
 #include "Publisher/JSON/JSONWriter.h"
 
-using namespace FCM;
-
 namespace sc {
 	namespace Adobe {
 		void JSONMovieclipWriter::Init(JSONWriter* writer) {
@@ -25,14 +23,14 @@ namespace sc {
 			}
 		}
 
-		void JSONMovieclipWriter::SetLabel(u16string label) {
+		void JSONMovieclipWriter::SetLabel(std::u16string label) {
 			m_frames.at(m_position)["label"] = label;
 		}
 
 		void JSONMovieclipWriter::AddFrameElement(
 			uint16_t id,
 			uint8_t blending,
-			u16string name,
+			std::u16string name,
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
 		) {
@@ -72,7 +70,7 @@ namespace sc {
 			m_frames.at(m_position)["elements"].push_back(frameElement);
 		}
 
-		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps, u16string name) {
+		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps, std::u16string name) {
 			json root = {
 				{"id", id},
 				{"name", Utils::ToUtf8(name)},

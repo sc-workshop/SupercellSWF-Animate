@@ -33,6 +33,7 @@
 #include "IFrame.h"
 #include "ILayer.h"
 #include "FCMPluginInterface.h"
+#include "DOM/Utils/DOMTypes.h"
 
 
 

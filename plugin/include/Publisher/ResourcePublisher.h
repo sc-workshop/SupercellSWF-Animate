@@ -31,9 +31,6 @@
 // Writer
 #include "Publisher/Shared/SharedWriter.h"
 
-using namespace FCM;
-using namespace std;
-
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher {
@@ -56,10 +53,6 @@ namespace sc {
 
             uint32_t m_id = 0;
             uint8_t m_fps = 24;
-
-            // Services
-            AutoPtr<IFCMCalloc> m_calloc;
-            AutoPtr<DOM::Service::Tween::ITweenerService> m_tweener;
 
         public:
             AppContext& context;
@@ -86,7 +79,7 @@ namespace sc {
 
             uint16_t AddMovieclip(
                 u16string name,
-                AutoPtr<DOM::ITimeline> timeline,
+                FCM::AutoPtr<DOM::ITimeline> timeline,
                 bool hasName
             );
 

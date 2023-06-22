@@ -125,7 +125,6 @@ namespace FCM
     #define BEGIN_DECLARE_INTERFACE_COMMON(ifx, iid) \
     FORWARD_DECLARE_INTERFACE(ifx) \
     const FCM::FCMIID IID_##ifx = (iid); \
-    using namespace FCM;
     
     
      /**
@@ -321,7 +320,7 @@ namespace FCM
      * @brief Add class entry with class id @a clsid and classobject @a ursClass to classFactory.
      */
     #define CLASS_ENTRY(clsid,ursClass)        \
-            addClassEntry(clsid,&FCMClassFactory<ursClass>::GetFactory,&ursClass::GetInterfaceMap,ursClass::GetVersion());
+            addClassEntry(clsid,&FCM::FCMClassFactory<ursClass>::GetFactory,&ursClass::GetInterfaceMap,ursClass::GetVersion());
 
 
     /**

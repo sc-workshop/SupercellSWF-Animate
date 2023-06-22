@@ -25,7 +25,7 @@ export default function TextureSettings() {
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("textureScaleFactor", value)),
+        value => (State.setParam("textureScaleFactor", parseInt(value))),
     );
 
     const textureWidth = EnumField(

@@ -104,7 +104,7 @@ namespace DOM
              * @return On success, FCM_SUCCESS is returned, else an error code is returned.
              *
              */
-            virtual FCM::Result _FCMCALL GetElementTweenInfo(PIFCMCallback pCallback, DOM::FrameElement::PIFrameDisplayElement pElement, FCM::PIFCMList& pTweenInfoList) = 0;
+            virtual FCM::Result _FCMCALL GetElementTweenInfo(FCM::PIFCMCallback pCallback, DOM::FrameElement::PIFrameDisplayElement pElement, FCM::PIFCMList& pTweenInfoList) = 0;
             
             /**
              * @brief  Returns shape tween information for shapes in a frame.

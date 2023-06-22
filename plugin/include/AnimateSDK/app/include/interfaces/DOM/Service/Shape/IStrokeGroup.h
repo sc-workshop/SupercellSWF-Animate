@@ -120,7 +120,7 @@ namespace DOM
                  *
                  * @see    DOM::Service::Shape::IPath
                  */
-                virtual FCM::Result _FCMCALL GetPaths(PIFCMList& pPathList) = 0;
+                virtual FCM::Result _FCMCALL GetPaths(FCM::PIFCMList& pPathList) = 0;
 
             END_DECLARE_INTERFACE
         }

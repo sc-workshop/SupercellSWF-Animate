@@ -24,7 +24,7 @@ namespace sc {
 		static const std::string kValue_true("true");
 		static const std::string kValue_false("false");
 
-		Result FeatureMatrix::Init(FCM::PIFCMCallback callback)
+		FCM::Result FeatureMatrix::Init(FCM::PIFCMCallback callback)
 		{
 			UpdateContext(callback);
 
@@ -88,7 +88,7 @@ namespace sc {
 			property.AddValue(value["name"], Value(value["supported"]));
 		}
 
-		FCM::Result FeatureMatrix::IsSupported(CStringRep16 inFeatureName, FCM::Boolean& isSupported)
+		FCM::Result FeatureMatrix::IsSupported(FCM::CStringRep16 inFeatureName, FCM::Boolean& isSupported)
 		{
 			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
 
@@ -112,8 +112,8 @@ namespace sc {
 		}
 
 		FCM::Result FeatureMatrix::IsSupported(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
+			FCM::CStringRep16 inFeatureName,
+			FCM::CStringRep16 inPropName,
 			FCM::Boolean& isSupported)
 		{
 			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
@@ -158,9 +158,9 @@ namespace sc {
 		}
 
 		FCM::Result FeatureMatrix::IsSupported(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
-			CStringRep16 inValName,
+			FCM::CStringRep16 inFeatureName,
+			FCM::CStringRep16 inPropName,
+			FCM::CStringRep16 inValName,
 			FCM::Boolean& isSupported)
 		{
 			std::string featureName = Utils::ToUtf8(std::u16string((const char16_t*)inFeatureName));
@@ -224,8 +224,8 @@ namespace sc {
 		}
 
 		FCM::Result FeatureMatrix::GetDefaultValue(
-			CStringRep16 inFeatureName,
-			CStringRep16 inPropName,
+			FCM::CStringRep16 inFeatureName,
+			FCM::CStringRep16 inPropName,
 			FCM::VARIANT& outDefVal)
 		{
 			// Any boolean value retuened as string should be "true" or "false"
@@ -244,19 +244,19 @@ namespace sc {
 					std::istringstream iss(strVal);
 					res = FCM_SUCCESS;
 					switch (outDefVal.m_type) {
-					case kFCMVarype_UInt32: 
+					case FCM::kFCMVarype_UInt32:
 						iss >> outDefVal.m_value.uVal; 
 						break;
-					case kFCMVarype_Float: 
+					case FCM::kFCMVarype_Float:
 						iss >> outDefVal.m_value.fVal;
 						break;
-					case kFCMVarype_Bool:
+					case FCM::kFCMVarype_Bool:
 						outDefVal.m_value.bVal = (kValue_true == strVal);
 						break;
-					case kFCMVarype_CString: 
-						outDefVal.m_value.strVal = (StringRep16)Utils::ToUtf16(strVal).c_str();
+					case FCM::kFCMVarype_CString:
+						outDefVal.m_value.strVal = (FCM::StringRep16)Utils::ToUtf16(strVal).c_str();
 						break;
-					case kFCMVarype_Double: 
+					case FCM::kFCMVarype_Double:
 						iss >> outDefVal.m_value.dVal;
 						break;
 					default:

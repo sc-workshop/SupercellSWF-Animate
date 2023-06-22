@@ -89,7 +89,7 @@ namespace DOM
               *
               * @see    DOM::FrameElement::IFrameDisplayElement
               */
-            virtual FCM::Result _FCMCALL GetMembers(PIFCMList& pMembers) = 0;
+            virtual FCM::Result _FCMCALL GetMembers(FCM::PIFCMList& pMembers) = 0;
 
         END_DECLARE_INTERFACE
     }

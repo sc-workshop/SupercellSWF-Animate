@@ -21,8 +21,6 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-using namespace FCM;
-using namespace std;
 using namespace DOM::Service::Image;
 
 namespace sc {
@@ -31,35 +29,35 @@ namespace sc {
 
 		class ShapeGenerator {
 			ResourcePublisher& m_resources;
-			AutoPtr<IBitmapExportService> BitmapExportService;
+			FCM::AutoPtr<IBitmapExportService> BitmapExportService;
 
 			void GenerateLayerShapes(
 				pSharedShapeWriter writer,
-				AutoPtr<DOM::Layer::ILayerNormal> layer
+				FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 			);
 
 			void GenerateLayer(
 				pSharedShapeWriter writer,
-				AutoPtr<DOM::ILayer2> layer
+				FCM::AutoPtr<DOM::ILayer2> layer
 			);
 
 			void GenerateLayerList(
 				pSharedShapeWriter writer,
-				FCMListPtr layers
+				FCM::FCMListPtr layers
 			);
 
 			// Validate Stuff
 
 			static bool ValidateLayerItems(
-				AutoPtr<DOM::Layer::ILayerNormal> layer
+				FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 			);
 
 			static bool ValidateLayer(
-				AutoPtr<DOM::ILayer2> layer
+				FCM::AutoPtr<DOM::ILayer2> layer
 			);
 
 			static bool ValidateLayerList(
-				FCMListPtr layers
+				FCM::FCMListPtr layers
 			);
 
 		public:
@@ -69,7 +67,7 @@ namespace sc {
 
 			const fs::path tempFile = fs::path(tmpnam(nullptr)).concat(".png");
 
-			void GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
+			void GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
 
 			void Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline);
 

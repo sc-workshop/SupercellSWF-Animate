@@ -11,7 +11,6 @@
 #include "AtlasGenerator.h"
 #include "opencv2/opencv.hpp"
 
-using namespace FCM;
 
 namespace sc {
 	namespace Adobe {

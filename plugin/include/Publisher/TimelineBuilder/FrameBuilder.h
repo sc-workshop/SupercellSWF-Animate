@@ -31,8 +31,6 @@
 // Writer
 #include "Publisher/Shared/SharedWriter.h"
 
-using namespace std;
-using namespace FCM;
 using namespace DOM::Service::Tween;
 
 using DOM::Utils::MATRIX2D;
@@ -60,14 +58,15 @@ namespace sc {
 			vector<shared_ptr<COLOR_MATRIX>> m_colors;
 
 			// Tweeners
-			AutoPtr<DOM::ITween> m_tween = nullptr;
+			FCM::AutoPtr<DOM::ITween> m_tween = nullptr;
 
-			AutoPtr<IGeometricTweener> m_matrixTweener = nullptr;
-			AutoPtr<IColorTweener> m_colorTweener = nullptr;
+			FCM::AutoPtr<IGeometricTweener> m_matrixTweener = nullptr;
+			FCM::AutoPtr<IColorTweener> m_colorTweener = nullptr;
+
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
 
-			void Update(AutoPtr<DOM::IFrame>& frame);
+			void Update(FCM::AutoPtr<DOM::IFrame>& frame);
 
 			void operator()(pSharedMovieclipWriter writer);
 

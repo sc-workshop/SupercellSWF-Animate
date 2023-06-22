@@ -96,8 +96,8 @@ namespace Publisher
          */
         virtual FCM::Result _FCMCALL Publish(
             DOM::PIFLADocument pFlaDocument, 
-            const PIFCMDictionary pDictPublishSettings, 
-            const PIFCMDictionary pDictConfig) = 0;
+            const FCM::PIFCMDictionary pDictPublishSettings,
+            const FCM::PIFCMDictionary pDictConfig) = 0;
         
         
         /**
@@ -129,8 +129,8 @@ namespace Publisher
             DOM::PIFLADocument pFlaDocument, 
             DOM::PITimeline pTimeline, 
             const Exporter::Service::RANGE& frameRange, 
-            const PIFCMDictionary pDictPublishSettings, 
-            const PIFCMDictionary pDictConfig) = 0;
+            const FCM::PIFCMDictionary pDictPublishSettings, 
+            const FCM::PIFCMDictionary pDictConfig) = 0;
         
 
         /**

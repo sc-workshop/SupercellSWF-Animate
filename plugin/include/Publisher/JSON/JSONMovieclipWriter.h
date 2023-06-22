@@ -5,9 +5,7 @@
 
 #include "JSON.hpp"
 
-using namespace FCM;
 using namespace nlohmann;
-using namespace std;
 
 namespace sc {
 	namespace Adobe {
@@ -23,16 +21,16 @@ namespace sc {
 
 			void InitTimeline(uint32_t frameCount);
 
-			void SetLabel(u16string label);
+			void SetLabel(std::u16string label);
 
 			void AddFrameElement(
 				uint16_t id,
 				uint8_t blending,
-				u16string name,
+				std::u16string name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color);
 
-			void Finalize(uint16_t id, uint8_t fps, u16string name);
+			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
 		};
 	}
 }

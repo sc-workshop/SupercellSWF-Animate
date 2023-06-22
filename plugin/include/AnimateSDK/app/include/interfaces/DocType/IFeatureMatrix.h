@@ -112,7 +112,7 @@ namespace DocType
           *         "ClassicTween".
           */
          virtual FCM::Result _FCMCALL IsSupported(
-             CStringRep16 inFeatureName, 
+             FCM::CStringRep16 inFeatureName, 
              FCM::Boolean& isSupported) = 0;
 
 
@@ -193,8 +193,8 @@ namespace DocType
          *          <"ClassicTween", "Scale">
          */
         virtual FCM::Result _FCMCALL IsSupported(
-            CStringRep16 inFeatureName, 
-            CStringRep16 inPropName, 
+            FCM::CStringRep16 inFeatureName, 
+            FCM::CStringRep16 inPropName, 
             FCM::Boolean& isSupported) = 0;
 
 
@@ -320,9 +320,9 @@ namespace DocType
          *          <"ClassicTween", "Rotate", "CCW">
          */
         virtual FCM::Result _FCMCALL IsSupported(
-            CStringRep16 inFeatureName, 
-            CStringRep16 inPropName, 
-            CStringRep16 inValName, 
+            FCM::CStringRep16 inFeatureName, 
+            FCM::CStringRep16 inPropName, 
+            FCM::CStringRep16 inValName, 
             FCM::Boolean& isSupported) = 0;
 
 
@@ -341,8 +341,8 @@ namespace DocType
          * @return On success, FCM_SUCCESS is returned, else an error code is returned.
          */
         virtual FCM::Result _FCMCALL GetDefaultValue(
-            CStringRep16 inFeatureName, 
-            CStringRep16 inPropName,
+            FCM::CStringRep16 inFeatureName, 
+            FCM::CStringRep16 inPropName,
             FCM::VARIANT& outDefVal) = 0;
 
     END_DECLARE_INTERFACE 

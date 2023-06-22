@@ -60,7 +60,7 @@ namespace DOM
 	* @brief  gets filters at frame of layer.
 	*
 	*/
-	virtual FCM::Result _FCMCALL GetFiltersAtFrame(FCM::U_Int32 frameIndex, PIFCMList& pFilterList) = 0;
+	virtual FCM::Result _FCMCALL GetFiltersAtFrame(FCM::U_Int32 frameIndex, FCM::PIFCMList& pFilterList) = 0;
 	/**
 	* @brief  gets color transform at frame of layer.
 	*

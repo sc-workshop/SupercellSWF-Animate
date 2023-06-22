@@ -102,9 +102,9 @@ namespace DOM
                  *         returned.
                  */
                 virtual FCM::Result _FCMCALL GetFilters(
-                    PITween pTween, 
+                    PITween pTween,
                     FCM::U_Int32 offset, 
-                    PIFCMList& pFilterList) = 0;
+                    FCM::PIFCMList& pFilterList) = 0;
 
             END_DECLARE_INTERFACE
         }

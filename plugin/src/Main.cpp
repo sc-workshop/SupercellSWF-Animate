@@ -5,8 +5,6 @@
 
 #include "Publisher/Publisher.h"
 
-using namespace FCM;
-
 namespace sc {
 	namespace Adobe
 	{
@@ -25,21 +23,21 @@ namespace sc {
 		ModuleInterface Module;
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		Result PluginBoot(PIFCMCallback callback)
+		FCM::Result PluginBoot(FCM::PIFCMCallback callback)
 		{
 			return Module.Init(callback);
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		Result PluginGetClassInfo(
-			PIFCMCalloc falloc,
-			PFCMClassInterfaceInfo* info)
+		FCM::Result PluginGetClassInfo(
+			FCM::PIFCMCalloc falloc,
+			FCM::PFCMClassInterfaceInfo* info)
 		{
 			return Module.getClassInfo(falloc, info);
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		Result PluginGetClassObject(
+		FCM::Result PluginGetClassObject(
 			FCM::PIFCMUnknown unknown,
 			FCM::ConstRefFCMCLSID clsid,
 			FCM::ConstRefFCMIID iid,
@@ -49,13 +47,13 @@ namespace sc {
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		Result PluginRegister(FCM::PIFCMPluginDictionary pluginDict)
+		FCM::Result PluginRegister(FCM::PIFCMPluginDictionary pluginDict)
 		{
 			FCM::Result res = FCM_SUCCESS;
 
-			AutoPtr<IFCMDictionary> dict = pluginDict;
+			FCM::AutoPtr<FCM::IFCMDictionary> dict = pluginDict;
 
-			AutoPtr<IFCMDictionary> plugins;
+			FCM::AutoPtr<FCM::IFCMDictionary> plugins;
 			dict->AddLevel((const FCM::StringRep8)kFCMComponent, plugins.m_Ptr);
 
 			res = RegisterDocType(plugins);
@@ -70,13 +68,13 @@ namespace sc {
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		U_Int32 PluginCanUnloadNow(void)
+		FCM::U_Int32 PluginCanUnloadNow(void)
 		{
 			return Module.canUnloadNow();
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP 
-		Result PluginShutdown()
+		FCM::Result PluginShutdown()
 		{
 			Module.finalize();
 

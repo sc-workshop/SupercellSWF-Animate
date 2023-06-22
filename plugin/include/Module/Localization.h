@@ -9,7 +9,6 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-using namespace std;
 using namespace nlohmann;
 
 #define DefaultLanguageCode "en_EN"
@@ -21,7 +20,7 @@ namespace sc {
 			json locale;
 
 		public:
-			void Load(string languageCode) { 
+			void Load(std::string languageCode) { 
 				/*fs::path localePath = Utils::CurrentPath() / ("../../../locales/" + languageCode + ".json");
 
 				if (!fs::exists(localePath)) {
@@ -33,7 +32,7 @@ namespace sc {
 				file.close();*/
 			};
 
-			u16string Get(string TID) {
+			std::u16string Get(std::string TID) {
 				if (locale[TID]) {
 					return locale[TID];
 				}

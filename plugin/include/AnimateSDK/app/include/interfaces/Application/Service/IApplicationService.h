@@ -124,7 +124,7 @@ namespace Application
              * @note   The caller of this function must release the 
              *         memory for 'ppLanguageCode' using IFCMCalloc::Free().
              */
-            virtual FCM::Result _FCMCALL GetLanguageCode(StringRep8* ppLanguageCode) = 0;
+            virtual FCM::Result _FCMCALL GetLanguageCode(FCM::StringRep8* ppLanguageCode) = 0;
 
         END_DECLARE_INTERFACE 
     }

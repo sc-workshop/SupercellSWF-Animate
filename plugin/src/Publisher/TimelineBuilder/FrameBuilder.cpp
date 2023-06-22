@@ -12,7 +12,7 @@
 
 namespace sc {
 	namespace Adobe {
-		void FrameBuilder::Update(AutoPtr<DOM::IFrame>& frame) {
+		void FrameBuilder::Update(FCM::AutoPtr<DOM::IFrame>& frame) {
 			if (!frame) {
 				throw exception("Failed to get NULL frame");
 			}
@@ -31,7 +31,7 @@ namespace sc {
 			DOM::KeyFrameLabelType labelType = DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NONE;
 			frame->GetLabelType(labelType);
 			if (labelType == DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NAME) {
-				StringRep16 frameNamePtr;
+				FCM::StringRep16 frameNamePtr;
 				frame->GetLabel(&frameNamePtr);
 				m_label = (const char16_t*)frameNamePtr;
 				m_resources.context.falloc->Free(frameNamePtr);
@@ -40,14 +40,14 @@ namespace sc {
 			frame->GetDuration(m_duration);
 
 			// Frame elements processing
-			FCMListPtr frameElements;
+			FCM::FCMListPtr frameElements;
 			uint32_t frameElementsCount = 0;
 			frame->GetFrameElements(frameElements.m_Ptr);
 			frameElements->Count(frameElementsCount);
 
 			uint32_t i = frameElementsCount;
 			for (uint32_t elementIndex = 0; frameElementsCount > elementIndex; elementIndex++) {
-				AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--i];
+				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--i];
 				if (!frameElement) {
 					throw exception("Failed to get frame element");
 				}
@@ -62,19 +62,19 @@ namespace sc {
 				COLOR_MATRIX* color = NULL;
 
 				// Game "guess who i am"
-				AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
-				AutoPtr<DOM::IFilterable> filterableElement = frameElement;
-				AutoPtr<DOM::FrameElement::IClassicText> textfieldElement = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
+				FCM::AutoPtr<DOM::IFilterable> filterableElement = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IClassicText> textfieldElement = frameElement;
 
-				AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
-				AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
 
 				// Symbol
 				if (libraryElement) {
 					DOM::PILibraryItem libraryItem;
 					libraryElement->GetLibraryItem(libraryItem);
 
-					StringRep16 itemNamePtr;
+					FCM::StringRep16 itemNamePtr;
 					libraryItem->GetName(&itemNamePtr);
 					u16string itemName = (const char16_t*)itemNamePtr;
 					m_resources.context.falloc->Free(itemNamePtr);
@@ -97,7 +97,7 @@ namespace sc {
 
 					if (movieClipElement) {
 						// Instance name
-						StringRep16 instanceNamePtr;
+						FCM::StringRep16 instanceNamePtr;
 						movieClipElement->GetName(&instanceNamePtr);
 						name = (const char16_t*)instanceNamePtr;
 						m_resources.context.falloc->Free(instanceNamePtr);
@@ -114,7 +114,7 @@ namespace sc {
 					{
 						frameElement->GetObjectSpaceBounds(textfield.bound);
 
-						StringRep16 text;
+						FCM::StringRep16 text;
 						textfieldElement->GetText(&text);
 						textfield.text = u16string((const char16_t*)text);
 						m_resources.context.falloc->Free(text);
@@ -122,14 +122,14 @@ namespace sc {
 						textfield.renderingMode.structSize = sizeof(textfield.renderingMode);
 						textfieldElement->GetAntiAliasModeProp(textfield.renderingMode);
 
-						AutoPtr<DOM::FrameElement::ITextBehaviour> textfieldElementBehaviour;
+						FCM::AutoPtr<DOM::FrameElement::ITextBehaviour> textfieldElementBehaviour;
 						textfieldElement->GetTextBehaviour(textfieldElementBehaviour.m_Ptr);
 
 						// Instance name
 
-						AutoPtr<DOM::FrameElement::IModifiableTextBehaviour> modifiableTextfieldBehaviour = textfieldElementBehaviour;
+						FCM::AutoPtr<DOM::FrameElement::IModifiableTextBehaviour> modifiableTextfieldBehaviour = textfieldElementBehaviour;
 						if (modifiableTextfieldBehaviour) {
-							StringRep16 instanceName;
+							FCM::StringRep16 instanceName;
 							modifiableTextfieldBehaviour->GetInstanceName(&instanceName);
 							name = (const char16_t*)instanceName;
 							m_resources.context.falloc->Free(instanceName);
@@ -139,7 +139,7 @@ namespace sc {
 
 						// Textfields properties
 
-						FCMListPtr paragraphs;
+						FCM::FCMListPtr paragraphs;
 						uint32_t paragraphsCount = 0;
 						textfieldElement->GetParagraphs(paragraphs.m_Ptr);
 						paragraphs->Count(paragraphsCount);
@@ -149,11 +149,11 @@ namespace sc {
 							m_resources.context.trace("Warning. Some of TextField has multiple paragraph");
 						}
 
-						AutoPtr<DOM::FrameElement::IParagraph> paragraph = paragraphs[0];
+						FCM::AutoPtr<DOM::FrameElement::IParagraph> paragraph = paragraphs[0];
 						textfield.style.structSize = sizeof(textfield.style);
 						paragraph->GetParagraphStyle(textfield.style);
 
-						FCMListPtr textRuns;
+						FCM::FCMListPtr textRuns;
 						uint32_t textRunCount = 0;
 						paragraph->GetTextRuns(textRuns.m_Ptr);
 						textRuns->Count(textRunCount);
@@ -163,20 +163,20 @@ namespace sc {
 							m_resources.context.trace("Warning. Some of TextField has multiple textRun");
 						}
 
-						AutoPtr<DOM::FrameElement::ITextRun> textRun = textRuns[0];
-						AutoPtr<DOM::FrameElement::ITextStyle> textStyle;
+						FCM::AutoPtr<DOM::FrameElement::ITextRun> textRun = textRuns[0];
+						FCM::AutoPtr<DOM::FrameElement::ITextStyle> textStyle;
 						textRun->GetTextStyle(textStyle.m_Ptr);
 
 						textStyle->GetFontColor(textfield.fontColor);
 						textStyle->GetFontSize(textfield.fontSize);
 						textStyle->IsAutoKernEnabled(textfield.autoKern);
 
-						StringRep16 fontNamePtr;
+						FCM::StringRep16 fontNamePtr;
 						textStyle->GetFontName(&fontNamePtr);
 						textfield.fontName = u16string((const char16_t*)fontNamePtr);
 						m_resources.context.falloc->Free(fontNamePtr);
 
-						StringRep8 fontStylePtr;
+						FCM::StringRep8 fontStylePtr;
 						textStyle->GetFontStyle(&fontStylePtr);
 						textfield.fontStyle = string((const char*)fontStylePtr);
 						m_resources.context.falloc->Free(fontStylePtr);
@@ -184,14 +184,14 @@ namespace sc {
 
 					// Textfield filters
 					if (filterableElement) {
-						FCMListPtr filters;
+						FCM::FCMListPtr filters;
 						filterableElement->GetGraphicFilters(filters.m_Ptr);
 						uint32_t filterCount = 0;
 						filters->Count(filterCount);
 						
 						for (uint32_t i = 0; filterCount > i; i++) {
 							// And again game "guess who i am"
-							AutoPtr<DOM::GraphicFilter::IGlowFilter> glowFilter = filters[i];
+							FCM::AutoPtr<DOM::GraphicFilter::IGlowFilter> glowFilter = filters[i];
 
 							if (glowFilter) {
 								textfield.isOutlined = true;
@@ -231,16 +231,16 @@ namespace sc {
 			// Tween
 			frame->GetTween(m_tween.m_Ptr);
 			if (m_tween) {
-				PIFCMDictionary tweenerDict;
+				FCM::PIFCMDictionary tweenerDict;
 				m_tween->GetTweenedProperties(tweenerDict);
 
-				FCMGUID matrixGuid;
-				FCMGUID colorGuid;
+				FCM::FCMGUID matrixGuid;
+				FCM::FCMGUID colorGuid;
 
 				bool hasMatrixTweener = Utils::ReadGUID(tweenerDict, kDOMGeometricProperty, matrixGuid);
 				bool hasColorTweener = Utils::ReadGUID(tweenerDict, kDOMColorProperty, colorGuid);
 
-				AutoPtr<ITweenerService> TweenerService = m_resources.context.getService<ITweenerService>(TWEENER_SERVICE);
+				FCM::AutoPtr<ITweenerService> TweenerService = m_resources.context.getService<ITweenerService>(TWEENER_SERVICE);
 
 				FCM::AutoPtr<FCM::IFCMUnknown> unknownTweener;
 				if (hasMatrixTweener) {

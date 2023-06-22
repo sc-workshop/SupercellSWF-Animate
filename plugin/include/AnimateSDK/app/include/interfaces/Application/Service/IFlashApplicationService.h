@@ -131,7 +131,7 @@ namespace Application
              *
              * @deprecated This function is deprecated. Please use IApplicationService::GetLanguageCode().
              */
-            virtual FCM::Result _FCMCALL GetLanguageCode(StringRep8* ppLanguageCode) = 0;
+            virtual FCM::Result _FCMCALL GetLanguageCode(FCM::StringRep8* ppLanguageCode) = 0;
 
         END_DECLARE_INTERFACE 
     }

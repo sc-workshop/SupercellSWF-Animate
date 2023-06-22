@@ -94,7 +94,7 @@ namespace DOM
                 //      "PROPERTY_X"    : Value will be a IPropertyTweenInfo
                 //      and so on...
                 //
-                virtual FCM::Result _FCMCALL GetProperties(PIFCMDictionary& pPropDict) = 0;
+                virtual FCM::Result _FCMCALL GetProperties(FCM::PIFCMDictionary& pPropDict) = 0;
 
             END_DECLARE_INTERFACE
         }

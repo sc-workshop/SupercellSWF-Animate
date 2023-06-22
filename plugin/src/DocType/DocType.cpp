@@ -17,14 +17,14 @@ namespace sc {
 			FCM_RELEASE(m_featureMatrix);
 		}
 
-		Result DocumentType::GetFeatureMatrix(PIFeatureMatrix& matrix)
+		FCM::Result DocumentType::GetFeatureMatrix(DocType::PIFeatureMatrix& matrix)
 		{
 			if (m_featureMatrix == NULL)
 			{
 				GetCallback()->CreateInstance(
 					NULL,
 					CLSID_FeatureMatrix,
-					ID_IFEATURE_MATRIX,
+					DocType::ID_IFEATURE_MATRIX,
 					(FCM::PPVoid)&m_featureMatrix);
 
 				((FeatureMatrix*)m_featureMatrix)->Init(GetCallback());
@@ -73,14 +73,14 @@ namespace sc {
 			 */
 
 			 // Level 1 Dictionary
-			AutoPtr<IFCMDictionary> pPlugin;
+			FCM::AutoPtr<FCM::IFCMDictionary> pPlugin;
 			res = pPlugins->AddLevel(
 				(const FCM::StringRep8)Utils::ToString(CLSID_DocType).c_str(),
 				pPlugin.m_Ptr
 			);
 
 			// Level 2 Dictionary
-			AutoPtr<IFCMDictionary> pCategory;
+			FCM::AutoPtr<FCM::IFCMDictionary> pCategory;
 			res = pPlugin->AddLevel((const FCM::StringRep8)kApplicationCategoryKey_DocType, pCategory.m_Ptr);
 
 			// Level 3 Dictionary
@@ -89,7 +89,7 @@ namespace sc {
 			std::string documentName = DOCTYPE_NAME;
 			res = pCategory->Add(
 				(const FCM::StringRep8)kApplicationCategoryKey_Name,
-				kFCMDictType_StringRep8,
+				FCM::kFCMDictType_StringRep8,
 				(FCM::PVoid)documentName.c_str(),
 				(FCM::U_Int32)documentName.length() + 1
 			);
@@ -98,7 +98,7 @@ namespace sc {
 			std::string documentUniversalName = DOCTYPE_UNIVERSAL_NAME;
 			res = pCategory->Add(
 				(const FCM::StringRep8)kApplicationCategoryKey_UniversalName,
-				kFCMDictType_StringRep8,
+				FCM::kFCMDictType_StringRep8,
 				(FCM::PVoid)documentUniversalName.c_str(),
 				(FCM::U_Int32)documentUniversalName.length() + 1
 			);
@@ -108,7 +108,7 @@ namespace sc {
 
 			res = pCategory->Add(
 				(const FCM::StringRep8)kApplicationDocTypeKey_Desc,
-				kFCMDictType_StringRep8,
+				FCM::kFCMDictType_StringRep8,
 				(FCM::PVoid)documentDescription.c_str(),
 				(FCM::U_Int32)documentDescription.length() + 1
 			);

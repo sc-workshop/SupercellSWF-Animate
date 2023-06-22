@@ -229,7 +229,7 @@ namespace DOM
              *
              * @see    DOM::Utils::ISoundEffect
              */
-            virtual FCM::Result _FCMCALL GetSoundEffect(PIFCMList& pISoundEffects) = 0;
+            virtual FCM::Result _FCMCALL GetSoundEffect(FCM::PIFCMList& pISoundEffects) = 0;
 
 
             /**

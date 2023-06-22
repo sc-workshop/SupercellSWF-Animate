@@ -217,7 +217,7 @@ namespace DOM
              *
              * @see    DOM::ILayer
              */    
-            virtual FCM::Result _FCMCALL GetChildren(PIFCMList& pLayerList) = 0;
+            virtual FCM::Result _FCMCALL GetChildren(FCM::PIFCMList& pLayerList) = 0;
         
         END_DECLARE_INTERFACE 
     }
@@ -244,7 +244,7 @@ namespace DOM
              *
              * @see    DOM::IFrame
              */    
-            virtual FCM::Result _FCMCALL GetKeyFrames(PIFCMList& pKeyFrameList) = 0;
+            virtual FCM::Result _FCMCALL GetKeyFrames(FCM::PIFCMList& pKeyFrameList) = 0;
 
 
             /**
@@ -298,7 +298,7 @@ namespace DOM
              *
              * @see    DOM::ILayer
              */    
-            virtual FCM::Result _FCMCALL GetChildren(PIFCMList& pLayerList) = 0;
+            virtual FCM::Result _FCMCALL GetChildren(FCM::PIFCMList& pLayerList) = 0;
             
         END_DECLARE_INTERFACE 
     }
@@ -326,7 +326,7 @@ namespace DOM
              *
              * @see    DOM::ILayer
              */    
-            virtual FCM::Result _FCMCALL GetChildren(PIFCMList& pLayerList) = 0;
+            virtual FCM::Result _FCMCALL GetChildren(FCM::PIFCMList& pLayerList) = 0;
             
         END_DECLARE_INTERFACE
     }

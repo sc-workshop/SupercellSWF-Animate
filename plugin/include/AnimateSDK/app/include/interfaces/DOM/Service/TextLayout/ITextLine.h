@@ -112,7 +112,7 @@ namespace DOM
                  *
                  * @see    DOM::Utils::IRect
                  */
-                virtual FCM::Result _FCMCALL GetCharBounds(PIFCMList& pCharBoundList) = 0;
+                virtual FCM::Result _FCMCALL GetCharBounds(FCM::PIFCMList& pCharBoundList) = 0;
                 
 
                 /**

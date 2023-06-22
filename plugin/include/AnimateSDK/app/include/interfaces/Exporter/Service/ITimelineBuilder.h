@@ -374,7 +374,7 @@ namespace Exporter
              */
             virtual FCM::Result _FCMCALL UpdateBlendMode(
                 FCM::U_Int32 objectId, 
-                DOM::FrameElement::BlendMode blendMode) = 0;
+                FCM::BlendMode blendMode) = 0;
 
 
             /**  
@@ -407,7 +407,7 @@ namespace Exporter
              */
             virtual FCM::Result _FCMCALL UpdateGraphicFilter(
                 FCM::U_Int32 objectId, 
-                PIFCMList pFilterable) = 0;
+                FCM::PIFCMList pFilterable) = 0;
 
             
             /**  

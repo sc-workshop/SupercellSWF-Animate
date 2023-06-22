@@ -91,7 +91,7 @@ namespace DOM
                  *
                  * @see    DOM::Service::Shape::IEdge
                  */
-                virtual FCM::Result _FCMCALL GetEdges(PIFCMList& pEdgeList) = 0;
+                virtual FCM::Result _FCMCALL GetEdges(FCM::PIFCMList& pEdgeList) = 0;
 
             END_DECLARE_INTERFACE
         }

@@ -17,7 +17,7 @@ namespace sc {
 			uint16_t elementsCount,
 			uint16_t id,
 			uint8_t blending,
-			string name
+			std::string name
 		) {
 
 			uint16_t frameInstancesOffset = 0;
@@ -70,7 +70,7 @@ namespace sc {
 			}
 		}
 
-		void MovieclipWriter::SetLabel(u16string label) {
+		void MovieclipWriter::SetLabel(std::u16string label) {
 			m_object->frames[m_position]->label(
 				Utils::ToUtf8(label)
 			);
@@ -79,7 +79,7 @@ namespace sc {
 		void MovieclipWriter::AddFrameElement(
 			uint16_t id,
 			uint8_t blending,
-			u16string name,
+			std::u16string name,
 
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
@@ -134,7 +134,7 @@ namespace sc {
 			m_colors.push_back(transformColor);
 		}
 
-		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps, u16string name) {
+		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps, std::u16string name) {
 			m_object->id(id);
 			m_object->frameRate(fps);
 			

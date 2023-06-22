@@ -8,8 +8,6 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-using namespace FCM;
-
 namespace sc {
     namespace Adobe {
         class SharedWriter {

@@ -16,7 +16,7 @@ namespace sc {
 
 		void ShapeGenerator::GenerateLayerShapes(
 			pSharedShapeWriter writer,
-			AutoPtr<DOM::Layer::ILayerNormal> layer
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 		) {
 			FCM::FCMListPtr keyframes;
 			layer->GetKeyFrames(keyframes.m_Ptr);
@@ -24,7 +24,7 @@ namespace sc {
 			uint32_t keyframesCount = 0;
 			keyframes->Count(keyframesCount);
 
-			AutoPtr<DOM::IFrame> keyframe = keyframes[0];
+			FCM::AutoPtr<DOM::IFrame> keyframe = keyframes[0];
 
 			FCM::FCMListPtr frameElements;
 			keyframe->GetFrameElements(frameElements.m_Ptr);
@@ -34,29 +34,29 @@ namespace sc {
 
 			uint32_t frameElementIndex = frameElementsCount;
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
-				AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--frameElementIndex];
+				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--frameElementIndex];
 
 				DOM::Utils::MATRIX2D transformMatrix;
 				frameElement->GetMatrix(transformMatrix);
 
-				AutoPtr<DOM::FrameElement::IInstance> instance = frameElement.m_Ptr;
+				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElement.m_Ptr;
 
 				if (instance) {
-					AutoPtr<DOM::ILibraryItem> item;
+					FCM::AutoPtr<DOM::ILibraryItem> item;
 					instance->GetLibraryItem(item.m_Ptr);
 
-					StringRep16 itemNamePtr;
+					FCM::StringRep16 itemNamePtr;
 					item->GetName(&itemNamePtr);
 					u16string itemName = (const char16_t*)itemNamePtr;
 					m_resources.context.falloc->Free(itemNamePtr);
 
-					AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
+					FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
 					if (media) {
-						AutoPtr<IFCMUnknown> unknownMedia;
+						FCM::AutoPtr<FCM::IFCMUnknown> unknownMedia;
 						media->GetMediaInfo(unknownMedia.m_Ptr);
 
-						AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmap = unknownMedia;
+						FCM::AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmap = unknownMedia;
 
 						if (bitmap) {
 							cv::Mat bitmapImage;
@@ -85,15 +85,15 @@ namespace sc {
 
 		void ShapeGenerator::GenerateLayer(
 			pSharedShapeWriter writer,
-			AutoPtr<DOM::ILayer2> layer
+			FCM::AutoPtr<DOM::ILayer2> layer
 		) {
-			AutoPtr<IFCMUnknown> unknownLayer;
+			FCM::AutoPtr<FCM::IFCMUnknown> unknownLayer;
 			layer->GetLayerType(unknownLayer.m_Ptr);
 
-			AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerMask> maskLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerMask> maskLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
 
 			if (folderLayer) {
 				FCM::FCMListPtr folderLayers;
@@ -125,23 +125,23 @@ namespace sc {
 
 		void ShapeGenerator::GenerateLayerList(
 			pSharedShapeWriter writer,
-			FCMListPtr layers
+			FCM::FCMListPtr layers
 		) {
-			U_Int32 layerCount = 0;
+			uint32_t layerCount = 0;
 			layers->Count(layerCount);
 
 			uint32_t i = layerCount;
-			for (U_Int32 layerIndex = 0; layerCount > layerIndex; layerIndex++) {
-				AutoPtr<DOM::ILayer2> layer = layers[--i];
+			for (uint32_t layerIndex = 0; layerCount > layerIndex; layerIndex++) {
+				FCM::AutoPtr<DOM::ILayer2> layer = layers[--i];
 
 				GenerateLayer(writer, layer);
 			};
 		}
 
-		void ShapeGenerator::GetImage(AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
-			Result res = BitmapExportService->ExportToFile(
+		void ShapeGenerator::GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
+			FCM::Result res = BitmapExportService->ExportToFile(
 				media,
-				(CStringRep16)tempFile.u16string().c_str(),
+				(FCM::CStringRep16)tempFile.u16string().c_str(),
 				100
 			);
 			if (FCM_FAILURE_CODE(res)) {
@@ -162,7 +162,7 @@ namespace sc {
 		// Validate stuff
 
 		bool ShapeGenerator::ValidateLayerItems(
-			AutoPtr<DOM::Layer::ILayerNormal> layer
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 		) {
 			FCM::FCMListPtr keyframes;
 			layer->GetKeyFrames(keyframes.m_Ptr);
@@ -174,7 +174,7 @@ namespace sc {
 				return false;
 			}
 
-			AutoPtr<DOM::IFrame> keyframe = keyframes[0];
+			FCM::AutoPtr<DOM::IFrame> keyframe = keyframes[0];
 
 			FCM::FCMListPtr frameElements;
 			keyframe->GetFrameElements(frameElements.m_Ptr);
@@ -183,16 +183,16 @@ namespace sc {
 			frameElements->Count(frameElementsCount);
 
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
-				AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
+				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
 
 				if (!instance) {
 					return false;
 				}
 
-				AutoPtr<DOM::ILibraryItem> item;
+				FCM::AutoPtr<DOM::ILibraryItem> item;
 				instance->GetLibraryItem(item.m_Ptr);
 
-				AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
+				FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
 				if (!media) {
 					return false;
@@ -203,15 +203,15 @@ namespace sc {
 		}
 
 		bool ShapeGenerator::ValidateLayer(
-			AutoPtr<DOM::ILayer2> layer
+			FCM::AutoPtr<DOM::ILayer2> layer
 		) {
-			AutoPtr<IFCMUnknown> unknownLayer;
+			FCM::AutoPtr<FCM::IFCMUnknown> unknownLayer;
 			layer->GetLayerType(unknownLayer.m_Ptr);
 
-			AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerMask> maskLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
-			AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> normalLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerMask> maskLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerGuide> guideLayer = unknownLayer;
+			FCM::AutoPtr<DOM::Layer::ILayerFolder> folderLayer = unknownLayer;
 
 			if (folderLayer) {
 				FCM::FCMListPtr folderLayers;
@@ -238,14 +238,14 @@ namespace sc {
 		}
 
 		bool ShapeGenerator::ValidateLayerList(
-			FCMListPtr layers
+			FCM::FCMListPtr layers
 		) {
 
-			U_Int32 layerCount = 0;
+			uint32_t layerCount = 0;
 			layers->Count(layerCount);
 
 			for (uint32_t i = 0; layerCount > i; i++) {
-				AutoPtr<DOM::ILayer2> layer = layers[i];
+				FCM::AutoPtr<DOM::ILayer2> layer = layers[i];
 
 				if (!ValidateLayer(layer)) {
 					return false;

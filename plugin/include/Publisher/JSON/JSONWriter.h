@@ -7,8 +7,6 @@
 
 #include "JSON.hpp"
 
-using namespace FCM;
-using namespace std;
 using namespace nlohmann;
 
 namespace sc {
@@ -23,7 +21,7 @@ namespace sc {
 			using SharedWriter::SharedWriter;
 
 			fs::path imageFolder;
-			U_Int32 imageCount = 0;
+			uint32_t imageCount = 0;
 
 			void Init() {
 				imageFolder = m_context.config.output.parent_path() / "images";
@@ -63,7 +61,7 @@ namespace sc {
 			}
 
 			void AddTextField(uint16_t id, TextFieldInfo field) {
-				string alignMode;
+				std::string alignMode;
 				switch (field.style.alignment)
 				{
 				case DOM::FrameElement::AlignMode::ALIGN_MODE_CENTER:
@@ -115,7 +113,7 @@ namespace sc {
 					{"movieclips", m_movieclips}
 				};
 
-				ofstream file(m_context.config.output);
+				std::ofstream file(m_context.config.output);
 				file << setw(4) << root << endl;
 				file.close();
 			}

@@ -113,7 +113,7 @@ namespace DOM
              *
              * @return On success, FCM_SUCCESS is returned, else an error code is returned.
              */
-            virtual Result _FCMCALL GetFocalPoint(FCM::S_Int32& focalPoint) = 0;
+            virtual FCM::Result _FCMCALL GetFocalPoint(FCM::S_Int32& focalPoint) = 0;
             
         END_DECLARE_INTERFACE
     }

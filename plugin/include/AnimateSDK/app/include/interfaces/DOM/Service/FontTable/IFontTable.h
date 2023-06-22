@@ -119,7 +119,7 @@ namespace DOM
                  */
                 virtual FCM::Result _FCMCALL GetGlyphs(
                     FrameElement::OrientationMode orientationMode, 
-                    PIFCMList& pGlyphList) = 0;
+                    FCM::PIFCMList& pGlyphList) = 0;
 
 
                 /**
@@ -172,7 +172,7 @@ namespace DOM
                  */                
                 virtual FCM::Result _FCMCALL GetKerningPairs(
                     FrameElement::OrientationMode orientationMode, 
-                    PIFCMList& pKerningPairList) = 0;
+                    FCM::PIFCMList& pKerningPairList) = 0;
             
             END_DECLARE_INTERFACE 
         }

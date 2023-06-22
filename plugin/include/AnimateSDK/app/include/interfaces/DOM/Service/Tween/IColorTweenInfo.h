@@ -81,7 +81,7 @@ namespace DOM
                 // Elements in each dictionary will be of form <key, value>. 
                 // Value will typically be a IPropertyTweenInfo and key will be a string 
                 // (example COLOR_ADDITIVE_RED)
-                virtual FCM::Result _FCMCALL GetProperties(PIFCMDictionary& pPropDict) = 0;
+                virtual FCM::Result _FCMCALL GetProperties(FCM::PIFCMDictionary& pPropDict) = 0;
 
             END_DECLARE_INTERFACE
         }
