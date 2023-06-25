@@ -21,9 +21,8 @@ for (const extensionName of Object.keys(config.extensions)) {
     progress(`Building ${extensionName}..`);
 
     const extensionDistFolder = join(distFolder, extensionName);
-    process.chdir(resolve(processPath, config.extensions[extensionName].root));
     try {
-        execSync(`npm run build:${isDev ? "dev" : "prod"} -- "${extensionDistFolder}"`, {stdio: [0, 1, 2]});
+        execSync(`npm run build:${isDev ? "dev" : "prod"} -- "${extensionDistFolder}"`, {stdio: [0, 1, 2], cwd: resolve(processPath, config.extensions[extensionName].root)});
     } catch (err) {
         throw processExecError(err as any);
     }

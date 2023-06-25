@@ -8,7 +8,8 @@
     "build:dev": "ts-node scripts/build.ts development",
     "build:prod": "ts-node scripts/build.ts production",
     "deploy:dev": "ts-node scripts/deploy.ts development",
-    "deploy:prod": "ts-node scripts/deploy.ts production"
+    "deploy:prod": "ts-node scripts/deploy.ts production",
+    "package": "ts-node scripts/package.ts"
   },
   "author": "DaniilSV",
   "license": "MIT",

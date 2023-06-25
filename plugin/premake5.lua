@@ -78,4 +78,5 @@ symbols "on"
 filter "configurations:Release"
 defines { "NDEBUG" }
 runtime "Release"
+symbols "off"
 optimize "on"

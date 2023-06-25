@@ -6,7 +6,7 @@
   "main": "build.ts",
   "scripts": {
     "build:dev": "ts-node build.ts development",
-    "build:prod": "ts-node build.ts development"
+    "build:prod": "ts-node build.ts production"
   },
   "author": "DaniilSV",
   "license": "MIT",

@@ -11,6 +11,7 @@ if (!isWindows && !isMac) {
 
 const args = process.argv;
 const isDev = args[2] == "development";
+console.log(args[2])
 const outputPath = args[3];
 mkdirSync(outputPath, { recursive: true });
 
@@ -31,11 +32,11 @@ const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 function buildWindows() {
     const sharedLibs = !isDev ?
         [
-            "ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/x86_64/windows/shared/opencv_world470.dll"
+            "ThirdParty/OpenCV/lib/x86_64/windows/shared/opencv_world470.dll"
         ]
         :
         [
-            "ThirdParty/AtlasGenerator/ThirdParty/lib/opencv/x86_64/windows/shared/opencv_world470d.dll"
+            "ThirdParty/OpenCV/lib/x86_64/windows/shared/opencv_world470d.dll"
         ]
 
     const msBuildPath = which.sync("msbuild");
@@ -51,7 +52,7 @@ function buildWindows() {
             throw new Error("Failed to find premake5 executable");
         }
 
-        execSync(`scripts/generate.bat`, {stdio: [0, 1, 2]});
+        execSync(`generate.bat`, {stdio: [0, 1, 2], cwd: join(__dirname, "scripts")});
     }
 
     progress("Building with MSBuild...");
@@ -69,7 +70,7 @@ function buildWindows() {
     progress("Done");
 
     if (!isDev) {
-        const binaryPath = "bin/win/Plugin.fcm";
+        const binaryPath = join(__dirname, "bin/win/Plugin.fcm");
         if (!binaryPath) {
             throw new Error("Failed to get binary");
         }
