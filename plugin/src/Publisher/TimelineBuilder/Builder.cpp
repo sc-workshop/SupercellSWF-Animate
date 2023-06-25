@@ -25,6 +25,7 @@ namespace sc {
 					folderLayer->GetChildren(folderLayers.m_Ptr);
 
 					TimelineBuilder::GetLayerBuilder(folderLayers, resources, result);
+					continue;
 				}
 				else if (guideLayer) {
 					continue;

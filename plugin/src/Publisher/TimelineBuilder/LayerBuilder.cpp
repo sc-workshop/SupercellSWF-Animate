@@ -8,8 +8,7 @@
 namespace sc {
 	namespace Adobe {
 		void LayerBuilder::UpdateFrame() {
-			FCM::AutoPtr<DOM::IFrame> frame;
-			m_layer->GetFrameAtIndex(m_position, frame.m_Ptr);
+			FCM::AutoPtr<DOM::IFrame> frame = m_keyframes[m_keyframeIndex];
 			m_frameBuilder.Update(frame);
 		}
 
@@ -38,6 +37,9 @@ namespace sc {
 		) : m_layer(layer), m_resources(resources), m_frameBuilder(resources)
 		{
 			m_layer->GetTotalDuration(m_duration);
+			layer->GetKeyFrames(m_keyframes.m_Ptr);
+			m_keyframes->Count(m_keyframeCount);
+
 			UpdateFrame();
 
 			FCM::AutoPtr<DOM::Layer::ILayerMask> maskLayer = m_layer;
@@ -59,8 +61,11 @@ namespace sc {
 				}
 			}
 			// if frame not valid anymore but layer is still valid for frame reading
-			if (!m_frameBuilder && m_duration > m_position) {
-				UpdateFrame();
+			if (m_keyframeCount != 0) {
+				if (!m_frameBuilder && m_duration > m_position) {
+					m_keyframeIndex++;
+					UpdateFrame();
+				}
 			}
 		}
 

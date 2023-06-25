@@ -26,6 +26,10 @@ namespace sc {
 		class LayerBuilder {
 			uint32_t m_duration = 0;
 			uint32_t m_position = 0;
+
+			FCM::FCMListPtr m_keyframes;
+			uint32_t m_keyframeCount = 0;
+			uint32_t m_keyframeIndex = 0;
 			
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> m_layer;
 			ResourcePublisher& m_resources;

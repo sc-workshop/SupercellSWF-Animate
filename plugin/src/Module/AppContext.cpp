@@ -50,7 +50,7 @@ namespace sc {
 		}
 
 		void AppContext::close() {
-			if (window && window->ui) {
+			if (window && window->ui && (!window->ui->readyToExit)) {
 				window->ui->readyToExit = true;
 				window->ui->Close();
 			}
