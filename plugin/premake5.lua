@@ -29,8 +29,9 @@ includedirs {
     "ThirdParty/SC/dependencies/Compression/include",
     "ThirdParty/SC/include",
 	
-	-- GUI
-	"ThirdParty/wxWidget/include"
+	-- UI
+	"ThirdParty/wxWidget/include",
+	"ui/include"
 }
 
 links {

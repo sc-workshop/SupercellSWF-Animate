@@ -177,20 +177,40 @@ namespace sc {
 		}
 
 		void Writer::Finalize() {
+			if (m_context.window->ui->aboutToExit) {
+				m_context.close();
+				return;
+			}
+
 			// Atlas processing
 			{
-				std::vector<AtlasGeneratorItem> items;
+				m_context.window->ui->SetProgress((uint8_t)PublisherExportStage::SpritePackaging);
+				m_context.window->ui->SetStatus(wxStringU16(m_context.locale.Get("TID_STATUS_TEXTURE_PROCESS")));
 
+				std::vector<AtlasGeneratorItem> items;
 				for (Sprite& sprite : sprites) {
 					items.push_back({ sprite.image });
 				}
+				int itemCount = (int)items.size();
+
+				auto width = m_context.config.textureMaxWidth;
 
 				AtlasGeneratorConfig config;
 				config.maxSize = { m_context.config.textureMaxWidth, m_context.config.textureMaxHeight };
 				config.scaleFactor = m_context.config.textureScaleFactor;
 
+				ProgressBar* textureProgress = m_context.window->ui->GetAvailableProgressBar();
+
+				textureProgress->SetLabel(wxStringU16(m_context.locale.Get("TID_BAR_LABEL_TEXURE_PACK")));
+				textureProgress->SetStatus(wxStringU16(m_context.locale.Get("TID_STATUS_SPRITE_PACK")));
+				textureProgress->SetRange(itemCount);
+				config.progress = [textureProgress, itemCount](int value) {
+					textureProgress->SetProgress(itemCount - value);
+				};
+
 				vector<cv::Mat> textures;
 				AtlasGeneratorResult packageResult = AtlasGenerator::Generate(items, textures, config);
+
 				switch (packageResult) {
 				case AtlasGeneratorResult::BAD_POLYGON:
 					throw exception("[AtlasGenerator] Failed to generate polygon");
@@ -203,6 +223,8 @@ namespace sc {
 				default:
 					throw exception("[AtlasGenerator] Unknown error");
 				}
+
+				textureProgress->SetLabel(wxStringU16(m_context.locale.Get("TID_STATUS_TEXTURE_SAVE")));
 
 				uint16_t itemIndex = 0;
 				for (pShape& shape : m_swf.shapes) {
@@ -253,16 +275,27 @@ namespace sc {
 
 					m_swf.textures.push_back(pSWFTexture(texture));
 				}
+
+				m_context.window->ui->DestroyProgressBar(textureProgress);
 			}
 
 			if (m_context.config.exportToExternal) {
 				LoadExternal();
 			}
 
-			m_swf.useExternalTexture(m_context.config.hasExternalTexture);
-			m_swf.useLowResTexture(false);
-			m_swf.useMultiResTexture(false);
-			m_swf.save(m_context.config.output, m_context.config.compression);
+			if (m_context.window->ui->aboutToExit) {
+				m_context.close();
+				return;
+			}
+			else {
+				m_context.window->ui->SetProgress((uint8_t)PublisherExportStage::Saving);
+				m_context.window->ui->SetStatus(wxStringU16(m_context.locale.Get("TID_STATUS_SAVE")));
+
+				m_swf.useExternalTexture(m_context.config.hasExternalTexture);
+				m_swf.useLowResTexture(false);
+				m_swf.useMultiResTexture(false);
+				m_swf.save(m_context.config.output, m_context.config.compression);
+			}
 		}
 	}
 }

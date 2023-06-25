@@ -12,16 +12,7 @@
 #include <Publisher/IPublisher.h>
 
 // Export config
-#include "Publisher/PublisherConfig.h"
-
-// Writers
-#include "Publisher/JSON/JSONWriter.h"
-#include "Publisher/SWF/Writer.h"
-
-// Symbol
-#include "DOM/ILibraryItem.h"
-#include "DOM/LibraryItem/IFolderItem.h"
-#include "DOM/LibraryItem/ISymbolItem.h"
+#include "Module/Config.h"
 
 #include "Publisher/ResourcePublisher.h"
 
@@ -76,9 +67,6 @@ namespace sc {
 			}
 
 			FCM::Result _FCMCALL ClearCache() { return FCM_SERVICE_NOT_FOUND; };
-
-		private:
-			void ExportLibraryItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
 		};
 
 		FCM::Result RegisterPublisher(FCM::PIFCMDictionary plugins, FCM::FCMCLSID docId);

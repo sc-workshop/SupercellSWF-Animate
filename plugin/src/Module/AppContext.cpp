@@ -1,22 +1,19 @@
 #include "Module/AppContext.h"
 
-//#include "Module/Window.h"
-
 namespace sc {
 	namespace Adobe {
-		AppContext::AppContext(FCM::PIFCMCallback callback, const FCM::PIFCMDictionary settings) {
-			if (!callback) {
-				throw std::exception("Failed to initialize app interface"); // TODO: replace all throw exception to Window::ThrowException
-			}
-			else {
-				m_callback = callback;
-			}
+		AppContext::AppContext(
+			FCM::PIFCMCallback callback,
+			DOM::IFLADocument* _document,
+			const FCM::PIFCMDictionary settings) : document(_document), m_callback(callback) {
+
 			falloc = getService<FCM::IFCMCalloc>(FCM::SRVCID_Core_Memory);
 
 			locale.Load(languageCode());
 			if (settings) {
-				config = PublisherConfig::FromDict(settings);
+				config = Config::FromDict(settings);
 			}
+
 		};
 
 		AppContext::~AppContext(){
@@ -50,6 +47,13 @@ namespace sc {
 			string message(buffer);
 
 			console->Trace((FCM::CStringRep16)Utils::ToUtf16(message + "\n").c_str());
+		}
+
+		void AppContext::close() {
+			if (window && window->ui) {
+				window->ui->readyToExit = true;
+				window->ui->Close();
+			}
 		}
 	}
 }

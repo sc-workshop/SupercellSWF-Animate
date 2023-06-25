@@ -2,114 +2,30 @@
 #include "Module/AppContext.h"
 #include <chrono>
 
+#include "Ui/PluginUI.h"
+
 namespace sc {
 	namespace Adobe {
 		FCM::Result Publisher::Publish(
 			DOM::PIFLADocument document,
 			const FCM::PIFCMDictionary publishSettings,
-			const FCM::PIFCMDictionary config)
-		{
-			AppContext app(GetCallback(), publishSettings);
-			if (app.config.output.empty()) {
-				app.trace("Failed to get output path");
-				return FCM_EXPORT_FAILED;
-			}
-
-			FCM::Double fps;
-			FCM::U_Int8 framesPerSec;
-
-			document->GetFrameRate(fps);
-			framesPerSec = (FCM::U_Int8)fps;
-
-			FCM::FCMListPtr libraryItems;
-			document->GetLibraryItems(libraryItems.m_Ptr);
+			const FCM::PIFCMDictionary config
+		){
+			AppContext app(GetCallback(), document, publishSettings);
 
 			auto start = chrono::high_resolution_clock::now();
-#ifndef DEBUG
-			try {
-#endif
-				shared_ptr<SharedWriter> writer;
-				switch (app.config.method) {
-				case PublisherMethod::SWF:
-					writer = shared_ptr<SharedWriter>(new Writer(app));
-					break;
-				case PublisherMethod::JSON:
-					writer = shared_ptr<SharedWriter>(new JSONWriter(app));
-					break;
-				default:
-					throw exception("Failed to get writer");
-				}
 
-				writer->Init();
-
-				ResourcePublisher resources(app, writer.get());
-				resources.InitDocument(framesPerSec);
-
-				ExportLibraryItems(libraryItems, resources);
-
-				resources.Finalize();
-#ifndef DEBUG
-			}
-			catch (const exception& err) {
-				app.trace("Error: %s", err.what());
-			}
-#endif
+			app.window = new PluginUI(app);
+			wxApp::SetInstance(app.window);
+			wxEntry();
 
 			auto end = chrono::high_resolution_clock::now();
 
 			long long executionTime = chrono::duration_cast<chrono::seconds>(end - start).count();
-			app.trace("Export done by %llu second(-s)", executionTime);
+			app.trace("Done by %llu second(-s)", executionTime);
 
 			return FCM_SUCCESS;
 		}
-
-		void Publisher::ExportLibraryItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources) {
-			uint32_t itemCount = 0;
-			libraryItems->Count(itemCount);
-
-			for (uint32_t i = 0; i < itemCount; i++)
-			{
-				FCM::AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
-
-				FCM::StringRep16 itemNamePtr;
-				item->GetName(&itemNamePtr);
-				u16string itemName = (const char16_t*)itemNamePtr;
-				resources.context.falloc->Free(itemNamePtr);
-
-				FCM::AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
-				if (folderItem)
-				{
-					FCM::FCMListPtr childrens;
-					folderItem->GetChildren(childrens.m_Ptr);
-
-					// Export all its children
-					ExportLibraryItems(childrens, resources);
-				}
-				else
-				{
-					FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
-					if (!symbolItem) continue;
-
-					FCM::AutoPtr<FCM::IFCMDictionary> dict;
-					item->GetProperties(dict.m_Ptr);
-
-					std::string symbolType;
-					Utils::ReadString(dict, kLibProp_SymbolType_DictKey, symbolType);
-
-					FCM::U_Int32 valueLen;
-					FCM::FCMDictRecTypeID type;
-					FCM::Result res = dict->GetInfo("SourceFilePath", type, valueLen);
-
-					if (symbolType != "MovieClip") continue;
-
-					uint16_t symbolIdentifer = resources.GetIdentifer(itemName);
-
-					if (symbolIdentifer != UINT16_MAX) continue;
-
-					resources.AddSymbol(itemName, symbolItem, true);
-				}
-			}
-		};
 
 		FCM::Result RegisterPublisher(FCM::PIFCMDictionary plugins, FCM::FCMCLSID docId)
 		{

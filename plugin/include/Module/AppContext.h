@@ -1,20 +1,22 @@
 #pragma once
 
+#include "DOM/IFLADocument.h"
 #include "FCMTypes.h"
 
 #include <string>
 #include <stdarg.h>
 #include <exception>
+#include <thread>
 
 #include "Localization.h"
-#include "Publisher/PublisherConfig.h"
+#include "Module/Config.h"
 
 #include "FCMPluginInterface.h"
 #include "Application/Service/IApplicationService.h"
 #include "Application/Service/IOutputConsoleService.h"
 #include "ApplicationFCMPublicIDs.h"
 
-#include "Module/Window.h"
+#include "Ui/PluginUI.h"
 
 namespace sc {
 	namespace Adobe {
@@ -22,24 +24,27 @@ namespace sc {
 			FCM::PIFCMCallback m_callback;
 
 		public:
-			AppContext(FCM::PIFCMCallback callback, const FCM::PIFCMDictionary settings);
+			AppContext(FCM::PIFCMCallback callback, DOM::IFLADocument* document, const FCM::PIFCMDictionary settings);
 
 			~AppContext();
 
 		public:
 			// Public properties
 
+			// Current document
+			DOM::IFLADocument* document;
+
 			// FCM memory control
 			FCM::AutoPtr<FCM::IFCMCalloc> falloc;
 
 			// Module localization
-			LocaleInterface locale;
+			Localization locale;
 
 			// Publish settings
-			PublisherConfig config;
+			Config config;
 
 			// Import / export window
-			Window* window = nullptr;
+			PluginUI* window = nullptr;
 
 		public:
 			// Functions
@@ -61,11 +66,7 @@ namespace sc {
 
 			void trace(const char* fmt, ...);
 
-			// Publish modes
-
-			//void startExport(DOM::PIFLADocument document);
-
-			//void startImport();
+			void close();
 		};
 	}
 }

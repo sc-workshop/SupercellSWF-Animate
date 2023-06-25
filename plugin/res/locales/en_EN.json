@@ -1,0 +1,15 @@
+{
+	"TID_WINDOW_TITLE": "Publishing",
+	
+	"TID_BAR_LABEL_TOTAL": "Total :",
+	"TID_STATUS_INIT": "Initializing",
+	"TID_STATUS_TEXTURE_PROCESS": "Texture processing",
+	"TID_STATUS_SAVE": "Saving...",
+	
+	"TID_BAR_LABEL_LIBRARY_ITEMS": "Library items :",
+	
+	"TID_BAR_LABEL_TEXURE_PACK": "Sprites :",
+	"TID_STATUS_SPRITE_PACK": "Sprite packaging...",
+	"TID_STATUS_TEXTURE_SAVE": "Texture saving..."
+	
+}

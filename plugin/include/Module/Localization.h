@@ -12,34 +12,20 @@ namespace fs = std::filesystem;
 using namespace nlohmann;
 
 #define DefaultLanguageCode "en_EN"
+#define wxStringU16(str) wxString((const wchar_t*)str.c_str())
 
 namespace sc {
 	namespace Adobe {
-		class LocaleInterface {
+		class Localization {
 		private:
-			json locale;
+			json m_locale;
 
 		public:
-			void Load(std::string languageCode) { 
-				/*fs::path localePath = Utils::CurrentPath() / ("../../../locales/" + languageCode + ".json");
+			void Load(std::string languageCode);
 
-				if (!fs::exists(localePath)) {
-					localePath = Utils::CurrentPath() / "../../../locales/" DefaultLanguageCode ".json";
-				}
+			std::string GetString(std::string TID);
 
-				ifstream file(localePath);
-				locale = json::parse(file);
-				file.close();*/
-			};
-
-			std::u16string Get(std::string TID) {
-				if (locale[TID]) {
-					return locale[TID];
-				}
-				else {
-					return Utils::ToUtf16(TID);
-				}
-			}
+			std::u16string Get(std::string TID);
 		};
 	}
 }

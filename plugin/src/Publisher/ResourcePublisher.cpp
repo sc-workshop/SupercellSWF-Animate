@@ -2,6 +2,98 @@
 
 namespace sc {
 	namespace Adobe {
+
+        void ResourcePublisher::Publish(AppContext& context) {
+            context.window->ui->SetProgress(
+                (uint8_t)PublisherExportStage::LibraryProcessing
+            );
+            context.window->ui->SetStatus("");
+
+            FCM::Double fps;
+            FCM::U_Int8 framesPerSec;
+
+            context.document->GetFrameRate(fps);
+            framesPerSec = (FCM::U_Int8)fps;
+
+            FCM::FCMListPtr libraryItems;
+            context.document->GetLibraryItems(libraryItems.m_Ptr);
+
+            shared_ptr<SharedWriter> writer;
+            switch (context.config.method) {
+            case PublisherMethod::SWF:
+                writer = shared_ptr<SharedWriter>(new Writer(context));
+                break;
+            case PublisherMethod::JSON:
+                writer = shared_ptr<SharedWriter>(new JSONWriter(context));
+                break;
+            default:
+                throw exception("Failed to get writer");
+            }
+
+            writer->Init();
+
+            ResourcePublisher resources(context, writer.get());
+            resources.InitDocument(framesPerSec);
+
+            ResourcePublisher::PublishItems(libraryItems, resources);
+
+            resources.Finalize();
+
+            context.close();
+        }
+
+        void ResourcePublisher::PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources) {
+            uint32_t itemCount = 0;
+            libraryItems->Count(itemCount);
+
+            for (uint32_t i = 0; i < itemCount; i++)
+            {
+                FCM::AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
+
+                FCM::StringRep16 itemNamePtr;
+                item->GetName(&itemNamePtr);
+                u16string itemName = (const char16_t*)itemNamePtr;
+                resources.context.falloc->Free(itemNamePtr);
+
+                FCM::AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
+                if (folderItem)
+                {
+                    FCM::FCMListPtr childrens;
+                    folderItem->GetChildren(childrens.m_Ptr);
+
+                    // Export all its children
+                    ResourcePublisher::PublishItems(childrens, resources);
+                }
+                else
+                {
+                    FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
+                    if (!symbolItem) continue;
+
+                    FCM::AutoPtr<FCM::IFCMDictionary> dict;
+                    item->GetProperties(dict.m_Ptr);
+
+                    std::string symbolType;
+                    Utils::ReadString(dict, kLibProp_SymbolType_DictKey, symbolType);
+
+                    FCM::U_Int32 valueLen;
+                    FCM::FCMDictRecTypeID type;
+                    FCM::Result res = dict->GetInfo("SourceFilePath", type, valueLen);
+
+                    if (symbolType != "MovieClip") continue;
+
+                    uint16_t symbolIdentifer = resources.GetIdentifer(itemName);
+
+                    if (symbolIdentifer != UINT16_MAX) continue;
+
+                    if (resources.context.window->ui->aboutToExit) {
+                        resources.context.close();
+                        return;
+                    }
+
+                    resources.AddSymbol(itemName, symbolItem, true);
+                }
+            }
+        };
         
         uint16_t ResourcePublisher::AddLibraryItem(
             DOM::ILibraryItem* item,

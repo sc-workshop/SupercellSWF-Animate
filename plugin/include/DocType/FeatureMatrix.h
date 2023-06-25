@@ -43,10 +43,6 @@ namespace sc {
 				return _pInterfaceMap;
 			}
 
-			/*BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)
-				INTERFACE_ENTRY(IFeatureMatrix)
-			END_INTERFACE_MAP*/
-
 		public:
 
 			virtual FCM::Result _FCMCALL IsSupported(
@@ -72,7 +68,7 @@ namespace sc {
 			FCM::Result Init(FCM::PIFCMCallback callback);
 
 			void UpdateContext(FCM::PIFCMCallback callback) {
-				m_context = shared_ptr<AppContext>(new AppContext(callback, nullptr));
+				m_context = shared_ptr<AppContext>(new AppContext(callback, nullptr, nullptr));
 			}
 
 		private:

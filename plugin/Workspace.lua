@@ -7,6 +7,7 @@ configurations {
 }
 
 include "premake5.lua"
+include "UITest/"
 
 group "SC"
 include "ThirdParty/SC/dependencies/Compression/"

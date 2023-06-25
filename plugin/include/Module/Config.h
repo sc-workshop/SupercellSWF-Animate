@@ -25,7 +25,7 @@ namespace sc {
 			Export
 		};
 
-		struct PublisherConfig {
+		struct Config {
 			PublisherMode mode = PublisherMode::Export;
 
 			fs::path output = "";
@@ -40,7 +40,7 @@ namespace sc {
 			uint32_t textureMaxWidth = 2048;
 			uint32_t textureMaxHeight = 2048;
 
-			static PublisherConfig FromDict(const FCM::PIFCMDictionary dict);
+			static Config FromDict(const FCM::PIFCMDictionary dict);
 		};
 	}
 }

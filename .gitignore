@@ -3,3 +3,4 @@
 /node_modules
 
 plugin/include/PluginConfiguration.h
+/plugin/UITest/bin

@@ -6,15 +6,17 @@
 #include "module/AppContext.h"
 
 // FCM stuff
-#include <FCMTypes.h>
+#include "DOM/IFLADocument.h"
+#include "FCMTypes.h"
 
 // Timeline
-#include <DOM/ILayer2.h>
+#include "DOM/ILayer2.h"
 
 // Symbol
-#include <DOM/ILibraryItem.h>
-#include <DOM/LibraryItem/ISymbolItem.h>
-#include <DOM/LibraryItem/IMediaItem.h>
+#include "DOM/ILibraryItem.h"
+#include "DOM/LibraryItem/ISymbolItem.h"
+#include "DOM/LibraryItem/IMediaItem.h"
+#include "DOM/LibraryItem/IFolderItem.h"
 
 // Image processing
 #include <opencv2/opencv.hpp>
@@ -28,12 +30,24 @@
 
 #include "Publisher/TimelineBuilder/TextField.h"
 
-// Writer
+// Writers
 #include "Publisher/Shared/SharedWriter.h"
+#include "Publisher/JSON/JSONWriter.h"
+#include "Publisher/SWF/Writer.h"
+
+// Symbol
+#include "DOM/ILibraryItem.h"
+
+#include "DOM/LibraryItem/ISymbolItem.h"
 
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher {
+        public:
+            static void Publish(AppContext& context);
+            static void PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
+
+        public:
             SharedWriter* m_writer;
 
             shared_ptr<TimelineBuilder> timelineBuilder;

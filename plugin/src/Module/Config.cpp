@@ -1,9 +1,9 @@
-#include "Publisher/PublisherConfig.h"
+#include "Module/Config.h"
 
 namespace sc {
 	namespace Adobe {
-		PublisherConfig PublisherConfig::FromDict(const FCM::PIFCMDictionary dict) {
-			PublisherConfig result;
+		Config Config::FromDict(const FCM::PIFCMDictionary dict) {
+			Config result;
 
 			string dataString;
 			Utils::ReadString(dict, "SupercellSWF", dataString);
