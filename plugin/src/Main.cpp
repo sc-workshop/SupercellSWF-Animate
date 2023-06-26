@@ -1,7 +1,7 @@
 #include <FCMPluginInterface.h>
 
-#include "DocType/DocType.h"
-#include "DocType/FeatureMatrix.h"
+#include "Document/DocumentType.h"
+#include "Document/FeatureMatrix.h"
 
 #include "Publisher/Publisher.h"
 
@@ -12,9 +12,9 @@ namespace sc {
 
 		BEGIN_CLASS_ENTRY
 
-			CLASS_ENTRY(CLSID_DocType, DocumentType)
+			CLASS_ENTRY(CLSID_DocType, SCDocumentType)
 			CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-			CLASS_ENTRY(CLSID_Publisher, Publisher)
+			CLASS_ENTRY(CLSID_Publisher, SCPublisher)
 
 		END_CLASS_ENTRY
 

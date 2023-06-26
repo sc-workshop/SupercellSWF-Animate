@@ -6,21 +6,21 @@
 
 namespace sc {
 	namespace Adobe {
-		FCM::Result Publisher::Publish(
+		FCM::Result SCPublisher::Publish(
 			DOM::PIFLADocument document,
 			const FCM::PIFCMDictionary publishSettings,
 			const FCM::PIFCMDictionary config
 		){
 			AppContext app(GetCallback(), document, publishSettings);
-
+			
 			auto start = chrono::high_resolution_clock::now();
-
+			
 			app.window = new PluginUI(app);
 			wxApp::SetInstance(app.window);
 			wxEntry();
-
+			
 			auto end = chrono::high_resolution_clock::now();
-
+			
 			long long executionTime = chrono::duration_cast<chrono::seconds>(end - start).count();
 			app.trace("Done by %llu second(-s)", executionTime);
 

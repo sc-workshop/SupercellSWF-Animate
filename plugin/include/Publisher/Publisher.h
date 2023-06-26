@@ -19,11 +19,11 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-using namespace Publisher;
+//using namespace Publisher;
 
 namespace sc {
 	namespace Adobe {
-		class Publisher : public IPublisher, public FCM::FCMObjectBase
+		class SCPublisher : public Publisher::IPublisher, public FCM::FCMObjectBase
 		{
 		public:
 			virtual FCM::PIFCMCallback GetCallback() = 0;
@@ -35,12 +35,12 @@ namespace sc {
 				static FCM::FCMInterfaceMap _pInterfaceMap[] = {
 					{
 						FCM::IID_IFCMUnknown,
-						((FCM::S_Int64)(static_cast<IFCMUnknown*>((Publisher*)1)) - 1),
+						((FCM::S_Int64)(static_cast<FCM::IFCMUnknown*>((SCPublisher*)1)) - 1),
 						((FCM::_FCM_CREATORARGFUNC*)0)
 					},
 					{
-						IID_IPublisher,
-						((FCM::S_Int64)(static_cast<IPublisher*>((Publisher*)1)) - 1),
+						Publisher::IID_IPublisher,
+						((FCM::S_Int64)(static_cast<Publisher::IPublisher*>((SCPublisher*)1)) - 1),
 						((FCM::_FCM_CREATORARGFUNC*)0)
 					},
 					{

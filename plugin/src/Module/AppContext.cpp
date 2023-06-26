@@ -6,14 +6,12 @@ namespace sc {
 			FCM::PIFCMCallback callback,
 			DOM::IFLADocument* _document,
 			const FCM::PIFCMDictionary settings) : document(_document), m_callback(callback) {
+			ASSERT(callback != nullptr);
 
 			falloc = getService<FCM::IFCMCalloc>(FCM::SRVCID_Core_Memory);
 
 			locale.Load(languageCode());
-			if (settings) {
-				config = Config::FromDict(settings);
-			}
-
+			config = Config::FromDict(settings);
 		};
 
 		AppContext::~AppContext(){
