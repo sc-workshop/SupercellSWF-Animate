@@ -105,8 +105,13 @@ namespace sc {
 				return;
 			}
 
+			fs::path filepath = m_context.config.exportToExternalPath;
+			if (filepath.is_relative()) {
+				filepath = m_context.documentPath / filepath;
+			}
+
 			SupercellSWF swf;
-			swf.load(m_context.config.exportToExternalPath);
+			swf.load(filepath);
 
 			uint16_t idOffset = 0;
 			{
@@ -304,7 +309,13 @@ namespace sc {
 				m_swf.useExternalTexture(m_context.config.hasExternalTexture);
 				m_swf.useLowResTexture(false);
 				m_swf.useMultiResTexture(false);
-				m_swf.save(m_context.config.output, m_context.config.compression);
+
+				fs::path output = m_context.config.output;
+				if (output.is_relative()) {
+					output = m_context.documentPath / output;
+				}
+
+				m_swf.save(output, m_context.config.compression);
 			}
 		}
 	}

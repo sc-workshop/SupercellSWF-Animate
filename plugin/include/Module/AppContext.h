@@ -33,6 +33,7 @@ namespace sc {
 
 			// Current document
 			DOM::IFLADocument* document;
+			fs::path documentPath;
 
 			// FCM memory control
 			FCM::AutoPtr<FCM::IFCMCalloc> falloc;

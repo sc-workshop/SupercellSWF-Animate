@@ -12,6 +12,11 @@ namespace sc {
 
 			locale.Load(languageCode());
 			config = Config::FromDict(settings);
+
+			FCM::StringRep16 documentPathPtr;
+			document->GetPath(&documentPathPtr);
+			documentPath = fs::path((const char16_t*)documentPathPtr).remove_filename();
+			falloc->Free(documentPathPtr);
 		};
 
 		AppContext::~AppContext(){

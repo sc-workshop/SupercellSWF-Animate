@@ -71,13 +71,13 @@ namespace sc {
 		}
 
 		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps) {
-			ordered_json root = 
+			ordered_json root = ordered_json::object(
 			{
 				{"id", id},
 				{"exports",  json::array()},
 				{"fps", fps},
 				{"frames", m_frames}
-			};
+			});
 
 			m_writer->AddMovieclip(root);
 

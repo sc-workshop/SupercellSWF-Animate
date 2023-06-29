@@ -30,10 +30,10 @@ namespace sc {
 		}
 
 		void JSONShapeWriter::Finalize(uint16_t id) {
-			ordered_json root = {
+			ordered_json root = ordered_json::object({
 				{"id", id},
 				{"bitmaps", m_bitmaps}
-			};
+			});
 
 			m_writer->AddShape(root);
 

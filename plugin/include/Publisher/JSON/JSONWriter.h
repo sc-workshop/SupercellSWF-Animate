@@ -20,11 +20,21 @@ namespace sc {
 		public:
 			using SharedWriter::SharedWriter;
 
+			std::u16string workspaceName;
+			fs::path workspaceFolder;
 			fs::path imageFolder;
 			uint32_t imageCount = 0;
 
 			void Init() {
-				imageFolder = m_context.config.output.parent_path() / "images";
+				workspaceName = m_context.config.output.stem().u16string();
+				if (m_context.config.output.is_relative()) {
+					workspaceFolder = fs::path(m_context.documentPath / m_context.config.output).parent_path();
+				}
+				else {
+					workspaceFolder = m_context.config.output.parent_path();
+				}
+				
+				imageFolder = fs::path(workspaceFolder / "images");
 				if (fs::exists(imageFolder)) {
 					fs::remove_all(imageFolder);
 				}
@@ -114,14 +124,14 @@ namespace sc {
 			}
 
 			void Finalize() {
-				ordered_json root = {
+				ordered_json root = ordered_json::object({
 					{"shapes", m_shapes },
 					{"textfields", m_textfields },
 					{"modifiers", m_modifiers},
 					{"movieclips", m_movieclips}
-				};
+				});
 
-				std::ofstream file(m_context.config.output);
+				std::ofstream file(workspaceFolder / (workspaceName + u".json"));
 				file << setw(4) << root << endl;
 				file.close();
 			}

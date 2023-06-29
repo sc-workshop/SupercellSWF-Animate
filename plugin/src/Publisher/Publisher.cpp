@@ -12,6 +12,11 @@ namespace sc {
 			const FCM::PIFCMDictionary config
 		){
 			AppContext app(GetCallback(), document, publishSettings);
+			if (app.documentPath.empty()) {
+				app.trace(Utils::ToUtf8(app.locale.Get("TID_ERROR_WRONG_DOCUMENT_PATH")).c_str());
+
+				return FCM_EXPORT_FAILED;
+			}
 			
 			auto start = chrono::high_resolution_clock::now();
 			
