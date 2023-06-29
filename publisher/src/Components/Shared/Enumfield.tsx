@@ -63,7 +63,7 @@ export default function EnumField(
         {
             key: `enumfield_${keyName}_input`,
             style: {
-                width: `${maxEnumSize * 15}px`,
+                width: `100px !important`,
                 height: "35px",
                 color: "white",
                 marginLeft: "5px",

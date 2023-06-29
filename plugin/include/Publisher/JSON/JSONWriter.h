@@ -54,10 +54,10 @@ namespace sc {
 			}
 
 			void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) {
-				m_modifiers.push_back({
+				m_modifiers.push_back(ordered_json::object({
 					{"id", id},
 					{"type", (uint8_t)type}
-				});
+				}));
 			}
 
 			void AddTextField(uint16_t id, TextFieldInfo field) {
@@ -81,7 +81,7 @@ namespace sc {
 				}
 
 
-				m_textfields.push_back(json::object({
+				m_textfields.push_back(ordered_json::object({
 					{"id", id},
 					{"bound", json::array({
 						field.bound.bottomRight.x,
@@ -105,8 +105,16 @@ namespace sc {
 				}));
 			}
 
+			void AddExportName(uint16_t id, std::u16string name) {
+				for (auto object : m_movieclips) {
+					if (object["id"] == id) {
+						object["exports"].push_back(Utils::ToUtf8(name));
+					}
+				}
+			}
+
 			void Finalize() {
-				json root = {
+				ordered_json root = {
 					{"shapes", m_shapes },
 					{"textfields", m_textfields },
 					{"modifiers", m_modifiers},

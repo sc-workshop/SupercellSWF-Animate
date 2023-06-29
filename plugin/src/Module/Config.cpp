@@ -23,41 +23,15 @@ namespace sc {
 			result.textureMaxWidth = data["textureMaxWidth"];
 			result.textureMaxHeight = data["textureMaxHeight"];
 
-			// Enums
-			{
-				uint8_t publishMethod = data["method"];
-				switch (publishMethod)
-				{
-				case 0:
-					result.method = PublisherMethod::JSON;
-					break;
-				case 1:
-					result.method = PublisherMethod::SWF;
-					break;
-				default:
-					break;
-				}
+			if (data["method"].is_number_unsigned()) {
+				result.method = (PublisherMethod)data["method"];
 			}
 
-			{
-				uint8_t compressionMethod = data["compressionMethod"];
-				switch (compressionMethod)
-				{
-				case 0:
-					result.compression = sc::CompressionSignature::LZMA;
-					break;
-				case 1:
-					result.compression = sc::CompressionSignature::LZHAM;
-					break;
-				case 2:
-					result.compression = sc::CompressionSignature::ZSTD;
-					break;
-				default:
-					break;
-				}
+			if (data["compressionMethod"].is_number_unsigned()) {
+				result.compression = (sc::CompressionSignature)(data["compressionMethod"] + 1);
 			}
 
-			{
+			if (data["textureScaleFactor"].is_number_unsigned()) {
 				uint8_t scaleFactor = data["textureScaleFactor"];
 				switch (scaleFactor)
 				{
@@ -73,6 +47,10 @@ namespace sc {
 				default:
 					break;
 				}
+			}
+
+			if (data["exportsMode"].is_number_unsigned()) {
+				result.exportsMode = (ExportsMode)data["exportsMode"];
 			}
 
 			return result;

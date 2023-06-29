@@ -43,6 +43,8 @@ namespace sc {
 
 			void AddTextField(uint16_t id, TextFieldInfo field);
 
+			void AddExportName(uint16_t id, std::u16string name);
+
 			void LoadExternal();
 
 			void Finalize();

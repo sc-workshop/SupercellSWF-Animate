@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #include "module/AppContext.h"
 
@@ -45,7 +46,10 @@ namespace sc {
 		class ResourcePublisher {
         public:
             static void Publish(AppContext& context);
-            static void PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
+
+        private:
+            static void GetItemsPaths(AppContext& resources, FCM::FCMListPtr libraryItems, std::vector<std::u16string>& paths);
+            //static void PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
 
         public:
             SharedWriter* m_writer;
@@ -53,17 +57,19 @@ namespace sc {
             shared_ptr<TimelineBuilder> timelineBuilder;
             shared_ptr<ShapeGenerator> shapeGenerator;
 
-                         // Name  /  Id
-            vector<pair<u16string, uint16_t>> m_symbolsDict;
+                               // Name  /  Id
+            std::unordered_map<u16string, uint16_t> m_symbolsData;
 
-                         // Name / Image
-            vector<pair<u16string, cv::Mat>> m_imageSymbolsDataDict;
+                                // Name / Image
+            std::unordered_map<u16string, cv::Mat> m_imagesData;
 
-                                            // Type / Id
-            vector<pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
+                                                // Type / Id
+            std::vector<pair<sc::MovieClipModifier::Type, uint16_t>> m_modifierDict;
 
-                             // Info / Id
-            vector<pair<TextFieldInfo, uint16_t>> m_textfieldDict;
+                                  // Info / Id
+            std::vector<pair<TextFieldInfo, uint16_t>> m_textfieldDict;
+
+            std::unordered_map<u16string, uint32_t> m_symbolsUsage;
 
             uint32_t m_id = 0;
             uint8_t m_fps = 24;
@@ -79,27 +85,25 @@ namespace sc {
                 shapeGenerator = shared_ptr<ShapeGenerator>(new ShapeGenerator(*this));
             }
 
-
             uint16_t AddLibraryItem(
-                DOM::ILibraryItem* item,
-                bool hasName = false
+                std::u16string name,
+                FCM::AutoPtr<DOM::ILibraryItem> item
             );
 
             uint16_t AddSymbol(
-                u16string name,
+                std::u16string name,
                 DOM::LibraryItem::ISymbolItem* item,
-                bool hasName = false
+                std::string symbolType
             );
 
             uint16_t AddMovieclip(
                 u16string name,
-                FCM::AutoPtr<DOM::ITimeline> timeline,
-                bool hasName
+                FCM::AutoPtr<DOM::ITimeline> timeline
             );
 
             uint16_t AddShape(
                 u16string name,
-                DOM::ITimeline* timeline
+                FCM::AutoPtr < DOM::ITimeline> timeline
             );
 
             uint16_t AddModifier(
@@ -109,6 +113,7 @@ namespace sc {
             uint16_t AddTextField(
                 TextFieldInfo field
             );
+
 
             uint16_t GetIdentifer(
                 u16string name
@@ -128,7 +133,9 @@ namespace sc {
 
             void InitDocument(uint8_t fps);
 
-            void Finalize();
+            uint32_t& GetSymbolUsage(std::u16string name);
+
+            void Finalize(std::vector<std::u16string> exports);
 		};
 	}
 }

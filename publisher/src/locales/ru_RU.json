@@ -13,5 +13,10 @@
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Записать внешнюю текстуру",
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Фактор уменьшения",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Высота текстуры",
-	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Ширина текстуры"
+	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Ширина текстуры",
+
+	"TID_EXPORTS_LABEL": "Экспортные имена",
+	"TID_SWF_SETTINGS_EXPORTS_MODE": "Режим выбора имен",
+	"TID_EXPORTS_ALL_MOVIES": "Все Фрагменты кадра",
+	"TID_EXPORTS_ALL_UNUSED_MOVIES": "Все не использованные Фрагменты кадра"
 }

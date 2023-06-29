@@ -13,5 +13,10 @@
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Reduction factor",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Texture width",
-	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Texture height"
+	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Texture height",
+
+	"TID_EXPORTS_LABEL": "Export names",
+	"TID_SWF_SETTINGS_EXPORTS_MODE": "Export name selector mode",
+	"TID_EXPORTS_ALL_MOVIES": "All MovieClips",
+	"TID_EXPORTS_ALL_UNUSED_MOVIES": "All unused MovieClips"
 }

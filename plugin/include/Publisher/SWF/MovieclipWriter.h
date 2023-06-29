@@ -45,7 +45,7 @@ namespace sc {
 				DOM::Utils::COLOR_MATRIX* color
 			);
 
-			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
+			void Finalize(uint16_t id, uint8_t fps);
 		};
 	}
 }

@@ -9,6 +9,7 @@ import TextureSettings from "./textures";
 import BoolField from "../../Shared/BoolField";
 import FileField from "../../Shared/FileField";
 import { useState } from "react";
+import ExportsSettings from "./exports";
 
 export default function Settings() {
     const [isExportToExternal, setExportToExternal] = useState(State.getParam("exportToExternal"));
@@ -38,12 +39,14 @@ export default function Settings() {
     let childrens = [
         compressionType,
         exportToExternal,
+        ExportsSettings(),
         TextureSettings()
     ]
 
     let externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
         "export_to_external_path",
+        "read",
         "sc",
         {
             marginLeft: "2%",
@@ -55,7 +58,7 @@ export default function Settings() {
 
 
     if (isExportToExternal) {
-        childrens.splice(2, 0, externalFilePath);
+        childrens.splice(3, 0, externalFilePath);
     }
 
     return SubMenu(

@@ -34,7 +34,7 @@ namespace sc {
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
 		) {
-			json frameElement = {};
+			ordered_json frameElement = {};
 			frameElement["id"] = id;
 
 			if (!name.empty()) {
@@ -70,10 +70,11 @@ namespace sc {
 			m_frames.at(m_position)["elements"].push_back(frameElement);
 		}
 
-		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps, std::u16string name) {
-			json root = {
+		void JSONMovieclipWriter::Finalize(uint16_t id, uint8_t fps) {
+			ordered_json root = 
+			{
 				{"id", id},
-				{"name", Utils::ToUtf8(name)},
+				{"exports",  json::array()},
 				{"fps", fps},
 				{"frames", m_frames}
 			};

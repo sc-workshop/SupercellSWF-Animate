@@ -25,16 +25,6 @@ namespace sc {
 	namespace Adobe {
         class FeatureDocumentHandler;
 
-        //static const std::string kElement_Features("Features");
-        //static const std::string kElement_Feature("Feature");
-        //static const std::string kElement_Property("Property");
-        //static const std::string kElement_Value("Value");
-        //static const std::string kAttribute_name("name");
-        //static const std::string kAttribute_supported("supported");
-        //static const std::string kAttribute_default("default");
-        //static const std::string kValue_true("true");
-        //static const std::string kValue_false("false");
-
         class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
         {
             BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)

@@ -134,19 +134,9 @@ namespace sc {
 			m_colors.push_back(transformColor);
 		}
 
-		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps, std::u16string name) {
+		void MovieclipWriter::Finalize(uint16_t id, uint8_t fps) {
 			m_object->id(id);
 			m_object->frameRate(fps);
-			
-			if (!name.empty()) {
-				pExportName exportName = pExportName(new ExportName());
-				exportName->id(id);
-
-				fs::path symbolPath(name);
-				exportName->name(symbolPath.filename().string());
-
-				m_writer->m_swf.exports.push_back(exportName);
-			}
 
 			FinalizeTransforms();
 

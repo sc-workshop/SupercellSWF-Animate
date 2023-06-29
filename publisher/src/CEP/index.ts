@@ -100,11 +100,11 @@ export class CSInterface {
    * @param callback  Optional. A callback function that receives the result of execution.
    *          If execution fails, the callback function receives the error message \c EvalScript_ErrMessage.
    */
-  evalScript(script: string, callback: (executionResult: string) => void) {
-    if (callback === null || callback === undefined) {
-      callback = (result: any) => undefined;
-    }
-    window.__adobe_cep__.evalScript(script, callback);
+  evalScript(script: string): Promise<string> {
+    return new Promise(function(resolve){
+      window.__adobe_cep__.evalScript(script, function(value: string){resolve(value)});
+    })
+    
   };
 
   /**

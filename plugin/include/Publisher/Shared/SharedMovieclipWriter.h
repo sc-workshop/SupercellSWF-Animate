@@ -28,7 +28,7 @@ namespace sc {
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color) = 0;
 
-			virtual void Finalize(uint16_t id, uint8_t fps, std::u16string name) = 0;
+			virtual void Finalize(uint16_t id, uint8_t fps) = 0;
 		};
 
 		typedef std::shared_ptr<SharedMovieclipWriter> pSharedMovieclipWriter;

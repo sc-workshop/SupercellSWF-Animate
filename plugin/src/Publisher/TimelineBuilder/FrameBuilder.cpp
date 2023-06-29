@@ -45,9 +45,8 @@ namespace sc {
 			frame->GetFrameElements(frameElements.m_Ptr);
 			frameElements->Count(frameElementsCount);
 
-			uint32_t i = frameElementsCount;
-			for (uint32_t elementIndex = 0; frameElementsCount > elementIndex; elementIndex++) {
-				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--i];
+			for (uint32_t i = 0; frameElementsCount > i; i++) {
+				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[i];
 				if (!frameElement) {
 					throw exception("Failed to get frame element");
 				}
@@ -80,11 +79,11 @@ namespace sc {
 					m_resources.context.falloc->Free(itemNamePtr);
 
 					id = m_resources.GetIdentifer(itemName);
-
-					// If Item not exported yet
 					if (id == UINT16_MAX) {
-						id = m_resources.AddLibraryItem(libraryItem);
+						id = m_resources.AddLibraryItem(itemName, libraryItem);
 					}
+
+					m_resources.GetSymbolUsage(itemName)++;
 
 					// Transform
 					matrix = new MATRIX2D();

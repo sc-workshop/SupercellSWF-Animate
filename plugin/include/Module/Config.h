@@ -15,14 +15,19 @@ using namespace nlohmann;
 
 namespace sc {
 	namespace Adobe {
-		enum class PublisherMethod {
+		enum class PublisherMethod : uint8_t {
 			JSON,
 			SWF
 		};
 
-		enum class PublisherMode {
+		enum class PublisherMode : uint8_t {
 			Import,
 			Export
+		};
+
+		enum class ExportsMode : uint8_t {
+			AllMovieclips,
+			UnusedMovieclips
 		};
 
 		struct Config {
@@ -39,6 +44,8 @@ namespace sc {
 			uint8_t textureScaleFactor = 1;
 			uint32_t textureMaxWidth = 2048;
 			uint32_t textureMaxHeight = 2048;
+
+			ExportsMode exportsMode = ExportsMode::AllMovieclips;
 
 			static Config FromDict(const FCM::PIFCMDictionary dict);
 		};

@@ -14,7 +14,7 @@ namespace sc {
 		class JSONMovieclipWriter: public SharedMovieclipWriter {
 			JSONWriter* m_writer = nullptr;
 
-			json m_frames = json::array();
+			ordered_json m_frames = json::array();
 
 		public:
 			void Init(JSONWriter* writer);
@@ -30,7 +30,7 @@ namespace sc {
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color);
 
-			void Finalize(uint16_t id, uint8_t fps, std::u16string name);
+			void Finalize(uint16_t id, uint8_t fps);
 		};
 	}
 }

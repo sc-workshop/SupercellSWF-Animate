@@ -27,6 +27,8 @@ namespace sc {
 
             virtual void AddTextField(uint16_t id, TextFieldInfo field) = 0;
 
+            virtual void AddExportName(uint16_t id, std::u16string name) = 0;
+
             virtual void Finalize() = 0;
         };
     }

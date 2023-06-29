@@ -12,9 +12,9 @@ export enum CompressionMethods {
 }
 
 export enum TextureScaleFactor {
-    None,
-    Half,
-    Quarter
+    "x1.0",
+    "x0.5",
+    "x0.25"
 
 }
 
@@ -24,6 +24,15 @@ export const TextureDimensions = [
     2048,
     4096
 ]
+
+enum ExportsMode {
+    AllMovieclips,
+    AllUnusedMovieclips
+}
+
+interface ExportName {
+    path: string
+}
 
 interface PublisherStateData {
     //Basic settings
@@ -41,7 +50,10 @@ interface PublisherStateData {
     hasExternalTexture: boolean,
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
-    textureMaxHeight: number
+    textureMaxHeight: number,
+
+    exportsMode: ExportsMode,
+    exports: ExportName[]
 
 }
 
@@ -57,9 +69,12 @@ export class PublisherState {
 
         // Textures
         hasExternalTexture: true,
-        textureScaleFactor: TextureScaleFactor.None,
+        textureScaleFactor: TextureScaleFactor["x1.0"],
         textureMaxWidth: 2048,
-        textureMaxHeight: 2048
+        textureMaxHeight: 2048,
+
+        exportsMode: ExportsMode.AllUnusedMovieclips,
+        exports: []
     };
 
     getParam(name: keyof PublisherStateData): any {
@@ -90,7 +105,7 @@ export class PublisherState {
     }
     
     restore(data: any) {
-
+        console.log(data)
         try {
             if (data.SupercellSWF) {
                 Object.assign(this.data, JSON.parse(data.SupercellSWF));

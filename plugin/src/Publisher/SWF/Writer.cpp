@@ -89,6 +89,16 @@ namespace sc {
 			m_swf.textFields.push_back(textfield);
 		}
 
+		void Writer::AddExportName(uint16_t id, std::u16string name) {
+			pExportName exportName = pExportName(new ExportName());
+
+			exportName->id(id);
+			exportName->name(Utils::ToUtf8(name));
+
+			m_swf.exports.push_back(exportName);
+
+		}
+
 		void Writer::LoadExternal() {
 			if (!fs::exists(m_context.config.exportToExternalPath)) {
 				m_context.trace("External file does not exist");

@@ -4,7 +4,6 @@ import { State, TextureDimensions, TextureScaleFactor } from "../../publisherSta
 import BoolField from "../../Shared/BoolField";
 import SubMenu from "../../Shared/SubMenu";
 import EnumField from "../../Shared/EnumField";
-import { useState } from "react";
 
 export default function TextureSettings() {
     const exportToExternal = BoolField(

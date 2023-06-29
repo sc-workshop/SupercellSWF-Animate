@@ -4,7 +4,6 @@ import { existsSync } from "fs";
 
 const args = process.argv;
 const buildFolder = join(__dirname, "build");
-
 const isDebug = args[2] === "development";
 const outputPath = args[3];
 

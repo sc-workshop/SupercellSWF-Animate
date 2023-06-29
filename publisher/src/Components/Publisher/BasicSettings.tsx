@@ -12,6 +12,7 @@ export default function BasicSettings() {
     const output = FileField(
         Locale.Get("TID_OUTPUT"),
         "publisher_output_path",
+        "write",
         fileExtension,
         {
             marginBottom: "6px"

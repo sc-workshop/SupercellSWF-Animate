@@ -8,12 +8,16 @@ export function publish() {
     if (!isCEP) {
         return;
     }
+
     try {
         State.save();
         const CSInterface = getInterface();
-        CSInterface.evalScript("fl.getDocumentDOM().publish()", function() {
+        
+        (async function(){
+            await CSInterface.evalScript("fl.getDocumentDOM().publish()");
             CSInterface.closeExtension();
-        })
+        })()
+
     } catch (error) {
         alert(error);
     }
