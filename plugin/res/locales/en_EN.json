@@ -1,4 +1,5 @@
 {
+	"TID_ERROR_WRONG_DOCUMENT_PATH": "Failed to get document path. Save document before publishing",
 	"TID_WINDOW_TITLE": "Publishing",
 	
 	"TID_BAR_LABEL_TOTAL": "Total :",
