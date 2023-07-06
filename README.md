@@ -159,6 +159,9 @@ Then download zxp package from [releases](https://github.com/Daniil-SV/Supercell
 Open extension manager, click on "Install" button and then select zxp package you downloaded  
 After a successful installation notification, you can close program and open Adobe Animate for use
 
+## Alternative installing
+Go to folder `C:\Users\{USER NAME}\AppData\Roaming\Adobe\CEP\extensions` (If some folders do not exist, create) then create folder `com.scwmake.SupercellSWF`, open .zxp package as zip and unzip to created folder. 
+
 <br/>
 
 # Dependecies
