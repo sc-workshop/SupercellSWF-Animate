@@ -4,10 +4,9 @@
   "description": "",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack",
-    "build:prod": "npm run build && ts-node build.ts production ",
-    "build:dev": "npm run build && ts-node build.ts development"
+    "start": "webpack serve --mode=development",
+    "build:prod": "webpack --mode=production && ts-node build.ts production ",
+    "build:dev": "webpack --mode=development && ts-node build.ts development"
   },
   "keywords": [],
   "author": "DaniilSV",

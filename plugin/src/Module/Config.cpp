@@ -53,6 +53,14 @@ namespace sc {
 				result.exportsMode = (ExportsMode)data["exportsMode"];
 			}
 
+			if (data["textureEncoding"].is_number_unsigned()) {
+				result.textureEncoding = (SWFTexture::TextureEncoding)data["textureEncoding"];
+			}
+
+			if (data["textureQuality"].is_number_unsigned()) {
+				result.textureQuality = (Quality)data["textureQuality"];
+			}
+
 			return result;
 		}
 	}

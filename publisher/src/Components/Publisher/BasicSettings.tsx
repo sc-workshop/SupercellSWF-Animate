@@ -52,7 +52,7 @@ export default function BasicSettings() {
             }
         },
         output,
-        method
+        process.env.NODE_ENV == "production" ? undefined : method
 
     )
 }

@@ -1,6 +1,11 @@
 {
     "TID_VERSION": "Version",
 
+	"TID_HIGHEST": "Highest",
+	"TID_HIGH": "High",
+	"TID_MEDIUM": "Medium",
+	"TID_LOW": "Low",
+
 	"TID_ERROR_WRONG_DOCUMENT_PATH": "Failed to get document path! Make sure you save your document",
 	
     "TID_OUTPUT": "Output",
@@ -13,6 +18,8 @@
 	
 	"TID_TEXTURES_LABEL": "Textures",
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
+	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Encoding method",
+	"TID_SWF_SETTINGS_TEXTURE_QUALITY": "Textrue quality",
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Reduction factor",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Texture width",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Texture height",

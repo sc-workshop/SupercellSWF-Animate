@@ -15,7 +15,13 @@ namespace sc {
 
 			FCM::StringRep16 documentPathPtr;
 			document->GetPath(&documentPathPtr);
-			documentPath = fs::path((const char16_t*)documentPathPtr).remove_filename();
+			if (documentPathPtr != nullptr) {
+				documentPath = fs::path((const char16_t*)documentPathPtr);
+			}
+			
+			if (documentPath.has_extension()) {
+				documentPath = documentPath.remove_filename();
+			}
 			falloc->Free(documentPathPtr);
 		};
 

@@ -25,6 +25,18 @@ export const TextureDimensions = [
     4096
 ]
 
+export enum TextureEncoding {
+    Raw,
+    KTX
+}
+
+export enum Quality {
+    highest,
+    high,
+    medium,
+    low
+} 
+
 enum ExportsMode {
     AllMovieclips,
     AllUnusedMovieclips
@@ -48,6 +60,8 @@ interface PublisherStateData {
 
     // Texture category
     hasExternalTexture: boolean,
+    textureEncoding: TextureEncoding,
+    textureQuality: Quality,
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
     textureMaxHeight: number,
@@ -69,6 +83,8 @@ export class PublisherState {
 
         // Textures
         hasExternalTexture: true,
+        textureEncoding: TextureEncoding.Raw,
+        textureQuality: Quality.highest,
         textureScaleFactor: TextureScaleFactor["x1.0"],
         textureMaxWidth: 2048,
         textureMaxHeight: 2048,

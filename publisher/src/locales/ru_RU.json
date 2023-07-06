@@ -1,6 +1,11 @@
 {
     "TID_VERSION": "Версия",
 
+	"TID_HIGHEST": "Самое высокое",
+	"TID_HIGH": "Высокое",
+	"TID_MEDIUM": "Среднее",
+	"TID_LOW": "Низкое",
+
 	"TID_ERROR_WRONG_DOCUMENT_PATH": "Не удалось получить путь документа! Убедитесь что вы сохранили докуменнт и повторите попытку",
 	
     "TID_OUTPUT": "Вывод",
@@ -13,6 +18,8 @@
 	
 	"TID_TEXTURES_LABEL": "Текстуры",
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Записать внешнюю текстуру",
+	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Метод кодирования",
+	"TID_SWF_SETTINGS_TEXTURE_QUALITY": "Качество текстуры",
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Фактор уменьшения",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Высота текстуры",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Ширина текстуры",

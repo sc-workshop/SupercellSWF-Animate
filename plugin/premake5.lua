@@ -56,13 +56,20 @@ filter {"system:windows", "configurations:Debug"}
 links {
 	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
 }
+postbuildcommands {
+    '{COPYFILE} "ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/shared/opencv_world470d.dll" "%{cfg.targetdir}" '
+}
 targetdir "../dist/com.scwmake.SupercellSWF/Plugin/lib/win"
 
 filter {"system:windows", "configurations:Release"}
 links {
 	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
 }
+postbuildcommands {
+    '{COPYFILE} "ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/shared/opencv_world470.dll" "%{cfg.targetdir}" '
+}
 targetdir "bin/win/"
+
 
 filter "system:windows"
 includedirs { "ThirdParty/wxWidget/include/msvc" }

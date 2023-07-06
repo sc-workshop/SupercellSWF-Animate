@@ -14,7 +14,7 @@ export function publish() {
         const CSInterface = getInterface();
         
         (async function(){
-            await CSInterface.evalScript("fl.getDocumentDOM().publish()");
+            CSInterface.evalScript("fl.getDocumentDOM().publish()");
             CSInterface.closeExtension();
         })()
 

@@ -2,7 +2,7 @@ import { distFolder, bundleId } from "./manifest";
 import { removeDirs, log } from "./utils";
 import { join} from "path"
 import { execSync } from "child_process"
-import { existsSync } from "fs"
+import { existsSync, unlinkSync } from "fs"
 import cert from "./cert";
 import { platform } from "os"
 
@@ -17,6 +17,14 @@ const zxpCmd = platform() == "win32" ? `ZXPSignCmd` : `./ZXPSignCmd`;
 const cwdDir = join(__dirname, "zxp");
 const certPath = join(process.cwd(), "cert.p12");
 const output = join(process.cwd(), `${bundleId}.zxp`);
+
+if (existsSync(certPath)) {
+    unlinkSync(certPath)
+}
+
+if (existsSync(output)) {
+    unlinkSync(output);
+}
 
 execSync(`${zxpCmd} -selfSignedCert ${cert.countryCode} ${cert.province} ${cert.organization} ${bundleId} ${cert.password} "${certPath}"`, {cwd: cwdDir, stdio:[0, 1, 2]})
 

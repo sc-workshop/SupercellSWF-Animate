@@ -1,11 +1,22 @@
 import Locale from "../../../Localization";
-import { State, TextureDimensions, TextureScaleFactor } from "../../publisherState";
+import { State, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../publisherState";
 
 import BoolField from "../../Shared/BoolField";
 import SubMenu from "../../Shared/SubMenu";
 import EnumField from "../../Shared/EnumField";
 
+import { useState } from "react"
+
+const LocalizedTextureQuality = [
+    Locale.Get("TID_HIGHEST"),
+    Locale.Get("TID_HIGH"),
+    Locale.Get("TID_MEDIUM"),
+    Locale.Get("TID_LOW"),
+]
+
 export default function TextureSettings() {
+    const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(State.getParam("textureEncoding"));
+
     const exportToExternal = BoolField(
         Locale.Get("TID_SWF_SETTINGS_HAS_TEXTURE"),
         "external_texture_select",
@@ -14,6 +25,32 @@ export default function TextureSettings() {
             marginBottom: "6px"
         },
         value => (State.setParam("hasExternalTexture", value)),
+    );
+
+    const textureEncoding = EnumField(
+        Locale.Get("TID_SWF_SETTINGS_TEXTURE_ENCODING"),
+        "texture_encoding_method",
+        TextureEncoding,
+        State.getParam("textureEncoding"),
+        {
+            marginBottom: "6px"
+        },
+        value => {
+            const intValue = parseInt(value);
+            setTextureEncodingMethod(intValue);
+            State.setParam("textureEncoding", intValue);
+        },
+    );
+
+    const textureQuality = EnumField(
+        Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
+        "texture_quality_method",
+        LocalizedTextureQuality,
+        State.getParam("textureQuality"),
+        {
+            marginBottom: "6px"
+        },
+        value => (State.setParam("textureQuality", parseInt(value))),
     );
 
     const scaleFactor = EnumField(
@@ -56,6 +93,8 @@ export default function TextureSettings() {
             marginBottom: "6px"
         },
         exportToExternal,
+        textureEncoding,
+        textureEncodingMethod == TextureEncoding.Raw ? textureQuality : undefined,
         scaleFactor,
         textureWidth,
         textureHeight

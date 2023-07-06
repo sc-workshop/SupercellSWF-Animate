@@ -11,7 +11,6 @@ if (!isWindows && !isMac) {
 
 const args = process.argv;
 const isDev = args[2] == "development";
-console.log(args[2])
 const outputPath = args[3];
 mkdirSync(outputPath, { recursive: true });
 
@@ -30,15 +29,6 @@ const doctypeId = "com.scwmake.SupercellSWF";
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 function buildWindows() {
-    const sharedLibs = !isDev ?
-        [
-            "ThirdParty/OpenCV/lib/x86_64/windows/shared/opencv_world470.dll"
-        ]
-        :
-        [
-            "ThirdParty/OpenCV/lib/x86_64/windows/shared/opencv_world470d.dll"
-        ]
-
     const msBuildPath = which.sync("msbuild");
     if (msBuildPath.length <= 0) {
         throw new Error("Failed to find MSBuild executable");
@@ -52,7 +42,7 @@ function buildWindows() {
             throw new Error("Failed to find premake5 executable");
         }
 
-        execSync(`generate.bat`, {stdio: [0, 1, 2], cwd: join(__dirname, "scripts")});
+        execSync(`generate.bat`, { stdio: [0, 1, 2], cwd: join(__dirname, "scripts") });
     }
 
     progress("Building with MSBuild...");
@@ -62,7 +52,7 @@ function buildWindows() {
     }
 
     try {
-        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`, {stdio: [0, 1, 2]})
+        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`, { stdio: [0, 1, 2] })
     } catch (err) {
         throw processExecError(err);
     }
@@ -70,19 +60,9 @@ function buildWindows() {
     progress("Done");
 
     if (!isDev) {
-        const binaryPath = join(__dirname, "bin/win/Plugin.fcm");
-        if (!binaryPath) {
-            throw new Error("Failed to get binary");
-        }
-
-        const fcmOutputFolder = join(libPath, "win");
-        mkdirSync(fcmOutputFolder, { recursive: true });
-        copyFileSync(binaryPath, join(fcmOutputFolder, "plugin.fcm"));
-
-        for (const filepath of sharedLibs) {
-            copyFileSync(join(__dirname, filepath), join(fcmOutputFolder, basename(filepath)))
-        }
+        copyDir(join(__dirname, "bin/win"), join(libPath, "win"))
     }
+
 
 }
 
@@ -112,10 +92,12 @@ writeFileSync(
 )
 
 const dstResourceFolder = join(libPath, "res");
-if (isDev) {
-    makeLink(join(__dirname, "res"), dstResourceFolder);
-} else {
-    copyDir("res", dstResourceFolder)
+if (!existsSync(dstResourceFolder)) {
+    if (isDev) {
+        makeLink(join(__dirname, "res"), dstResourceFolder);
+    } else {
+        copyDir("res", dstResourceFolder)
+    }
 }
 
 if (isWindows) {

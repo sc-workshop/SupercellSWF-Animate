@@ -1,5 +1,5 @@
 @echo off
 cd ../../
-call git submodule update --recursive --remote --force
+call git submodule update --recursive --remote --force --init
 popd
 pause

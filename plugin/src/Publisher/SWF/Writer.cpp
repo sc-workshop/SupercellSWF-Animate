@@ -100,16 +100,16 @@ namespace sc {
 		}
 
 		void Writer::LoadExternal() {
-			if (!fs::exists(m_context.config.exportToExternalPath)) {
-				m_context.trace("External file does not exist");
-				return;
-			}
-
 			fs::path filepath = m_context.config.exportToExternalPath;
 			if (filepath.is_relative()) {
 				filepath = m_context.documentPath / filepath;
 			}
 
+			if (!fs::exists(filepath)) {
+				m_context.trace("External file does not exist");
+				return;
+			}
+			 
 			SupercellSWF swf;
 			swf.load(filepath);
 
@@ -257,10 +257,10 @@ namespace sc {
 							vertex->v(point.uv.second / (float)textures[item.textureIndex].rows);
 
 							vertex->x(
-								point.xy.first * matrix.a + point.xy.second * matrix.b + matrix.tx
+								(matrix.a * point.xy.first) + (-matrix.b * point.xy.second) + matrix.tx
 							);
 							vertex->y(
-								point.xy.first * matrix.c + point.xy.second * matrix.d + matrix.ty
+								(-matrix.c * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty
 							);
 
 							command->vertices.push_back(pShapeDrawBitmapCommandVertex(vertex));
@@ -286,8 +286,29 @@ namespace sc {
 						break;
 					}
 
-					texture->data = std::vector<uint8_t>(atlas.datastart, atlas.dataend);
+					texture->textureData = std::vector<uint8_t>(atlas.datastart, atlas.dataend);
 
+					if (m_context.config.textureEncoding == SWFTexture::TextureEncoding::Raw) {
+						switch (m_context.config.textureQuality)
+						{
+						case Quality::Highest:
+							texture->pixelFormat(SWFTexture::PixelFormat::RGBA8);
+							break;
+						case Quality::High:
+						case Quality::Medium:
+							texture->pixelFormat(SWFTexture::PixelFormat::RGBA4);
+							break;
+						case Quality::Low:
+							texture->pixelFormat(SWFTexture::PixelFormat::RGB5_A1);
+							break;
+						default:
+							break;
+						}
+					}
+					else {
+						texture->textureEncoding(m_context.config.textureEncoding);
+					}
+					
 					m_swf.textures.push_back(pSWFTexture(texture));
 				}
 

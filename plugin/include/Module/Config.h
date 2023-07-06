@@ -30,6 +30,13 @@ namespace sc {
 			UnusedMovieclips
 		};
 
+		enum class Quality : uint8_t {
+			Highest,
+			High,
+			Medium,
+			Low
+		};
+
 		struct Config {
 			PublisherMode mode = PublisherMode::Export;
 
@@ -42,8 +49,10 @@ namespace sc {
 
 			bool hasExternalTexture = 0;
 			uint8_t textureScaleFactor = 1;
+			Quality textureQuality = Quality::Highest;
 			uint32_t textureMaxWidth = 2048;
 			uint32_t textureMaxHeight = 2048;
+			SWFTexture::TextureEncoding textureEncoding = SWFTexture::TextureEncoding::Raw;
 
 			ExportsMode exportsMode = ExportsMode::AllMovieclips;
 

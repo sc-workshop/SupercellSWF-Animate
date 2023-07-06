@@ -36,13 +36,6 @@ export default function Settings() {
     )
     State.data["exportToExternal"] = isExportToExternal;
 
-    let childrens = [
-        compressionType,
-        exportToExternal,
-        ExportsSettings(),
-        TextureSettings()
-    ]
-
     let externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
         "export_to_external_path",
@@ -56,17 +49,16 @@ export default function Settings() {
         State.getParam("exportToExternalPath")
     )
 
-
-    if (isExportToExternal) {
-        childrens.splice(3, 0, externalFilePath);
-    }
-
     return SubMenu(
         Locale.Get("TID_ADDITIONAL_SETTINGS_LABEL"),
         "additional_settings",
         {
             marginBottom: "12px"
         },
-        childrens
+        compressionType,
+        exportToExternal,
+        isExportToExternal ? externalFilePath : undefined,
+        ExportsSettings(),
+        TextureSettings()
     )
 }
