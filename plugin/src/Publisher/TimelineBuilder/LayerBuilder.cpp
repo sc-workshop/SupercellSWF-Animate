@@ -24,7 +24,7 @@ namespace sc {
 
 			writer->AddFrameElement(
 				identifer,
-				0,
+				FCM::BlendMode::NORMAL_BLEND_MODE,
 				u"",
 				nullptr,
 				nullptr

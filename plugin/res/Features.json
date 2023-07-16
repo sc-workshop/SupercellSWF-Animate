@@ -1,75 +1,79 @@
 [
 	{
 		"name": "Stroke",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "Style",
-				"supported": false,
+				"supported": true,
 				"default": "Solid",
 				"values": [
 					{
+						"name": "Solid",
+						"supported": true
+					},
+					{
 						"name": "Hairline",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Dashed",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Dotted",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Ragged",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Stippled",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Hatched",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "PaintBrushed",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "Scale",
-				"supported": false,
+				"supported": true,
 				"default": "Normal",
 				"values": [
 					{
 						"name": "Normal",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Horizontal",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Vertical",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "None",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "VariableWidth",
-				"supported": false
+				"supported": true
 			}
 		]
 	},
 	{
 		"name": "Fill",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "GradientFlow",
@@ -78,22 +82,22 @@
 				"values": [
 					{
 						"name": "Extend",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Reflect",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Repeat",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "FillType",
-				"supported": false,
-				"default": "Solid",
+				"supported": true,
+				"default": "SolidFill",
 				"values": [
 					{
 						"name": "NoFill",
@@ -101,7 +105,7 @@
 					},
 					{
 						"name": "SolidFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "LinearGradientFill",
@@ -364,55 +368,55 @@
 					},
 					{
 						"name": "Layer",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Darken",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Add",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Multiply",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Lighten",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Screen",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Overlay",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "HardLight",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Subtract",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Difference",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Invert",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Alpha",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "Erase",
-						"supported": false
+						"supported": true
 					}
 				]
 			},

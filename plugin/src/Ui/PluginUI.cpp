@@ -32,10 +32,8 @@ namespace sc {
 					files.push_back(entry.path().wstring());
 				}
 
-				int fileIndex = 1 + (rand() % files.size());
-
 				wxAnimationCtrl* animationCtrl = new wxAnimationCtrl(ui, wxID_ANY, wxNullAnimation, wxPoint(340, 5));
-				animationCtrl->LoadFile(files[fileIndex - 1]);
+				animationCtrl->LoadFile(files[rand() % files.size()]);
 				animationCtrl->Play();
 			}
 

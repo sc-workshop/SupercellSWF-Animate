@@ -1,6 +1,8 @@
 #include "Publisher/ShapeGenerator.h"
 #include "Publisher/ResourcePublisher.h"
 
+#include "DOM/FrameElement/IShape.h"
+
 namespace sc {
 	namespace Adobe {
 		ShapeGenerator::ShapeGenerator(ResourcePublisher& resources) :
@@ -40,7 +42,9 @@ namespace sc {
 				frameElement->GetMatrix(transformMatrix);
 
 				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElement.m_Ptr;
+				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElement.m_Ptr;
 
+				// Bitmap
 				if (instance) {
 					FCM::AutoPtr<DOM::ILibraryItem> item;
 					instance->GetLibraryItem(item.m_Ptr);
@@ -76,8 +80,10 @@ namespace sc {
 						throw exception("Failed to get media type");
 					}
 				}
-				else {
-					throw exception("Failed to get FrameElement type");
+
+				// Fills / Stroke
+				else if (shape) {
+				
 				}
 
 			}
@@ -184,8 +190,9 @@ namespace sc {
 
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
 				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
+				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElements[i];
 
-				if (!instance) {
+				if (!instance || !shape) {
 					return false;
 				}
 

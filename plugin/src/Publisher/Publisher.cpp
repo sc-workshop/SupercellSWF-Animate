@@ -19,7 +19,7 @@ namespace sc {
 			}
 			
 			auto start = chrono::high_resolution_clock::now();
-			
+
 			app.window = new PluginUI(app);
 			wxApp::SetInstance(app.window);
 			wxEntry();

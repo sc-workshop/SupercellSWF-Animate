@@ -29,7 +29,8 @@
 #include "Publisher/ShapeGenerator.h"
 #include "Publisher/TimelineBuilder/Builder.h"
 
-#include "Publisher/TimelineBuilder/TextField.h"
+#include "Publisher/TimelineBuilder/FrameElements/TextField.h"
+#include "Publisher/TimelineBuilder/FrameElements/FilledShape.h"
 
 // Writers
 #include "Publisher/Shared/SharedWriter.h"
@@ -49,7 +50,6 @@ namespace sc {
 
         private:
             static void GetItemsPaths(AppContext& resources, FCM::FCMListPtr libraryItems, std::vector<std::u16string>& paths);
-            //static void PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources);
 
         public:
             SharedWriter* m_writer;
@@ -69,6 +69,10 @@ namespace sc {
                                   // Info / Id
             std::vector<pair<TextFieldInfo, uint16_t>> m_textfieldDict;
 
+                                // Shape / Id
+            std::vector<pair<FilledShape, uint16_t>> m_filledShapeDict;
+
+                                // Name / Usage count
             std::unordered_map<u16string, uint32_t> m_symbolsUsage;
 
             uint32_t m_id = 0;
@@ -84,6 +88,7 @@ namespace sc {
                 timelineBuilder = shared_ptr<TimelineBuilder>(new TimelineBuilder(*this));
                 shapeGenerator = shared_ptr<ShapeGenerator>(new ShapeGenerator(*this));
             }
+
 
             uint16_t AddLibraryItem(
                 std::u16string name,
@@ -114,6 +119,10 @@ namespace sc {
                 TextFieldInfo field
             );
 
+            uint16_t AddFilledShape(
+                FilledShape shape
+            );
+
 
             uint16_t GetIdentifer(
                 u16string name
@@ -126,6 +135,11 @@ namespace sc {
             uint16_t GetIdentifer(
                 TextFieldInfo field
             );
+
+            uint16_t GetIdentifer(
+                FilledShape shape
+            );
+
 
             void AddCachedBitmap(u16string name, cv::Mat image);
 

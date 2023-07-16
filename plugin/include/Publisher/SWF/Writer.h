@@ -18,6 +18,7 @@ namespace sc {
 		struct Sprite {
 			cv::Mat image;
 			DOM::Utils::MATRIX2D matrix;
+			std::vector<Point2D> contour;
 		};
 
 		class Writer : public SharedWriter {

@@ -22,7 +22,7 @@ namespace sc {
 			uint16_t GetInstanceIndex(
 				uint16_t elementsCount,
 				uint16_t id,
-				uint8_t blending,
+				FCM::BlendMode blending,
 				std::string name
 			);
 
@@ -39,7 +39,7 @@ namespace sc {
 
 			void AddFrameElement(
 				uint16_t id,
-				uint8_t blending,
+				FCM::BlendMode blending,
 				std::u16string name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color

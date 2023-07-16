@@ -3,7 +3,7 @@
 #include "SharedMovieclipWriter.h"
 #include "SharedShapeWriter.h"
 #include "Module/AppContext.h"
-#include "Publisher/TimelineBuilder/TextField.h"
+#include "Publisher/TimelineBuilder/FrameElements/TextField.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;

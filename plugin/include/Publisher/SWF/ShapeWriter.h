@@ -15,7 +15,9 @@ namespace sc {
 
 		public:
 			void Init(Writer* writer);
-			void AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix);
+			void AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix);
+			void AddFilledShape(const FilledShape& shape);
+			void AddFilledShapeRegion(const FilledShapeRegion& region);
 
 			void Finalize(uint16_t id);
 		};

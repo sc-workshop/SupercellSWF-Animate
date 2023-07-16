@@ -7,11 +7,11 @@
 #include <tuple>
 
 // FCM stuff
-#include <FCMTypes.h>
-#include <DOM/Service/Tween/IPropertyIDs.h>
+#include "FCMTypes.h"
+#include "DOM/Service/Tween/IPropertyIDs.h"
 
 // MATRIX2D, COLOR_MATRIX
-#include <DOM/Utils/DOMTypes.h>
+#include "DOM/Utils/DOMTypes.h"
 
 // Tweeners stuff
 #include <DOM/ITween.h>
@@ -30,6 +30,9 @@
 
 // Writer
 #include "Publisher/Shared/SharedWriter.h"
+
+// Fills
+#include "FrameElements/FilledShape.h"
 
 using namespace DOM::Service::Tween;
 
@@ -51,7 +54,7 @@ namespace sc {
 			u16string m_label = u"";
 
 			// Frane symbols data in resource palette
-			vector<tuple<uint16_t, uint8_t, u16string>> m_elementsData;
+			vector<tuple<uint16_t, FCM::BlendMode, u16string>> m_elementsData;
 
 			// Transforms for each frame element
 			vector<shared_ptr<MATRIX2D>> m_matrices;

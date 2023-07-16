@@ -16,7 +16,7 @@ namespace sc {
 		uint16_t MovieclipWriter::GetInstanceIndex(
 			uint16_t elementsCount,
 			uint16_t id,
-			uint8_t blending,
+			FCM::BlendMode blending,
 			std::string name
 		) {
 
@@ -29,7 +29,7 @@ namespace sc {
 				if (
 					instance->id == id &&
 					instance->name == name &&
-					instance->blend == blending) {
+					instance->blend == (DisplayObjectInstance::BlendMode)blending) {
 					frameInstancesOffset++;
 				}
 			}
@@ -40,7 +40,7 @@ namespace sc {
 
 				if (instance->id == id &&
 					instance->name == name &&
-					instance->blend == blending) {
+					instance->blend == (DisplayObjectInstance::BlendMode)blending) {
 					if (frameInstancesOffset != 0) {
 						frameInstancesOffset--;
 						continue;
@@ -52,7 +52,7 @@ namespace sc {
 
 			DisplayObjectInstance* instance = new DisplayObjectInstance();
 			instance->id = id;
-			instance->blend = blending;
+			instance->blend = (DisplayObjectInstance::BlendMode)blending;
 			instance->name = name;
 
 			m_object->instances.push_back(
@@ -78,7 +78,7 @@ namespace sc {
 
 		void MovieclipWriter::AddFrameElement(
 			uint16_t id,
-			uint8_t blending,
+			FCM::BlendMode blending,
 			std::u16string name,
 
 			DOM::Utils::MATRIX2D* matrix,

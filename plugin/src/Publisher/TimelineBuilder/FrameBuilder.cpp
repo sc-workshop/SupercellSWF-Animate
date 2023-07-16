@@ -54,7 +54,7 @@ namespace sc {
 				// Symbol info
 				uint16_t id = 0xFFFF;
 				u16string name = u"";
-				uint8_t blendMode = 0; // TODO
+				FCM::BlendMode blendMode = FCM::BlendMode::NORMAL_BLEND_MODE; // TODO
 
 				// Base transform
 				MATRIX2D* matrix = NULL;
@@ -67,6 +67,7 @@ namespace sc {
 
 				FCM::AutoPtr<DOM::FrameElement::IMovieClip> movieClipElement = frameElement;
 				FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbolItem = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IShape> filledShapeItem = frameElement;
 
 				// Symbol
 				if (libraryElement) {
@@ -100,6 +101,8 @@ namespace sc {
 						movieClipElement->GetName(&instanceNamePtr);
 						name = (const char16_t*)instanceNamePtr;
 						m_resources.context.falloc->Free(instanceNamePtr);
+ 
+						movieClipElement->GetBlendMode(blendMode);
 					}
 				}
 
@@ -204,12 +207,25 @@ namespace sc {
 						id = m_resources.AddTextField(textfield);
 					}
 				}
+
+				// Fills / Stroke
+				else if (filledShapeItem) {
+					FilledShape shape(m_resources.context, filledShapeItem);
+
+					id = m_resources.GetIdentifer(shape);
+
+					if (id == UINT16_MAX) {
+						id = m_resources.AddFilledShape(shape);
+					}
+				}
 				else {
-					m_resources.context.trace("Unknown resource in scene");
+					m_resources.context.trace("Unknown resource in library. Make sure symbols don't contain unsupported elements.");
+					continue;
 				}
 
 				if (id == 0xFFFF) {
-					throw exception("Failed to get frame element id");
+					m_resources.context.trace("Failed to get object id. Invalid FrameElement.");
+					continue;
 				}
 
 				m_elementsData.push_back({

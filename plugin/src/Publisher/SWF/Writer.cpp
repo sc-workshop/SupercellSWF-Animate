@@ -246,24 +246,53 @@ namespace sc {
 					for (uint16_t i = 0; shape->commands.size() > i; i++) {
 						ShapeDrawBitmapCommand* command = new ShapeDrawBitmapCommand();
 						AtlasGeneratorItem& item = items[itemIndex];
-						DOM::Utils::MATRIX2D& matrix = sprites[itemIndex].matrix;
+						Sprite sprite = sprites[itemIndex];
+						DOM::Utils::MATRIX2D& matrix = sprite.matrix;
 
 						command->textureIndex(item.textureIndex);
 
-						for (auto point : item.polygon) {
+						/*uint32_t vertexCount = sprite.contour.empty() ? item.polygon.size() : sprite.contour.size();
+						for (uint32_t i = 0; vertexCount > i; i++) {
 							ShapeDrawBitmapCommandVertex* vertex = new ShapeDrawBitmapCommandVertex();
 
-							vertex->u(point.uv.first / (float)textures[item.textureIndex].cols);
-							vertex->v(point.uv.second / (float)textures[item.textureIndex].rows);
+							uint32_t x = sprite.contour.empty() ? 
+						}*/
 
-							vertex->x(
-								(matrix.a * point.xy.first) + (-matrix.b * point.xy.second) + matrix.tx
-							);
-							vertex->y(
-								(-matrix.c * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty
-							);
+						if (sprite.contour.empty()) {
+							for (auto point : item.polygon) {
+								ShapeDrawBitmapCommandVertex* vertex = new ShapeDrawBitmapCommandVertex();
 
-							command->vertices.push_back(pShapeDrawBitmapCommandVertex(vertex));
+								vertex->u(point.uv.first / (float)textures[item.textureIndex].cols);
+								vertex->v(point.uv.second / (float)textures[item.textureIndex].rows);
+
+								vertex->x(
+									(matrix.a * point.xy.first) + (-matrix.b * point.xy.second) + matrix.tx
+								);
+								vertex->y(
+									(-matrix.c * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty
+								);
+
+								command->vertices.push_back(pShapeDrawBitmapCommandVertex(vertex));
+							}
+						}
+						else {
+							float u = item.polygon[0].uv.first / (float)textures[item.textureIndex].cols;
+							float v = item.polygon[0].uv.second / (float)textures[item.textureIndex].rows;
+							for (const Point2D& point : sprites[itemIndex].contour) {
+								ShapeDrawBitmapCommandVertex* vertex = new ShapeDrawBitmapCommandVertex();
+
+								vertex->u(u);
+								vertex->v(v);
+
+								vertex->x(
+									(matrix.a * point.x) + (-matrix.b * point.y) + matrix.tx
+								);
+								vertex->y(
+									(-matrix.c * point.x) + (matrix.d * point.y) + matrix.ty
+								);
+
+								command->vertices.push_back(pShapeDrawBitmapCommandVertex(vertex));
+							}
 						}
 
 						itemIndex++;

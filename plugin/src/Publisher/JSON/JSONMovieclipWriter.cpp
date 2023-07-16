@@ -29,13 +29,61 @@ namespace sc {
 
 		void JSONMovieclipWriter::AddFrameElement(
 			uint16_t id,
-			uint8_t blending,
+			FCM::BlendMode blending,
 			std::u16string name,
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
 		) {
 			ordered_json frameElement = {};
 			frameElement["id"] = id;
+
+			switch (blending)
+			{
+			case FCM::BlendMode::ADD_BLEND_MODE:
+				frameElement["blend"] = "Add";
+				break;
+			case FCM::BlendMode::ALPHA_BLEND_MODE:
+				frameElement["blend"] = "Alpha";
+				break;
+			case FCM::BlendMode::DARKEN_BLEND_MODE:
+				frameElement["blend"] = "Darken";
+				break;
+			case FCM::BlendMode::DIFFERENCE_BLEND_MODE:
+				frameElement["blend"] = "Difference";
+				break;
+			case FCM::BlendMode::ERASE_BLEND_MODE:
+				frameElement["blend"] = "Erase";
+				break;
+			case FCM::BlendMode::HARDLIGHT_BLEND_MODE:
+				frameElement["blend"] = "Hardlight";
+				break;
+			case FCM::BlendMode::INVERT_BLEND_MODE:
+				frameElement["blend"] = "Invert";
+				break;
+			case FCM::BlendMode::LAYER_BLEND_MODE:
+				frameElement["blend"] = "Layer";
+				break;
+			case FCM::BlendMode::LIGHTEN_BLEND_MODE:
+				frameElement["blend"] = "Lighten";
+				break;
+			case FCM::BlendMode::MULTIPLY_BLEND_MODE:
+				frameElement["blend"] = "Mulitply";
+				break;
+			case FCM::BlendMode::NORMAL_BLEND_MODE:
+				frameElement["blend"] = "Normal";
+				break;
+			case FCM::BlendMode::OVERLAY_BLEND_MODE:
+				frameElement["blend"] = "Overlay";
+				break;
+			case FCM::BlendMode::SCREEN_BLEND_MODE:
+				frameElement["blend"] = "Screen";
+				break;
+			case FCM::BlendMode::SUBTRACT_BLEND_MODE:
+				frameElement["blend"] = "Subtract";
+				break;
+			default:
+				break;
+			}
 
 			if (!name.empty()) {
 				frameElement["name"] = Utils::ToUtf8(name);

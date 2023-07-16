@@ -66,59 +66,6 @@ namespace sc {
             context.close();
         }
 
-        /*
-        void ResourcePublisher::PublishItems(FCM::FCMListPtr libraryItems, ResourcePublisher& resources) {
-            uint32_t itemCount = 0;
-            libraryItems->Count(itemCount);
-
-            uint32_t itemIndex = itemCount;
-            for (uint32_t i = 0; i < itemCount; i++)
-            {
-                if (resources.context.window->ui->aboutToExit) {
-                    resources.context.close();
-                    return;
-                }
-
-                FCM::AutoPtr<DOM::ILibraryItem> item = libraryItems[i];
-
-                FCM::StringRep16 itemNamePtr;
-                item->GetName(&itemNamePtr);
-                u16string itemName = (const char16_t*)itemNamePtr;
-                resources.context.falloc->Free(itemNamePtr);
-
-                FCM::AutoPtr<DOM::LibraryItem::IFolderItem> folderItem = item;
-                if (folderItem)
-                {
-                    FCM::FCMListPtr childrens;
-                    folderItem->GetChildren(childrens.m_Ptr);
-
-                    // Export all its children
-                    ResourcePublisher::PublishItems(childrens, resources);
-                }
-                else
-                {
-                    FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
-                    if (!symbolItem) continue;
-
-                    FCM::AutoPtr<FCM::IFCMDictionary> dict;
-                    item->GetProperties(dict.m_Ptr);
-
-                    std::string symbolType;
-                    Utils::ReadString(dict, kLibProp_SymbolType_DictKey, symbolType);
-                    if (resources.context.config.exportsMode != ExportsMode::UnusedSymbols) {
-                        if (symbolType != "MovieClip") continue;
-                    }
-                    
-                    uint16_t symbolIdentifer = resources.GetIdentifer(itemName);
-
-                    if (symbolIdentifer != UINT16_MAX) continue;
-
-                    resources.AddSymbol(itemName, symbolItem, symbolType, true);
-                }
-            }
-        };
-        */
-
         void ResourcePublisher::GetItemsPaths(AppContext& context, FCM::FCMListPtr libraryItems, std::vector<std::u16string>& paths) {
             uint32_t itemCount = 0;
             libraryItems->Count(itemCount);
@@ -284,6 +231,21 @@ namespace sc {
             }
         }
 
+        uint16_t ResourcePublisher::AddFilledShape(
+            FilledShape filledShape
+        ) {
+            pSharedShapeWriter shape = m_writer->AddShape();
+
+            uint16_t identifer = m_id++;
+
+            shape->AddFilledShape(filledShape);
+
+            shape->Finalize(identifer);
+            m_filledShapeDict.push_back({ filledShape , identifer });
+
+            return identifer;
+        }
+
         uint16_t ResourcePublisher::GetIdentifer(
             sc::MovieClipModifier::Type type
         ) {
@@ -302,6 +264,18 @@ namespace sc {
             for (auto textfield : m_textfieldDict) {
                 if (textfield.first == field) {
                     return textfield.second;
+                }
+            }
+
+            return UINT16_MAX;
+        }
+
+        uint16_t ResourcePublisher::GetIdentifer(
+            FilledShape shape
+        ) {
+            for (auto shapePair : m_filledShapeDict) {
+                if (shapePair.first == shape) {
+                    return shapePair.second;
                 }
             }
 

@@ -14,7 +14,7 @@ namespace sc {
 			}
 		}
 
-		void JSONShapeWriter::AddGraphic(cv::Mat& image, DOM::Utils::MATRIX2D matrix) {
+		void JSONShapeWriter::AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) {
 			uint32_t imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
 			
@@ -24,9 +24,53 @@ namespace sc {
 			cv::imwrite(bitmapOutputPath.string(), image);
 
 			m_bitmaps.push_back({
+				{"type", "graphic"},
 				{"path", bitmapBasename},
 				{"matrix", Utils::ToString(matrix)}
 			});
+		}
+
+		void JSONShapeWriter::AddFilledShape(const FilledShape& shape) {
+			std::function processRegions = [](std::vector<FilledShapeRegion> regions) {
+				json result = json::array();
+
+				for (const FilledShapeRegion& region : regions) {
+
+					json points = json::array();
+					json holes = json::array();
+
+					if (region.contour) {
+						for (const Point2D& point : region.contour->points) {
+							points.push_back(json::array({ point.x, point.y }));
+						}
+					}
+					
+					for (auto hole : region.holes) {
+						if (hole) {
+							json holePoints = json::array();
+							for (const Point2D& point : hole->points) {
+								holePoints.push_back(json::array({ point.x, point.y }));
+							}
+							holes.push_back(holePoints);
+						}
+					}
+
+					result.push_back({
+						{"type", (uint8_t)region.type},
+						{"points", points},
+						{"holes", holes}
+					});
+				}
+
+				return result;
+			};
+
+			ordered_json shapeData;
+			shapeData["type"] = "shape";
+			shapeData["fills"] = processRegions(shape.fill);
+			shapeData["stroke"] = processRegions(shape.stroke);
+
+			m_bitmaps.push_back(shapeData);
 		}
 
 		void JSONShapeWriter::Finalize(uint16_t id) {
