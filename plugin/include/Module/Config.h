@@ -43,7 +43,7 @@ namespace sc {
 			fs::path output = "";
 			PublisherMethod method = PublisherMethod::SWF;
 
-			sc::CompressionSignature compression = sc::CompressionSignature::LZMA;
+			sc::CompressionSignature compression = sc::CompressionSignature::ZSTD;
 			bool exportToExternal = false;
 			fs::path exportToExternalPath = "";
 
@@ -55,6 +55,9 @@ namespace sc {
 			SWFTexture::TextureEncoding textureEncoding = SWFTexture::TextureEncoding::Raw;
 
 			ExportsMode exportsMode = ExportsMode::AllMovieclips;
+
+			bool filledShapeOptimization = true;
+			bool hasPrecisionMatrices = false;
 
 			static Config FromDict(const FCM::PIFCMDictionary dict);
 		};

@@ -74,7 +74,6 @@ namespace sc {
 						else {
 							throw exception("Failed to get media type");
 						}
-						
 					}
 					else {
 						throw exception("Failed to get media type");
@@ -83,9 +82,10 @@ namespace sc {
 
 				// Fills / Stroke
 				else if (shape) {
-				
-				}
+					FilledShape shape(m_resources.context, shape);
 
+					writer->AddFilledShape(shape, false);
+				}
 			}
 		}
 
@@ -156,7 +156,6 @@ namespace sc {
 
 			image = cv::imread(tempFile.string(), cv::IMREAD_UNCHANGED);
 		}
-		
 
 		void ShapeGenerator::Generate(pSharedShapeWriter writer, DOM::ITimeline* timeline) {
 			FCM::FCMListPtr layers;
@@ -247,7 +246,6 @@ namespace sc {
 		bool ShapeGenerator::ValidateLayerList(
 			FCM::FCMListPtr layers
 		) {
-
 			uint32_t layerCount = 0;
 			layers->Count(layerCount);
 
@@ -263,7 +261,6 @@ namespace sc {
 		}
 
 		bool ShapeGenerator::Validate(DOM::ITimeline* timeline) {
-
 			FCM::FCMListPtr layers;
 			timeline->GetLayers(layers.m_Ptr);
 

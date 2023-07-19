@@ -17,7 +17,7 @@ namespace sc {
 		public:
 			virtual void AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) = 0;
 
-			virtual void AddFilledShape(const FilledShape& shape) = 0; // TODO: nine slice
+			virtual void AddFilledShape(const FilledShape& shape, bool isNineSlice) = 0; // TODO: nine slice
 
 			virtual void Finalize(uint16_t id) = 0;
 		};

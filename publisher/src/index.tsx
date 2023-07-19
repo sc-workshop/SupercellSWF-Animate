@@ -79,12 +79,14 @@ function App() {
   if (publisherStateData !== undefined && isFontLoaded) {
     State.restore(publisherStateData);
 
-    return createElement("body",
+    return createElement(
+      "body",
       {
         key: "publisher_body",
         style: {
           fontFamily: "PublisherFont",
-          backgroundColor: `#${AppColor.toString(16)}`
+          backgroundColor: `#${AppColor.toString(16)}`,
+          position: "relative"
         }
       },
       <Publisher></Publisher>

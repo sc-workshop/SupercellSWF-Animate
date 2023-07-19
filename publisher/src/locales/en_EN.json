@@ -1,19 +1,17 @@
 {
     "TID_VERSION": "Version",
+	"TID_PUBLISH": "Publish",
 
 	"TID_HIGHEST": "Highest",
 	"TID_HIGH": "High",
 	"TID_MEDIUM": "Medium",
 	"TID_LOW": "Low",
-
-	"TID_ERROR_WRONG_DOCUMENT_PATH": "Failed to get document path! Make sure you save your document",
 	
     "TID_OUTPUT": "Output",
 	"TID_PUBLISH_METHOD": "Output type",
 
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Additional",
-    "TID_SWF_SETTINGS_COMPRESSION": "Compression method",
-	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Export document to external file",
+    "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Export document to external file",
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "External file",
 	
 	"TID_TEXTURES_LABEL": "Textures",
@@ -27,5 +25,11 @@
 	"TID_EXPORTS_LABEL": "Export names",
 	"TID_SWF_SETTINGS_EXPORTS_MODE": "Export name selector mode",
 	"TID_EXPORTS_ALL_MOVIES": "All MovieClips",
-	"TID_EXPORTS_ALL_UNUSED_MOVIES": "All unused MovieClips"
+	"TID_EXPORTS_ALL_UNUSED_MOVIES": "All unused MovieClips",
+
+	"TID_OTHER_LABEL": "Others",
+	"TID_SWF_SETTINGS_COMPRESSION": "Compression method",
+	"TID_SWF_SETTINGS_FILLED_SHAPE_OPTIMIZATION": "Fill and stroke optimization",
+	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precise matrices"
+	
 }

@@ -741,11 +741,11 @@
 	},
 	{
 		"name": "PaintBrush",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "GPUBrush",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Camera",

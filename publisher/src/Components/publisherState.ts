@@ -53,6 +53,8 @@ interface PublisherStateData {
 
     // Additional settings
     compressionMethod: CompressionMethods,
+    filledShapeOptimization: boolean,
+    hasPrecisionMatrices: boolean,
 
     // Export to another file settings
     exportToExternal: boolean,
@@ -77,6 +79,8 @@ export class PublisherState {
         method: PublisherMethods.SWF,
 
         compressionMethod: CompressionMethods.LZMA,
+        filledShapeOptimization: true,
+        hasPrecisionMatrices: false,
 
         exportToExternal: false,
         exportToExternalPath: "",

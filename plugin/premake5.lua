@@ -19,19 +19,22 @@ includedirs {
     "include/AnimateSDK/app/include/interfaces",
     "include/AnimateSDK/core/include/interfaces",
 
-    -- ScAnimate
+    -- Sprites
     "include",
     "ThirdParty/AtlasGenerator/include",
 	"ThirdParty/OpenCV/include",
 
-    -- SC
+    -- SC SWF
     "ThirdParty/SC/dependencies/Bytestream",
     "ThirdParty/SC/dependencies/Compression/include",
     "ThirdParty/SC/include",
 	
 	-- UI
 	"ThirdParty/wxWidget/include",
-	"ui/include"
+	"ui/include",
+	
+	-- Fills
+	"ThirdParty/CDT/include"
 }
 
 links {
@@ -42,10 +45,8 @@ links {
     "LZHAM",
     "Zstandard",
 
-    -- ScAnimate libs
+    -- Sprites
     "AtlasGenerator",
-
-    -- ZIP
 
     -- FLA
 }

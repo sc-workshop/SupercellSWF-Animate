@@ -17,7 +17,7 @@ namespace sc {
 		void JSONShapeWriter::AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) {
 			uint32_t imageIndex = m_writer->imageCount;
 			m_writer->imageCount++;
-			
+
 			std::string bitmapBasename = std::to_string(imageIndex) + ".png";
 			fs::path bitmapOutputPath = m_writer->imageFolder / bitmapBasename;
 
@@ -27,15 +27,14 @@ namespace sc {
 				{"type", "graphic"},
 				{"path", bitmapBasename},
 				{"matrix", Utils::ToString(matrix)}
-			});
+				});
 		}
 
-		void JSONShapeWriter::AddFilledShape(const FilledShape& shape) {
+		void JSONShapeWriter::AddFilledShape(const FilledShape& shape, bool isNineSlice) {
 			std::function processRegions = [](std::vector<FilledShapeRegion> regions) {
 				json result = json::array();
 
 				for (const FilledShapeRegion& region : regions) {
-
 					json points = json::array();
 					json holes = json::array();
 
@@ -44,7 +43,7 @@ namespace sc {
 							points.push_back(json::array({ point.x, point.y }));
 						}
 					}
-					
+
 					for (auto hole : region.holes) {
 						if (hole) {
 							json holePoints = json::array();
@@ -59,7 +58,7 @@ namespace sc {
 						{"type", (uint8_t)region.type},
 						{"points", points},
 						{"holes", holes}
-					});
+						});
 				}
 
 				return result;
@@ -77,10 +76,9 @@ namespace sc {
 			ordered_json root = ordered_json::object({
 				{"id", id},
 				{"bitmaps", m_bitmaps}
-			});
+				});
 
 			m_writer->AddShape(root);
-
 		}
 	}
 }

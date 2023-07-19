@@ -10,20 +10,10 @@ import BoolField from "../../Shared/BoolField";
 import FileField from "../../Shared/FileField";
 import { useState } from "react";
 import ExportsSettings from "./exports";
+import OtherSettings from "./others";
 
 export default function Settings() {
     const [isExportToExternal, setExportToExternal] = useState(State.getParam("exportToExternal"));
-
-    const compressionType = EnumField(
-        Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
-        "file_compression_select",
-        CompressionMethods,
-        State.getParam("compressionMethod"),
-        {
-            marginBottom: "6px"
-        },
-        value => (State.setParam("compressionMethod", parseInt(value))),
-    )
 
     const exportToExternal = BoolField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL"),
@@ -53,12 +43,12 @@ export default function Settings() {
         Locale.Get("TID_ADDITIONAL_SETTINGS_LABEL"),
         "additional_settings",
         {
-            marginBottom: "12px"
+            marginBottom: "20%"
         },
-        compressionType,
         exportToExternal,
         isExportToExternal ? externalFilePath : undefined,
         ExportsSettings(),
-        TextureSettings()
+        TextureSettings(),
+        OtherSettings()
     )
 }

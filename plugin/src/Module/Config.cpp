@@ -16,12 +16,16 @@ namespace sc {
 
 			result.output = fs::path(Utils::ToUtf16(data["output"]));
 
+			result.filledShapeOptimization = data["filledShapeOptimization"];
+			result.hasPrecisionMatrices = data["hasPrecisionMatrices"];
+
 			result.exportToExternal = data["exportToExternal"];
 			result.exportToExternalPath = fs::path(Utils::ToUtf16(data["exportToExternalPath"]));
 
 			result.hasExternalTexture = data["hasExternalTexture"];
 			result.textureMaxWidth = data["textureMaxWidth"];
 			result.textureMaxHeight = data["textureMaxHeight"];
+
 
 			if (data["method"].is_number_unsigned()) {
 				result.method = (PublisherMethod)data["method"];

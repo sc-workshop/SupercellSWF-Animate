@@ -242,21 +242,15 @@ namespace sc {
 				textureProgress->SetLabel(wxStringU16(m_context.locale.Get("TID_STATUS_TEXTURE_SAVE")));
 
 				uint16_t itemIndex = 0;
+				uint32_t spriteIndex = 0;
 				for (pShape& shape : m_swf.shapes) {
 					for (uint16_t i = 0; shape->commands.size() > i; i++) {
 						ShapeDrawBitmapCommand* command = new ShapeDrawBitmapCommand();
 						AtlasGeneratorItem& item = items[itemIndex];
-						Sprite sprite = sprites[itemIndex];
+						Sprite sprite = sprites[spriteIndex++];
 						DOM::Utils::MATRIX2D& matrix = sprite.matrix;
 
 						command->textureIndex(item.textureIndex);
-
-						/*uint32_t vertexCount = sprite.contour.empty() ? item.polygon.size() : sprite.contour.size();
-						for (uint32_t i = 0; vertexCount > i; i++) {
-							ShapeDrawBitmapCommandVertex* vertex = new ShapeDrawBitmapCommandVertex();
-
-							uint32_t x = sprite.contour.empty() ? 
-						}*/
 
 						if (sprite.contour.empty()) {
 							for (auto point : item.polygon) {
@@ -278,7 +272,14 @@ namespace sc {
 						else {
 							float u = item.polygon[0].uv.first / (float)textures[item.textureIndex].cols;
 							float v = item.polygon[0].uv.second / (float)textures[item.textureIndex].rows;
-							for (const Point2D& point : sprites[itemIndex].contour) {
+
+							if (sprite.contour.size() < 4) {
+								while (sprite.contour.size() != 4) {
+									sprite.contour.push_back(sprite.contour[sprite.contour.size() - 1]);
+								}
+							}
+
+							for (const Point2D& point : sprite.contour) {
 								ShapeDrawBitmapCommandVertex* vertex = new ShapeDrawBitmapCommandVertex();
 
 								vertex->u(u);

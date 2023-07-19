@@ -1,50 +1,50 @@
 import { createElement } from 'react';
 import { publish } from './Components';
-import TextField from './Components/Shared/TextField';
 import { Header } from './Components/Publisher/Header';
 import Settings from './Components/Publisher/Settings';
 import BasicSettings from './Components/Publisher/BasicSettings';
+import Button from './Components/Shared/Button';
 import Locale from './Localization';
-import FileField from './Components/Shared/FileField';
-import { State } from './Components/publisherState';
 
 function Publisher() {
-  const delim = <hr key="header_delin" style={{
+  const delim = <hr key="header_delim" style={{
     width: "99%",
     border: "2px solid #484848",
   }} />;
 
-  const publishButtonLabel = TextField(
-    "Publish",
+  const publishButton = Button(
+    Locale.Get("TID_PUBLISH"),
+    "publish_start",
     {
-      color: "white",
-      textShadow: "1px 1px black"
-    }
+      margin: "10px"
+    },
+    publish
   );
 
-  const publishButton = createElement(
-    "button",
+  const buttonContainer = createElement(
+    "div",
     {
-      key: "publish_button",
+      key: "button_container",
       style: {
-        bottom: "25px",
-        width: "100px",
-        height: "35px",
-        position: "absolute",
-        border: "3px solid white",
-        borderRadius: "20px",
-        background: "rgba(0,0,0,0.0)",
-      },
-      onClick: publish
+        background: "rgba(25,25,25,255)",
+        width: "100%",
+        height: "10%",
+        display: "flex",
+        flexDirection: "column",
+        bottom: "0",
+        left: "0",
+        position: "fixed"
+      }
     },
-    publishButtonLabel
+    publishButton
   )
 
   return createElement("div",
     {
       id: "publisher",
       style: {
-
+        width: "100%",
+        height: "100%"
       },
       children: [
         Header(),
@@ -54,7 +54,7 @@ function Publisher() {
         BasicSettings(),
         Settings(),
 
-        publishButton
+        buttonContainer
       ]
     });
 }

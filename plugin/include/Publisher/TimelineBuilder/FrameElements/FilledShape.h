@@ -25,18 +25,21 @@ using namespace DOM::Service::Shape;
 namespace sc {
 	namespace Adobe {
 		struct Point2D {
+			Point2D() {};
+			Point2D(float x, float y) : x(x), y(y) {};
+
 			bool operator==(const Point2D& other) const;
 
 			bool operator!=(const Point2D& other) const {
 				return !(*this == other);
 			}
 
-			float x;
-			float y;
+			float x = 0;
+			float y = 0;
 		};
 
 		struct FilledShapePath {
-			FilledShapePath(FCM::AutoPtr<IPath> path);
+			FilledShapePath(AppContext& context, FCM::AutoPtr<IPath> path);
 
 			bool operator==(const FilledShapePath& other) const;
 
@@ -54,7 +57,7 @@ namespace sc {
 		};
 
 		struct FilledShapeRegion {
-			FilledShapeRegion(FCM::AutoPtr<IFilledRegion> region);
+			FilledShapeRegion(AppContext& context, FCM::AutoPtr<IFilledRegion> region);
 
 			bool operator==(const FilledShapeRegion& other) const;
 
