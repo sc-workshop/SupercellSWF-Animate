@@ -64,9 +64,6 @@ Also note that all symbols from guide layer will be ignored and will only be use
 - Classic / Animation tweens ✅  
 Absolutely all types of animation tweens and their types of interpolation are supported.
 
-- Groups ❌  
- TODO
-
  - Shape animation ❌  
  TODO 
 

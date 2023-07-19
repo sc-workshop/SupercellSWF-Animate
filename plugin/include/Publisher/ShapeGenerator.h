@@ -48,6 +48,8 @@ namespace sc {
 
 			// Validate Stuff
 
+			static bool ValidateLayerFrameElements(FCM::FCMListPtr frameElements);
+
 			static bool ValidateLayerItems(
 				FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 			);

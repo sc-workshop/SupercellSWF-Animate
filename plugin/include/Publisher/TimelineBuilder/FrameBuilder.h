@@ -14,19 +14,20 @@
 #include "DOM/Utils/DOMTypes.h"
 
 // Tweeners stuff
-#include <DOM/ITween.h>
-#include <DOM/Service/Tween/ITweenerService.h>
-#include <DOM/Service/Tween/IGeometricTweener.h>
-#include <DOM/Service/Tween/IColorTweener.h>
+#include "DOM/ITween.h"
+#include "DOM/Service/Tween/ITweenerService.h"
+#include "DOM/Service/Tween/IGeometricTweener.h"
+#include "DOM/Service/Tween/IColorTweener.h"
 
 // Symbols
-#include <DOM/ILibraryItem.h>
-#include <DOM/FrameElement/IFrameDisplayElement.h>
-#include <DOM/FrameElement/IInstance.h>
-#include <DOM/FrameElement/ISymbolInstance.h>
+#include "DOM/ILibraryItem.h"
+#include "DOM/FrameElement/IFrameDisplayElement.h"
+#include "DOM/FrameElement/IInstance.h"
+#include "DOM/FrameElement/ISymbolInstance.h"
+#include "DOM/FrameElement/IGroup.h"
 
 // Timeline
-#include <DOM/IFrame.h>
+#include "DOM/IFrame.h"
 
 // Writer
 #include "Publisher/Shared/SharedWriter.h"
@@ -85,6 +86,9 @@ namespace sc {
 			{
 				return m_duration > m_position;
 			}
+
+		private:
+			void AddFrameElementArray(FCM::FCMListPtr frameElements);
 		};
 	}
 }

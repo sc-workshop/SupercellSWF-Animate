@@ -166,6 +166,44 @@ namespace sc {
 
 		// Validate stuff
 
+		bool ShapeGenerator::ValidateLayerFrameElements(FCM::FCMListPtr frameElements) {
+			uint32_t frameElementsCount = 0;
+			frameElements->Count(frameElementsCount);
+
+			for (uint32_t i = 0; frameElementsCount > i; i++) {
+				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
+				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElements[i];
+				FCM::AutoPtr<DOM::FrameElement::IGroup> group = frameElements[i];
+
+				if (group) {
+					FCM::FCMListPtr groupElements;
+					group->GetMembers(groupElements.m_Ptr);
+
+					if (!ValidateLayerFrameElements(groupElements)) {
+						return false;
+					}
+				}
+				else if (instance) {
+					FCM::AutoPtr<DOM::ILibraryItem> item;
+					instance->GetLibraryItem(item.m_Ptr);
+
+					FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
+
+					if (!media) {
+						return false;
+					}
+				}
+				else if (shape) {
+					continue;
+				}
+				else {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		bool ShapeGenerator::ValidateLayerItems(
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 		) {
@@ -184,28 +222,7 @@ namespace sc {
 			FCM::FCMListPtr frameElements;
 			keyframe->GetFrameElements(frameElements.m_Ptr);
 
-			uint32_t frameElementsCount = 0;
-			frameElements->Count(frameElementsCount);
-
-			for (uint32_t i = 0; frameElementsCount > i; i++) {
-				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElements[i];
-				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElements[i];
-
-				if (!instance || !shape) {
-					return false;
-				}
-
-				FCM::AutoPtr<DOM::ILibraryItem> item;
-				instance->GetLibraryItem(item.m_Ptr);
-
-				FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
-
-				if (!media) {
-					return false;
-				}
-			}
-
-			return true;
+			return ValidateLayerFrameElements(frameElements);
 		}
 
 		bool ShapeGenerator::ValidateLayer(
