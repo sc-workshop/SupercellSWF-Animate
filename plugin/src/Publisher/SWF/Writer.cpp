@@ -259,10 +259,10 @@ namespace sc {
 								vertex->v(point.uv.second / (float)textures[item.textureIndex].rows);
 
 								vertex->x(
-									(matrix.a * point.xy.first) + (-matrix.b * point.xy.second) + matrix.tx
+									(matrix.a * point.xy.first) + (matrix.c * point.xy.second) + matrix.tx
 								);
 								vertex->y(
-									(-matrix.c * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty
+									(matrix.b * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty
 								);
 
 								command->vertices.push_back(pShapeDrawBitmapCommandVertex(vertex));
