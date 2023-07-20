@@ -85,7 +85,7 @@ namespace sc {
 			textfield->isMultiline(
 				field.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true
 			);
-			
+
 			m_swf.textFields.push_back(textfield);
 		}
 
@@ -96,7 +96,6 @@ namespace sc {
 			exportName->name(Utils::ToUtf8(name));
 
 			m_swf.exports.push_back(exportName);
-
 		}
 
 		void Writer::LoadExternal() {
@@ -109,7 +108,7 @@ namespace sc {
 				m_context.trace("External file does not exist");
 				return;
 			}
-			 
+
 			SupercellSWF swf;
 			swf.load(filepath);
 
@@ -338,7 +337,7 @@ namespace sc {
 					else {
 						texture->textureEncoding(m_context.config.textureEncoding);
 					}
-					
+
 					m_swf.textures.push_back(pSWFTexture(texture));
 				}
 
@@ -360,6 +359,7 @@ namespace sc {
 				m_swf.useExternalTexture(m_context.config.hasExternalTexture);
 				m_swf.useLowResTexture(false);
 				m_swf.useMultiResTexture(false);
+				m_swf.usePrecisionMatrices(m_context.config.hasPrecisionMatrices);
 
 				fs::path output = m_context.config.output;
 				if (output.is_relative()) {
