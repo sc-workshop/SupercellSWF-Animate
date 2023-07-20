@@ -765,7 +765,7 @@
 	},
 	{
 		"name": "ShapeTween",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Alpha",

@@ -27,6 +27,7 @@ namespace sc {
 			m_tween = nullptr;
 			m_matrixTweener = nullptr;
 			m_colorTweener = nullptr;
+			m_shapeTweener = nullptr;
 
 			DOM::KeyFrameLabelType labelType = DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NONE;
 			frame->GetLabelType(labelType);
@@ -39,11 +40,6 @@ namespace sc {
 
 			frame->GetDuration(m_duration);
 
-			// Frame elements processing
-			FCM::FCMListPtr frameElements;
-			frame->GetFrameElements(frameElements.m_Ptr);
-			AddFrameElementArray(frameElements);
-
 			// Tween
 			frame->GetTween(m_tween.m_Ptr);
 			if (m_tween) {
@@ -52,9 +48,11 @@ namespace sc {
 
 				FCM::FCMGUID matrixGuid;
 				FCM::FCMGUID colorGuid;
+				FCM::FCMGUID shapeGuid;
 
 				bool hasMatrixTweener = Utils::ReadGUID(tweenerDict, kDOMGeometricProperty, matrixGuid);
 				bool hasColorTweener = Utils::ReadGUID(tweenerDict, kDOMColorProperty, colorGuid);
+				bool hasShapeTweener = Utils::ReadGUID(tweenerDict, kDOMShapeProperty, shapeGuid);
 
 				FCM::AutoPtr<ITweenerService> TweenerService = m_resources.context.getService<ITweenerService>(TWEENER_SERVICE);
 
@@ -62,14 +60,21 @@ namespace sc {
 				if (hasMatrixTweener) {
 					TweenerService->GetTweener(matrixGuid, nullptr, unknownTweener.m_Ptr);
 					m_matrixTweener = unknownTweener;
-					unknownTweener.m_Ptr = nullptr;
 				}
 				if (hasColorTweener) {
 					TweenerService->GetTweener(colorGuid, nullptr, unknownTweener.m_Ptr);
 					m_colorTweener = unknownTweener;
-					unknownTweener.m_Ptr = nullptr;
+				}
+				if (hasShapeTweener) {
+					TweenerService->GetTweener(shapeGuid, nullptr, unknownTweener.m_Ptr);
+					m_shapeTweener = unknownTweener;
 				}
 			}
+
+			// Frame elements processing
+			FCM::FCMListPtr frameElements;
+			frame->GetFrameElements(frameElements.m_Ptr);
+			AddFrameElementArray(frameElements);
 		}
 
 		void FrameBuilder::operator()(pSharedMovieclipWriter writer) {
@@ -115,6 +120,30 @@ namespace sc {
 					color = m_colors[i].get();
 				}
 
+				if (m_shapeTweener) {
+					FCM::AutoPtr<DOM::FrameElement::IShape> filledShape = nullptr;
+					m_shapeTweener->GetShape(m_tween, m_position, filledShape.m_Ptr);
+					assert(filledShape != nullptr);
+
+					FilledShape shape(m_resources.context, filledShape);
+
+					uint16_t id = m_resources.GetIdentifer(shape);
+
+					if (id == UINT16_MAX) {
+						id = m_resources.AddFilledShape(shape);
+					}
+
+					writer->AddFrameElement(
+						id,
+						get<1>(m_elementsData[i]),
+						get<2>(m_elementsData[i]),
+						matrix,
+						color
+					);
+
+					continue;
+				}
+
 				writer->AddFrameElement(
 					get<0>(m_elementsData[i]),
 					get<1>(m_elementsData[i]),
@@ -156,6 +185,10 @@ namespace sc {
 				FCM::AutoPtr<DOM::FrameElement::IShape> filledShapeItem = frameElement;
 				FCM::AutoPtr<DOM::FrameElement::IGroup> groupedElemenets = frameElement;
 
+				// Transform
+				matrix = new MATRIX2D();
+				frameElement->GetMatrix(*matrix);
+
 				// Symbol
 				if (libraryElement) {
 					DOM::PILibraryItem libraryItem;
@@ -172,10 +205,6 @@ namespace sc {
 					}
 
 					m_resources.GetSymbolUsage(itemName)++;
-
-					// Transform
-					matrix = new MATRIX2D();
-					frameElement->GetMatrix(*matrix);
 
 					if (symbolItem) {
 						color = new COLOR_MATRIX();
@@ -195,9 +224,6 @@ namespace sc {
 
 				// Textfield
 				else if (textfieldElement) {
-					matrix = new MATRIX2D();
-					frameElement->GetMatrix(*matrix);
-
 					TextFieldInfo textfield;
 
 					{

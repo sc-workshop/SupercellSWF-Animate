@@ -18,6 +18,7 @@
 #include "DOM/Service/Tween/ITweenerService.h"
 #include "DOM/Service/Tween/IGeometricTweener.h"
 #include "DOM/Service/Tween/IColorTweener.h"
+#include "DOM/Service/Tween/IShapeTweener.h"
 
 // Symbols
 #include "DOM/ILibraryItem.h"
@@ -66,6 +67,7 @@ namespace sc {
 
 			FCM::AutoPtr<IGeometricTweener> m_matrixTweener = nullptr;
 			FCM::AutoPtr<IColorTweener> m_colorTweener = nullptr;
+			FCM::AutoPtr<IShapeTweener> m_shapeTweener = nullptr;
 
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
