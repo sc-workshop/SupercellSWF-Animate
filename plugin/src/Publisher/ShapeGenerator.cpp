@@ -16,21 +16,10 @@ namespace sc {
 			}
 		};
 
-		void ShapeGenerator::GenerateLayerShapes(
+		void ShapeGenerator::GenerateLayerElements(
 			pSharedShapeWriter writer,
-			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
+			FCM::FCMListPtr frameElements
 		) {
-			FCM::FCMListPtr keyframes;
-			layer->GetKeyFrames(keyframes.m_Ptr);
-
-			uint32_t keyframesCount = 0;
-			keyframes->Count(keyframesCount);
-
-			FCM::AutoPtr<DOM::IFrame> keyframe = keyframes[0];
-
-			FCM::FCMListPtr frameElements;
-			keyframe->GetFrameElements(frameElements.m_Ptr);
-
 			uint32_t frameElementsCount = 0;
 			frameElements->Count(frameElementsCount);
 
@@ -41,8 +30,9 @@ namespace sc {
 				DOM::Utils::MATRIX2D transformMatrix;
 				frameElement->GetMatrix(transformMatrix);
 
-				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElement.m_Ptr;
-				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElement.m_Ptr;
+				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElement;
+				FCM::AutoPtr<DOM::FrameElement::IGroup> group = frameElement;
 
 				// Bitmap
 				if (instance) {
@@ -56,7 +46,8 @@ namespace sc {
 
 					FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media = item;
 
-					if (media) {
+					if (media)
+					{
 						FCM::AutoPtr<FCM::IFCMUnknown> unknownMedia;
 						media->GetMediaInfo(unknownMedia.m_Ptr);
 
@@ -81,12 +72,40 @@ namespace sc {
 				}
 
 				// Fills / Stroke
-				else if (shape) {
+				else if (shape)
+				{
 					FilledShape shape(m_resources.context, shape);
 
 					writer->AddFilledShape(shape, false);
 				}
+
+				// Group of elements
+				else if (group)
+				{
+					FCM::FCMListPtr groupElements;
+					group->GetMembers(groupElements.m_Ptr);
+
+					GenerateLayerElements(writer, groupElements);
+				}
 			}
+		}
+
+		void ShapeGenerator::GenerateLayerShapes(
+			pSharedShapeWriter writer,
+			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
+		) {
+			FCM::FCMListPtr keyframes;
+			layer->GetKeyFrames(keyframes.m_Ptr);
+
+			uint32_t keyframesCount = 0;
+			keyframes->Count(keyframesCount);
+
+			FCM::AutoPtr<DOM::IFrame> keyframe = keyframes[0];
+
+			FCM::FCMListPtr frameElements;
+			keyframe->GetFrameElements(frameElements.m_Ptr);
+
+			GenerateLayerElements(writer, frameElements);
 		}
 
 		void ShapeGenerator::GenerateLayer(
@@ -108,6 +127,9 @@ namespace sc {
 				return;
 			}
 			else if (guideLayer) {
+				FCM::FCMListPtr childrens;
+				guideLayer->GetChildren(childrens.m_Ptr);
+				GenerateLayerList(writer, childrens);
 				return;
 			}
 			else if (maskLayer) {

@@ -31,6 +31,11 @@ namespace sc {
 			ResourcePublisher& m_resources;
 			FCM::AutoPtr<IBitmapExportService> BitmapExportService;
 
+			void GenerateLayerElements(
+				pSharedShapeWriter writer,
+				FCM::FCMListPtr elements
+			);
+
 			void GenerateLayerShapes(
 				pSharedShapeWriter writer,
 				FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
