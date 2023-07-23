@@ -28,6 +28,10 @@ namespace sc {
 					continue;
 				}
 				else if (guideLayer) {
+					FCM::FCMListPtr guideChildren;
+					guideLayer->GetChildren(guideChildren.m_Ptr);
+
+					TimelineBuilder::GetLayerBuilder(guideChildren, resources, result);
 					continue;
 				}
 				else if (normalLayer) {
@@ -50,9 +54,7 @@ namespace sc {
 			vector<LayerBuilder> layerBuilders;
 			TimelineBuilder::GetLayerBuilder(layers, m_resources, layerBuilders);
 
-			for (uint32_t t = 0; duration > t; t++){
-				//m_resources.context.window->frame->SetProgress((uint8_t)(duration / t * 100));
-
+			for (uint32_t t = 0; duration > t; t++) {
 				uint32_t i = (uint32_t)layerBuilders.size();
 				for (uint32_t layerIndex = 0; layerBuilders.size() > layerIndex; layerIndex++) {
 					LayerBuilder& layer = layerBuilders[--i];
