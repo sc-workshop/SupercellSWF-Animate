@@ -74,7 +74,7 @@ export default function TextureSettings() {
         },
         value => (State.setParam("textureMaxWidth", TextureDimensions[value as any])),
     )
-    alert(State.getParam("textureMaxHeight"));
+
     const textureHeight = EnumField(
         Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT"),
         "texture_height_select",
