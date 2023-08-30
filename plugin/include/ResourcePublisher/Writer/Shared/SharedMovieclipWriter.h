@@ -6,7 +6,7 @@
 
 #include "FCMTypes.h"
 #include "DOM/FrameElement/IFrameDisplayElement.h"
-#include "ResourcePublisher/SymbolGenerator/SymbolBehavior.h"
+#include "Module/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {
@@ -21,7 +21,7 @@ namespace sc {
 				m_position++;
 			}
 
-			virtual void Init(Context& context, SymbolBehaviorInfo& info, uint32_t frameCount) = 0;
+			virtual void Init(Context& context, SymbolContext& info, uint32_t frameCount) = 0;
 
 			virtual void SetLabel(std::u16string& label) = 0;
 

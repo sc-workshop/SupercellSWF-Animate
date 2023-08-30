@@ -4,7 +4,7 @@
 
 namespace sc {
 	namespace Adobe {
-		void JSONMovieclipWriter::Init(Context&, SymbolBehaviorInfo& info, uint32_t frameCount) {
+		void JSONMovieclipWriter::Init(Context&, SymbolContext& symbol, uint32_t frameCount) {
 			m_frames.clear();
 
 			for (uint32_t i = 0; frameCount > i; i++) {
@@ -15,9 +15,9 @@ namespace sc {
 				);
 			}
 
-			if (info.hasSlice9)
+			if (symbol.hasSlice9)
 			{
-				DOM::Utils::RECT& rect = info.slice9;
+				DOM::Utils::RECT& rect = symbol.slice9;
 				m_9scale = json::array({ rect.topLeft.y,  rect.bottomRight.y, rect.topLeft.x + rect.bottomRight.y, rect.bottomRight.x + rect.topLeft.y });
 			}
 		}

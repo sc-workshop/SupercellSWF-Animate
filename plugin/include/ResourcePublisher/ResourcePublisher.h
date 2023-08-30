@@ -29,7 +29,7 @@
 // Generators
 #include "ResourcePublisher/SymbolGenerator/GraphicGenerator.h"
 #include "ResourcePublisher/SymbolGenerator/MovieClipGenerator.h"
-#include "ResourcePublisher/SymbolGenerator/SymbolBehavior.h"
+#include "Module/SymbolContext.h"
 
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledShape.h"
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextField.h"
@@ -98,19 +98,19 @@ namespace sc {
 			uint16_t AddSymbol(
 				std::u16string name,
 				DOM::LibraryItem::ISymbolItem* item,
-				SymbolBehaviorInfo& symbolBehavior
+				SymbolContext& symbolBehavior
 			);
 
 			uint16_t AddMovieclip(
 				u16string name,
 				FCM::AutoPtr<DOM::ITimeline1> timeline,
-				SymbolBehaviorInfo& symbolBehavior
+				SymbolContext& symbolBehavior
 			);
 
 			uint16_t AddShape(
 				u16string name,
 				FCM::AutoPtr <DOM::ITimeline1> timeline,
-				SymbolBehaviorInfo& symbolBehavior
+				SymbolContext& symbolBehavior
 			);
 
 			uint16_t AddModifier(

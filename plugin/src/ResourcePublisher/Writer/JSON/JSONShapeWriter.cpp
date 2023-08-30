@@ -4,7 +4,7 @@
 
 namespace sc {
 	namespace Adobe {
-		void JSONShapeWriter::Init(Context&, SymbolBehaviorInfo&) {};
+		void JSONShapeWriter::Init(Context&, SymbolContext&) {};
 
 		void JSONShapeWriter::AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) {
 			uint32_t imageIndex = m_writer->imageCount;

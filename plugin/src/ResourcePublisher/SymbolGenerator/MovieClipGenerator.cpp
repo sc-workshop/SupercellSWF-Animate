@@ -3,7 +3,7 @@
 
 namespace sc {
 	namespace Adobe {
-		void MovieClipGeneator::GetLayerBuilder(FCM::FCMListPtr& layers, ResourcePublisher& resources, SymbolBehaviorInfo& info, vector<LayerBuilder>& result) {
+		void MovieClipGeneator::GetLayerBuilder(FCM::FCMListPtr& layers, ResourcePublisher& resources, SymbolContext& symbol, vector<LayerBuilder>& result) {
 			uint32_t layerCount = 0;
 			layers->Count(layerCount);
 
@@ -24,35 +24,35 @@ namespace sc {
 					FCM::FCMListPtr folderLayers;
 					folderLayer->GetChildren(folderLayers.m_Ptr);
 
-					MovieClipGeneator::GetLayerBuilder(folderLayers, resources, info, result);
+					MovieClipGeneator::GetLayerBuilder(folderLayers, resources, symbol, result);
 					continue;
 				}
 				else if (guideLayer) {
 					FCM::FCMListPtr guideChildren;
 					guideLayer->GetChildren(guideChildren.m_Ptr);
 
-					MovieClipGeneator::GetLayerBuilder(guideChildren, resources, info, result);
+					MovieClipGeneator::GetLayerBuilder(guideChildren, resources, symbol, result);
 					continue;
 				}
 				else if (normalLayer) {
 					result.push_back(
-						LayerBuilder(normalLayer, resources, info)
+						LayerBuilder(normalLayer, resources, symbol)
 					);
 				}
 			}
 		};
 
-		void MovieClipGeneator::Generate(Context& context, pSharedMovieclipWriter writer, SymbolBehaviorInfo& info, FCM::AutoPtr<DOM::ITimeline1> timeline) {
+		void MovieClipGeneator::Generate(Context& context, pSharedMovieclipWriter writer, SymbolContext& symbol, FCM::AutoPtr<DOM::ITimeline1> timeline) {
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
 
-			writer->Init(context, info, duration);
+			writer->Init(context, symbol, duration);
 
 			FCM::FCMListPtr layers;
 			timeline->GetLayers(layers.m_Ptr);
 
 			vector<LayerBuilder> layerBuilders;
-			MovieClipGeneator::GetLayerBuilder(layers, m_resources, info, layerBuilders);
+			MovieClipGeneator::GetLayerBuilder(layers, m_resources, symbol, layerBuilders);
 
 			for (uint32_t t = 0; duration > t; t++) {
 				uint32_t i = (uint32_t)layerBuilders.size();

@@ -179,8 +179,8 @@ namespace sc {
 			image = cv::imread(tempFile.string(), cv::IMREAD_UNCHANGED);
 		}
 
-		void GraphicGenerator::Generate(Context& context, SymbolBehaviorInfo& info, pSharedShapeWriter writer, DOM::ITimeline* timeline) {
-			writer->Init(context, info);
+		void GraphicGenerator::Generate(Context& context, SymbolContext& symbol, pSharedShapeWriter writer, DOM::ITimeline* timeline) {
+			writer->Init(context, symbol);
 
 			FCM::FCMListPtr layers;
 			timeline->GetLayers(layers.m_Ptr);

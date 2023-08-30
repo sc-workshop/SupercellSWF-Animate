@@ -18,7 +18,7 @@
 // Writer
 #include "ResourcePublisher/Writer/Shared/SharedGraphicWriter.h"
 
-#include "ResourcePublisher/SymbolGenerator/SymbolBehavior.h"
+#include "Module/SymbolContext.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -79,7 +79,7 @@ namespace sc {
 
 			void GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
 
-			void Generate(Context& context, SymbolBehaviorInfo& info, pSharedShapeWriter writer, DOM::ITimeline* timeline);
+			void Generate(Context& context, SymbolContext& symbol, pSharedShapeWriter writer, DOM::ITimeline* timeline);
 
 			static bool Validate(DOM::ITimeline* timeline);
 		};

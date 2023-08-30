@@ -20,7 +20,7 @@ namespace sc {
 		public:
 			JSONMovieclipWriter(JSONWriter* writer) : m_writer(writer) {};
 
-			void Init(Context& context, SymbolBehaviorInfo& info, uint32_t frameCount);
+			void Init(Context& context, SymbolContext& info, uint32_t frameCount);
 
 			void SetLabel(std::u16string& label);
 

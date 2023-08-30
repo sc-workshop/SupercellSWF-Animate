@@ -5,8 +5,9 @@
 namespace sc
 {
 	namespace Adobe {
-		struct SymbolBehaviorInfo
+		struct SymbolContext
 		{
+			std::u16string name;
 			std::string type;
 
 			bool hasSlice9 = false;

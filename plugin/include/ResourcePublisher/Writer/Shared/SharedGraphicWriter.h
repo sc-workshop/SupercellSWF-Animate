@@ -9,7 +9,7 @@
 #include "DOM/LibraryItem/IMediaItem.h"
 
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledShape.h"
-#include "ResourcePublisher/SymbolGenerator/SymbolBehavior.h"
+#include "Module/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {
@@ -17,7 +17,7 @@ namespace sc {
 
 		class SharedShapeWriter {
 		public:
-			virtual void Init(Context& context, SymbolBehaviorInfo& info) = 0;
+			virtual void Init(Context& context, SymbolContext& symbol) = 0;
 
 			virtual void AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) = 0;
 

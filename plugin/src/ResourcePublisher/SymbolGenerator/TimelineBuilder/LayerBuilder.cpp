@@ -31,8 +31,8 @@ namespace sc {
 		LayerBuilder::LayerBuilder(
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer,
 			ResourcePublisher& resources,
-			SymbolBehaviorInfo& info
-		) : m_layer(layer), m_resources(resources), m_frameBuilder(resources), m_behavior(info)
+			SymbolContext& symbol
+		) : m_layer(layer), m_resources(resources), m_frameBuilder(resources), m_symbol(symbol)
 		{
 			m_layer->GetTotalDuration(m_duration);
 			layer->GetKeyFrames(m_keyframes.m_Ptr);
@@ -45,8 +45,8 @@ namespace sc {
 				FCM::FCMListPtr maskedLayers;
 				maskLayer->GetChildren(maskedLayers.m_Ptr);
 
-				m_behavior.hasSlice9 = false;
-				MovieClipGeneator::GetLayerBuilder(maskedLayers, resources, m_behavior, m_maskedLayers);
+				m_symbol.hasSlice9 = false;
+				MovieClipGeneator::GetLayerBuilder(maskedLayers, resources, m_symbol, m_maskedLayers);
 			}
 		}
 

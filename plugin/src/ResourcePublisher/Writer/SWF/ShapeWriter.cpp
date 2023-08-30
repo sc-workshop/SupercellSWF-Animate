@@ -10,7 +10,7 @@ using namespace sc;
 
 namespace sc {
 	namespace Adobe {
-		void SCShapeWriter::Init(Context&, SymbolBehaviorInfo&) {
+		void SCShapeWriter::Init(Context&, SymbolContext&) {
 		}
 
 		void SCShapeWriter::AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix) {

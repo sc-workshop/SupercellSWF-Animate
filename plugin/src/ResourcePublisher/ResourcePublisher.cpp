@@ -113,13 +113,14 @@ namespace sc {
 			ASSERT(symbolItem != nullptr || mediaItem != nullptr);
 
 			if (symbolItem) {
-				SymbolBehaviorInfo symbolBehavior;
+				SymbolContext symbol;
+				symbol.name = name;
 
 				FCM::AutoPtr<FCM::IFCMDictionary> properties;
 				item->GetProperties(properties.m_Ptr);
-				Utils::ReadString(properties, kLibProp_SymbolType_DictKey, symbolBehavior.type);
+				Utils::ReadString(properties, kLibProp_SymbolType_DictKey, symbol.type);
 
-				return AddSymbol(name, symbolItem, symbolBehavior);
+				return AddSymbol(name, symbolItem, symbol);
 			}
 			else if (mediaItem) {
 				pSharedShapeWriter shape = m_writer->AddShape();
@@ -142,7 +143,7 @@ namespace sc {
 		uint16_t ResourcePublisher::AddSymbol(
 			std::u16string name,
 			DOM::LibraryItem::ISymbolItem* item,
-			SymbolBehaviorInfo& symbolBehavior
+			SymbolContext& symbol
 		) {
 			FCM::AutoPtr<DOM::ITimeline> timeline;
 			item->GetTimeLine(timeline.m_Ptr);
@@ -151,12 +152,12 @@ namespace sc {
 
 			uint16_t result = UINT16_MAX;
 
-			if (symbolBehavior.type != "MovieClip") {
-				result = AddShape(name, timeline, symbolBehavior);
+			if (symbol.type != "MovieClip") {
+				result = AddShape(name, timeline, symbol);
 			}
 
 			if (result == UINT16_MAX) {
-				return AddMovieclip(name, timeline, symbolBehavior);
+				return AddMovieclip(name, timeline, symbol);
 			}
 
 			return result;
@@ -165,18 +166,18 @@ namespace sc {
 		uint16_t ResourcePublisher::AddMovieclip(
 			u16string name,
 			FCM::AutoPtr<DOM::ITimeline1> timeline,
-			SymbolBehaviorInfo& symbolBehavior
+			SymbolContext& symbol
 		) {
-			CDocumentPage* symbol = timeline->GetDocPage();
-			symbolBehavior.hasSlice9 = symbol->GetScale9();
-			if (symbolBehavior.hasSlice9)
+			CDocumentPage* page = timeline->GetDocPage();
+			symbol.hasSlice9 = page->GetScale9();
+			if (symbol.hasSlice9)
 			{
-				symbol->GetScale9Rect(symbolBehavior.slice9);
+				page->GetScale9Rect(symbol.slice9);
 			}
 
 			pSharedMovieclipWriter movieclip = m_writer->AddMovieclip();
 
-			movieClipGenerator->Generate(context, movieclip, symbolBehavior, timeline);
+			movieClipGenerator->Generate(context, movieclip, symbol, timeline);
 
 			uint16_t identifer = m_id++;
 			m_symbolsData[name] = identifer;
@@ -189,7 +190,7 @@ namespace sc {
 		uint16_t ResourcePublisher::AddShape(
 			u16string name,
 			FCM::AutoPtr<DOM::ITimeline1> timeline,
-			SymbolBehaviorInfo& symbolBehavior
+			SymbolContext& symbol
 		) {
 			bool isShape = GraphicGenerator::Validate(timeline);
 
@@ -199,7 +200,7 @@ namespace sc {
 
 			pSharedShapeWriter shape = m_writer->AddShape();
 
-			graphicGenerator->Generate(context, symbolBehavior, shape, timeline);
+			graphicGenerator->Generate(context, symbol, shape, timeline);
 
 			uint16_t identifer = m_id++;
 

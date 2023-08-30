@@ -17,7 +17,7 @@ namespace sc {
 		public:
 			SCShapeWriter(SCWriter* writer) : m_writer(writer) {};
 
-			void Init(Context& context, SymbolBehaviorInfo& info);
+			void Init(Context& context, SymbolContext& info);
 
 			void AddGraphic(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix);
 

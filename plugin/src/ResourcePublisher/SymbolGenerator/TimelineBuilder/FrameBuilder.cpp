@@ -350,10 +350,11 @@ namespace sc {
 					continue;
 				}
 
-				m_elementsData.push_back({
-					id,
-					blendMode,
-					name
+				m_elementsData.push_back(
+					{
+						id,
+						blendMode,
+						name
 					}
 				);
 

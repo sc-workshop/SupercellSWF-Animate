@@ -18,14 +18,14 @@
 #include "ResourcePublisher/Writer/Shared/SharedWriter.h"
 
 #include "FrameBuilder.h"
-#include "ResourcePublisher/SymbolGenerator/SymbolBehavior.h"
+#include "Module/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
 
 		class LayerBuilder {
-			SymbolBehaviorInfo& m_behavior;
+			SymbolContext& m_symbol;
 
 			uint32_t m_duration = 0;
 			uint32_t m_position = 0;
@@ -48,7 +48,7 @@ namespace sc {
 			);
 
 		public:
-			LayerBuilder(FCM::AutoPtr<DOM::Layer::ILayerNormal> layer, ResourcePublisher& resources, SymbolBehaviorInfo& info);
+			LayerBuilder(FCM::AutoPtr<DOM::Layer::ILayerNormal> layer, ResourcePublisher& resources, SymbolContext& info);
 
 			void next();
 

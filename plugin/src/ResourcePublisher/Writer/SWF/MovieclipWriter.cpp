@@ -5,16 +5,16 @@
 
 namespace sc {
 	namespace Adobe {
-		void SCMovieclipWriter::Init(Context&, SymbolBehaviorInfo& info, uint32_t frameCount) {
+		void SCMovieclipWriter::Init(Context&, SymbolContext& symbol, uint32_t frameCount) {
 			for (uint32_t i = 0; frameCount > i; i++) {
 				m_object->frames.push_back(
 					pMovieClipFrame(new MovieClipFrame())
 				);
 			}
 
-			if (info.hasSlice9)
+			if (symbol.hasSlice9)
 			{
-				DOM::Utils::RECT& rect = info.slice9;
+				DOM::Utils::RECT& rect = symbol.slice9;
 				ScalingGrid* grid = new ScalingGrid();
 
 				grid->x = rect.topLeft.y;
