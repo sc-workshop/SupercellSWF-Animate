@@ -108,25 +108,25 @@ namespace sc {
 
 			uint16_t idOffset = 0;
 			{
-				for (auto object : base_swf.movieClips) {
+				for (pMovieClip object : base_swf.movieClips) {
 					if (object->id() > idOffset) {
 						idOffset = object->id();
 					}
 				}
 
-				for (auto object : base_swf.movieClipModifiers) {
+				for (pMovieClipModifier object : base_swf.movieClipModifiers) {
 					if (object->id() > idOffset) {
 						idOffset = object->id();
 					}
 				}
 
-				for (auto object : base_swf.textFields) {
+				for (pTextField object : base_swf.textFields) {
 					if (object->id() > idOffset) {
 						idOffset = object->id();
 					}
 				}
 
-				for (auto object : base_swf.shapes) {
+				for (pShape object : base_swf.shapes) {
 					if (object->id() > idOffset) {
 						idOffset = object->id();
 					}
@@ -135,10 +135,10 @@ namespace sc {
 			idOffset++;
 
 			// Display object processing
-			for (auto object : base_swf.movieClips) {
+			for (pMovieClip object : swf.movieClips) {
 				object->id(object->id() + idOffset);
 
-				for (auto bind : object->instances) {
+				for (pDisplayObjectInstance bind : object->instances) {
 					bind->id += idOffset;
 				}
 
@@ -147,19 +147,19 @@ namespace sc {
 				base_swf.movieClips.push_back(object);
 			}
 
-			for (auto object : base_swf.movieClipModifiers) {
+			for (pMovieClipModifier object : swf.movieClipModifiers) {
 				object->id(object->id() + idOffset);
 
 				base_swf.movieClipModifiers.push_back(object);
 			}
 
-			for (auto object : base_swf.textFields) {
+			for (pTextField object : swf.textFields) {
 				object->id(object->id() + idOffset);
 
 				base_swf.textFields.push_back(object);
 			}
 
-			for (auto object : base_swf.shapes) {
+			for (pShape object : swf.shapes) {
 				object->id(object->id() + idOffset);
 
 				for (auto bitmap : object->commands) {
@@ -170,13 +170,13 @@ namespace sc {
 			}
 
 			// Common resources processing
-			for (auto bank : base_swf.matrixBanks) {
+			for (pMatrixBank bank : swf.matrixBanks) {
 				base_swf.matrixBanks.push_back(bank);
 			}
-			for (auto texture : base_swf.textures) {
+			for (pSWFTexture texture : swf.textures) {
 				base_swf.textures.push_back(texture);
 			}
-			for (auto exportName : base_swf.exports) {
+			for (pExportName exportName : swf.exports) {
 				exportName->id(exportName->id() + idOffset);
 				base_swf.exports.push_back(exportName);
 			}

@@ -11,28 +11,6 @@ namespace sc {
 
 			auto start = chrono::high_resolution_clock::now();
 
-			FCM::Result result = FCM_SUCCESS;
-			//std::function<void()> startPublish([&app, &result]()
-			//	{
-			//		if (app.config.output.empty()) {
-			//			app.progressBar->window->ThrowException(Utils::ToUtf8(app.locale.Get("TID_ERROR_WRONG_DOCUMENT_PATH")).c_str());
-			//
-			//			result = FCM_EXPORT_FAILED;
-			//			return;
-			//		}
-			//
-			//		// Publishing start
-			//		try {
-			//			ResourcePublisher::Publish(app);
-			//			app.close();
-			//		}
-			//		catch (const std::exception& exception) {
-			//			app.progressBar->window->ThrowException(exception.what());
-			//		}
-			//	}
-			//);
-			//
-
 			bool inited = false;
 			std::thread progressWindow(
 				[&app, &inited]()
@@ -43,17 +21,27 @@ namespace sc {
 				}
 			);
 
-			std::thread publishing([&app, &inited]()
+			FCM::Result result = FCM_SUCCESS;
+			std::thread publishing([&app, &inited, &result]()
 				{
 					while (!inited);
+
+					if (app.config.output.empty()) {
+						app.progressBar->window->ThrowException(Utils::ToUtf8(app.locale.Get("TID_ERROR_WRONG_DOCUMENT_PATH")).c_str());
+
+						result = FCM_EXPORT_FAILED;
+						return;
+					}
 
 					try {
 						ResourcePublisher::Publish(app);
 					}
 					catch (const std::exception& exception) {
 						app.progressBar->window->ThrowException(exception.what());
+						result = FCM_EXPORT_FAILED;
 					}
-				});
+				}
+			);
 
 			publishing.join();
 			progressWindow.join();
