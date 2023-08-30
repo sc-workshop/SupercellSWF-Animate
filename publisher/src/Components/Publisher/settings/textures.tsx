@@ -68,18 +68,18 @@ export default function TextureSettings() {
         Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH"),
         "texture_width_select",
         TextureDimensions,
-        "2",
+        TextureDimensions.indexOf(State.getParam("textureMaxWidth")) as any,
         {
             marginBottom: "6px"
         },
         value => (State.setParam("textureMaxWidth", TextureDimensions[value as any])),
     )
-
+    alert(State.getParam("textureMaxHeight"));
     const textureHeight = EnumField(
         Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT"),
         "texture_height_select",
         TextureDimensions,
-        "2",
+        TextureDimensions.indexOf(State.getParam("textureMaxHeight")) as any,
         {
             //marginBottom: "6px"
         },
