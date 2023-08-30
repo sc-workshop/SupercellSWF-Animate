@@ -1,15 +1,15 @@
 #pragma once
 
-#include <IFCMDictionary.h>
-#include <Utils.h>
-
 #include <string>
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
-#include "JSON.hpp"
-#include <SupercellFlash.h>
+#include "IFCMDictionary.h"
+#include "SupercellFlash.h"
+#include "Utils.h"
+
+#include "json.hpp"
 
 using namespace nlohmann;
 
@@ -18,11 +18,6 @@ namespace sc {
 		enum class PublisherMethod : uint8_t {
 			JSON,
 			SWF
-		};
-
-		enum class PublisherMode : uint8_t {
-			Import,
-			Export
 		};
 
 		enum class ExportsMode : uint8_t {
@@ -38,8 +33,6 @@ namespace sc {
 		};
 
 		struct Config {
-			PublisherMode mode = PublisherMode::Export;
-
 			fs::path output = "";
 			PublisherMethod method = PublisherMethod::SWF;
 

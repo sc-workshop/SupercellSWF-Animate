@@ -333,7 +333,7 @@
 	},
 	{
 		"name": "9Slice",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Symbol",

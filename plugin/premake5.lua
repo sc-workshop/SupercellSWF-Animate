@@ -12,79 +12,74 @@ files {
 }
 
 includedirs {
+    "include/",
+	"ThirdParty/",
+
     -- Animate SDK
-    "include/AnimateSDK/app/include/interfaces/DOM",
-    "include/AnimateSDK/app/include/common",
-    "include/AnimateSDK/core/include/common",
-    "include/AnimateSDK/app/include/interfaces",
-    "include/AnimateSDK/core/include/interfaces",
+    "include/AnimateSDK/app/include/interfaces/DOM/",
+    "include/AnimateSDK/app/include/common/",
+    "include/AnimateSDK/core/include/common/",
+    "include/AnimateSDK/app/include/interfaces/",
+    "include/AnimateSDK/core/include/interfaces/",
 
-    -- Sprites
-    "include",
-    "ThirdParty/AtlasGenerator/include",
-	"ThirdParty/OpenCV/include",
+    -- Image processing
+	"ThirdParty/OpenCV/include/",
+    "ThirdParty/libnest2d/include/",
 
-    -- SC SWF
-    "ThirdParty/SC/dependencies/Bytestream",
-    "ThirdParty/SC/dependencies/Compression/include",
-    "ThirdParty/SC/include",
+    -- SC
+    "ThirdParty/SC/dependencies/Bytestream/",
+    "ThirdParty/SC/dependencies/Compression/include/",
+    "ThirdParty/SC/include/",
 	
 	-- UI
-	"ThirdParty/wxWidget/include",
-	"ui/include",
+	"ThirdParty/wxWidget/include/",
+	"ui/include/",
 	
 	-- Fills
-	"ThirdParty/CDT/include"
+	"ThirdParty/CDT/include/"
 }
 
 links {
     -- SC
-    "SupercellFlash",
+	"SupercellFlash",
     "SupercellCompression",
-    "LZMA",
-    "LZHAM",
-    "Zstandard",
+	"LZMA",
+	"LZHAM",
+	"Zstandard",
+	
+    -- Textures
+	"SupercellTextureLoader",
+	"libktx",
+	
+	"ASTC",
+	"dfdutils",
+	"basisu",
+	"ETCPACK",
 
-    -- Sprites
-    "AtlasGenerator",
-
-    -- FLA
+    -- Image processing
+    "ThirdParty/OpenCV/lib/%{cfg.buildcfg}/%{cfg.system}/*",
+    "ThirdParty/libnest2d/lib/%{cfg.buildcfg}/%{cfg.architecture}/%{cfg.system}/*",
 }
-
 
 
 filter {"system:windows", "configurations:Debug"}
-links {
-	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470d"
-}
-postbuildcommands {
-    '{COPYFILE} "ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/shared/opencv_world470d.dll" "%{cfg.targetdir}" '
-}
 targetdir "../dist/com.scwmake.SupercellSWF/Plugin/lib/win"
+linkoptions {"/DEBUG:FASTLINK", "/IGNORE:4099"}
 
 filter {"system:windows", "configurations:Release"}
-links {
-	"ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/static/opencv_world470"
-}
-postbuildcommands {
-    '{COPYFILE} "ThirdParty/OpenCV/lib/%{cfg.architecture}/%{cfg.system}/shared/opencv_world470.dll" "%{cfg.targetdir}" '
-}
 targetdir "bin/win/"
 
 
-filter "system:windows"
+filter {"system:windows"}
 includedirs { "ThirdParty/wxWidget/include/msvc" }
 libdirs { "ThirdParty/wxWidget/lib/vc_x64_lib" }
 defines { "_WINDOWS", "_WIN32", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS", "WIN32_LEAN_AND_MEAN" }
 targetextension ".fcm"
 
 filter "configurations:Debug"
-defines { "DEBUG" }
 runtime "Debug"
-symbols "on"
+defines { "DEBUG", "_DEBUG" }
 
 filter "configurations:Release"
-defines { "NDEBUG" }
 runtime "Release"
-symbols "off"
-optimize "on"
+defines { "NDEBUG" }

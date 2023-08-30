@@ -1,0 +1,9 @@
+.vs
+build
+output
+images
+
+*.sln
+*.vcxproj
+*.vcxproj.*
+scripts/
