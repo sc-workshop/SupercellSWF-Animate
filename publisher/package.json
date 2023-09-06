@@ -10,8 +10,8 @@
   },
   "keywords": [],
   "author": "DaniilSV",
-  "license": "ISC",
-  "devDependencies": {
+  "license": "MIT",
+  "dependencies": {
     "@babel/core": "^7.13.8",
     "@babel/preset-env": "^7.13.9",
     "@babel/preset-react": "^7.12.13",
@@ -29,9 +29,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.24.2",
     "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2"
-  },
-  "dependencies": {
+    "webpack-dev-server": "^3.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.2.2",

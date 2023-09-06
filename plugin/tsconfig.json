@@ -4,7 +4,6 @@
         "target": "ES2022",
         "module": "CommonJS",
         "moduleResolution": "node",
-        "watch": false,
         "strict": true,
         "allowUnreachableCode": false,
         "noFallthroughCasesInSwitch": true,

@@ -14,6 +14,7 @@
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^20.5.9",
     "picocolors": "^1.0.0",
     "ts-node": "^10.9.1",
     "url": "^0.11.0",

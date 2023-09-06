@@ -11,10 +11,8 @@
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^20.5.9",
     "@types/which": "^3.0.0",
     "which": "^3.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.5.9"
   }
 }
