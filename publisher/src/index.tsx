@@ -3,7 +3,7 @@ import Publisher from './Publisher';
 import React, { useState, createElement, useEffect } from 'react';
 import { AppColor } from './Components/themes';
 import { getInterface, CSEvent, isCEP } from './CEP';
-import { State } from './Components/publisherState';
+import { Settings } from './PublisherSettings';
 import Locale from './Localization';
 
 function App() {
@@ -77,7 +77,7 @@ function App() {
   }, []);
 
   if (publisherStateData !== undefined && isFontLoaded) {
-    State.restore(publisherStateData);
+    Settings.restore(publisherStateData);
 
     return createElement(
       "body",

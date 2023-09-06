@@ -1,16 +1,16 @@
 
 import { getInterface, isCEP } from "../CEP";
-import { State } from "./publisherState";
+import { Settings } from "../PublisherSettings";
 
 export function publish() {
-    console.log(State.data)
+    console.log(Settings.data)
 
     if (!isCEP) {
         return;
     }
 
     try {
-        State.save();
+        Settings.save();
         const CSInterface = getInterface();
         
         (async function(){

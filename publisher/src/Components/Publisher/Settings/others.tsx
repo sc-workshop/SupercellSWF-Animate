@@ -2,38 +2,48 @@ import Locale from "../../../Localization";
 import BoolField from "../../Shared/BoolField";
 import EnumField from "../../Shared/EnumField";
 import SubMenu from "../../Shared/SubMenu";
-import { CompressionMethods, State } from "../../publisherState";
+import { CompressionMethods, Settings } from "../../../PublisherSettings";
 
 export default function OtherSettings() {
     const compressionType = EnumField(
         Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
         "file_compression_select",
         CompressionMethods,
-        State.getParam("compressionMethod"),
+        Settings.getParam("compressionMethod"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("compressionMethod", parseInt(value))),
+        value => (Settings.setParam("compressionMethod", parseInt(value))),
     )
     
     const shapeOptimization = BoolField(
         Locale.Get("TID_SWF_SETTINGS_FILLED_SHAPE_OPTIMIZATION"),
         "filled_shape_optimization",
-        State.getParam("filledShapeOptimization"),
+        Settings.getParam("filledShapeOptimization"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("filledShapeOptimization", value)),
+        value => (Settings.setParam("filledShapeOptimization", value)),
     );
 
     const precisionMatrix = BoolField(
         Locale.Get("TID_SWF_SETTINGS_PRECISION_MATRIX"),
         "precision_matrix",
-        State.getParam("hasPrecisionMatrices"),
+        Settings.getParam("hasPrecisionMatrices"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("hasPrecisionMatrices", value)),
+        value => (Settings.setParam("hasPrecisionMatrices", value)),
+    );
+
+    const NineSliceSprites = BoolField(
+        Locale.Get("TID_SWF_SETTINGS_NINE_SLICE_SPRITES"),
+        "9_slice_sprites",
+        Settings.getParam("useSpritesForNineSlice"),
+        {
+            marginBottom: "6px"
+        },
+        value => (Settings.setParam("useSpritesForNineSlice", value)),
     );
     
     return SubMenu(

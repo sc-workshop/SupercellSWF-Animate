@@ -1,7 +1,7 @@
 import { createElement, useState } from "react";
-import { State } from "../publisherState";
+import { Settings } from "../../PublisherSettings";
 import Locale from "../../Localization";
-import { PublisherMethods } from "../publisherState";
+import { PublisherMethods } from "../../PublisherSettings";
 
 import EnumField from "../Shared/EnumField";
 import FileField from "../Shared/FileField";
@@ -17,15 +17,15 @@ export default function BasicSettings() {
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("output", value)),
-        State.getParam("output")
+        value => (Settings.setParam("output", value)),
+        Settings.getParam("output")
     )
 
     const method = EnumField(
         Locale.Get("TID_PUBLISH_METHOD"),
         "publisher_method",
         PublisherMethods,
-        State.getParam("method"),
+        Settings.getParam("method"),
         {
             marginBottom: "6px"
         },
@@ -39,7 +39,7 @@ export default function BasicSettings() {
                     setFileExtension("json")
                     break
             }
-            State.setParam("method", key)
+            Settings.setParam("method", key)
         }
     );
 

@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { publish } from './Components';
 import { Header } from './Components/Publisher/Header';
-import Settings from './Components/Publisher/Settings';
+import SettingsMenu from './Components/Publisher/Settings';
 import BasicSettings from './Components/Publisher/BasicSettings';
 import Button from './Components/Shared/Button';
 import Locale from './Localization';
@@ -52,7 +52,7 @@ function Publisher() {
         delim,
 
         BasicSettings(),
-        Settings(),
+        SettingsMenu(),
 
         buttonContainer
       ]

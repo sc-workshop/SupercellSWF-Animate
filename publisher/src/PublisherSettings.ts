@@ -1,4 +1,4 @@
-import { CSEvent, getInterface, isCEP } from "../CEP"
+import { CSEvent, getInterface, isCEP } from "./CEP"
 
 export enum PublisherMethods {
     JSON,
@@ -42,11 +42,7 @@ enum ExportsMode {
     AllUnusedMovieclips
 }
 
-interface ExportName {
-    path: string
-}
-
-interface PublisherStateData {
+interface PublisherSettingsData {
     //Basic settings
     output: string,
     method: PublisherMethods,
@@ -55,6 +51,7 @@ interface PublisherStateData {
     compressionMethod: CompressionMethods,
     filledShapeOptimization: boolean,
     hasPrecisionMatrices: boolean,
+    useSpritesForNineSlice: boolean,
 
     // Export to another file settings
     exportToExternal: boolean,
@@ -69,18 +66,19 @@ interface PublisherStateData {
     textureMaxHeight: number,
 
     exportsMode: ExportsMode,
-    exports: ExportName[]
+    
 
 }
 
-export class PublisherState {
-    data: PublisherStateData = {
+export class PublisherSettings {
+    data: PublisherSettingsData = {
         output: "",
         method: PublisherMethods.SWF,
 
         compressionMethod: CompressionMethods.LZMA,
         filledShapeOptimization: true,
         hasPrecisionMatrices: false,
+        useSpritesForNineSlice: false,
 
         exportToExternal: false,
         exportToExternalPath: "",
@@ -94,14 +92,13 @@ export class PublisherState {
         textureMaxHeight: 2048,
 
         exportsMode: ExportsMode.AllUnusedMovieclips,
-        exports: []
     };
 
-    getParam(name: keyof PublisherStateData): any {
+    getParam(name: keyof PublisherSettingsData): any {
         return this.data[name];
     }
 
-    setParam(name: keyof PublisherStateData, value: any) {
+    setParam(name: keyof PublisherSettingsData, value: any) {
         this.data[name] = value as never;
     }
 
@@ -137,4 +134,4 @@ export class PublisherState {
     }
 }
 
-export const State = new PublisherState();
+export const Settings = new PublisherSettings();

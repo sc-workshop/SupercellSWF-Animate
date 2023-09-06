@@ -1,5 +1,5 @@
 import Locale from "../../../Localization";
-import { State, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../publisherState";
+import { Settings, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../../PublisherSettings";
 
 import BoolField from "../../Shared/BoolField";
 import SubMenu from "../../Shared/SubMenu";
@@ -15,30 +15,30 @@ const LocalizedTextureQuality = [
 ]
 
 export default function TextureSettings() {
-    const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(State.getParam("textureEncoding"));
+    const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
 
     const exportToExternal = BoolField(
         Locale.Get("TID_SWF_SETTINGS_HAS_TEXTURE"),
         "external_texture_select",
-        State.getParam("hasExternalTexture"),
+        Settings.getParam("hasExternalTexture"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("hasExternalTexture", value)),
+        value => (Settings.setParam("hasExternalTexture", value)),
     );
 
     const textureEncoding = EnumField(
         Locale.Get("TID_SWF_SETTINGS_TEXTURE_ENCODING"),
         "texture_encoding_method",
         TextureEncoding,
-        State.getParam("textureEncoding"),
+        Settings.getParam("textureEncoding"),
         {
             marginBottom: "6px"
         },
         value => {
             const intValue = parseInt(value);
             setTextureEncodingMethod(intValue);
-            State.setParam("textureEncoding", intValue);
+            Settings.setParam("textureEncoding", intValue);
         },
     );
 
@@ -46,44 +46,44 @@ export default function TextureSettings() {
         Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
         "texture_quality_method",
         LocalizedTextureQuality,
-        State.getParam("textureQuality"),
+        Settings.getParam("textureQuality"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("textureQuality", parseInt(value))),
+        value => (Settings.setParam("textureQuality", parseInt(value))),
     );
 
     const scaleFactor = EnumField(
         Locale.Get("TID_SWF_SETTINGS_SCALE_FACTOR"),
         "sprite_scale_factor_select",
         TextureScaleFactor,
-        State.getParam("textureScaleFactor"),
+        Settings.getParam("textureScaleFactor"),
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("textureScaleFactor", parseInt(value))),
+        value => (Settings.setParam("textureScaleFactor", parseInt(value))),
     );
 
     const textureWidth = EnumField(
         Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH"),
         "texture_width_select",
         TextureDimensions,
-        TextureDimensions.indexOf(State.getParam("textureMaxWidth")) as any,
+        TextureDimensions.indexOf(Settings.getParam("textureMaxWidth")) as any,
         {
             marginBottom: "6px"
         },
-        value => (State.setParam("textureMaxWidth", TextureDimensions[value as any])),
+        value => (Settings.setParam("textureMaxWidth", TextureDimensions[value as any])),
     )
 
     const textureHeight = EnumField(
         Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT"),
         "texture_height_select",
         TextureDimensions,
-        TextureDimensions.indexOf(State.getParam("textureMaxHeight")) as any,
+        TextureDimensions.indexOf(Settings.getParam("textureMaxHeight")) as any,
         {
             //marginBottom: "6px"
         },
-        value => (State.setParam("textureMaxHeight", TextureDimensions[value as any])),
+        value => (Settings.setParam("textureMaxHeight", TextureDimensions[value as any])),
     )
 
     return SubMenu(
