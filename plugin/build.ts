@@ -1,8 +1,8 @@
 import which from "which";
-import { join, basename } from "path";
+import { join } from "path";
 import { copyDir, isMac, isWindows, makeLink, processExecError, progress } from "../scripts/utils";
 import { execSync } from "child_process";
-import { mkdirSync, copyFileSync, writeFileSync, existsSync } from "fs";
+import { mkdirSync, writeFileSync, existsSync } from "fs";
 import { version } from "./package.json"
 
 if (!isWindows && !isMac) {

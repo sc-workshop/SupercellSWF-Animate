@@ -1,0 +1,17 @@
+{
+	"TID_ERROR_WRONG_DOCUMENT_PATH": "Не получилось получить путь документа. Убедитесь что вы сохранили документ перед публикацией",
+	"TID_WINDOW_TITLE": "Публикация",
+	
+	"TID_BAR_LABEL_TOTAL": "Общее :",
+	"TID_STATUS_INIT": "Инициализация",
+	"TID_STATUS_TEXTURE_PROCESS": "Обработка текстур",
+	"TID_STATUS_SAVE": "Сохранение...",
+	
+	"TID_BAR_LABEL_LIBRARY_ITEMS": "Обьекты бибилотеки :",
+	
+	"TID_BAR_LABEL_TEXURE_PACK": "Спрайты :",
+	"TID_STATUS_SPRITE_PACK": "Упаковка спрайтов...",
+	"TID_STATUS_TEXTURE_SAVE": "Сохранение текстур..."
+	
+	
+}
