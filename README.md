@@ -22,7 +22,7 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Building](#building)
 - [Examples](#examples)
 - [Authors](#authors)
-
+- [Support](#support)
 
 <br/>
 
@@ -66,6 +66,9 @@ Absolutely all types of animation tweens and their types of interpolation are su
 
  - Shape animation ✅  
 Full support. Be careful when using it, the result can be very unoptimized.
+
+- Nine-slice ❌  
+Soon.
 <br/>
 
 # How to use
@@ -148,6 +151,7 @@ To enable text outline you need to add "Glow" filter to text field
 
         - Precise matrices - If flag is on, writes transformation of objects to file more "accurately"
 
+TODO: In-Publisher description
 <br/>
 
 # Requirements
@@ -174,16 +178,17 @@ Go to folder `C:\Users\{USER NAME}\AppData\Roaming\Adobe\CEP\extensions` (If som
 # Dependecies
 There will be a list of other people's projects that have been used here:
 - JS
-    - [React](https://github.com/facebook/react): Interface for Publisher settings panel
+    - [React](https://github.com/facebook/react): UI framework for Publisher settings panel
 - C++
-    - [Libnest2d](https://github.com/tamasmeszaros/libnest2d) Great library for packing polygons. Used to create texture atlases: [LGPL-3.0 License](./plugin/ThirdParty/AtlasGenerator/ThirdParty/libnest2d/LICENSE.txt)
-    - [wxWidgets](https://github.com/wxWidgets/wxWidgets) Cross-platform and simple library for creating an interface in C++. Used to create a progress window during export: [wxWidgets license](https://github.com/wxWidgets/wxWidgets/blob/master/docs/licence.txt)
+    - [OpenCV](https://github.com/opencv/opencv) Computer vision library for image processing: [Apache License 2.0](https://github.com/opencv/opencv/blob/4.6.0/LICENSE)
+    - [Libnest2d](https://github.com/tamasmeszaros/libnest2d) Great library for packing polygons. Used to create texture atlases: [LGPL-3.0 License](https://github.com/tamasmeszaros/libnest2d/blob/master/LICENSE.txt)
+    - [wxWidgets](https://github.com/wxWidgets/wxWidgets) Cross-platform and simple library for creating an UI in C++. Used to create a progress window during export: [wxWidgets license](https://github.com/wxWidgets/wxWidgets/blob/master/docs/licence.txt)
     - [CDT](https://github.com/artem-ogre/CDT/) Library for polygon triangulation. Used to triangulate fills and stroke: [MPL-2.0 License](./plugin/ThirdParty/CDT/LICENSE)
     - Data compression algorithms:
         - LZMA: [Source](https://7-zip.org/sdk.html)
         - ZSTD [Git](https://github.com/facebook/zstd), [BSD / GPL2 License](./plugin/ThirdParty/SC/dependencies/Compression/dependencies/zstd/LICENSE)
         - LZHAM: [Git](https://github.com/richgel999/lzham_codec)
-        - ASTC:  [Git](https://github.com/ARM-software/astc-encoder), [Apache-2.0 License](https://github.com/ARM-software/astc-encoder/blob/main/LICENSE.txt)
+        - ASTC:  [Git](https://github.com/ARM-software/astc-encoder), [Apache License 2.0](https://github.com/ARM-software/astc-encoder/blob/main/LICENSE.txt)
 
 <br/>
 
@@ -206,22 +211,7 @@ Instruction will be divided into 2 parts, instructions for building Plugin and P
     Try opening `localhost:8080` in your browser. If page works and you see the publisher interface, then everything is OK!
 
 - Plugin  
-    Make sure you have installed Visual Studio with C++ build tools and also premake5 which should be in system variables or PATH.  
-    To install most dependencies you need to run "update_submodule" script in `plugin/scripts/`. Also note, dependency download process can be a bit long.  
-    But you need to build wxWidgets yourself and copy everything to plugin/ThirdParty/wxWidget.  
-    Final file structure should look like this:  
-    ```
-    ThirdParty \  
-        wxWidget \
-            include \
-                *.h
-            lib \
-                vc_x64_lib \
-                    *d.lib
-                    *.lib
-
-    ```
-    After preparing  dependencies, try to generate solution. Open console in `plugin/scripts/` and run script "generate
+    Make sure you have installed Visual Studio with C++ build tools and also cmake which should be in system variables or PATH. That's all!  
 
 Next, after preparing all modules, you need to open console in root of repository.
 - Debug  
@@ -270,7 +260,7 @@ Also, thanks for a lot of things like SWF module, sc2json converters, etc...
 ## [Danila Schelkov](https://github.com/danila-schelkov) (Also known as Vorono4ka) 
 Famous author of the most unoptimized and most used tool for _tex.sc files - [XCoder](https://github.com/xcoder-tool/XCoder)  
 Also known a bit for [SC-editor](https://github.com/danila-schelkov/sc-editor) (I think it's because it can't edit or even export movie clips :) ).  
-Also thanks for support during this time and many other things that helped write SWF module.
+Also thanks for support during this time and many other things that helped write Supercell SWF library.
 
 <br/>
 
@@ -281,8 +271,14 @@ A cool author of some scripts and modules from which some implementations for pl
 
 <br/>
 
-<img src="./plugin/res/assets/loading/neco_ark.gif" width="10%">
+<img src="./plugin/resources/loading/neco_ark.gif" width="10%">
 
 
 ## And me, DaniilSV
 Dude who created this, and writes this text. Yes.
+
+<br/>
+
+# Support
+This project was created with the goal of exploring various interesting tools and to support a small but quite creative community of modders. I put a lot of heart and time into this creation, so if you want to support me, you can buy me a coffee right here :3  
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/daniilsivi)

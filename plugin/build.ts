@@ -44,7 +44,7 @@ function buildWindows() {
     }
 
     const buildDirectory = join(__dirname, "build");
-    //exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
+    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
     exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
 
     copyDir(join(__dirname, "build", activeConfiguration), join(libPath, "win"));
