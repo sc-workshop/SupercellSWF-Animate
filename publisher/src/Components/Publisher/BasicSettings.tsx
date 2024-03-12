@@ -1,7 +1,6 @@
 import { createElement, useState } from "react";
 import { Settings } from "../../PublisherSettings";
 import Locale from "../../Localization";
-import { PublisherMethods } from "../../PublisherSettings";
 
 import EnumField from "../Shared/EnumField";
 import FileField from "../Shared/FileField";
@@ -15,33 +14,11 @@ export default function BasicSettings() {
         "write",
         fileExtension,
         {
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         value => (Settings.setParam("output", value)),
         Settings.getParam("output")
     )
-
-    const method = EnumField(
-        Locale.Get("TID_PUBLISH_METHOD"),
-        "publisher_method",
-        PublisherMethods,
-        Settings.getParam("method"),
-        {
-            marginBottom: "6px"
-        },
-        function (value) {
-            const key: PublisherMethods = parseInt(value);
-            switch (key) {
-                case PublisherMethods.SWF:
-                    setFileExtension("sc")
-                    break
-                case PublisherMethods.JSON:
-                    setFileExtension("json")
-                    break
-            }
-            Settings.setParam("method", key)
-        }
-    );
 
     return createElement(
         "div",
@@ -51,8 +28,7 @@ export default function BasicSettings() {
                 width: "100%"
             }
         },
-        output,
-        process.env.NODE_ENV == "production" ? undefined : method
+        output
 
     )
 }

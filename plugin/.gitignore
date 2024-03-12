@@ -4,12 +4,6 @@
 /include/PluginConfiguration.h
 /bin
 
-/project/win/.vs
-
 *.vcxproj
 *.vcxproj.*
 *.sln
-project/build
-project/win
-
-ThirdParty/wxWidget

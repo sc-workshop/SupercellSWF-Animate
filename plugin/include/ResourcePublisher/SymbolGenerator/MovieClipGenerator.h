@@ -3,12 +3,12 @@
 #include <vector>
 
 // FCM stuff
-#include <FCMTypes.h>
-#include <DOM/Service/Tween/IPropertyIDs.h>
+#include <AnimateSDK/core/common/FCMTypes.h>
+#include <AnimateSDK/app/DOM/Service/Tween/IPropertyIDs.h>
 
 // Timeline
-#include <DOM/ITimeline1.h>
-#include <DOM/ILayer2.h>
+#include <AnimateSDK/app/DOM/ITimeline1.h>
+#include <AnimateSDK/app/DOM/ILayer2.h>
 
 // Writer
 #include "ResourcePublisher/Writer/Shared/SharedMovieclipWriter.h"
@@ -27,7 +27,7 @@ namespace sc {
 
 			MovieClipGeneator(ResourcePublisher& resources) : m_resources(resources) {}
 
-			void Generate(Context& context, pSharedMovieclipWriter writer, SymbolContext& symbol, FCM::AutoPtr<DOM::ITimeline1> timeline);
+			void Generate(SharedMovieclipWriter& writer, SymbolContext& symbol, FCM::AutoPtr<DOM::ITimeline1> timeline);
 		};
 	}
 }

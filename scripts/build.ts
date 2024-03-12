@@ -4,7 +4,7 @@ import { progress, isDev, processPath, processExecError } from "./utils";
 import { join, resolve } from "path"
 import { execSync } from "child_process"
 
-const extensions = process.argv.slice(3, process.argv.length);
+const extensions = process.argv.slice(3);
 
 progress(`BUILD for ${isDev ? "Development" : "Production"}`, 'blue');
 cleanup(extensions);
@@ -13,10 +13,8 @@ progress('Generating manifest..');
 generateCSXS(config);
 
 for (const extensionName of Object.keys(config.extensions)) {
-    if (extensions.length != 0) {
-        if (extensions.indexOf(extensionName) === -1) {
-            continue;
-        } 
+    if (extensions.length != 0 && extensions.indexOf(extensionName) === -1) {
+        continue;
     }
     progress(`Building ${extensionName}..`);
 

@@ -4,15 +4,16 @@
 #include <string>
 #include <memory>
 
-#include "FCMTypes.h"
-#include "DOM/FrameElement/IFrameDisplayElement.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
+#include "AnimateSDK/app/DOM/FrameElement/IFrameDisplayElement.h"
 #include "Module/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {
-		class Context;
-
 		class SharedMovieclipWriter {
+		public:
+			virtual ~SharedMovieclipWriter() = default;
+
 		protected:
 			uint32_t m_position = 0;
 
@@ -21,20 +22,18 @@ namespace sc {
 				m_position++;
 			}
 
-			virtual void Init(Context& context, SymbolContext& info, uint32_t frameCount) = 0;
+			virtual void InitializeTimeline(double fps, uint32_t frameCount) = 0;
 
-			virtual void SetLabel(std::u16string& label) = 0;
+			virtual void SetLabel(const std::u16string& label) = 0;
 
 			virtual void AddFrameElement(
 				uint16_t id,
 				FCM::BlendMode blending,
-				std::u16string name,
+				const std::u16string& name,
 				DOM::Utils::MATRIX2D* matrix,
 				DOM::Utils::COLOR_MATRIX* color) = 0;
 
-			virtual void Finalize(uint16_t id, uint8_t fps) = 0;
+			virtual void Finalize(uint16_t id) = 0;
 		};
-
-		typedef std::shared_ptr<SharedMovieclipWriter> pSharedMovieclipWriter;
 	}
 }

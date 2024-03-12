@@ -3,16 +3,19 @@
 #include <chrono>
 #include <thread>
 
+#include "exception/GeneralRuntimeException.h"
+
 #include "PluginConfiguration.h"
 #include "Module/FCMClasses.h"
 #include "Module/Version.h"
-#include "Publisher/IPublisher.h"
 
-// FCM stuff
-#include "FCMTypes.h"
+#include "AnimateSDK/app/Publisher/IPublisher.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
 
-#include "Publisher/IPublisher.h"
-#include "Module/Context.h"
+#include "Module/PluginContext.h"
+#include "Module/SessionConfig.h"
+#include "Module/PluginException.h"
+#include "Module/Localization.h"
 #include "ResourcePublisher/ResourcePublisher.h"
 
 #include <filesystem>

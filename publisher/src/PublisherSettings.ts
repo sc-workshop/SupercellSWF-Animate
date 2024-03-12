@@ -1,10 +1,5 @@
 import { CSEvent, getInterface, isCEP } from "./CEP"
 
-export enum PublisherMethods {
-    JSON,
-    SWF
-}
-
 export enum CompressionMethods {
     LZMA,
     LZHAM,
@@ -37,21 +32,15 @@ export enum Quality {
     low
 } 
 
-enum ExportsMode {
-    AllMovieclips,
-    AllUnusedMovieclips
-}
-
 interface PublisherSettingsData {
     //Basic settings
     output: string,
-    method: PublisherMethods,
 
     // Additional settings
     compressionMethod: CompressionMethods,
     filledShapeOptimization: boolean,
     hasPrecisionMatrices: boolean,
-    useSpritesForNineSlice: boolean,
+    //useSpritesForNineSlice: boolean,
 
     // Export to another file settings
     exportToExternal: boolean,
@@ -59,39 +48,42 @@ interface PublisherSettingsData {
 
     // Texture category
     hasExternalTexture: boolean,
+    hasExternalCompressedTexture: boolean,
+    hasLowresTexture: boolean,
+    hasMultiresTexture: boolean,
+    multiResolutinSuffix: string,
+    lowResolutionSuffix: string,
     textureEncoding: TextureEncoding,
     textureQuality: Quality,
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
     textureMaxHeight: number,
-
-    exportsMode: ExportsMode,
-    
-
 }
 
 export class PublisherSettings {
     data: PublisherSettingsData = {
         output: "",
-        method: PublisherMethods.SWF,
 
-        compressionMethod: CompressionMethods.LZMA,
+        compressionMethod: CompressionMethods.ZSTD,
         filledShapeOptimization: true,
         hasPrecisionMatrices: false,
-        useSpritesForNineSlice: false,
+        //useSpritesForNineSlice: false,
 
         exportToExternal: false,
         exportToExternalPath: "",
 
         // Textures
         hasExternalTexture: true,
-        textureEncoding: TextureEncoding.Raw,
+        hasExternalCompressedTexture: true,
+        hasLowresTexture: false,
+        hasMultiresTexture: false,
+        multiResolutinSuffix: "_highres",
+        lowResolutionSuffix: "_lowres",
+        textureEncoding: TextureEncoding.KTX,
         textureQuality: Quality.highest,
         textureScaleFactor: TextureScaleFactor["x1.0"],
         textureMaxWidth: 2048,
         textureMaxHeight: 2048,
-
-        exportsMode: ExportsMode.AllUnusedMovieclips,
     };
 
     getParam(name: keyof PublisherSettingsData): any {

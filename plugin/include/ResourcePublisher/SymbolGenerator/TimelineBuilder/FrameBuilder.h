@@ -7,36 +7,34 @@
 #include <tuple>
 
 // FCM stuff
-#include "FCMTypes.h"
-#include "DOM/Service/Tween/IPropertyIDs.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
+#include "AnimateSDK/app/DOM/Service/Tween/IPropertyIDs.h"
 
 // MATRIX2D, COLOR_MATRIX
-#include "DOM/Utils/DOMTypes.h"
+#include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 
 // Tweeners stuff
-#include "DOM/ITween.h"
-#include "DOM/Service/Tween/ITweenerService.h"
-#include "DOM/Service/Tween/IGeometricTweener.h"
-#include "DOM/Service/Tween/IColorTweener.h"
-#include "DOM/Service/Tween/IShapeTweener.h"
+#include "AnimateSDK/app/DOM/ITween.h"
+#include "AnimateSDK/app/DOM/Service/Tween/ITweenerService.h"
+#include "AnimateSDK/app/DOM/Service/Tween/IGeometricTweener.h"
+#include "AnimateSDK/app/DOM/Service/Tween/IColorTweener.h"
+#include "AnimateSDK/app/DOM/Service/Tween/IShapeTweener.h"
 
 // Symbols
-#include "DOM/ILibraryItem.h"
-#include "DOM/FrameElement/IFrameDisplayElement.h"
-#include "DOM/FrameElement/IInstance.h"
-#include "DOM/FrameElement/ISymbolInstance.h"
-#include "DOM/FrameElement/IGroup.h"
+#include "AnimateSDK/app/DOM/ILibraryItem.h"
+#include "AnimateSDK/app/DOM/FrameElement/IFrameDisplayElement.h"
+#include "AnimateSDK/app/DOM/FrameElement/IInstance.h"
+#include "AnimateSDK/app/DOM/FrameElement/ISymbolInstance.h"
+#include "AnimateSDK/app/DOM/FrameElement/IGroup.h"
 
 // Timeline
-#include "DOM/IFrame.h"
+#include "AnimateSDK/app/DOM/IFrame.h"
 
 // Writer
 #include "ResourcePublisher/Writer/Shared/SharedMovieclipWriter.h"
 
 // Fills
 #include "FrameElements/FilledShape.h"
-
-using namespace DOM::Service::Tween;
 
 using DOM::Utils::MATRIX2D;
 using DOM::Utils::COLOR_MATRIX;
@@ -65,16 +63,16 @@ namespace sc {
 			// Tweeners
 			FCM::AutoPtr<DOM::ITween> m_tween = nullptr;
 
-			FCM::AutoPtr<IGeometricTweener> m_matrixTweener = nullptr;
-			FCM::AutoPtr<IColorTweener> m_colorTweener = nullptr;
-			FCM::AutoPtr<IShapeTweener> m_shapeTweener = nullptr;
+			FCM::AutoPtr<DOM::Service::Tween::IGeometricTweener> m_matrixTweener = nullptr;
+			FCM::AutoPtr<DOM::Service::Tween::IColorTweener> m_colorTweener = nullptr;
+			FCM::AutoPtr<DOM::Service::Tween::IShapeTweener> m_shapeTweener = nullptr;
 
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
 
-			void Update(FCM::AutoPtr<DOM::IFrame>& frame);
+			void Update(SymbolContext& symbol, DOM::IFrame* frame);
 
-			void operator()(pSharedMovieclipWriter writer);
+			void operator()(SymbolContext& symbol, SharedMovieclipWriter& writer);
 
 			bool empty() {
 				return m_elementsData.size() == 0;
@@ -90,7 +88,7 @@ namespace sc {
 			}
 
 		private:
-			void AddFrameElementArray(FCM::FCMListPtr frameElements);
+			void AddFrameElementArray(SymbolContext& symbol, FCM::FCMListPtr frameElements);
 		};
 	}
 }

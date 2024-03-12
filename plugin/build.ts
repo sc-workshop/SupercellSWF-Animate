@@ -17,7 +17,7 @@ mkdirSync(outputPath, { recursive: true });
 const libPath = join(outputPath, "lib");
 mkdirSync(libPath, { recursive: true });
 
-const winSolution = "ScAnimate.sln";
+const activeConfiguration = isDev ? "Debug" : "RelWithDebInfo"
 
 const publisherName = "SupercellSWF"
 const publisherId = "com.scwmake.SupercellSWF.Publisher";
@@ -26,44 +26,29 @@ const publisherUi = "com.scwmake.SupercellSWF.PublishSettings"
 const doctypeName = "SupercellSWF";
 const doctypeId = "com.scwmake.SupercellSWF";
 
+const assetsFolder = "resources"
+
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 function buildWindows() {
-    const msBuildPath = which.sync("msbuild");
-    if (msBuildPath.length <= 0) {
-        throw new Error("Failed to find MSBuild executable");
+    const cmakePath = which.sync("cmake");
+    if (cmakePath.length <= 0) {
+        throw new Error("Failed to find CMake executable");
     }
 
-    const solutionPath = join(__dirname, winSolution);
-
-    if (!existsSync(winSolution)) {
-        const premakePath = which.sync("premake5");
-        if (premakePath.length <= 0) {
-            throw new Error("Failed to find premake5 executable");
-        }
-
-        execSync(`generate.bat`, { stdio: [0, 1, 2], cwd: join(__dirname, "scripts") });
+    function exec(command: string)
+    {
+        execSync(command,
+        { stdio: [0, 1, 2], cwd: __dirname 
+    });
     }
 
-    progress("Building with MSBuild...");
+    const buildDirectory = join(__dirname, "build");
+    //exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
 
-    if (!existsSync(solutionPath)) {
-        throw new Error("Failed to get solution");
-    }
-
-    try {
-        execSync(`"${msBuildPath}" "${solutionPath}" -property:Configuration=${isDev ? "Debug" : "Release"}`, { stdio: [0, 1, 2] })
-    } catch (err) {
-        throw processExecError(err);
-    }
-
+    copyDir(join(__dirname, "build", activeConfiguration), join(libPath, "win"));
     progress("Done");
-
-    if (!isDev) {
-        copyDir(join(__dirname, "bin/win"), join(libPath, "win"))
-    }
-
-
 }
 
 function buildMac() {
@@ -91,12 +76,12 @@ writeFileSync(
     "utf-8"
 )
 
-const dstResourceFolder = join(libPath, "res");
+const dstResourceFolder = join(libPath, assetsFolder);
 if (!existsSync(dstResourceFolder)) {
     if (isDev) {
-        makeLink(join(__dirname, "res"), dstResourceFolder);
+        makeLink(join(__dirname, assetsFolder), dstResourceFolder);
     } else {
-        copyDir("res", dstResourceFolder)
+        copyDir(assetsFolder, dstResourceFolder)
     }
 }
 

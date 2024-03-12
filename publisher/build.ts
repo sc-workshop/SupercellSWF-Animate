@@ -7,8 +7,7 @@ const buildFolder = join(__dirname, "build");
 const isDebug = args[2] === "development";
 const outputPath = args[3];
 
-progress("Copying files to dist...");
-
+progress(`Copying files to ${outputPath}`)
 if (isDebug) {
     if (!existsSync(outputPath)) {
         makeLink(buildFolder, outputPath);

@@ -4,7 +4,6 @@
 /node_modules
 
 plugin/include/PluginConfiguration.h
-/plugin/UITest/bin
 
 *.p12
 *.zxp

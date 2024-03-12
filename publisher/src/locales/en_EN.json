@@ -18,18 +18,18 @@
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Write external texture",
 	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Encoding method",
 	"TID_SWF_SETTINGS_TEXTURE_QUALITY": "Textrue quality",
-	"TID_SWF_SETTINGS_SCALE_FACTOR": "Reduction factor",
-	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Texture width",
-	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Texture height",
-
-	"TID_EXPORTS_LABEL": "Export names",
-	"TID_SWF_SETTINGS_EXPORTS_MODE": "Export name selector mode",
-	"TID_EXPORTS_ALL_MOVIES": "All MovieClips",
-	"TID_EXPORTS_ALL_UNUSED_MOVIES": "All unused MovieClips",
+	"TID_SWF_SETTINGS_SCALE_FACTOR": "Texture scale factor",
+	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Textures width",
+	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Textures height",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE": "Write compressed textures to external files",
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Has Multi Resolution texture",
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Multi Resolution texture suffix",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES": "Has Low Resolution texture",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Low Resolution suffix",
 
 	"TID_OTHER_LABEL": "Others",
 	"TID_SWF_SETTINGS_COMPRESSION": "Compression method",
-	"TID_SWF_SETTINGS_FILLED_SHAPE_OPTIMIZATION": "Fill and stroke optimization",
+	"TID_SWF_SETTINGS_FILLED_SHAPE_OPTIMIZATION": "Fill and Stroke optimization",
 	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precise matrices"
 	
 }

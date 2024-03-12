@@ -3,20 +3,22 @@
 #include <string>
 #include <math.h>
 
-#include "Utils/DOMTypes.h"
+#include <AnimateSDK/app/DOM/Utils/DOMTypes.h>
 
-#include <DOM/FrameElement/IClassicText.h>
-#include <DOM/FrameElement/IParagraph.h>
-#include <DOM/FrameElement/ITextRun.h>
-#include <DOM/FrameElement/ITextBehaviour.h>
+#include <AnimateSDK/app/DOM/FrameElement/IClassicText.h>
+#include <AnimateSDK/app/DOM/FrameElement/IParagraph.h>
+#include <AnimateSDK/app/DOM/FrameElement/ITextRun.h>
+#include <AnimateSDK/app/DOM/FrameElement/ITextBehaviour.h>
 
 using namespace DOM::FrameElement;
 
 namespace sc {
 	namespace Adobe {
 		struct TextFieldInfo {
+		public:
 			bool operator==(TextFieldInfo const& other) const;
 
+		public:
 			DOM::Utils::RECT bound;
 
 			// IClassicText

@@ -40,7 +40,7 @@ export default function FileField(
             marginLeft: "5px"
         },
         onChange: function (event) {
-            const value = event.target.value;
+            const {value} = event.target;
             setInput(value);
             callback(value);
         },

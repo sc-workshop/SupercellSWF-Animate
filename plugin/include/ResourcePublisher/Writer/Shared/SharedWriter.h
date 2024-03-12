@@ -1,5 +1,6 @@
 #pragma once
 
+#include "generic/ref.h"
 #include "SharedMovieclipWriter.h"
 #include "SharedGraphicWriter.h"
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextField.h"
@@ -11,21 +12,27 @@ namespace fs = std::filesystem;
 
 namespace sc {
 	namespace Adobe {
-		class Context;
+		enum class MaskedLayerState : uint8_t
+		{
+			MASK_LAYER = 0,
+			MASKED_LAYERS,
+			MASKED_LAYERS_END
+		};
 
 		class SharedWriter {
 		public:
-			virtual void Init(Context& context) = 0;
+			virtual ~SharedWriter() = default;
 
-			virtual pSharedMovieclipWriter AddMovieclip() = 0;
+		public:
+			virtual SharedMovieclipWriter* AddMovieclip(SymbolContext& symbol) = 0;
 
-			virtual pSharedShapeWriter AddShape() = 0;
+			virtual SharedShapeWriter* AddShape(SymbolContext& symbol) = 0;
 
-			virtual void AddModifier(uint16_t id, sc::MovieClipModifier::Type type) = 0;
+			virtual void AddModifier(uint16_t id, MaskedLayerState type) = 0;
 
 			virtual void AddTextField(uint16_t id, TextFieldInfo field) = 0;
 
-			virtual void AddExportName(uint16_t id, std::u16string name) = 0;
+			virtual void AddExportName(uint16_t id, std::string name) = 0;
 
 			virtual void Finalize() = 0;
 		};

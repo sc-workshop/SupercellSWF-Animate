@@ -7,7 +7,6 @@ import TextureSettings from "./textures";
 import BoolField from "../../Shared/BoolField";
 import FileField from "../../Shared/FileField";
 import { useState } from "react";
-import ExportsSettings from "./exports";
 import OtherSettings from "./others";
 
 export default function SettingsMenu() {
@@ -18,7 +17,7 @@ export default function SettingsMenu() {
         "export_to_external_select",
         Settings.getParam("exportToExternal"),
         {
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         [isExportToExternal, setExportToExternal]
     )
@@ -31,7 +30,7 @@ export default function SettingsMenu() {
         "sc",
         {
             marginLeft: "2%",
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         function (value) { Settings.setParam("exportToExternalPath", value) },
         Settings.getParam("exportToExternalPath")
@@ -45,7 +44,6 @@ export default function SettingsMenu() {
         },
         exportToExternal,
         isExportToExternal ? externalFilePath : undefined,
-        ExportsSettings(),
         TextureSettings(),
         OtherSettings()
     )

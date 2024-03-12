@@ -4,12 +4,12 @@
 #include <vector>
 
 // FCM stuff
-#include <FCMTypes.h>
-#include <DOM/Service/Tween/IPropertyIDs.h>
+#include <AnimateSDK/core/common/FCMTypes.h>
+#include <AnimateSDK/app/DOM/Service/Tween/IPropertyIDs.h>
 
 // Timeline
-#include <DOM/ILayer2.h>
-#include <DOM/FrameElement/IMovieClip.h>
+#include <AnimateSDK/app/DOM/ILayer2.h>
+#include <AnimateSDK/app/DOM/FrameElement/IMovieClip.h>
 
 // Modifier
 #include <SupercellFlash/objects/MovieClipModifier.h>
@@ -38,13 +38,13 @@ namespace sc {
 			ResourcePublisher& m_resources;
 
 			FrameBuilder m_frameBuilder;
-			vector<LayerBuilder> m_maskedLayers;
+			std::vector<LayerBuilder> m_maskedLayers;
 
-			void UpdateFrame();
+			void UpdateFrame(SymbolContext& symbol);
 
 			void AddModifier(
-				pSharedMovieclipWriter writer,
-				sc::MovieClipModifier::Type type
+				SharedMovieclipWriter& writer,
+				MaskedLayerState type
 			);
 
 		public:
@@ -52,7 +52,7 @@ namespace sc {
 
 			void next();
 
-			void operator()(pSharedMovieclipWriter writer);
+			void operator()(SymbolContext& symbol, SharedMovieclipWriter& writer);
 
 			operator bool() const
 			{

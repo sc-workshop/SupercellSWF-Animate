@@ -57,23 +57,6 @@ function App() {
       await publisherData;
     };
     getData();
-
-    /* const checkData = async () => {
-      const scriptPath =  CSInterface.getSystemPath(SystemPath.HOST_APPLICATION) + require("./JSFL/index.jsfl") ;
-      const scriptURI = 'file:///' + 
-      scriptPath
-        .replace(/\\+/g, '/')
-        .replace(/\/+/g, '/')
-        .replace(/(^|\/)\.\//img, '$1')
-        .replace(/ /g, '%20')
-        .replace(/^([a-z ]+):/i, '$1|');
-
-      await CSInterface.evalScript(`fl.runScript("${scriptURI}")`)
-
-      setDataCheck(true);
-    }
-    checkData(); */
-
   }, []);
 
   if (publisherStateData !== undefined && isFontLoaded) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FCMTypes.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
 
 namespace sc {
 	namespace Adobe {

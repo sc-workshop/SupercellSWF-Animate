@@ -5,32 +5,31 @@
 #include <fstream>
 #include <sstream>
 
-#include "FCMTypes.h"
-#include "FCMPluginInterface.h"
-#include "DocType/IDocType.h"
-#include "ApplicationFCMPublicIDs.h"
-#include "Application/Service/IOutputConsoleService.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
+#include "AnimateSDK/core/common/FCMPluginInterface.h"
+#include "AnimateSDK/app/DocType/IDocType.h"
+#include "AnimateSDK/app/ApplicationFCMPublicIDs.h"
+#include "AnimateSDK/app/Application/Service/IOutputConsoleService.h"
 
+#include "Module/Localization.h"
+#include "Module/PluginContext.h"
 #include "Module/Version.h"
 #include "FeaturesTypes.h"
-#include "Utils.h"
 
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 using namespace nlohmann;
 
-using namespace FCM;
 using namespace DocType;
 
 namespace sc {
 	namespace Adobe {
-		class FeatureMatrix : public DocType::IFeatureMatrix, public FCM::FCMObjectBase
+		class FeatureMatrix : public FCM::FCMObjectBase, public DocType::IFeatureMatrix
 		{
 			BEGIN_MULTI_INTERFACE_MAP(FeatureMatrix, PLUGIN_VERSION)
 				INTERFACE_ENTRY(IFeatureMatrix)
 				END_INTERFACE_MAP
 
 		public:
-
 			virtual FCM::Result _FCMCALL IsSupported(
 				FCM::CStringRep16 inFeatureName,
 				FCM::Boolean& isSupported);
@@ -52,10 +51,7 @@ namespace sc {
 				FCM::VARIANT& outDefVal);
 
 			FeatureMatrix();
-
-			~FeatureMatrix();
-
-			void Init(FCM::PIFCMCallback pCallback);
+			virtual ~FeatureMatrix();
 
 		private:
 			void ReadFeature(json& feature);
@@ -65,7 +61,9 @@ namespace sc {
 			Feature* FindFeature(const std::string& inFeatureName);
 
 		private:
-			FCM::IFCMCallback* m_callback = nullptr;
+#if SC_DEBUG
+			json m_dump = json::object();
+#endif
 			FeatureMap m_features;
 		};
 	}

@@ -16,7 +16,7 @@ execSync("npm run build:prod", {stdio: [0, 1, 2]});
 const zxpCmd = platform() == "win32" ? `ZXPSignCmd` : `./ZXPSignCmd`;
 const cwdDir = join(__dirname, "zxp");
 const certPath = join(process.cwd(), "cert.p12");
-const output = join(process.cwd(), `${bundleId}.zxp`);
+const output = join(process.cwd(), "dist", `${bundleId}.zxp`);
 
 if (existsSync(certPath)) {
     unlinkSync(certPath)

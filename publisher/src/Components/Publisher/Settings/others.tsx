@@ -11,7 +11,7 @@ export default function OtherSettings() {
         CompressionMethods,
         Settings.getParam("compressionMethod"),
         {
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         value => (Settings.setParam("compressionMethod", parseInt(value))),
     )
@@ -21,7 +21,7 @@ export default function OtherSettings() {
         "filled_shape_optimization",
         Settings.getParam("filledShapeOptimization"),
         {
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         value => (Settings.setParam("filledShapeOptimization", value)),
     );
@@ -31,20 +31,20 @@ export default function OtherSettings() {
         "precision_matrix",
         Settings.getParam("hasPrecisionMatrices"),
         {
-            marginBottom: "6px"
+            marginBottom: "7px"
         },
         value => (Settings.setParam("hasPrecisionMatrices", value)),
     );
 
-    const NineSliceSprites = BoolField(
-        Locale.Get("TID_SWF_SETTINGS_NINE_SLICE_SPRITES"),
-        "9_slice_sprites",
-        Settings.getParam("useSpritesForNineSlice"),
-        {
-            marginBottom: "6px"
-        },
-        value => (Settings.setParam("useSpritesForNineSlice", value)),
-    );
+    //const NineSliceSprites = BoolField(
+    //    Locale.Get("TID_SWF_SETTINGS_NINE_SLICE_SPRITES"),
+    //    "9_slice_sprites",
+    //    Settings.getParam("useSpritesForNineSlice"),
+    //    {
+    //        marginBottom: "6px"
+    //    },
+    //    value => (Settings.setParam("useSpritesForNineSlice", value)),
+    //);
     
     return SubMenu(
         Locale.Get("TID_OTHER_LABEL"),

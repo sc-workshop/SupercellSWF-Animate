@@ -1,19 +1,19 @@
 #pragma once
 
 // FCM stuff
-#include "FCMTypes.h"
-#include "DOM/Service/Image/IBitmapExportService.h"
+#include "AnimateSDK/core/common/FCMTypes.h"
+#include "AnimateSDK/app/DOM/Service/Image/IBitmapExportService.h"
 
 // Timeline stuff
-#include <ITimeline.h>
-#include <DOM/ILayer2.h>
-#include <DOM/IFrame.h>
-#include "DOM/ITween.h"
+#include <AnimateSDK/app/DOM/ITimeline.h>
+#include <AnimateSDK/app/DOM/ILayer2.h>
+#include <AnimateSDK/app/DOM/IFrame.h>
+#include "AnimateSDK/app/DOM/ITween.h"
 
 // Symbol
-#include <DOM/ILibraryItem.h>
-#include <DOM/MediaInfo/IBitmapInfo.h>
-#include <DOM/FrameElement/IInstance.h>
+#include <AnimateSDK/app/DOM/ILibraryItem.h>
+#include <AnimateSDK/app/DOM/MediaInfo/IBitmapInfo.h>
+#include <AnimateSDK/app/DOM/FrameElement/IInstance.h>
 
 // Writer
 #include "ResourcePublisher/Writer/Shared/SharedGraphicWriter.h"
@@ -28,29 +28,33 @@ using namespace DOM::Service::Image;
 namespace sc {
 	namespace Adobe {
 		class ResourcePublisher;
-		class Context;
+		class PluginContext;
 
 		class GraphicGenerator {
 			ResourcePublisher& m_resources;
 			FCM::AutoPtr<IBitmapExportService> BitmapExportService;
 
 			void GenerateLayerElements(
-				pSharedShapeWriter writer,
+				SymbolContext& symbol,
+				SharedShapeWriter& writer,
 				FCM::FCMListPtr elements
 			);
 
 			void GenerateLayerShapes(
-				pSharedShapeWriter writer,
+				SymbolContext& symbol,
+				SharedShapeWriter& writer,
 				FCM::AutoPtr<DOM::Layer::ILayerNormal> layer
 			);
 
 			void GenerateLayer(
-				pSharedShapeWriter writer,
+				SymbolContext& symbol,
+				SharedShapeWriter& writer,
 				FCM::AutoPtr<DOM::ILayer2> layer
 			);
 
 			void GenerateLayerList(
-				pSharedShapeWriter writer,
+				SymbolContext& symbol,
+				SharedShapeWriter& writer,
 				FCM::FCMListPtr layers
 			);
 
@@ -79,7 +83,7 @@ namespace sc {
 
 			void GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
 
-			void Generate(Context& context, SymbolContext& symbol, pSharedShapeWriter writer, DOM::ITimeline* timeline);
+			void Generate(SymbolContext& symbol, SharedShapeWriter& writer, DOM::ITimeline* timeline);
 
 			static bool Validate(DOM::ITimeline* timeline);
 		};
