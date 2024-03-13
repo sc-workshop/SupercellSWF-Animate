@@ -19,7 +19,7 @@ namespace sc {
 				(const wchar_t*)title.c_str(),
 				wxDefaultPosition,
 				wxDefaultSize,
-				wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
+				wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
 		{
 			Center();
 			SetBackgroundColour(wxColor(0x333333));

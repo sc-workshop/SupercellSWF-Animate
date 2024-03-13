@@ -173,7 +173,7 @@ namespace sc {
 			for (Shape& object : swf.shapes) {
 				object.id += idOffset;
 
-				for (ShapeDrawBitmapCommand bitmap : object.commands) {
+				for (ShapeDrawBitmapCommand& bitmap : object.commands) {
 					bitmap.texture_index += swf.textures.size();
 				}
 
@@ -359,12 +359,11 @@ namespace sc {
 
 			status->SetProgress(ATLAS_FINALIZE);
 			status->SetLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
-
 			FinalizeAtlas();
 
-			status->SetProgress(EXTERNAL_LOADING);
-			status->SetLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
 			if (config.exportToExternal) {
+				status->SetProgress(EXTERNAL_LOADING);
+				status->SetLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
 				LoadExternal();
 			}
 
