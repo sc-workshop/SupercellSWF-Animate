@@ -48,7 +48,9 @@ namespace sc {
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (...) {
-						context.print("Unexpected runtime exception");
+						context.print(
+							context.locale.GetString("TID_UNKNOWN_EXCEPTION")
+						);
 						result = FCM_EXPORT_FAILED;
 					}
 				}
@@ -60,7 +62,9 @@ namespace sc {
 			auto end = std::chrono::high_resolution_clock::now();
 
 			long long executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-			context.print("Done by %llu second(-s)", executionTime);
+			context.print(
+				context.locale.GetString("TID_EXPORT_TIME_STATUS"), executionTime
+			);
 
 			return result;
 		}

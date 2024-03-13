@@ -31,35 +31,6 @@ namespace sc
 			return languageCode;
 		}
 
-		void PluginContext::print(const char* fmt, ...) {
-			va_list args;
-			va_start(args, fmt);
-
-			char buffer[1024];
-			std::vsnprintf(buffer, 1024, fmt, args);
-
-			std::string message(buffer);
-
-			console->Trace((FCM::CStringRep16)Localization::ToUtf16(message + "\n").c_str());
-
-			va_end(args);
-		}
-
-		void PluginContext::print(const wchar_t* fmt, ...) {
-			va_list args;
-			va_start(args, fmt);
-
-			wchar_t buffer[1024];
-			std::vswprintf(buffer, 1024, fmt, args);
-
-			std::wstring message(buffer);
-			message += L"\n";
-
-			console->Trace((FCM::CStringRep16)message.c_str());
-
-			va_end(args);
-		}
-
 		bool& PluginContext::initializeWindow()
 		{
 			m_app = new PluginWindowApp();

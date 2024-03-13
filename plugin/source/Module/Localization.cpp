@@ -37,10 +37,6 @@ namespace sc {
 			}
 		}
 
-		// std::u16string Localization::GetString(const std::string& TID, Args ... args) {
-		// 	std::u16string result = GetString(TID, args);
-		// }
-
 		std::u16string Localization::ToUtf16(const std::string& string) {
 			static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
 			return convert.from_bytes(string);

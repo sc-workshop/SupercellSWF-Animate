@@ -1,15 +1,21 @@
 {
-	"TID_ERROR_WRONG_DOCUMENT_PATH": "Failed to get document path. Save document before publishing",
-	"TID_WINDOW_TITLE": "Publishing",
+	"TID_WINDOW_TITLE": "Publishing: %ls",
 	
 	"TID_STATUS_INIT": "Initializing",
 	"TID_STATUS_SAVE": "Saving...",
+	"TID_UNKNOWN_EXCEPTION": "Unknown exception",
+	"TID_EXPORT_TIME_STATUS": "Done by %llu second(-s)",
+	"TID_FCM_SERVICE_INIT_FAILED": "Failed to initialize FCM service",
+	"TID_BITMAP_SERVICE_EXPORT_FAILED": "Failed to export sprite image",
+	"TID_UNKNOWN_LIBRARY_ITEM_TYPE": "Unknown symbol type: \"%ls\"",
 	
 	"TID_BAR_LABEL_LIBRARY_ITEMS": "Library items :",
 	
 	"TID_BAR_LABEL_TEXURE_PACK": "Sprites :",
-	"TID_STATUS_SPRITE_PACK": "Sprite packaging...",
-	"TID_STATUS_TEXTURE_SAVE": "Texture saving...",
+	"TID_STATUS_SPRITE_PACK": "Sprite packaging",
+	"TID_STATUS_TEXTURE_SAVE": "Texture saving",
+	"TID_EXTERNAL_FILE_LOAD": "External file loading",
+	"TID_FILE_SAVE": "Saving: %ls",
 	
 	// Exceptions
 	"TID_UNKNOWN_FILL_STYLE_TYPE": "Unknown or unsuported type of Filled Shape in \"%ls\"",
@@ -17,6 +23,11 @@
 	
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "External file at path \"%ls\" does not exist",
-	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again"
+	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again",
+	
+	"TID_SWF_ATLAS_GENERATOR_TYPE": "[Atlas Generator]",
+	"TID_SWF_ATLAS_GENERATOR_BAD_POLYGON": "Failed to generate polygon",
+	"TID_SWF_ATLAS_GENERATOR_TOO_MANY_IMAGES": "Too many sprites for one file",
+	"TID_SWF_ATLAS_GENERATOR_TOO_BIG_SPRITES": "Some of sprites are too big"
 	
 }

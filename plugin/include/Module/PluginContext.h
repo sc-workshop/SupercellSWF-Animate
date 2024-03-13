@@ -63,7 +63,7 @@ namespace sc {
 
 				FCM::Result res = callback->GetService(id, service.m_Ptr);
 				if (FCM_FAILURE_CODE(res)) {
-					throw GeneralRuntimeException("Failed to initialize service");
+					throw PluginException("TID_FCM_SERVICE_INIT_FAILED");
 				}
 
 				return (FCM::AutoPtr<T>)service;
@@ -71,8 +71,33 @@ namespace sc {
 
 			std::string languageCode();
 
-			void print(const char* message, ...);
-			void print(const wchar_t* message, ...);
+			template <class ... Args>
+			void print(const char* message, Args ... args) {
+				char buffer[1024];
+				std::vsnprintf(buffer, 1024, fmt, ...args);
+
+				std::string message(buffer);
+
+				console->Trace((FCM::CStringRep16)Localization::ToUtf16(message + "\n").c_str());
+			}
+
+			template <class ... Args>
+			void print(const uint16_t* message, Args ... args)
+			{
+				wchar_t buffer[1024];
+				std::vswprintf(buffer, 1024, fmt, ...args);
+
+				std::wstring message(buffer);
+				message += L"\n";
+
+				console->Trace((FCM::CStringRep16)message.c_str());
+			}
+
+			template <class ... Args>
+			void print(const std::u16string& message, Args ... args)
+			{
+				print(message.c_str(), ...args)
+			}
 
 			bool& initializeWindow();
 			void destroyWindow();

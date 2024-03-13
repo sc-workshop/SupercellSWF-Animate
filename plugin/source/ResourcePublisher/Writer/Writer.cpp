@@ -231,16 +231,32 @@ namespace sc {
 				break;
 
 			case AtlasGeneratorResult::BAD_POLYGON:
-				throw GeneralRuntimeException("[AtlasGenerator] Failed to generate polygon");
+				throw PluginException(
+					"%ls %ls",
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_BAD_POLYGON").c_str()
+				);
 
 			case AtlasGeneratorResult::TOO_MANY_IMAGES:
-				throw GeneralRuntimeException("[AtlasGenerator] Too many sprites for one file");
+				throw PluginException(
+					"%ls %ls",
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TOO_MANY_IMAGES").c_str()
+				);
 
 			case AtlasGeneratorResult::TOO_BIG_IMAGE:
-				throw GeneralRuntimeException("[AtlasGenerator] Some of sprites are too big");
+				throw PluginException(
+					"%ls %ls",
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TOO_BIG_SPRITES").c_str()
+				);
 
 			default:
-				throw GeneralRuntimeException("[AtlasGenerator] Unknown error");
+				throw PluginException(
+					"%ls %ls",
+					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
+					context.locale.GetString("TID_UNKNOWN_EXCEPTION").c_str()
+				);
 			}
 
 			status->SetLabel(

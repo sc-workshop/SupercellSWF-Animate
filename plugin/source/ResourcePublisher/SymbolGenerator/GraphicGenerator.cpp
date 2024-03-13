@@ -66,12 +66,6 @@ namespace sc {
 
 							writer.AddGraphic(bitmapImage, transformMatrix);
 						}
-						else {
-							throw GeneralRuntimeException("Failed to get media type");
-						}
-					}
-					else {
-						throw GeneralRuntimeException("Failed to get media type");
 					}
 				}
 
@@ -152,8 +146,6 @@ namespace sc {
 				GenerateLayerShapes(symbol, writer, normalLayer);
 				return;
 			}
-
-			throw GeneralRuntimeException("Failed to get layer type");
 		}
 
 		void GraphicGenerator::GenerateLayerList(
@@ -179,7 +171,7 @@ namespace sc {
 				100
 			);
 			if (FCM_FAILURE_CODE(res)) {
-				throw GeneralRuntimeException("Failed to export image");
+				throw PluginException("TID_BITMAP_SERVICE_EXPORT_FAILED");
 			}
 
 			image = cv::imread(tempFile.string(), cv::IMREAD_UNCHANGED);

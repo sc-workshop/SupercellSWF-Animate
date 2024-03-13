@@ -3,11 +3,6 @@
 namespace sc {
 	namespace Adobe {
 		void ResourcePublisher::Publish() {
-			//FCM::Double fps;
-			//FCM::U_Int8 framesPerSec;
-			//
-			//context.document->GetFrameRate(fps);
-			//framesPerSec = (FCM::U_Int8)fps;
 			PluginContext& context = PluginContext::Instance();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 
@@ -131,7 +126,7 @@ namespace sc {
 				return identifer;
 			}
 
-			throw GeneralRuntimeException("Unknown Library Item Type");
+			throw PluginException("TID_UNKNOWN_LIBRARY_ITEM_TYPE", symbol.name.c_str());
 		}
 
 		uint16_t ResourcePublisher::AddSymbol(

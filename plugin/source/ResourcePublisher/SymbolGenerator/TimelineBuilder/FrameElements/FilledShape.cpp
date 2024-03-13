@@ -196,7 +196,10 @@ namespace sc {
 					solidStyle->GetColor(solidColor);
 				}
 				else {
-					throw PluginException("TID_UNKNOWN_FILL_STYLE_TYPE", symbol.name.c_str());
+					throw PluginException(
+						"TID_UNKNOWN_FILL_STYLE_TYPE",
+						symbol.name.c_str()
+					);
 				}
 			}
 		}
