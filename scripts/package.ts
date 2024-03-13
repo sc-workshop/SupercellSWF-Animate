@@ -1,6 +1,6 @@
 import { distFolder, bundleId } from "./manifest";
 import { removeDirs, log } from "./utils";
-import { join} from "path"
+import { join } from "path"
 import { execSync } from "child_process"
 import { existsSync, unlinkSync } from "fs"
 import cert from "./cert";
@@ -31,3 +31,5 @@ execSync(`${zxpCmd} -selfSignedCert ${cert.countryCode} ${cert.province} ${cert.
 execSync(`${zxpCmd} -sign "${distFolder}" "${output}" "${certPath}" ${cert.password} -tsa http://timestamp.digicert.com/`, {cwd: cwdDir, stdio:[0, 1, 2]})
 
 log(`Package saved to ${output}`)
+
+removeDirs(join(distFolder, bundleId))

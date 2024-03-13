@@ -12,8 +12,7 @@
 #include <exception>
 #include <thread>
 
-#include "exception/GeneralRuntimeException.h"
-
+#include "Module/PluginException.h"
 #include "Module/Localization.h"
 
 #include "Window/PluginWindowApp.h"
@@ -74,29 +73,28 @@ namespace sc {
 			template <class ... Args>
 			void print(const char* message, Args ... args) {
 				char buffer[1024];
-				std::vsnprintf(buffer, 1024, fmt, ...args);
+				std::snprintf(buffer, 1024, message, args...);
 
-				std::string message(buffer);
-
-				console->Trace((FCM::CStringRep16)Localization::ToUtf16(message + "\n").c_str());
+				std::string result(buffer);
+				console->Trace((FCM::CStringRep16)Localization::ToUtf16(result + "\n").c_str());
 			}
 
 			template <class ... Args>
-			void print(const uint16_t* message, Args ... args)
+			void print(const char16_t* message, Args ... args)
 			{
 				wchar_t buffer[1024];
-				std::vswprintf(buffer, 1024, fmt, ...args);
+				std::swprintf(buffer, 1024, (const wchar_t *)message, args...);
 
-				std::wstring message(buffer);
-				message += L"\n";
+				std::wstring result(buffer);
+				result += L"\n";
 
-				console->Trace((FCM::CStringRep16)message.c_str());
+				console->Trace((FCM::CStringRep16)result.c_str());
 			}
 
 			template <class ... Args>
 			void print(const std::u16string& message, Args ... args)
 			{
-				print(message.c_str(), ...args)
+				print(message.c_str(), args...);
 			}
 
 			bool& initializeWindow();

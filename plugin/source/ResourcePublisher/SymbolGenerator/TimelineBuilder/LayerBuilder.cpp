@@ -32,7 +32,7 @@ namespace sc {
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer,
 			ResourcePublisher& resources,
 			SymbolContext& symbol
-		) : m_symbol(symbol), m_resources(resources), m_layer(layer), m_frameBuilder(resources)
+		) : m_symbol(symbol), m_layer(layer), m_resources(resources), m_frameBuilder(resources)
 		{
 			m_layer->GetTotalDuration(m_duration);
 			layer->GetKeyFrames(m_keyframes.m_Ptr);

@@ -54,6 +54,8 @@ namespace sc {
 			}
 
 		public:
+			virtual ~SCPublisher() = default;
+
 			FCM::Result _FCMCALL Publish(DOM::PIFLADocument document, const FCM::PIFCMDictionary publishSettings, const FCM::PIFCMDictionary config);
 
 			FCM::Result _FCMCALL Publish(

@@ -37,7 +37,7 @@ namespace sc
 			DOM::Utils::RECT slice9 = { {0.0f, 0.0f}, {0.0f, 0.0f} };
 
 		private:
-			static std::u16string SymbolContext::GetName(DOM::ILibraryItem* symbol);
+			static std::u16string GetName(DOM::ILibraryItem* symbol);
 			static SymbolType GetType(DOM::ILibraryItem* symbol);
 		};
 	}

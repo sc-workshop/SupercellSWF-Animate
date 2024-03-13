@@ -110,7 +110,6 @@ namespace sc {
 
 		void SCWriter::LoadExternal() {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
-			PluginContext& context = PluginContext::Instance();
 
 			fs::path& filepath = config.exportToExternalPath;
 

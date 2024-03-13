@@ -27,7 +27,7 @@ namespace sc {
 
 			GenericDocumentType();
 
-			~GenericDocumentType();
+			virtual ~GenericDocumentType();
 
 		private:
 

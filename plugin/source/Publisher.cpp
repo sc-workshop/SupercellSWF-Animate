@@ -39,7 +39,7 @@ namespace sc {
 					catch (const PluginException& exception)
 					{
 						context.window()->ThrowException((wchar_t*)exception.title());
-						context.print(L"%s\n%s", exception.title(), exception.description());
+						context.print(u"%s\n%s", exception.title(), exception.description());
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const sc::GeneralRuntimeException& exception) {

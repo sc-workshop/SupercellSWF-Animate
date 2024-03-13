@@ -59,8 +59,6 @@ namespace sc {
 		}
 
 		void ResourcePublisher::GetItems(FCM::FCMListPtr libraryItems, std::vector<FCM::AutoPtr<DOM::ILibraryItem>>& result) {
-			PluginContext& context = PluginContext::Instance();
-
 			uint32_t itemCount = 0;
 			libraryItems->Count(itemCount);
 
