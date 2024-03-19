@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <numeric>
 
 #include <opencv2/opencv.hpp>
 
@@ -159,7 +161,7 @@ namespace sc {
 namespace sc {
 	class AtlasGenerator {
 		// Some functions for drawing
-#ifdef DEBUG
+#ifdef CV_DEBUG
 		inline static cv::RNG rng = cv::RNG(time(NULL));
 		static void ShowImage(std::string name, cv::Mat image) {
 			cv::namedWindow(name, cv::WINDOW_NORMAL);
@@ -197,10 +199,10 @@ namespace sc {
 					2,
 					cv::LINE_AA
 				);
-	}
+			}
 			ShowImage("Image polygon", drawing);
 			cv::destroyAllWindows();
-}
+		}
 #endif
 		static void NormalizeConfig(AtlasGeneratorConfig& config);
 

@@ -3,15 +3,14 @@
 #include <libnest2d/libnest2d.hpp>
 
 #define PercentOf(proc, num) (num * proc / 100)
-using namespace std;
 
 namespace sc {
 	void AtlasGenerator::NormalizeConfig(AtlasGeneratorConfig& config)
 	{
-		config.maxSize.first = (uint16_t)clamp((int)config.maxSize.first, 0, MaxTextureDimension);
-		config.maxSize.second = (uint16_t)clamp((int)config.maxSize.second, 0, MaxTextureDimension);
-		config.scaleFactor = (uint8_t)clamp((int)config.scaleFactor, MinScaleFactor, MaxScaleFactor);
-		config.extrude = (uint8_t)clamp((int)config.extrude, MinExtrude, MaxExtrude);
+		config.maxSize.first = (uint16_t)std::clamp((int)config.maxSize.first, 0, MaxTextureDimension);
+		config.maxSize.second = (uint16_t)std::clamp((int)config.maxSize.second, 0, MaxTextureDimension);
+		config.scaleFactor = (uint8_t)std::clamp((int)config.scaleFactor, MinScaleFactor, MaxScaleFactor);
+		config.extrude = (uint8_t)std::clamp((int)config.extrude, MinExtrude, MaxExtrude);
 	};
 
 	void AtlasGenerator::ImagePreprocess(cv::Mat& image) {
@@ -82,23 +81,23 @@ namespace sc {
 		return sharpened;
 	}
 
-	vector<cv::Point> AtlasGenerator::GetImageContour(cv::Mat& image)
+	std::vector<cv::Point> AtlasGenerator::GetImageContour(cv::Mat& image)
 	{
 		using namespace cv;
 
-		vector<Point> result;
+		std::vector<Point> result;
 
-		vector<vector<Point>> contours;
+		std::vector<std::vector<Point>> contours;
 		findContours(image, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-		for (vector<Point>& points : contours) {
+		for (std::vector<Point>& points : contours) {
 #ifdef CV_DEBUG
 			Mat drawingImage;
 			cvtColor(image, drawingImage, COLOR_GRAY2BGR);
 			ShowContour(drawingImage, points);
 #endif
 
-			move(points.begin(), points.end(), back_inserter(result));
+			std::move(points.begin(), points.end(), std::back_inserter(result));
 		}
 
 		SnapToBorder(image, result);
@@ -106,7 +105,7 @@ namespace sc {
 		return result;
 	}
 
-	void AtlasGenerator::ExtrudePoints(cv::Mat src, vector<cv::Point>& points) {
+	void AtlasGenerator::ExtrudePoints(cv::Mat src, std::vector<cv::Point>& points) {
 		using namespace cv;
 
 		const uint16_t offsetX = (uint16_t)PercentOf(src.cols, 5);
@@ -137,14 +136,14 @@ namespace sc {
 				}
 
 				point = {
-					clamp(x + centerW, 0, src.cols),
-					clamp(y + centerH, 0, src.rows),
+					std::clamp(x + centerW, 0, src.cols),
+					std::clamp(y + centerH, 0, src.rows),
 				};
 			}
 		}
 	}
 
-	void AtlasGenerator::SnapToBorder(cv::Mat src, vector<cv::Point>& points) {
+	void AtlasGenerator::SnapToBorder(cv::Mat src, std::vector<cv::Point>& points) {
 		using namespace cv;
 
 		const double snapPercent = 7;
@@ -209,7 +208,7 @@ namespace sc {
 		Size dstSize = polygonMask.size();
 
 		if (IsRectangle(image, config)) {
-			item.polygon = vector<AtlasGeneratorVertex>(4);
+			item.polygon = std::vector<AtlasGeneratorVertex>(4);
 
 			item.polygon[0].uv = { 0, 0 };
 			item.polygon[1].uv = { 0, dstSize.height };
@@ -228,9 +227,9 @@ namespace sc {
 		}
 
 		polygonMask = AtlasGenerator::MaskPreprocess(polygonMask);
-		vector<Point> contour = GetImageContour(polygonMask);
+		std::vector<Point> contour = GetImageContour(polygonMask);
 
-		vector<cv::Point> polygon;
+		std::vector<cv::Point> polygon;
 		ExtrudePoints(polygonMask, polygon);
 		convexHull(contour, polygon, true);
 
@@ -314,32 +313,15 @@ namespace sc {
 		}
 	};
 
-	uint32_t AtlasGenerator::SearchDuplicate(vector<AtlasGeneratorItem>& items, AtlasGeneratorItem& item, uint32_t range) {
+	uint32_t AtlasGenerator::SearchDuplicate(std::vector<AtlasGeneratorItem>& items, AtlasGeneratorItem& item, uint32_t range) {
 		using namespace cv;
 
 		for (uint32_t i = 0; range > i; i++) {
 			AtlasGeneratorItem& other = items[i];
-			//if (other.type != item.type) continue;
 
-			//switch (item.type)
-			//{
-			//case AtlasGeneratorItem::ItemType::Sprite:
-			//{
 			if (CompareImage(item.image, other.image)) {
 				return i;
 			}
-			//}
-			//break;
-			//
-			//case AtlasGeneratorItem::ItemType::Color:
-			//{
-			//	if (other.color.color == item.color.color)
-			//	{
-			//		return i;
-			//	}
-			//}
-			//break;
-			//}
 		}
 
 		return UINT32_MAX;
@@ -354,8 +336,8 @@ namespace sc {
 
 		if (imageChannelsCount != otherChannelsCount) return false;
 
-		vector<Mat> channels(imageChannelsCount);
-		vector<Mat> otherChannels(imageChannelsCount);
+		std::vector<Mat> channels(imageChannelsCount);
+		std::vector<Mat> otherChannels(imageChannelsCount);
 		split(src1, channels);
 		split(src2, otherChannels);
 
@@ -375,38 +357,38 @@ namespace sc {
 		return true;
 	}
 
-	AtlasGeneratorResult AtlasGenerator::Generate(vector<AtlasGeneratorItem>& items, vector<cv::Mat>& atlases, AtlasGeneratorConfig& config) {
+	AtlasGeneratorResult AtlasGenerator::Generate(std::vector<AtlasGeneratorItem>& items, std::vector<cv::Mat>& atlases, AtlasGeneratorConfig& config) {
 		using namespace libnest2d;
 		NormalizeConfig(config);
 
 		// Duplicated images
-		vector<size_t> duplicates;
+		std::vector<size_t> duplicates;
 
-		// Vector with polygons for libnest2d
-		vector<Item> packerItems;
+		// Perimeters of items for sorting by scale
+		std::vector<float> itemsPerimeters;
 
+		// Polygon Generating & Image Filtering
 		for (uint32_t i = 0; items.size() > i; i++) {
 			AtlasGeneratorItem& item = items[i];
 			uint32_t itemIndex = SearchDuplicate(items, item, i);
+			float perimeter = 0;
 
 			if (itemIndex == UINT32_MAX) {
-				//switch (item.type)
-				//{
-				//case AtlasGeneratorItem::ItemType::Sprite:
-				//{
-					// TODO remove later
+				// TODO: LA generator
 				if (item.image.channels() != 4) return AtlasGeneratorResult::BAD_IMAGE;
 
+				// Is Empty Image Check
 				if (item.image.rows <= 0 || item.image.cols <= 0) {
 					return AtlasGeneratorResult::BAD_IMAGE;
 				}
 
+				// Is Big Image Check
 				if (item.image.cols >= config.maxSize.first || item.image.rows >= config.maxSize.second) {
 					return AtlasGeneratorResult::TOO_BIG_IMAGE;
 				}
 
+				// Polygon Generating
 				if (item.polygon.empty()) {
-					// Polygon generation
 					GenerateImagePolygon(item, config);
 
 					// Check if generated polygon is ok
@@ -420,8 +402,8 @@ namespace sc {
 						(int)ceil(item.image.cols / config.scaleFactor),
 						(int)ceil(item.image.rows / config.scaleFactor));
 
-					imageSize.width = clamp(imageSize.width, 1, MaxTextureDimension);
-					imageSize.height = clamp(imageSize.height, 1, MaxTextureDimension);
+					imageSize.width = std::clamp(imageSize.width, 1, MaxTextureDimension);
+					imageSize.height = std::clamp(imageSize.height, 1, MaxTextureDimension);
 
 					resize(item.image, item.image, imageSize);
 				}
@@ -430,28 +412,21 @@ namespace sc {
 				ShowContour(item.image.clone(), item.polygon);
 #endif
 
-				// Adding new items to packer
-				libnest2d::Item packerItem = libnest2d::Item(vector<ClipperLib::IntPoint>(item.polygon.size() + 1), {});
+				// Iterating Over Each Line
+				for (size_t p = 0; item.polygon.size() > p; p++)
+				{
+					if ((p % 2) == 0) continue;
 
-				for (uint16_t p = 0; packerItem.vertexCount() > p; p++) {
-					if (p == item.polygon.size()) { // End point for libnest
-						packerItem.setVertex(p, { item.polygon[0].uv.first, item.polygon[0].uv.second });
-					}
-					else {
-						packerItem.setVertex(p, { item.polygon[p].uv.first, item.polygon[p].uv.second });
-					}
+					bool isEndLine = p == item.polygon.size() - 1;
+
+					AtlasGeneratorVertex& pointStart = item.polygon[p];
+					AtlasGeneratorVertex& pointEnd = item.polygon[isEndLine ? 0 : p - 1];
+
+					float distance = sqrt(pow((pointStart.uv.second - pointStart.uv.first), 2) + pow((pointEnd.uv.second - pointEnd.uv.first), 2));
+					perimeter += distance;
 				}
 
-				packerItems.push_back(packerItem);
-				//}
-				//case AtlasGeneratorItem::ItemType::Color:
-				//{
-				//	libnest2d::Item packerItem = libnest2d::Item(vector<ClipperLib::IntPoint>({ {0, 0}, {0, 1}, {1, 1}, {1, 0}, {0, 0} }), {});
-				//	packerItems.push_back(packerItem);
-				//}
-				//break;
-				//}
-
+				itemsPerimeters.push_back(perimeter * item.polygon.size());
 				duplicates.push_back(SIZE_MAX);
 			}
 			else {
@@ -459,17 +434,53 @@ namespace sc {
 			}
 		}
 
+		// Vector with polygons for libnest2d
+		std::vector<Item> packerItems;
+
+		// Indices of sorted items
+		std::vector<size_t> itemsIndices(items.size());
+		std::iota(itemsIndices.begin(), itemsIndices.end(), 0);
+
+		std::stable_sort(itemsIndices.begin(), itemsIndices.end(),
+			[&itemsPerimeters](size_t a, size_t b) {return itemsPerimeters[a] < itemsPerimeters[b]; });
+		for (size_t& index : itemsIndices)
+		{
+			AtlasGeneratorItem& item = items[index];
+
+			// Adding new items to packer
+			libnest2d::Item packerItem = libnest2d::Item(
+				std::vector<ClipperLib::IntPoint>(item.polygon.size() + 1), {}
+			);
+
+			for (uint16_t p = 0; packerItem.vertexCount() > p; p++) {
+				if (p == item.polygon.size()) { // End point for libnest
+					packerItem.setVertex(p, { item.polygon[0].uv.first, item.polygon[0].uv.second });
+				}
+				else {
+					packerItem.setVertex(p, { item.polygon[p].uv.first, item.polygon[p].uv.second });
+				}
+			}
+
+			packerItems.push_back(packerItem);
+		}
+
 		NestConfig<BottomLeftPlacer, DJDHeuristic> cfg;
-		//cfg.placer_config.epsilon = config.extrude;
 		cfg.placer_config.allow_rotations = true;
+		//cfg.selector_config.initial_fill_proportion
 
 		libnest2d::NestControl control;
 		control.progressfn = config.progress;
-		size_t binCount = nest(packerItems, Box(config.maxSize.first, config.maxSize.second, { (int)ceil(config.maxSize.first / 2), (int)ceil(config.maxSize.second / 2) }), config.extrude, cfg, control);
+		size_t binCount = nest(
+			packerItems,
+			Box(
+				config.maxSize.first, config.maxSize.second,
+				{ (int)ceil(config.maxSize.first / 2), (int)ceil(config.maxSize.second / 2) }),
+			config.extrude, cfg, control
+		);
 		if (binCount >= 0xFF) return AtlasGeneratorResult::TOO_MANY_IMAGES;
 
 		// Texture preparing
-		vector<cv::Size> textureSize(binCount);
+		std::vector<cv::Size> textureSize(binCount);
 		for (size_t i = 0; packerItems.size() > i; i++) {
 			Item& item = packerItems[i];
 			if (item.binId() == libnest2d::BIN_ID_UNSET) return AtlasGeneratorResult::BAD_POLYGON;
@@ -511,14 +522,10 @@ namespace sc {
 				continue;
 			}
 
-			Item& packerItem = packerItems[i - itemOffset];
+			Item& packerItem = packerItems[itemsIndices[i - itemOffset]];
 			AtlasGeneratorItem& item = items[i];
 			item.textureIndex = static_cast<uint8_t>(packerItem.binId());
 
-			//switch (item.type)
-			//{
-			//case AtlasGeneratorItem::ItemType::Sprite:
-			//{
 			cv::Mat& atlas = atlases[item.textureIndex];
 
 			auto rotation = packerItem.rotation();
@@ -528,7 +535,6 @@ namespace sc {
 			auto box = packerItem.boundingBox();
 
 			// Point processing
-
 			for (size_t j = 0; item.polygon.size() > j; j++) {
 				uint16_t x = item.polygon[j].uv.first;
 				uint16_t y = item.polygon[j].uv.second;
@@ -559,47 +565,35 @@ namespace sc {
 				static_cast<uint16_t>(getX(box.minCorner()) - config.extrude),
 				static_cast<uint16_t>(getY(box.minCorner()) - config.extrude)
 			);
+		}
 
 #ifdef CV_DEBUG
-			vector<cv::Mat> sheets;
-			cv::RNG rng = cv::RNG(time(NULL));
+		std::vector<cv::Mat> sheets;
+		cv::RNG rng = cv::RNG(time(NULL));
 
-			for (cv::Mat& atlas : atlases) {
-				sheets.push_back(cv::Mat(atlas.size(), CV_8UC4, cv::Scalar(0)));
-			}
-
-			for (AtlasGeneratorItem& item : items) {
-				vector<cv::Point> polyContour;
-				for (AtlasGeneratorVertex point : item.polygon) {
-					polyContour.push_back(cv::Point(point.uv.first, point.uv.second));
-				}
-				cv::Scalar color(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-				fillPoly(sheets[item.textureIndex], polyContour, color);
-			}
-
-			for (cv::Mat& sheet : sheets) {
-				ShowImage("Sheet", sheet);
-			}
-
-			for (cv::Mat& atlas : atlases) {
-				ShowImage("Atlas", atlas);
-			}
-
-			cv::destroyAllWindows();
-#endif // DEBUG
-			//}
-			//break;
-			//
-			//case AtlasGeneratorItem::ItemType::Color:
-			//{
-			//	auto shape = packerItem.transformedShape();
-			//	assert(shape.Contour.size() >= 4);
-			//
-			//	item.color.point = { shape.Contour[0].X, shape.Contour[0].Y };
-			//}
-			//break;
-			//}
+		for (cv::Mat& atlas : atlases) {
+			sheets.push_back(cv::Mat(atlas.size(), CV_8UC4, cv::Scalar(0)));
 		}
+
+		for (AtlasGeneratorItem& item : items) {
+			std::vector<cv::Point> polyContour;
+			for (AtlasGeneratorVertex point : item.polygon) {
+				polyContour.push_back(cv::Point(point.uv.first, point.uv.second));
+			}
+			cv::Scalar color(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+			fillPoly(sheets[item.textureIndex], polyContour, color);
+		}
+
+		for (cv::Mat& sheet : sheets) {
+			ShowImage("Sheet", sheet);
+		}
+
+		for (cv::Mat& atlas : atlases) {
+			ShowImage("Atlas", atlas);
+		}
+
+		cv::destroyAllWindows();
+#endif // DEBUG
 		return AtlasGeneratorResult::OK;
 	}
 }
