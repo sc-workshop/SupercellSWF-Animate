@@ -88,7 +88,11 @@ namespace sc {
 			}
 
 		private:
-			void AddFrameElementArray(SymbolContext& symbol, FCM::FCMListPtr frameElements);
+			void AddFrameElementArray(
+				SymbolContext& symbol,
+				FCM::FCMListPtr frameElements,
+				MATRIX2D* base_transform = nullptr
+			);
 		};
 	}
 }

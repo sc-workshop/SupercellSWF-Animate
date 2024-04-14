@@ -146,7 +146,7 @@ namespace sc {
 					uint16_t id = m_resources.GetIdentifer(shape);
 
 					if (id == UINT16_MAX) {
-						id = m_resources.AddFilledShape(shape);
+						id = m_resources.AddFilledElement(shape);
 					}
 
 					writer.AddFrameElement(
@@ -170,7 +170,7 @@ namespace sc {
 			}
 		}
 
-		void FrameBuilder::AddFrameElementArray(SymbolContext& symbol, FCM::FCMListPtr frameElements) {
+		void FrameBuilder::AddFrameElementArray(SymbolContext& symbol, FCM::FCMListPtr frameElements, MATRIX2D* base_transform) {
 			PluginContext& context = PluginContext::Instance();
 
 			uint32_t frameElementsCount = 0;
@@ -184,9 +184,21 @@ namespace sc {
 				std::u16string instance_name = u"";
 				FCM::BlendMode blendMode = FCM::BlendMode::NORMAL_BLEND_MODE;
 
-				// Base transform
-				MATRIX2D* matrix = nullptr;
-				COLOR_MATRIX* color = nullptr;
+				// Transform
+				std::shared_ptr<MATRIX2D> matrix = std::make_shared<MATRIX2D>();
+				frameElement->GetMatrix(*matrix);
+
+				if (base_transform != nullptr)
+				{
+					matrix->a += base_transform->a;
+					matrix->b += base_transform->b;
+					matrix->c += base_transform->c;
+					matrix->d += base_transform->d;
+					matrix->tx += base_transform->tx;
+					matrix->ty += base_transform->ty;
+				}
+
+				std::shared_ptr<COLOR_MATRIX> color = nullptr;
 
 				// Game "guess who i am"
 				FCM::AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
@@ -199,8 +211,6 @@ namespace sc {
 				FCM::AutoPtr<DOM::FrameElement::IGroup> groupedElemenets = frameElement;
 
 				// Transform
-				matrix = new MATRIX2D();
-				frameElement->GetMatrix(*matrix);
 
 				// Symbol
 				if (libraryElement) {
@@ -215,7 +225,7 @@ namespace sc {
 					}
 
 					if (symbolItem) {
-						color = new COLOR_MATRIX();
+						color = std::make_shared<COLOR_MATRIX>();
 						symbolItem->GetColorMatrix(*color);
 					}
 
@@ -267,6 +277,7 @@ namespace sc {
 						textfieldElement->GetParagraphs(paragraphs.m_Ptr);
 						paragraphs->Count(paragraphsCount);
 
+						// TODO: Move to writer
 						if (paragraphsCount > 1) {
 							context.print("Warning. Some of TextField has multiple paragraph");
 						}
@@ -323,18 +334,26 @@ namespace sc {
 
 					id = m_resources.GetIdentifer(textfield);
 					if (id == UINT16_MAX) {
-						id = m_resources.AddTextField(textfield);
+						id = m_resources.AddTextField(symbol, textfield);
 					}
 				}
 
 				// Fills / Stroke
 				else if (filledShapeItem) {
-					FilledElement shape(symbol, filledShapeItem);
+					if (symbol.slice_scaling.should_accumulate)
+					{
+						symbol.slice_scaling.elements.emplace_back(symbol, filledShapeItem, *matrix);
+						continue;
+					}
+					else
+					{
+						FilledElement shape(symbol, filledShapeItem);
 
-					id = m_resources.GetIdentifer(shape);
+						id = m_resources.GetIdentifer(shape);
 
-					if (id == UINT16_MAX) {
-						id = m_resources.AddFilledShape(shape);
+						if (id == UINT16_MAX) {
+							id = m_resources.AddFilledElement(shape);
+						}
 					}
 				}
 
@@ -348,11 +367,13 @@ namespace sc {
 				}
 
 				else {
+					// TODO: make it more detailed
 					context.print("Unknown resource in library. Make sure symbols don't contain unsupported elements.");
 					continue;
 				}
 
 				if (id == 0xFFFF) {
+					// TODO: this too, probably
 					context.print("Failed to get object id. Invalid FrameElement.");
 					continue;
 				}
@@ -365,11 +386,11 @@ namespace sc {
 					}
 				);
 
-				m_matrices.emplace_back(
+				m_matrices.push_back(
 					matrix
 				);
 
-				m_colors.emplace_back(
+				m_colors.push_back(
 					color
 				);
 			}

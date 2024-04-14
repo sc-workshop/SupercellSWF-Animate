@@ -28,9 +28,9 @@ namespace sc {
 
 			virtual void AddModifier(uint16_t id, MaskedLayerState type) = 0;
 
-			virtual void AddTextField(uint16_t id, TextElement field) = 0;
+			virtual void AddTextField(uint16_t id, SymbolContext& symbol, TextElement& field) = 0;
 
-			virtual void AddExportName(uint16_t id, std::string name) = 0;
+			virtual void AddExportName(uint16_t id, const std::string& name) = 0;
 
 			virtual void Finalize() = 0;
 		};

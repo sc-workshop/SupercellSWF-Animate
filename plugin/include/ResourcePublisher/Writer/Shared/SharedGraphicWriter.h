@@ -9,7 +9,8 @@
 
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledElement.h"
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/SpriteElement.h"
-#include "Module/SymbolContext.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/SliceElement.h"
+#include "Module/Symbol/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {
@@ -20,7 +21,9 @@ namespace sc {
 		public:
 			virtual void AddGraphic(const SpriteElement& item, const DOM::Utils::MATRIX2D& matrix) = 0;
 
-			virtual void AddFilledShape(const FilledElement& shape) = 0;
+			virtual void AddFilledElement(const FilledElement& shape) = 0;
+
+			virtual void AddSlicedElements(const std::vector<SliceElement>& elements) = 0;
 
 			virtual void Finalize(uint16_t id) = 0;
 		};

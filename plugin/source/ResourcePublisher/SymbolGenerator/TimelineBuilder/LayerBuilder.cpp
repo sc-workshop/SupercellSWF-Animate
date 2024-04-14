@@ -57,6 +57,7 @@ namespace sc {
 					layer.next();
 				}
 			}
+
 			// if frame not valid anymore but layer is still valid for frame reading
 			if (m_keyframeCount != 0) {
 				if (!m_frameBuilder && m_duration > m_position) {
@@ -76,23 +77,28 @@ namespace sc {
 				return;
 			};
 
-			bool isMaskLayer = m_maskedLayers.size() != 0;
-			if (isMaskLayer) {
-				AddModifier(writer, MaskedLayerState::MASK_LAYER);
-			}
-
-			m_frameBuilder(symbol, writer);
-
-			if (isMaskLayer) {
-				AddModifier(writer, MaskedLayerState::MASKED_LAYERS);
-
-				for (LayerBuilder& layer : m_maskedLayers) {
-					if (layer) {
-						layer(symbol, writer);
-					}
+			{
+				// Begin Masked Layers Building
+				bool has_masked = m_maskedLayers.size() != 0;
+				if (has_masked) {
+					AddModifier(writer, MaskedLayerState::MASK_LAYER);
 				}
 
-				AddModifier(writer, MaskedLayerState::MASKED_LAYERS_END);
+				// Build Mask Layer
+				m_frameBuilder(symbol, writer);
+
+				// Build Masked Layers
+				if (has_masked) {
+					AddModifier(writer, MaskedLayerState::MASKED_LAYERS);
+
+					for (LayerBuilder& layer : m_maskedLayers) {
+						if (layer) {
+							layer(symbol, writer);
+						}
+					}
+
+					AddModifier(writer, MaskedLayerState::MASKED_LAYERS_END);
+				}
 			}
 		}
 	}

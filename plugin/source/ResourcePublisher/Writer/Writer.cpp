@@ -47,7 +47,7 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::AddTextField(uint16_t id, TextElement object) {
+		void SCWriter::AddTextField(uint16_t id, SymbolContext& symbol, TextElement& object) {
 			TextField& textfield = swf.textfields.emplace_back();
 
 			std::string text = Localization::ToUtf8(object.text);
@@ -109,7 +109,7 @@ namespace sc {
 				object.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
 		}
 
-		void SCWriter::AddExportName(uint16_t id, std::string name) {
+		void SCWriter::AddExportName(uint16_t id, const std::string& name) {
 			ExportName& exportName = swf.exports.emplace_back();
 			exportName.id = id;
 			exportName.name = SWFString(name);
@@ -201,12 +201,26 @@ namespace sc {
 			swf = base_swf;
 		}
 
-		void SCWriter::TransformCommand(
+		void SCWriter::ProcessCommandTransform(
 			ShapeDrawBitmapCommand& command,
-			Matrix2x3<float> matrix,
-			AtlasGenerator::Item::Transformation& transform
+			AtlasGenerator::Item::Transformation& transform,
+			GraphicItem& item
 		)
 		{
+			Matrix2x3<float> matrix = item.transformation();
+
+			for (ShapeDrawBitmapCommandVertex& vertex : command.vertices)
+			{
+				Point<uint16_t> uv(vertex.u, vertex.v);
+				Point<float> xy(vertex.x, vertex.y);
+				transform.transform_point(uv);
+
+				vertex.u = uv.u / (float)swf.textures[command.texture_index].image()->width();
+				vertex.v = uv.v / (float)swf.textures[command.texture_index].image()->height();
+
+				vertex.x = (matrix.a * xy.x) + (matrix.c * xy.y) + matrix.tx;
+				vertex.y = (matrix.b * xy.x) + (matrix.d * xy.y) + matrix.ty;
+			}
 		}
 
 		void SCWriter::ProcessSpriteItem(
@@ -220,19 +234,31 @@ namespace sc {
 
 			shape_command.texture_index = atlas_item.texture_index;
 
+			//for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
+			//{
+			//	ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
+			//
+			//	Point<uint16_t> uv = vertex.uv;
+			//	atlas_item.transform.transform_point(uv);
+			//
+			//	shape_vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
+			//	shape_vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
+			//
+			//	shape_vertex.x = (matrix.a * vertex.xy.x) + (matrix.c * vertex.xy.y) + matrix.tx;
+			//	shape_vertex.y = (matrix.b * vertex.xy.x) + (matrix.d * vertex.xy.y) + matrix.ty;
+			//}
+
 			for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
 			{
 				ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
 
-				Point<uint16_t> uv = vertex.uv;
-				atlas_item.transform.transform_point(uv);
-
-				shape_vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
-				shape_vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
-
-				shape_vertex.x = (matrix.a * vertex.xy.x) + (matrix.c * vertex.xy.y) + matrix.tx;
-				shape_vertex.y = (matrix.b * vertex.xy.x) + (matrix.d * vertex.xy.y) + matrix.ty;
+				shape_vertex.x = vertex.xy.x;
+				shape_vertex.y = vertex.xy.y;
+				shape_vertex.u = vertex.uv.u;
+				shape_vertex.v = vertex.uv.v;
 			}
+
+			ProcessCommandTransform(shape_command, atlas_item.transform, sprite_item);
 		}
 
 		void SCWriter::FinalizeAtlas()
@@ -243,8 +269,6 @@ namespace sc {
 			StatusComponent* status = context.window()->CreateStatusBar(
 				context.locale.GetString("TID_STATUS_SPRITE_PACK")
 			);
-
-			////////////////////////
 
 			std::vector<Ref<AtlasGenerator::Item>> items;
 
@@ -258,7 +282,7 @@ namespace sc {
 
 					if (item.IsSprite())
 					{
-						SpriteItem sprite_item = item.GetSprite();
+						SpriteItem& sprite_item = *(SpriteItem*)&item;
 
 						atlas_item = CreateRef<AtlasGenerator::Item>(sprite_item.image());
 					}
@@ -344,8 +368,9 @@ namespace sc {
 
 					if (item.IsSprite())
 					{
+						SpriteItem& element = *(SpriteItem*)&item;
 						ProcessSpriteItem(
-							shape, atlas_item, item.GetSprite()
+							shape, atlas_item, element
 						);
 					}
 

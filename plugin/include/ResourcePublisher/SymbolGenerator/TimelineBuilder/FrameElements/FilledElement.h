@@ -22,10 +22,10 @@
 
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 
-#include "Module/SymbolContext.h"
-
 namespace sc {
 	namespace Adobe {
+		class SymbolContext;
+
 		class Point2D {
 		public:
 			Point2D() {};
@@ -102,6 +102,9 @@ namespace sc {
 		public:
 			std::vector<FilledElementRegion> fill;
 			std::vector<FilledElementRegion> stroke;
+
+		private:
+			void AddRegions(SymbolContext& symbol, FCM::FCMListPtr regions, std::vector<FilledElementRegion>& elements);
 		};
 	}
 }

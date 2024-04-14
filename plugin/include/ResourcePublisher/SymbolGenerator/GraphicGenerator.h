@@ -18,7 +18,7 @@
 // Writer
 #include "ResourcePublisher/Writer/Shared/SharedGraphicWriter.h"
 
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;

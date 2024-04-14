@@ -53,15 +53,9 @@ namespace sc {
 						FCM::AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmap = unknownMedia;
 
 						if (bitmap) {
-							SpriteElement item(item, media, bitmap);
+							SpriteElement element(item, media, bitmap);
 
-							//cv::Mat bitmapImage;
-							//if (!m_resources.GetCachedBitmap(itemName, bitmapImage)) {
-							//	GetImage(media, bitmapImage);
-							//	m_resources.AddCachedBitmap(itemName, bitmapImage);
-							//}
-							//
-							writer.AddGraphic(item, transformation);
+							writer.AddGraphic(element, transformation);
 						}
 					}
 				}
@@ -70,7 +64,7 @@ namespace sc {
 				else if (shape)
 				{
 					FilledElement filledShape(symbol, shape);
-					writer.AddFilledShape(filledShape);
+					writer.AddFilledElement(filledShape);
 				}
 
 				// Group of elements

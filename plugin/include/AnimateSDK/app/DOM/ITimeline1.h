@@ -40,27 +40,30 @@ namespace FCM
 struct CPicPage;
 
 struct CDocumentPage {
-	//bool GetScale9()
-	//{
-	//	return *((uint8_t*)this + 1624);
-	//}
-	//
-	//void GetScale9Rect(DOM::Utils::RECT& result)
-	//{
-	//	uint8_t* grid = (uint8_t*)this + 1628;
-	//
-	//	int32_t left = *(int32_t*)(grid);
-	//	int32_t right = *(int32_t*)(grid + sizeof(int32_t));
-	//
-	//	int32_t top = *(int32_t*)(grid + (sizeof(int32_t) * 2));
-	//	int32_t bottom  = *(int32_t*)(grid + (sizeof(int32_t) * 3));
-	//
-	//	result.topLeft.x = static_cast<float>(top) / 20.0f;
-	//	result.topLeft.y = static_cast<float>(left) / 20.0f;
-	//
-	//	result.bottomRight.x = static_cast<float>(bottom) / 20.0f;
-	//	result.bottomRight.y = static_cast<float>(right) / 20.0f;
-	//}
+	// Magic numbers yay thanks Adobe
+	bool GetScale9()
+	{
+		return *((uint8_t*)this + 1624);
+	}
+
+	void GetScale9Rect(DOM::Utils::RECT& result)
+	{
+		int32_t* grid = (int32_t*)(this + 1628);
+
+		const size_t stride = sizeof(int32_t);
+
+		int32_t left = *grid;
+		int32_t right = *(grid + stride);
+
+		int32_t top = *(grid + (stride * 2));
+		int32_t bottom = *(grid + (stride * 3));
+
+		result.topLeft.x = (float)top / 20.0f;
+		result.topLeft.y = (float)left / 20.0f;
+
+		result.bottomRight.x = (float)bottom / 20.0f;
+		result.bottomRight.y = (float)right / 20.0f;
+	}
 };
 
 /* -------------------------------------------------- Macros / Constants */

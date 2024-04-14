@@ -1,10 +1,18 @@
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 #include "Module/PluginContext.h"
 
 namespace sc
 {
 	namespace Adobe
 	{
+		SymbolContext::SymbolContext(DOM::ILibraryItem* item) : name(GetName(item)), type(GetType(item))
+		{
+		}
+
+		SymbolContext::SymbolContext(const std::u16string& name, SymbolType type) : name(name), type(type)
+		{
+		}
+
 		std::u16string SymbolContext::GetName(DOM::ILibraryItem* symbol)
 		{
 			PluginContext& context = PluginContext::Instance();

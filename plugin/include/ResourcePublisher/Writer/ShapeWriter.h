@@ -11,24 +11,31 @@ namespace sc {
 		struct Sprite;
 
 		class SCShapeWriter : public SharedShapeWriter {
-			SCWriter& m_writer;
-			SymbolContext& m_symbol;
-
-			GraphicGroup m_group;
-
 		public:
 			SCShapeWriter(SCWriter& writer, SymbolContext& symbol) : m_writer(writer), m_symbol(symbol), m_group(symbol) {};
 			virtual ~SCShapeWriter() = default;
 
-			void AddGraphic(const SpriteElement& item, const DOM::Utils::MATRIX2D& matrix);
+		public:
 
+			virtual void AddGraphic(const SpriteElement& item, const DOM::Utils::MATRIX2D& matrix);
+
+			virtual void AddFilledElement(const FilledElement& shape);
+
+			virtual void AddSlicedElements(const std::vector<SliceElement>& elements);
+
+			virtual void Finalize(uint16_t id);
+
+		public:
 			void AddSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
 			void AddRasterizedSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
 
-			void AddFilledShape(const FilledElement& shape);
 			void AddFilledShapeRegion(const FilledElementRegion& region);
 
-			void Finalize(uint16_t id);
+		private:
+			SCWriter& m_writer;
+			SymbolContext& m_symbol;
+
+			GraphicGroup m_group;
 		};
 	}
 }

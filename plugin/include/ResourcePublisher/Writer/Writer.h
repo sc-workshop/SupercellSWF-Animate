@@ -32,14 +32,14 @@ namespace sc {
 
 			virtual void AddModifier(uint16_t id, MaskedLayerState type);
 
-			virtual void AddTextField(uint16_t id, TextElement field);
+			virtual void AddTextField(uint16_t id, SymbolContext& symbol, TextElement& field);
 
-			virtual void AddExportName(uint16_t id, std::string name);
+			virtual void AddExportName(uint16_t id, const std::string& name);
 
 			virtual void Finalize();
 
 		public:
-			// Path to temp file for sprites
+			// Path to temp sprite file
 			const fs::path sprite_temp_path = fs::path(tmpnam(nullptr)).concat(".png");
 
 			// kokoro
@@ -75,10 +75,10 @@ namespace sc {
 
 			// Some functions for atlas finalize
 
-			void TransformCommand(
+			void ProcessCommandTransform(
 				ShapeDrawBitmapCommand& command,
-				Matrix2x3<float> matrix,
-				AtlasGenerator::Item::Transformation& transform
+				AtlasGenerator::Item::Transformation& transform,
+				GraphicItem& item
 			);
 
 			void ProcessSpriteItem(

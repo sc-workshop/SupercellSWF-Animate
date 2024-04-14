@@ -8,6 +8,8 @@
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 #include "AnimateSDK/app/DOM/ILibraryItem.h"
 
+#include "SliceScalingData.h"
+
 namespace sc
 {
 	namespace Adobe {
@@ -22,19 +24,14 @@ namespace sc
 			};
 
 		public:
-			SymbolContext(DOM::ILibraryItem* item) : name(GetName(item)), type(GetType(item))
-			{
-			}
+			SymbolContext(DOM::ILibraryItem* item);
+			SymbolContext(const std::u16string& name, SymbolType type);
 
-			SymbolContext(const std::u16string& name, SymbolType type) : name(name), type(type)
-			{
-			}
-
+		public:
 			const std::u16string name;
 			const SymbolType type = SymbolType::Unknown;
 
-			bool hasSlice9 = false;
-			DOM::Utils::RECT slice9 = { {0.0f, 0.0f}, {0.0f, 0.0f} };
+			SliceScalingData slice_scaling;
 
 		private:
 			static std::u16string GetName(DOM::ILibraryItem* symbol);

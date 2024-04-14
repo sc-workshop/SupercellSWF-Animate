@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "GraphicItem.h"
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 #include "generic/ref.h"
 

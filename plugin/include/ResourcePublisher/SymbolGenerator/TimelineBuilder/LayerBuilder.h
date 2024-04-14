@@ -18,7 +18,7 @@
 #include "ResourcePublisher/Writer/Shared/SharedWriter.h"
 
 #include "FrameBuilder.h"
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {

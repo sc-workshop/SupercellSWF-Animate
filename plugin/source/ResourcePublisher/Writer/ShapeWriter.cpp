@@ -16,7 +16,7 @@ namespace sc {
 		}
 
 		// TODO: rework
-		void SCShapeWriter::AddFilledShape(const FilledElement& shape) {
+		void SCShapeWriter::AddFilledElement(const FilledElement& shape) {
 			//for (const FilledElementRegion& region : shape.fill) {
 			//	AddFilledShapeRegion(region);
 			//}
@@ -153,6 +153,11 @@ namespace sc {
 			//default:
 			//	break;
 			//}
+		}
+
+		void SCShapeWriter::AddSlicedElements(const std::vector<SliceElement>& elements)
+		{
+			return;
 		}
 
 		void SCShapeWriter::Finalize(uint16_t id) {

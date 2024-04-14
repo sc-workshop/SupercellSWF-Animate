@@ -41,10 +41,20 @@ namespace sc {
 		};
 
 		void MovieClipGeneator::Generate(SharedMovieclipWriter& writer, SymbolContext& symbol, FCM::AutoPtr<DOM::ITimeline1> timeline) {
+			PluginContext& context = PluginContext::Instance();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
-			
+
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
+
+			if (symbol.slice_scaling.IsEnabled() && duration != 1)
+			{
+				context.print(
+					context.locale.GetString("TID_9SLICE_FRAME_RESTRICTION", symbol.name.c_str())
+				);
+
+				symbol.slice_scaling.should_accumulate = false;
+			}
 
 			FCM::Double fps;
 			config.document->GetFrameRate(fps);
@@ -63,6 +73,19 @@ namespace sc {
 					LayerBuilder& layer = layers[--i];
 					if (layer) {
 						layer(symbol, writer);
+
+						if (!symbol.slice_scaling.elements.empty())
+						{
+							uint16_t sliced_item_id = m_resources.AddSlicedElement(symbol, symbol.slice_scaling.elements);
+							writer.AddFrameElement(
+								sliced_item_id,
+								FCM::BlendMode::NORMAL_BLEND_MODE,
+								u"",
+								nullptr,
+								nullptr
+							);
+						}
+
 						layer.next();
 					}
 				}

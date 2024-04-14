@@ -29,7 +29,7 @@
 // Generators
 #include "ResourcePublisher/SymbolGenerator/GraphicGenerator.h"
 #include "ResourcePublisher/SymbolGenerator/MovieClipGenerator.h"
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledElement.h"
 #include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextElement.h"
@@ -105,11 +105,17 @@ namespace sc {
 			);
 
 			uint16_t AddTextField(
-				TextElement field
+				SymbolContext& symbol,
+				TextElement& field
 			);
 
-			uint16_t AddFilledShape(
-				FilledElement shape
+			uint16_t AddFilledElement(
+				FilledElement& shape
+			);
+
+			uint16_t AddSlicedElement(
+				SymbolContext& symbol,
+				std::vector<SliceElement>& elements
 			);
 
 			uint16_t GetIdentifer(

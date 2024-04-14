@@ -3,6 +3,7 @@
 #include "Module/PluginException.h"
 #include "Module/SessionConfig.h"
 #include "Module/PluginContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 #define STEP_COUNT 14
 
@@ -41,6 +42,7 @@ namespace sc {
 			return x == other.x && y == other.y;
 		}
 
+#pragma region
 		FilledElementPath::FilledElementPath() {};
 		FilledElementPath::FilledElementPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path)
 		{
@@ -161,8 +163,29 @@ namespace sc {
 
 			return true;
 		}
+#pragma endregion Path
 
+#pragma region
 		FilledElementRegion::FilledElementRegion(SymbolContext& symbol, FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region) {
+			// Fill style
+			{
+				FCM::AutoPtr<FCM::IFCMUnknown> unknown_style;
+				region->GetFillStyle(unknown_style.m_Ptr);
+
+				FCM::AutoPtr<DOM::FillStyle::ISolidFillStyle> solid = unknown_style;
+
+				if (solid) {
+					type = ShapeType::SolidColor;
+					solid->GetColor(solidColor);
+				}
+				else {
+					throw PluginException(
+						"TID_UNKNOWN_FILL_STYLE_TYPE",
+						symbol.name.c_str()
+					);
+				}
+			}
+
 			// Contour
 			{
 				FCM::AutoPtr<DOM::Service::Shape::IPath> polygonPath;
@@ -181,25 +204,6 @@ namespace sc {
 					FCM::AutoPtr<DOM::Service::Shape::IPath> holePath = holePaths[i];
 
 					holes.emplace_back(holePath);
-				}
-			}
-
-			// Fill style
-			{
-				FCM::AutoPtr<FCM::IFCMUnknown> unknownFillStyle;
-				region->GetFillStyle(unknownFillStyle.m_Ptr);
-
-				FCM::AutoPtr<DOM::FillStyle::ISolidFillStyle> solidStyle = unknownFillStyle;
-
-				if (solidStyle) {
-					type = ShapeType::SolidColor;
-					solidStyle->GetColor(solidColor);
-				}
-				else {
-					throw PluginException(
-						"TID_UNKNOWN_FILL_STYLE_TYPE",
-						symbol.name.c_str()
-					);
 				}
 			}
 		}
@@ -226,44 +230,33 @@ namespace sc {
 			return true;
 		}
 
+#pragma endregion Region
+
+#pragma region
 		FilledElement::FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape) {
 			PluginContext& context = PluginContext::Instance();
 
-			auto filledShapeGenerator =
-				context.getService<DOM::Service::Shape::IRegionGeneratorService>(DOM::FLA_REGION_GENERATOR_SERVICE);
-
-			auto strokeGenerator =
+			auto stroke_generator =
 				context.getService<DOM::Service::Shape::IShapeService>(DOM::FLA_SHAPE_SERVICE);
 
+			auto region_generator =
+				context.getService<DOM::Service::Shape::IRegionGeneratorService>(DOM::FLA_REGION_GENERATOR_SERVICE);
+
 			{
-				FCM::FCMListPtr fiilRegions;
-				filledShapeGenerator->GetFilledRegions(shape, fiilRegions.m_Ptr);
-				uint32_t regionsCount;
-				fiilRegions->Count(regionsCount);
+				FCM::FCMListPtr regions;
+				region_generator->GetFilledRegions(shape, regions.m_Ptr);
 
-				for (uint32_t i = 0; regionsCount > i; i++) {
-					FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> filledRegion = fiilRegions[i];
-					if (!filledRegion) continue;
-
-					fill.emplace_back(symbol, filledRegion);
-				}
+				AddRegions(symbol, regions, fill);
 			}
 
 			{
-				FCM::AutoPtr<DOM::FrameElement::IShape> strokeShape;
-				strokeGenerator->ConvertStrokeToFill(shape, strokeShape.m_Ptr);
+				FCM::AutoPtr<DOM::FrameElement::IShape> stroke_fill;
+				stroke_generator->ConvertStrokeToFill(shape, stroke_fill.m_Ptr);
 
-				FCM::FCMListPtr strokeRegions;
-				filledShapeGenerator->GetFilledRegions(strokeShape, strokeRegions.m_Ptr);
-				uint32_t regionsCount;
-				strokeRegions->Count(regionsCount);
+				FCM::FCMListPtr regions;
+				region_generator->GetFilledRegions(stroke_fill, regions.m_Ptr);
 
-				for (uint32_t i = 0; regionsCount > i; i++) {
-					FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> filledRegion = strokeRegions[i];
-					if (!filledRegion) continue;
-
-					stroke.emplace_back(symbol, filledRegion);
-				}
+				AddRegions(symbol, regions, stroke);
 			}
 		}
 
@@ -284,5 +277,19 @@ namespace sc {
 
 			return true;
 		}
+
+		void FilledElement::AddRegions(SymbolContext& symbol, FCM::FCMListPtr regions, std::vector<FilledElementRegion>& elements)
+		{
+			uint32_t region_count;
+			regions->Count(region_count);
+
+			for (uint32_t i = 0; region_count > i; i++) {
+				FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region = regions[i];
+				if (!region) continue;
+
+				elements.emplace_back(symbol, region);
+			}
+		}
 	}
+#pragma endregion Element
 }

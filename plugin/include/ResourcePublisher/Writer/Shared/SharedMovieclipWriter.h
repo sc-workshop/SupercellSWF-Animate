@@ -6,7 +6,7 @@
 
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/app/DOM/FrameElement/IFrameDisplayElement.h"
-#include "Module/SymbolContext.h"
+#include "Module/Symbol/SymbolContext.h"
 
 namespace sc {
 	namespace Adobe {

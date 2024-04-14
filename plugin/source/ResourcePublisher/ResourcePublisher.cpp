@@ -165,15 +165,9 @@ namespace sc {
 			SymbolContext& symbol,
 			FCM::AutoPtr<DOM::ITimeline1> timeline
 		) {
-			CDocumentPage* page = timeline->GetDocPage();
-			//symbol.hasSlice9 = page->GetScale9();
-			//if (symbol.hasSlice9)
-			//{
-			//	page->GetScale9Rect(symbol.slice9);
-			//}
+			symbol.slice_scaling = SliceScalingData(timeline);
 
 			SharedMovieclipWriter* movieclip = m_writer.AddMovieclip(symbol);
-
 			movieClipGenerator.Generate(*movieclip, symbol, timeline);
 
 			uint16_t identifer = m_id++;
@@ -222,11 +216,12 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::AddTextField(
-			TextElement field
+			SymbolContext& symbol,
+			TextElement& field
 		) {
 			uint16_t identifer = m_id++;
 
-			m_writer.AddTextField(identifer, field);
+			m_writer.AddTextField(identifer, symbol, field);
 			m_textfieldDict.push_back({ field, identifer });
 
 			return identifer;
@@ -242,21 +237,38 @@ namespace sc {
 			}
 		}
 
-		uint16_t ResourcePublisher::AddFilledShape(
-			FilledElement filledShape
+		uint16_t ResourcePublisher::AddFilledElement(
+			FilledElement& filledShape
 		) {
 			SymbolContext symbol(u"", SymbolContext::SymbolType::Graphic);
 			SharedShapeWriter* shape = m_writer.AddShape(symbol);
 
 			uint16_t identifer = m_id++;
 
-			shape->AddFilledShape(filledShape);
+			shape->AddFilledElement(filledShape);
 
 			shape->Finalize(identifer);
 			m_filledShapeDict.push_back({ filledShape , identifer });
 
 			delete shape;
 
+			return identifer;
+		}
+
+		uint16_t ResourcePublisher::AddSlicedElement(
+			SymbolContext& symbol,
+			std::vector<SliceElement>& elements
+		)
+		{
+			SharedShapeWriter* shape = m_writer.AddShape(symbol);
+
+			uint16_t identifer = m_id++;
+
+			shape->AddSlicedElements(elements);
+
+			shape->Finalize(identifer);
+
+			delete shape;
 			return identifer;
 		}
 

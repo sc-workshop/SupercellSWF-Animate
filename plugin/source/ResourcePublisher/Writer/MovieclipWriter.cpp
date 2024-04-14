@@ -11,20 +11,16 @@ namespace sc {
 			m_object.frame_rate = (uint8_t)fps;
 			m_object.frames.resize(frameCount);
 
-			//if (symbol.hasSlice9)
-			//{
-			//	DOM::Utils::RECT& rect = symbol.slice9;
-			//	ScalingGrid* grid = new ScalingGrid();
-			//
-			//	grid->x = rect.topLeft.y;
-			//	grid->y = rect.topLeft.x;
-			//	grid->width = rect.bottomRight.y - rect.topLeft.y;
-			//	grid->height = rect.bottomRight.x - rect.topLeft.x;
-			//
-			//	m_object->scalingGrid(
-			//		pScalingGrid(grid)
-			//	);
-			//}
+			if (m_symbol.slice_scaling.IsEnabled() && m_symbol.slice_scaling.should_accumulate)
+			{
+				DOM::Utils::RECT guides = m_symbol.slice_scaling.Guides();
+
+				m_object.use_nine_slice = true;
+				m_object.scaling_grid.x = guides.topLeft.y;
+				m_object.scaling_grid.y = guides.topLeft.x;
+				m_object.scaling_grid.width = guides.bottomRight.y - guides.topLeft.y;
+				m_object.scaling_grid.height = guides.bottomRight.x - guides.topLeft.x;
+			}
 		}
 
 		uint16_t SCMovieclipWriter::GetInstanceIndex(
