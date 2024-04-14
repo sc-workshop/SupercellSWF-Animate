@@ -10,7 +10,7 @@ namespace sc {
 		wxBEGIN_EVENT_TABLE(PluginWindow, wxFrame)
 			EVT_CLOSE(PluginWindow::OnClose)
 			EVT_MYFOO(wxID_ANY, PluginWindow::OnProgressCreate)
-		wxEND_EVENT_TABLE();
+			wxEND_EVENT_TABLE();
 
 		PluginWindow::PluginWindow(const std::u16string& title)
 			: wxFrame(
@@ -37,10 +37,8 @@ namespace sc {
 				dialog->ShowModal();
 				dialog->Destroy();
 				readyToExit = true;
-				Close(true);
 				});
 		}
-
 
 		StatusComponent* PluginWindow::CreateStatusBar(
 			const std::u16string& title,

@@ -42,7 +42,7 @@ namespace sc {
 					context.destroyWindow();
 					return;
 				}
-				publishStatus->SetProgress(i+1);
+				publishStatus->SetProgress(i + 1);
 			}
 
 			publishStatus->SetLabel(
@@ -51,6 +51,7 @@ namespace sc {
 			publishStatus->SetStatus(u"");
 
 			// Disable Close Button for writer finalizing process
+			// TODO: make it possible to stop in finalize
 			context.window()->EnableCloseButton(false);
 
 			m_writer.Finalize();
@@ -81,12 +82,14 @@ namespace sc {
 					if (!symbolItem) continue;
 
 					FCM::AutoPtr<FCM::IFCMDictionary> dict;
-					item->GetProperties(dict.m_Ptr);
+					FCM::Result status = item->GetProperties(dict.m_Ptr);
+
+					if (FCM_FAILURE_CODE(status) || dict == nullptr) continue;
 
 					FCM::U_Int32 valueLen;
 					FCM::FCMDictRecTypeID type;
 
-					FCM::Result status = dict->GetInfo(kLibProp_LinkageClass_DictKey, type, valueLen);
+					status = dict->GetInfo(kLibProp_LinkageClass_DictKey, type, valueLen);
 					if (FCM_FAILURE_CODE(status) || type != FCM::FCMDictRecTypeID::kFCMDictType_StringRep8)
 					{
 						continue;
@@ -101,29 +104,40 @@ namespace sc {
 			SymbolContext& symbol,
 			DOM::ILibraryItem* item
 		) {
-			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
-			FCM::AutoPtr<DOM::LibraryItem::IMediaItem> mediaItem = item;
+			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbol_item = item;
+			FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media_item = item;
 
-			if (symbolItem) {
-				return AddSymbol(symbol, symbolItem);
+			if (symbol_item) {
+				return AddSymbol(symbol, symbol_item);
 			}
-			else if (mediaItem) {
-				SharedShapeWriter* shape = m_writer.AddShape(symbol);
+			else if (media_item) {
+				FCM::AutoPtr<FCM::IFCMUnknown> unknownMedia;
+				media_item->GetMediaInfo(unknownMedia.m_Ptr);
 
-				cv::Mat image;
-				graphicGenerator.GetImage(mediaItem, image);
+				FCM::AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmap = unknownMedia;
 
-				shape->AddGraphic(image, { 1, 0, 0, 1, 0, 0 });
+				if (bitmap)
+				{
+					SharedShapeWriter* shape_writer = m_writer.AddShape(symbol);
 
-				uint16_t identifer = m_id++;
-				shape->Finalize(identifer);
+					SpriteElement element(item, media_item, bitmap);
+					shape_writer->AddGraphic(element, { 1, 0, 0, 1, 0, 0 });
 
-				m_symbolsData[symbol.name] = identifer;
+					uint16_t identifer = m_id++;
+					shape_writer->Finalize(identifer);
 
-				delete shape;
-				return identifer;
+					m_symbolsData[symbol.name] = identifer;
+
+					delete shape_writer;
+					return identifer;
+				}
+				else
+				{
+					goto UNKNOWN_TYPE;
+				}
 			}
 
+		UNKNOWN_TYPE:
 			throw PluginException("TID_UNKNOWN_LIBRARY_ITEM_TYPE", symbol.name.c_str());
 		}
 
@@ -208,7 +222,7 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::AddTextField(
-			TextFieldInfo field
+			TextElement field
 		) {
 			uint16_t identifer = m_id++;
 
@@ -229,7 +243,7 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::AddFilledShape(
-			FilledShape filledShape
+			FilledElement filledShape
 		) {
 			SymbolContext symbol(u"", SymbolContext::SymbolType::Graphic);
 			SharedShapeWriter* shape = m_writer.AddShape(symbol);
@@ -259,7 +273,7 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::GetIdentifer(
-			TextFieldInfo field
+			TextElement field
 		) {
 			for (auto textfield : m_textfieldDict) {
 				if (textfield.first == field) {
@@ -271,7 +285,7 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::GetIdentifer(
-			FilledShape shape
+			FilledElement shape
 		) {
 			for (auto shapePair : m_filledShapeDict) {
 				if (shapePair.first == shape) {
@@ -280,21 +294,6 @@ namespace sc {
 			}
 
 			return UINT16_MAX;
-		}
-
-		void ResourcePublisher::AddCachedBitmap(const std::u16string& name, cv::Mat image) {
-			m_imagesData[name] = image;
-		}
-
-		bool ResourcePublisher::GetCachedBitmap(const std::u16string& name, cv::Mat& result) {
-			auto it = m_imagesData.find(name);
-			if (it != m_imagesData.end()) {
-				result = it->second;
-				return true;
-			}
-			else {
-				return false;
-			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledShape.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledElement.h"
 
 #include "Module/PluginException.h"
 #include "Module/SessionConfig.h"
@@ -41,13 +41,13 @@ namespace sc {
 			return x == other.x && y == other.y;
 		}
 
-		FilledShapePath::FilledShapePath() {};
-		FilledShapePath::FilledShapePath(FCM::AutoPtr<DOM::Service::Shape::IPath> path)
+		FilledElementPath::FilledElementPath() {};
+		FilledElementPath::FilledElementPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path)
 		{
 			fromPath(path);
 		};
 
-		void FilledShapePath::fromPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path) {
+		void FilledElementPath::fromPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path) {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 			FCM::FCMListPtr edges;
 			uint32_t edgesCount = 0;
@@ -150,7 +150,7 @@ namespace sc {
 			}
 		}
 
-		bool FilledShapePath::operator==(const FilledShapePath& other) const {
+		bool FilledElementPath::operator==(const FilledElementPath& other) const {
 			if (points.size() != other.points.size()) { return false; }
 
 			for (uint32_t i = 0; points.size() > i; i++) {
@@ -162,7 +162,7 @@ namespace sc {
 			return true;
 		}
 
-		FilledShapeRegion::FilledShapeRegion(SymbolContext& symbol, FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region) {
+		FilledElementRegion::FilledElementRegion(SymbolContext& symbol, FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region) {
 			// Contour
 			{
 				FCM::AutoPtr<DOM::Service::Shape::IPath> polygonPath;
@@ -204,7 +204,7 @@ namespace sc {
 			}
 		}
 
-		bool FilledShapeRegion::operator==(const FilledShapeRegion& other) const {
+		bool FilledElementRegion::operator==(const FilledElementRegion& other) const {
 			if (type != other.type) { return false; }
 			if (contour != other.contour || holes.size() != other.holes.size()) { return false; }
 
@@ -226,7 +226,7 @@ namespace sc {
 			return true;
 		}
 
-		FilledShape::FilledShape(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape) {
+		FilledElement::FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape) {
 			PluginContext& context = PluginContext::Instance();
 
 			auto filledShapeGenerator =
@@ -267,7 +267,7 @@ namespace sc {
 			}
 		}
 
-		bool FilledShape::operator==(const FilledShape& other) const {
+		bool FilledElement::operator==(const FilledElement& other) const {
 			if (fill.size() != other.fill.size() || stroke.size() != other.stroke.size()) { return false; }
 
 			for (uint32_t i = 0; fill.size() > i; i++) {

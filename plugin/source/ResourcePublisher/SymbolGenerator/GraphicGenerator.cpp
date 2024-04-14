@@ -7,14 +7,9 @@ namespace sc {
 	namespace Adobe {
 		GraphicGenerator::GraphicGenerator(ResourcePublisher& resources) :
 			m_resources(resources) {
-			PluginContext& context = PluginContext::Instance();
-			BitmapExportService = context.getService<IBitmapExportService>(DOM::FLA_BITMAP_SERVICE);
 		};
 
 		GraphicGenerator::~GraphicGenerator() {
-			if (fs::exists(tempFile)) {
-				remove(tempFile);
-			}
 		};
 
 		void GraphicGenerator::GenerateLayerElements(
@@ -31,8 +26,8 @@ namespace sc {
 			for (uint32_t i = 0; frameElementsCount > i; i++) {
 				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[--frameElementIndex];
 
-				DOM::Utils::MATRIX2D transformMatrix;
-				frameElement->GetMatrix(transformMatrix);
+				DOM::Utils::MATRIX2D transformation;
+				frameElement->GetMatrix(transformation);
 
 				FCM::AutoPtr<DOM::FrameElement::IInstance> instance = frameElement;
 				FCM::AutoPtr<DOM::FrameElement::IShape> shape = frameElement;
@@ -58,13 +53,15 @@ namespace sc {
 						FCM::AutoPtr<DOM::MediaInfo::IBitmapInfo> bitmap = unknownMedia;
 
 						if (bitmap) {
-							cv::Mat bitmapImage;
-							if (!m_resources.GetCachedBitmap(itemName, bitmapImage)) {
-								GetImage(media, bitmapImage);
-								m_resources.AddCachedBitmap(itemName, bitmapImage);
-							}
+							SpriteElement item(item, media, bitmap);
 
-							writer.AddGraphic(bitmapImage, transformMatrix);
+							//cv::Mat bitmapImage;
+							//if (!m_resources.GetCachedBitmap(itemName, bitmapImage)) {
+							//	GetImage(media, bitmapImage);
+							//	m_resources.AddCachedBitmap(itemName, bitmapImage);
+							//}
+							//
+							writer.AddGraphic(item, transformation);
 						}
 					}
 				}
@@ -72,7 +69,7 @@ namespace sc {
 				// Fills / Stroke
 				else if (shape)
 				{
-					FilledShape filledShape(symbol, shape);
+					FilledElement filledShape(symbol, shape);
 					writer.AddFilledShape(filledShape);
 				}
 
@@ -162,19 +159,6 @@ namespace sc {
 
 				GenerateLayer(symbol, writer, layer);
 			};
-		}
-
-		void GraphicGenerator::GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image) {
-			FCM::Result res = BitmapExportService->ExportToFile(
-				media,
-				(FCM::CStringRep16)tempFile.u16string().c_str(),
-				100
-			);
-			if (FCM_FAILURE_CODE(res)) {
-				throw PluginException("TID_BITMAP_SERVICE_EXPORT_FAILED");
-			}
-
-			image = cv::imread(tempFile.string(), cv::IMREAD_UNCHANGED);
 		}
 
 		void GraphicGenerator::Generate(SymbolContext& symbol, SharedShapeWriter& writer, DOM::ITimeline* timeline) {

@@ -26,36 +26,43 @@
 
 namespace sc {
 	namespace Adobe {
-		struct Point2D {
+		class Point2D {
+		public:
 			Point2D() {};
 			Point2D(float x, float y) : x(x), y(y) {};
 
+		public:
 			bool operator==(const Point2D& other) const;
 
 			bool operator!=(const Point2D& other) const {
 				return !(*this == other);
 			}
 
+		public:
 			float x = 0;
 			float y = 0;
 		};
 
-		struct FilledShapePath {
-			FilledShapePath();
-			FilledShapePath(FCM::AutoPtr<DOM::Service::Shape::IPath> path);
+		class FilledElementPath {
+		public:
+			FilledElementPath();
+			FilledElementPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path);
 
+		public:
 			void fromPath(FCM::AutoPtr<DOM::Service::Shape::IPath> path);
 
-			bool operator==(const FilledShapePath& other) const;
+		public:
+			bool operator==(const FilledElementPath& other) const;
 
-			bool operator!=(const FilledShapePath& other) const {
+			bool operator!=(const FilledElementPath& other) const {
 				return !(*this == other);
 			}
 
+		public:
 			std::vector<Point2D> points;
 		};
 
-		struct FilledShapeRegion {
+		class FilledElementRegion {
 		public:
 			enum class ShapeType {
 				SolidColor,
@@ -64,11 +71,12 @@ namespace sc {
 			};
 
 		public:
-			FilledShapeRegion(SymbolContext& symbol, FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region);
+			FilledElementRegion(SymbolContext& symbol, FCM::AutoPtr<DOM::Service::Shape::IFilledRegion> region);
 
-			bool operator==(const FilledShapeRegion& other) const;
+		public:
+			bool operator==(const FilledElementRegion& other) const;
 
-			bool operator!=(const FilledShapeRegion& other) const {
+			bool operator!=(const FilledElementRegion& other) const {
 				return !(*this == other);
 			}
 
@@ -76,21 +84,24 @@ namespace sc {
 
 			DOM::Utils::COLOR solidColor{ 0 };
 
-			FilledShapePath contour;
-			std::vector<FilledShapePath> holes;
+			FilledElementPath contour;
+			std::vector<FilledElementPath> holes;
 		};
 
-		struct FilledShape {
-			FilledShape(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape);
+		class FilledElement {
+		public:
+			FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape);
 
-			bool operator==(const FilledShape& other) const;
+		public:
+			bool operator==(const FilledElement& other) const;
 
-			bool operator!=(const FilledShape& other) const {
+			bool operator!=(const FilledElement& other) const {
 				return !(*this == other);
 			}
 
-			std::vector<FilledShapeRegion> fill;
-			std::vector<FilledShapeRegion> stroke;
+		public:
+			std::vector<FilledElementRegion> fill;
+			std::vector<FilledElementRegion> stroke;
 		};
 	}
 }

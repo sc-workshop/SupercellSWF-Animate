@@ -44,10 +44,21 @@ function buildWindows() {
     }
 
     const buildDirectory = join(__dirname, "build");
-    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
-    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
+    const outputDirectory = join(libPath, "win");
+    const binaryDirectory = join(buildDirectory, "bin", activeConfiguration);
 
-    copyDir(join(__dirname, "build", activeConfiguration), join(libPath, "win"));
+    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
+
+    if (isDev)
+    {
+        mkdirSync(binaryDirectory, { recursive: true });
+        makeLink(binaryDirectory, outputDirectory);
+        return;
+    }
+
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
+
+    copyDir(binaryDirectory, outputDirectory);
     progress("Done");
 }
 

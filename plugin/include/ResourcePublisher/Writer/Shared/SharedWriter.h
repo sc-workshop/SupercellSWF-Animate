@@ -3,9 +3,7 @@
 #include "generic/ref.h"
 #include "SharedMovieclipWriter.h"
 #include "SharedGraphicWriter.h"
-#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextField.h"
-
-#include "SupercellFlash/objects/MovieClipModifier.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextElement.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -30,7 +28,7 @@ namespace sc {
 
 			virtual void AddModifier(uint16_t id, MaskedLayerState type) = 0;
 
-			virtual void AddTextField(uint16_t id, TextFieldInfo field) = 0;
+			virtual void AddTextField(uint16_t id, TextElement field) = 0;
 
 			virtual void AddExportName(uint16_t id, std::string name) = 0;
 

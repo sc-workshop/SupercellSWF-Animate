@@ -83,7 +83,7 @@ namespace sc {
 			void print(const char16_t* message, Args ... args)
 			{
 				wchar_t buffer[1024];
-				std::swprintf(buffer, 1024, (const wchar_t *)message, args...);
+				std::swprintf(buffer, 1024, (const wchar_t*)message, args...);
 
 				std::wstring result(buffer);
 				result += L"\n";
@@ -97,7 +97,7 @@ namespace sc {
 				print(message.c_str(), args...);
 			}
 
-			bool& initializeWindow();
+			void initializeWindow();
 			void destroyWindow();
 			PluginWindow* window();
 

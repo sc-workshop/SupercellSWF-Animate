@@ -1,10 +1,10 @@
-#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextField.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextElement.h"
 
 #define isEqual(a,b) (fabs(a - b) <= ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * 0.01))
 
 namespace sc {
 	namespace Adobe {
-		bool TextFieldInfo::operator==(TextFieldInfo const& other) const {
+		bool TextElement::operator==(TextElement const& other) const {
 			return
 				text == other.text &&
 

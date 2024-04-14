@@ -20,59 +20,12 @@ namespace sc {
 			json data = json::parse(serializedConfig);
 
 			outputFilepath = fs::path(Localization::ToUtf16(data["output"]));
-			fs::path documentPath;
-			{
-				FCM::StringRep16 documentPathPtr;
-				document->GetPath(&documentPathPtr);
-				PluginContext& context = PluginContext::Instance();
-				if (documentPathPtr)
-				{
-					documentPath = fs::path((const char16_t*)documentPathPtr);
-					context.falloc->Free(documentPathPtr);
-				}
-			}
-
-			if (outputFilepath.empty())
-			{
-				if (!documentPath.empty())
-				{
-					outputFilepath = documentPath;
-				}
-			}
-			else if (outputFilepath.is_relative())
-			{
-				if (!documentPath.empty())
-				{
-					outputFilepath = (documentPath.parent_path() / outputFilepath).make_preferred();
-				}
-			}
-
-			if (outputFilepath.has_extension())
-			{
-				fs::path outputExt = outputFilepath.extension();
-				if (outputExt.compare(".xfl") == 0)
-				{
-					outputFilepath = outputFilepath.parent_path();
-				}
-				else
-				{
-					outputFilepath.replace_extension();
-				}
-			}
 
 			filledShapeOptimization = data["filledShapeOptimization"];
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
 
 			exportToExternal = data["exportToExternal"];
 			exportToExternalPath = fs::path(Localization::ToUtf16(data["exportToExternalPath"]));
-
-			if (exportToExternal && !exportToExternalPath.empty())
-			{
-				if (!documentPath.empty())
-				{
-					exportToExternalPath = (documentPath.parent_path() / exportToExternalPath).make_preferred();
-				}
-			}
 
 			hasExternalTexture = data["hasExternalTexture"];
 			hasExternalCompressedTexture = data["hasExternalCompressedTexture"];
@@ -121,6 +74,61 @@ namespace sc {
 
 			if (data["lowResolutionSuffix"].is_string()) {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
+			}
+		}
+
+		void PluginSessionConfig::Normalize()
+		{
+			fs::path documentPath;
+			{
+				FCM::StringRep16 documentPathPtr;
+				document->GetPath(&documentPathPtr);
+				PluginContext& context = PluginContext::Instance();
+				if (documentPathPtr)
+				{
+					documentPath = fs::path((const char16_t*)documentPathPtr);
+					context.falloc->Free(documentPathPtr);
+				}
+			}
+
+			if (outputFilepath.empty())
+			{
+				if (!documentPath.empty())
+				{
+					outputFilepath = documentPath;
+				}
+				else
+				{
+					outputFilepath = "File";
+				}
+			}
+			else if (outputFilepath.is_relative())
+			{
+				if (!documentPath.empty())
+				{
+					outputFilepath = (documentPath.parent_path() / outputFilepath).make_preferred();
+				}
+			}
+
+			if (outputFilepath.has_extension())
+			{
+				fs::path outputExt = outputFilepath.extension();
+				if (outputExt.compare(".xfl") == 0)
+				{
+					outputFilepath = outputFilepath.parent_path();
+				}
+				else
+				{
+					outputFilepath.replace_extension();
+				}
+			}
+
+			if (exportToExternal && !exportToExternalPath.empty())
+			{
+				if (!documentPath.empty())
+				{
+					exportToExternalPath = (documentPath.parent_path() / exportToExternalPath).make_preferred();
+				}
 			}
 		}
 	}

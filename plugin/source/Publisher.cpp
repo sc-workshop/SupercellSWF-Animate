@@ -11,15 +11,25 @@ namespace sc {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 			config.document = document;
 			config.FromDict(publishSettings);
+			config.Normalize();
 
 			auto start = std::chrono::high_resolution_clock::now();
 
-			bool* isWindowReady = nullptr;
+			bool isWindowReady = false;
 			std::thread progressWindow(
 				[&context, &isWindowReady]()
 				{
-					isWindowReady = &context.initializeWindow();
-					wxEntry();
+					context.initializeWindow();
+					wxEntryStart(0, nullptr);
+					wxTheApp->CallOnInit();
+
+					isWindowReady = true;
+
+					wxTheApp->OnRun();
+					wxTheApp->OnExit();
+					wxEntryCleanup();
+
+					context.destroyWindow();
 				}
 			);
 
@@ -27,14 +37,12 @@ namespace sc {
 			std::thread publishing([&context, &result, &isWindowReady]()
 				{
 					// Do nothing until window is ready
-					while (!isWindowReady || !(*isWindowReady));
+					while (!isWindowReady);
 
 					try {
 						SCWriter writer;
 						ResourcePublisher publisher(writer);
 						publisher.Publish();
-
-						context.destroyWindow();
 					}
 					catch (const PluginException& exception)
 					{
@@ -53,6 +61,9 @@ namespace sc {
 						);
 						result = FCM_EXPORT_FAILED;
 					}
+
+					context.window()->readyToExit = true;
+					context.window()->Close();
 				}
 			);
 

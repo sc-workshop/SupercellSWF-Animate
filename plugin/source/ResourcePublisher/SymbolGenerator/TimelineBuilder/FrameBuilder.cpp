@@ -141,7 +141,7 @@ namespace sc {
 					FCM::AutoPtr<DOM::FrameElement::IShape> filledShape = nullptr;
 					m_shapeTweener->GetShape(m_tween, m_position, filledShape.m_Ptr);
 
-					FilledShape shape(symbol, filledShape);
+					FilledElement shape(symbol, filledShape);
 
 					uint16_t id = m_resources.GetIdentifer(shape);
 
@@ -232,7 +232,7 @@ namespace sc {
 
 				// Textfield
 				else if (textfieldElement) {
-					TextFieldInfo textfield;
+					TextElement textfield;
 
 					{
 						frameElement->GetObjectSpaceBounds(textfield.bound);
@@ -329,7 +329,7 @@ namespace sc {
 
 				// Fills / Stroke
 				else if (filledShapeItem) {
-					FilledShape shape(symbol, filledShapeItem);
+					FilledElement shape(symbol, filledShapeItem);
 
 					id = m_resources.GetIdentifer(shape);
 

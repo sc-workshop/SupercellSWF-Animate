@@ -12,6 +12,13 @@ namespace sc {
 			}
 		}
 
+		SCWriter::~SCWriter()
+		{
+			if (fs::exists(sprite_temp_path)) {
+				remove(sprite_temp_path);
+			}
+		}
+
 		SharedMovieclipWriter* SCWriter::AddMovieclip(SymbolContext& symbol) {
 			return new SCMovieclipWriter(*this, symbol);
 		}
@@ -40,7 +47,7 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::AddTextField(uint16_t id, TextFieldInfo object) {
+		void SCWriter::AddTextField(uint16_t id, TextElement object) {
 			TextField& textfield = swf.textfields.emplace_back();
 
 			std::string text = Localization::ToUtf8(object.text);
@@ -194,6 +201,40 @@ namespace sc {
 			swf = base_swf;
 		}
 
+		void SCWriter::TransformCommand(
+			ShapeDrawBitmapCommand& command,
+			Matrix2x3<float> matrix,
+			AtlasGenerator::Item::Transformation& transform
+		)
+		{
+		}
+
+		void SCWriter::ProcessSpriteItem(
+			Shape& shape,
+			AtlasGenerator::Item& atlas_item,
+			SpriteItem& sprite_item
+		)
+		{
+			ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
+			Matrix2x3<float> matrix = sprite_item.transformation();
+
+			shape_command.texture_index = atlas_item.texture_index;
+
+			for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
+			{
+				ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
+
+				Point<uint16_t> uv = vertex.uv;
+				atlas_item.transform.transform_point(uv);
+
+				shape_vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
+				shape_vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
+
+				shape_vertex.x = (matrix.a * vertex.xy.x) + (matrix.c * vertex.xy.y) + matrix.tx;
+				shape_vertex.y = (matrix.b * vertex.xy.x) + (matrix.d * vertex.xy.y) + matrix.ty;
+			}
+		}
+
 		void SCWriter::FinalizeAtlas()
 		{
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
@@ -203,122 +244,62 @@ namespace sc {
 				context.locale.GetString("TID_STATUS_SPRITE_PACK")
 			);
 
-			std::vector<AtlasGeneratorItem> items;
-			for (ShapeSymbol& shape : shapes) {
-				for (Sprite& sprite : shape.sprites)
+			////////////////////////
+
+			std::vector<Ref<AtlasGenerator::Item>> items;
+
+			for (GraphicGroup& group : m_graphic_groups)
+			{
+				for (size_t i = 0; group.size() > i; i++)
 				{
-					items.emplace_back(sprite.image);
+					GraphicItem& item = group.getItem(i);
+
+					Ref<AtlasGenerator::Item>& atlas_item = items.emplace_back();
+
+					if (item.IsSprite())
+					{
+						SpriteItem sprite_item = item.GetSprite();
+
+						atlas_item = CreateRef<AtlasGenerator::Item>(sprite_item.image());
+					}
+					else
+					{
+						throw PluginException("Not implemented");
+					}
 				}
 			}
+
+			AtlasGenerator::Config generator_config(
+				AtlasGenerator::Config::TextureType::RGBA,
+				config.textureMaxWidth,
+				config.textureMaxHeight,
+				config.textureScaleFactor,
+				2
+			);
 
 			int itemCount = (int)items.size();
 			status->SetRange(itemCount);
 
-			AtlasGeneratorConfig atlasConfig;
-			atlasConfig.maxSize = { config.textureMaxWidth, config.textureMaxHeight };
-			atlasConfig.scaleFactor = config.textureScaleFactor;
-			atlasConfig.progress = [&status, &itemCount](int value) {
+			generator_config.progress = [&status, &itemCount](int value) {
 				status->SetProgress(itemCount - value);
 			};
 
-			std::vector<cv::Mat> textures;
-			AtlasGeneratorResult packageResult = AtlasGenerator::Generate(items, textures, atlasConfig);
+			AtlasGenerator::Generator generator(generator_config);
 
-			switch (packageResult)
+			uint16_t texture_count = 0;
+
+			try
 			{
-			case AtlasGeneratorResult::OK:
-				break;
-
-			case AtlasGeneratorResult::BAD_POLYGON:
-				throw PluginException(
-					"%ls %ls",
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_BAD_POLYGON").c_str()
-				);
-
-			case AtlasGeneratorResult::TOO_MANY_IMAGES:
-				throw PluginException(
-					"%ls %ls",
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TOO_MANY_IMAGES").c_str()
-				);
-
-			case AtlasGeneratorResult::TOO_BIG_IMAGE:
-				throw PluginException(
-					"%ls %ls",
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TOO_BIG_SPRITES").c_str()
-				);
-
-			default:
-				throw PluginException(
-					"%ls %ls",
-					context.locale.GetString("TID_SWF_ATLAS_GENERATOR_TYPE").c_str(),
-					context.locale.GetString("TID_UNKNOWN_EXCEPTION").c_str()
-				);
+				texture_count = generator.generate(items);
+			}
+			catch (const AtlasGenerator::PackagingException& exception)
+			{
+				throw PluginException("TODO");
 			}
 
-			status->SetLabel(
-				context.locale.GetString("TID_STATUS_SAVE")
-			);
+			for (uint16_t i = 0; texture_count > i; i++) {
+				cv::Mat& atlas = generator.get_atlas(i);
 
-			uint16_t itemIndex = 0;
-			for (uint32_t shapeIndex = 0; swf.shapes.size() > shapeIndex; shapeIndex++)
-			{
-				Shape& shape = swf.shapes[shapeIndex];
-				ShapeSymbol& symbol = shapes[shapeIndex];
-
-				for (uint32_t spriteIndex = 0; symbol.sprites.size() > spriteIndex; spriteIndex++)
-				{
-					ShapeDrawBitmapCommand& command = shape.commands.emplace_back();
-					AtlasGeneratorItem& generatorItem = items[itemIndex];
-					Sprite& sprite = symbol.sprites[spriteIndex];
-					DOM::Utils::MATRIX2D& matrix = sprite.matrix;
-
-					command.texture_index = generatorItem.textureIndex;
-
-					// If bitmap is sprite
-					if (sprite.contour.empty()) {
-						while (generatorItem.polygon.size() <= 3)
-						{
-							generatorItem.polygon.push_back(generatorItem.polygon[generatorItem.polygon.size() - 1]);
-						}
-
-						for (auto point : generatorItem.polygon) {
-							ShapeDrawBitmapCommandVertex& vertex = command.vertices.emplace_back();
-
-							vertex.u = point.uv.first / (float)textures[generatorItem.textureIndex].cols;
-							vertex.v = point.uv.second / (float)textures[generatorItem.textureIndex].rows;
-
-							vertex.x = (matrix.a * point.xy.first) + (matrix.c * point.xy.second) + matrix.tx;
-							vertex.y = (matrix.b * point.xy.first) + (matrix.d * point.xy.second) + matrix.ty;
-						}
-					}
-
-					// If bitmap is filled shape triangle
-					else {
-						while (sprite.contour.size() <= 3) {
-							sprite.contour.push_back(sprite.contour[sprite.contour.size() - 1]);
-						}
-
-						float u = generatorItem.polygon[0].uv.first / (float)textures[generatorItem.textureIndex].cols;
-						float v = generatorItem.polygon[0].uv.second / (float)textures[generatorItem.textureIndex].rows;
-
-						for (const Point2D& point : sprite.contour) {
-							ShapeDrawBitmapCommandVertex& vertex = command.vertices.emplace_back();
-
-							vertex.u = u;
-							vertex.v = v;
-
-							vertex.x = (matrix.a * point.x) + (-matrix.b * point.y) + matrix.tx;
-							vertex.y = (-matrix.c * point.x) + (matrix.d * point.y) + matrix.ty;
-						}
-					}
-					itemIndex++;
-				}
-			}
-
-			for (cv::Mat& atlas : textures) {
 				cv::cvtColor(atlas, atlas, cv::COLOR_BGRA2RGBA);
 
 				SWFTexture& texture = swf.textures.emplace_back();
@@ -347,6 +328,28 @@ namespace sc {
 				else
 				{
 					texture.encoding(SWFTexture::TextureEncoding::KhronosTexture);
+				}
+			}
+
+			uint16_t command_index = 0;
+			for (uint32_t shape_index = 0; swf.shapes.size() > shape_index; shape_index++)
+			{
+				Shape& shape = swf.shapes[shape_index];
+				GraphicGroup& group = m_graphic_groups[shape_index];
+
+				for (uint32_t group_item_index = 0; group.size() > group_item_index; group_item_index++)
+				{
+					AtlasGenerator::Item& atlas_item = *items[command_index];
+					GraphicItem& item = group.getItem(group_item_index);
+
+					if (item.IsSprite())
+					{
+						ProcessSpriteItem(
+							shape, atlas_item, item.GetSprite()
+						);
+					}
+
+					command_index++;
 				}
 			}
 
@@ -399,7 +402,7 @@ namespace sc {
 					"TID_FILE_SAVE", basename.u16string().c_str()
 				)
 			);
-			 
+
 			swf.save(filepath, config.compression);
 
 			status->Destroy();

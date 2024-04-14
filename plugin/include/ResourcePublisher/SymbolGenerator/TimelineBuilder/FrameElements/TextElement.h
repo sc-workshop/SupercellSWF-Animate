@@ -14,9 +14,9 @@ using namespace DOM::FrameElement;
 
 namespace sc {
 	namespace Adobe {
-		struct TextFieldInfo {
+		class TextElement {
 		public:
-			bool operator==(TextFieldInfo const& other) const;
+			bool operator==(TextElement const& other) const;
 
 		public:
 			DOM::Utils::RECT bound;

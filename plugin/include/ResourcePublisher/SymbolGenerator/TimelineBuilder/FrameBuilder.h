@@ -34,7 +34,7 @@
 #include "ResourcePublisher/Writer/Shared/SharedMovieclipWriter.h"
 
 // Fills
-#include "FrameElements/FilledShape.h"
+#include "FrameElements/FilledElement.h"
 
 using DOM::Utils::MATRIX2D;
 using DOM::Utils::COLOR_MATRIX;

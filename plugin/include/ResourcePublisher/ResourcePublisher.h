@@ -31,8 +31,8 @@
 #include "ResourcePublisher/SymbolGenerator/MovieClipGenerator.h"
 #include "Module/SymbolContext.h"
 
-#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledShape.h"
-#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextField.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/FilledElement.h"
+#include "ResourcePublisher/SymbolGenerator/TimelineBuilder/FrameElements/TextElement.h"
 
 // Writers
 #include "ResourcePublisher/Writer/Shared/SharedWriter.h"
@@ -63,17 +63,14 @@ namespace sc {
 			// Name  /  Id
 			std::unordered_map<std::u16string, uint16_t> m_symbolsData;
 
-			// Name / Image
-			std::unordered_map<std::u16string, cv::Mat> m_imagesData;
-
 			// Type / Id
 			std::vector<std::pair<MaskedLayerState, uint16_t>> m_modifierDict;
 
 			// Info / Id
-			std::vector<std::pair<TextFieldInfo, uint16_t>> m_textfieldDict;
+			std::vector<std::pair<TextElement, uint16_t>> m_textfieldDict;
 
 			// Shape / Id
-			std::vector<std::pair<FilledShape, uint16_t>> m_filledShapeDict;
+			std::vector<std::pair<FilledElement, uint16_t>> m_filledShapeDict;
 
 			uint32_t m_id = 0;
 			uint8_t m_current_fps = 30;
@@ -108,11 +105,11 @@ namespace sc {
 			);
 
 			uint16_t AddTextField(
-				TextFieldInfo field
+				TextElement field
 			);
 
 			uint16_t AddFilledShape(
-				FilledShape shape
+				FilledElement shape
 			);
 
 			uint16_t GetIdentifer(
@@ -124,16 +121,12 @@ namespace sc {
 			);
 
 			uint16_t GetIdentifer(
-				TextFieldInfo field
+				TextElement field
 			);
 
 			uint16_t GetIdentifer(
-				FilledShape shape
+				FilledElement shape
 			);
-
-			void AddCachedBitmap(const std::u16string& name, cv::Mat image);
-
-			bool GetCachedBitmap(const std::u16string& name, cv::Mat& result);
 		};
 	}
 }

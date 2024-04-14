@@ -15,9 +15,6 @@ namespace sc {
 		class PluginWindowApp : public wxApp
 		{
 		public:
-			bool isInited = false;
-
-		public:
 			PluginWindowApp();
 			virtual ~PluginWindowApp() = default;
 

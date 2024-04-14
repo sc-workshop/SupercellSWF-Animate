@@ -27,13 +27,7 @@ namespace sc {
 		}
 
 		FeatureMatrix::~FeatureMatrix()
-		{
-#if SC_DEBUG
-			fs::path dumpPath = PluginContext::CurrentPath() / "features_dump.json";
-			std::ofstream file(dumpPath);
-			file << m_dump.dump(4);
-#endif
-		}
+		{}
 
 		void FeatureMatrix::ReadFeature(json& feature) {
 			Feature featureItem = Feature(feature["supported"]);
@@ -81,16 +75,12 @@ namespace sc {
 
 		FCM::Result FeatureMatrix::IsSupported(FCM::CStringRep16 featureName, FCM::Boolean& isSupported)
 		{
-			std::string featureNameStr = Localization::ToUtf8((const char16_t*)featureName);
-#if  SC_DEBUG
-			if (!m_dump.contains(featureNameStr))
-			{
-				m_dump[featureNameStr] = json::object({
-					{"properties", json::object()}
-					});
-			}
+#if SC_DEBUG
+			isSupported = true;
+			return FCM_SUCCESS;
+#endif
 
-#endif //  SC_DEBUG
+			std::string featureNameStr = Localization::ToUtf8((const char16_t*)featureName);
 
 			if (featureNameStr.empty()) {
 				isSupported = true;
@@ -114,25 +104,13 @@ namespace sc {
 			FCM::CStringRep16 propertyName,
 			FCM::Boolean& isSupported)
 		{
+#if SC_DEBUG
+			isSupported = true;
+			return FCM_SUCCESS;
+#endif
+
 			std::string featureNameStr = Localization::ToUtf8((const char16_t*)featureName);
 			std::string propertyNameStr = Localization::ToUtf8((const char16_t*)propertyName);
-
-#if  SC_DEBUG
-			if (!m_dump.contains(featureNameStr))
-			{
-				m_dump[featureNameStr] = json::object({
-					{"properties", json::object()}
-					});
-			}
-
-			if (!m_dump[featureNameStr]["properties"].contains(propertyNameStr))
-			{
-				m_dump[featureNameStr]["properties"][propertyNameStr] = json::object(
-					{ { "values", json::array() } }
-				);
-			}
-
-#endif //  SC_DEBUG
 
 			if (featureNameStr.empty()) {
 				isSupported = true;
@@ -177,31 +155,13 @@ namespace sc {
 			FCM::CStringRep16 valueName,
 			FCM::Boolean& isSupported)
 		{
+#if SC_DEBUG
+			isSupported = true;
+			return FCM_SUCCESS;
+#endif
 			std::string featureNameStr = Localization::ToUtf8((const char16_t*)inFeatureName);
 			std::string propertyNameStr = Localization::ToUtf8((const char16_t*)propertyName);
 			std::string valueNameStr = Localization::ToUtf8((const char16_t*)valueName);
-
-#if  SC_DEBUG
-			if (!m_dump.contains(featureNameStr))
-			{
-				m_dump[featureNameStr] = json::object({
-					{"properties", json::object()}
-					});
-			}
-
-			if (!m_dump[featureNameStr]["properties"].contains(propertyNameStr))
-			{
-				m_dump[featureNameStr]["properties"][propertyNameStr] = json::object(
-					{ { "values", json::array() } }
-				);
-			}
-
-			if (!m_dump[featureNameStr]["properties"][propertyNameStr]["values"].contains(valueNameStr))
-			{
-				m_dump[featureNameStr]["properties"][propertyNameStr]["values"].push_back(valueNameStr);
-			}
-
-#endif //  SC_DEBUG
 
 			if (featureNameStr.empty()) {
 				isSupported = true;
@@ -266,6 +226,10 @@ namespace sc {
 			FCM::VARIANT& output)
 		{
 			FCM::Result res = FCM_INVALID_PARAM;
+
+#if SC_DEBUG
+			return res;
+#endif
 
 			std::string featureNameStr = Localization::ToUtf8((const char16_t*)featureName);
 			std::string propertyNameStr = Localization::ToUtf8((const char16_t*)propertyName);

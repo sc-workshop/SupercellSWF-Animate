@@ -47,7 +47,6 @@ namespace sc {
 			window->Show();
 			SetTopWindow(window);
 
-			isInited = true;
 			return true;
 		}
 	}

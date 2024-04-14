@@ -32,7 +32,6 @@ namespace sc {
 
 		class GraphicGenerator {
 			ResourcePublisher& m_resources;
-			FCM::AutoPtr<IBitmapExportService> BitmapExportService;
 
 			void GenerateLayerElements(
 				SymbolContext& symbol,
@@ -78,10 +77,6 @@ namespace sc {
 			GraphicGenerator(ResourcePublisher& resources);;
 
 			~GraphicGenerator();
-
-			const fs::path tempFile = fs::path(tmpnam(nullptr)).concat(".png");
-
-			void GetImage(FCM::AutoPtr<DOM::LibraryItem::IMediaItem>& media, cv::Mat& image);
 
 			void Generate(SymbolContext& symbol, SharedShapeWriter& writer, DOM::ITimeline* timeline);
 

@@ -31,29 +31,28 @@ namespace sc
 			return languageCode;
 		}
 
-		bool& PluginContext::initializeWindow()
+		void PluginContext::initializeWindow()
 		{
 			m_app = new PluginWindowApp();
 			wxApp::SetInstance(m_app);
-
-			return m_app->isInited;
 		}
 
 		void PluginContext::destroyWindow()
 		{
 			if (m_app)
 			{
-				m_app->window->aboutToExit = true;
-				m_app->window->readyToExit = true;
-				m_app->window->Close(true);
-
 				m_app = nullptr;
 			}
 		}
 
 		PluginWindow* PluginContext::window()
 		{
-			return m_app->window;
+			if (m_app)
+			{
+				return m_app->window;
+			}
+
+			return nullptr;
 		}
 
 		fs::path PluginContext::CurrentPath(PluginContext::PathType type)
