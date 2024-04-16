@@ -234,20 +234,6 @@ namespace sc {
 
 			shape_command.texture_index = atlas_item.texture_index;
 
-			//for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
-			//{
-			//	ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
-			//
-			//	Point<uint16_t> uv = vertex.uv;
-			//	atlas_item.transform.transform_point(uv);
-			//
-			//	shape_vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
-			//	shape_vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
-			//
-			//	shape_vertex.x = (matrix.a * vertex.xy.x) + (matrix.c * vertex.xy.y) + matrix.tx;
-			//	shape_vertex.y = (matrix.b * vertex.xy.x) + (matrix.d * vertex.xy.y) + matrix.ty;
-			//}
-
 			for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
 			{
 				ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
@@ -259,6 +245,38 @@ namespace sc {
 			}
 
 			ProcessCommandTransform(shape_command, atlas_item.transform, sprite_item);
+		}
+
+		void SCWriter::ProcessFilledItem(
+			Shape& shape,
+			AtlasGenerator::Item& atlas_item,
+			FilledItem& filled_item
+		)
+		{
+			if (!atlas_item.is_rectangle() || atlas_item.vertices.size() != 4)
+			{
+				// Just in case if something wrong with item
+				return;
+			}
+
+			const AtlasGenerator::Vertex& atlas_point = atlas_item.vertices[0];
+
+			for (const FilledItemContour& contour : filled_item.contours)
+			{
+				ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
+
+				for (const Point2D& point : contour.Contour())
+				{
+					ShapeDrawBitmapCommandVertex& shape_vertex = shape_command.vertices.emplace_back();
+
+					shape_vertex.u = atlas_point.uv.x;
+					shape_vertex.v = atlas_point.uv.y;
+					shape_vertex.x = point.x;
+					shape_vertex.y = point.y;
+
+					ProcessCommandTransform(shape_command, atlas_item.transform, filled_item);
+				}
+			}
 		}
 
 		void SCWriter::FinalizeAtlas()
@@ -285,6 +303,11 @@ namespace sc {
 						SpriteItem& sprite_item = *(SpriteItem*)&item;
 
 						atlas_item = CreateRef<AtlasGenerator::Item>(sprite_item.image());
+					}
+					else if (item.IsFilledShape())
+					{
+						FilledItem& filled_item = *(FilledItem*)&item;
+						atlas_item = CreateRef<AtlasGenerator::Item>(filled_item.Color());
 					}
 					else
 					{
@@ -368,9 +391,16 @@ namespace sc {
 
 					if (item.IsSprite())
 					{
-						SpriteItem& element = *(SpriteItem*)&item;
+						SpriteItem& sprite_item = *(SpriteItem*)&item;
 						ProcessSpriteItem(
-							shape, atlas_item, element
+							shape, atlas_item, sprite_item
+						);
+					}
+					else if (item.IsFilledShape())
+					{
+						FilledItem& filled_item = *(FilledItem*)&item;
+						ProcessFilledItem(
+							shape, atlas_item, filled_item
 						);
 					}
 
@@ -378,7 +408,7 @@ namespace sc {
 				}
 			}
 
-			status->Destroy();
+			context.window()->DestroyStatusBar(status);
 		}
 
 		void SCWriter::Finalize() {
@@ -430,7 +460,7 @@ namespace sc {
 
 			swf.save(filepath, config.compression);
 
-			status->Destroy();
+			context.window()->DestroyStatusBar(status);
 		}
 	}
 }

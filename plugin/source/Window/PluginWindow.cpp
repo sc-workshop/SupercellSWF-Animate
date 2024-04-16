@@ -9,7 +9,8 @@ namespace sc {
 	namespace Adobe {
 		wxBEGIN_EVENT_TABLE(PluginWindow, wxFrame)
 			EVT_CLOSE(PluginWindow::OnClose)
-			EVT_MYFOO(wxID_ANY, PluginWindow::OnProgressCreate)
+			SC_EVT_CREATE_PROGRESS(wxID_ANY, PluginWindow::OnProgressCreate)
+			SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
 			wxEND_EVENT_TABLE();
 
 		PluginWindow::PluginWindow(const std::u16string& title)
@@ -48,13 +49,24 @@ namespace sc {
 			StatusComponent* result = nullptr;
 
 			PluginCreateProgressEvent* event = new PluginCreateProgressEvent(title, defaultLabel, range, result);
-
+			event->SetEventObject(this);
 			GetEventHandler()->QueueEvent(event);
 
 			// await result
 			while (!result);
 
 			return result;
+		}
+
+		void PluginWindow::DestroyStatusBar(StatusComponent* bar)
+		{
+			bool destroyed = false;
+			PluginDestroyProgressEvent* event = new PluginDestroyProgressEvent(bar, &destroyed);
+			event->SetEventObject(this);
+			GetEventHandler()->QueueEvent(event);
+
+			// await result
+			while (!destroyed);
 		}
 
 		void PluginWindow::ThrowException(const wxString& what) {
@@ -96,6 +108,14 @@ namespace sc {
 			ScaleByContent();
 
 			event.result = progressBar;
+		}
+
+		void PluginWindow::OnProgressDestroy(PluginDestroyProgressEvent& event)
+		{
+			event.component->Destroy();
+			ScaleByContent();
+
+			*event.destroyed = true;
 		}
 	}
 }

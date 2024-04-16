@@ -18,13 +18,15 @@ namespace sc
 			}
 
 		public:
-			virtual bool IsSprite()
+			virtual bool IsSprite() const
 			{
 				return false;
 			}
 
-		public:
-			virtual SpriteItem GetSprite() = 0;
+			virtual bool IsFilledShape() const
+			{
+				return false;
+			}
 		};
 	}
 }

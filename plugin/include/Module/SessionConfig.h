@@ -29,10 +29,17 @@ namespace sc {
 				return singleton;
 			}
 
+			static void Clear()
+			{
+				Instance() = PluginSessionConfig();
+			}
+
 		private:
 			PluginSessionConfig() {}
 			~PluginSessionConfig() {}
 			PluginSessionConfig(const PluginSessionConfig&);
+
+			PluginSessionConfig& operator=(PluginSessionConfig&&) = default;
 
 		public:
 			// Current document

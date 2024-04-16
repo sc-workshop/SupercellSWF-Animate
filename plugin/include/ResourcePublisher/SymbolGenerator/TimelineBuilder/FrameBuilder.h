@@ -44,6 +44,17 @@ namespace sc {
 		class ResourcePublisher;
 
 		class FrameBuilder {
+		public:
+			enum class LastElementType
+			{
+				None = 0,
+				Symbol,
+				TextField,
+				FilledElement,
+				SpriteElement
+			};
+
+		private:
 			ResourcePublisher& m_resources;
 			// Frame duration
 			uint32_t m_duration = 0;
@@ -67,25 +78,51 @@ namespace sc {
 			FCM::AutoPtr<DOM::Service::Tween::IColorTweener> m_colorTweener = nullptr;
 			FCM::AutoPtr<DOM::Service::Tween::IShapeTweener> m_shapeTweener = nullptr;
 
+			std::vector<FilledElement> m_filled_elements;
+
+			LastElementType m_last_element = LastElementType::None;
+
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
 
 			void Update(SymbolContext& symbol, DOM::IFrame* frame);
 
+			void releaseFrameElement(SymbolContext& symbol, SharedMovieclipWriter& writer, size_t index);
+
 			void operator()(SymbolContext& symbol, SharedMovieclipWriter& writer);
 
-			bool empty() {
+			bool empty() const
+			{
 				return m_elementsData.size() == 0;
 			}
 
-			void next() {
+			void next()
+			{
 				m_position++;
+			}
+
+			uint32_t duration() const
+			{
+				return m_duration;
+			}
+
+			LastElementType last_element() const
+			{
+				return m_last_element;
 			}
 
 			operator bool() const
 			{
 				return m_duration > m_position;
 			}
+
+			const std::vector<FilledElement>& filledElements() const
+			{
+				return m_filled_elements;
+			}
+
+			void releaseFilledElements(SymbolContext& symbol);
+			void inheritFilledElements(const FrameBuilder& frame);
 
 		private:
 			void AddFrameElementArray(

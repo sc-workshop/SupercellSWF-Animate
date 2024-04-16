@@ -23,7 +23,7 @@ namespace sc {
 
 			virtual void AddFilledElement(const FilledElement& shape) = 0;
 
-			virtual void AddSlicedElements(const std::vector<SliceElement>& elements) = 0;
+			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides) = 0;
 
 			virtual void Finalize(uint16_t id) = 0;
 		};

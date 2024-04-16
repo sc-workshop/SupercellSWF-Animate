@@ -36,9 +36,9 @@ namespace sc
 
 		typedef void (wxEvtHandler::* PluginCreateProgressFunction)(PluginCreateProgressEvent&);
 
-#define MyFooEventHandler(func) wxEVENT_HANDLER_CAST(PluginCreateProgressFunction, func)                    
+#define SC_PluginCreateProgressEventHandler(func) wxEVENT_HANDLER_CAST(PluginCreateProgressFunction, func)
 
-#define EVT_MYFOO(id, func) \
- 	wx__DECLARE_EVT1(AN_EVT_CREATE_PROGRESS, id, MyFooEventHandler(func))
+#define SC_EVT_CREATE_PROGRESS(id, func) \
+ 	wx__DECLARE_EVT1(AN_EVT_CREATE_PROGRESS, id, SC_PluginCreateProgressEventHandler(func))
 	}
 }

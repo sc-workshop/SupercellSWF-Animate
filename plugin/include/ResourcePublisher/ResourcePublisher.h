@@ -110,12 +110,8 @@ namespace sc {
 			);
 
 			uint16_t AddFilledElement(
-				FilledElement& shape
-			);
-
-			uint16_t AddSlicedElement(
 				SymbolContext& symbol,
-				std::vector<SliceElement>& elements
+				const std::vector<FilledElement>& shape
 			);
 
 			uint16_t GetIdentifer(

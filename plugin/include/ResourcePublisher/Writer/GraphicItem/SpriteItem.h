@@ -15,16 +15,6 @@ namespace sc
 		class SpriteItem : public GraphicItem
 		{
 		public:
-			//SpriteItem(std::filesystem::path path, const DOM::Utils::MATRIX2D& matrix)
-			//	: m_matrix(SpriteItem::init_matrix(matrix))
-			//{
-			//	m_image = cv::imread(path.string(), cv::IMREAD_UNCHANGED);
-			//};
-
-			//SpriteItem(const cv::Mat& image, const DOM::Utils::MATRIX2D& matrix)
-			//	: m_image(image.clone()), m_matrix(SpriteItem::init_matrix(matrix))
-			//{};
-
 			SpriteItem(Ref<cv::Mat> image, const DOM::Utils::MATRIX2D& matrix);
 
 		public:
@@ -33,14 +23,13 @@ namespace sc
 				return m_matrix;
 			}
 
-			virtual bool IsSprite()
+			virtual bool IsSprite() const
 			{
 				return true;
 			}
 
 		public:
 			cv::Mat& image() { return *m_image; }
-			virtual SpriteItem GetSprite();
 
 		private:
 			static Matrix2x3<float> init_matrix(const DOM::Utils::MATRIX2D& matrix);

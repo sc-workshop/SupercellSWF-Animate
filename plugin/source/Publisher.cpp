@@ -8,6 +8,8 @@ namespace sc {
 			const FCM::PIFCMDictionary appConfig
 		) {
 			PluginContext& context = PluginContext::Instance();
+
+			PluginSessionConfig::Clear();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 			config.document = document;
 			config.FromDict(publishSettings);
@@ -39,10 +41,15 @@ namespace sc {
 					// Do nothing until window is ready
 					while (!isWindowReady);
 
+					// Removes Exception catch in debug mode
+#if !(SC_DEBUG)
 					try {
+#endif
 						SCWriter writer;
 						ResourcePublisher publisher(writer);
 						publisher.Publish();
+
+#if !(SC_DEBUG)
 					}
 					catch (const PluginException& exception)
 					{
@@ -61,6 +68,7 @@ namespace sc {
 						);
 						result = FCM_EXPORT_FAILED;
 					}
+#endif
 
 					context.window()->readyToExit = true;
 					context.window()->Close();

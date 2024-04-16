@@ -25,6 +25,7 @@ namespace sc {
 			m_matrixTweener = nullptr;
 			m_colorTweener = nullptr;
 			m_shapeTweener = nullptr;
+			m_filled_elements.clear();
 
 			DOM::KeyFrameLabelType labelType = DOM::KeyFrameLabelType::KEY_FRAME_LABEL_NONE;
 			frame->GetLabelType(labelType);
@@ -94,6 +95,77 @@ namespace sc {
 			AddFrameElementArray(symbol, frameElements);
 		}
 
+		void FrameBuilder::releaseFrameElement(SymbolContext& symbol, SharedMovieclipWriter& writer, size_t index)
+		{
+			DOM::Utils::MATRIX2D* matrix = nullptr;
+			DOM::Utils::COLOR_MATRIX* color = nullptr;
+
+			if (m_matrices[index]) {
+				matrix = new DOM::Utils::MATRIX2D(*(m_matrices[index].get()));
+
+				if (m_matrixTweener) {
+					DOM::Utils::MATRIX2D baseMatrix(*matrix);
+					DOM::Utils::MATRIX2D transformMatrix;
+					m_matrixTweener->GetGeometricTransform(m_tween, m_position, transformMatrix);
+
+					matrix->a = transformMatrix.a * baseMatrix.a + transformMatrix.c * baseMatrix.b;
+					matrix->d = transformMatrix.d * baseMatrix.d + transformMatrix.b * baseMatrix.c;
+
+					matrix->b = baseMatrix.a * transformMatrix.b + baseMatrix.b * transformMatrix.d;
+					matrix->c = baseMatrix.c * transformMatrix.a + baseMatrix.d * transformMatrix.c;
+
+					matrix->tx = transformMatrix.a * baseMatrix.tx + transformMatrix.c * baseMatrix.ty + transformMatrix.tx;
+					matrix->ty = transformMatrix.b * baseMatrix.tx + transformMatrix.d * baseMatrix.ty + transformMatrix.ty;
+				}
+			}
+			else if (m_matrixTweener) {
+				matrix = new DOM::Utils::MATRIX2D();
+				m_matrixTweener->GetGeometricTransform(m_tween, m_position, *matrix);
+			}
+
+			if (m_colorTweener) {
+				color = new DOM::Utils::COLOR_MATRIX();
+				m_colorTweener->GetColorMatrix(m_tween, m_position, *color);
+			}
+			else if (m_colors[index]) {
+				color = m_colors[index].get();
+			}
+
+			if (m_shapeTweener) {
+				FCM::AutoPtr<DOM::FrameElement::IShape> filledShape = nullptr;
+				m_shapeTweener->GetShape(m_tween, m_position, filledShape.m_Ptr);
+
+				// TODO: check
+				m_filled_elements.emplace_back(symbol, filledShape);
+
+				//FilledElement shape(symbol, filledShape);
+				//
+				//uint16_t id = m_resources.GetIdentifer(shape);
+				//
+				//if (id == UINT16_MAX) {
+				//	id = m_resources.AddFilledElement(m_symbol, shape);
+				//}
+				//
+				//writer.AddFrameElement(
+				//	id,
+				//	std::get<1>(m_elementsData[i]),
+				//	std::get<2>(m_elementsData[i]),
+				//	matrix,
+				//	color
+				//);
+
+				return;
+			}
+
+			writer.AddFrameElement(
+				std::get<0>(m_elementsData[index]),
+				std::get<1>(m_elementsData[index]),
+				std::get<2>(m_elementsData[index]),
+				matrix,
+				color
+			);
+		}
+
 		void FrameBuilder::operator()(SymbolContext& symbol, SharedMovieclipWriter& writer) {
 			if (!m_label.empty()) {
 				writer.SetLabel(m_label);
@@ -103,70 +175,7 @@ namespace sc {
 			for (uint32_t elementIndex = 0; m_elementsData.size() > elementIndex; elementIndex++) {
 				i--;
 
-				DOM::Utils::MATRIX2D* matrix = nullptr;
-				DOM::Utils::COLOR_MATRIX* color = nullptr;
-
-				if (m_matrices[i]) {
-					matrix = new DOM::Utils::MATRIX2D(*(m_matrices[i].get()));
-
-					if (m_matrixTweener) {
-						DOM::Utils::MATRIX2D baseMatrix(*matrix);
-						DOM::Utils::MATRIX2D transformMatrix;
-						m_matrixTweener->GetGeometricTransform(m_tween, m_position, transformMatrix);
-
-						matrix->a = transformMatrix.a * baseMatrix.a + transformMatrix.c * baseMatrix.b;
-						matrix->d = transformMatrix.d * baseMatrix.d + transformMatrix.b * baseMatrix.c;
-
-						matrix->b = baseMatrix.a * transformMatrix.b + baseMatrix.b * transformMatrix.d;
-						matrix->c = baseMatrix.c * transformMatrix.a + baseMatrix.d * transformMatrix.c;
-
-						matrix->tx = transformMatrix.a * baseMatrix.tx + transformMatrix.c * baseMatrix.ty + transformMatrix.tx;
-						matrix->ty = transformMatrix.b * baseMatrix.tx + transformMatrix.d * baseMatrix.ty + transformMatrix.ty;
-					}
-				}
-				else if (m_matrixTweener) {
-					matrix = new DOM::Utils::MATRIX2D();
-					m_matrixTweener->GetGeometricTransform(m_tween, m_position, *matrix);
-				}
-
-				if (m_colorTweener) {
-					color = new DOM::Utils::COLOR_MATRIX();
-					m_colorTweener->GetColorMatrix(m_tween, m_position, *color);
-				}
-				else if (m_colors[i]) {
-					color = m_colors[i].get();
-				}
-
-				if (m_shapeTweener) {
-					FCM::AutoPtr<DOM::FrameElement::IShape> filledShape = nullptr;
-					m_shapeTweener->GetShape(m_tween, m_position, filledShape.m_Ptr);
-
-					FilledElement shape(symbol, filledShape);
-
-					uint16_t id = m_resources.GetIdentifer(shape);
-
-					if (id == UINT16_MAX) {
-						id = m_resources.AddFilledElement(shape);
-					}
-
-					writer.AddFrameElement(
-						id,
-						std::get<1>(m_elementsData[i]),
-						std::get<2>(m_elementsData[i]),
-						matrix,
-						color
-					);
-
-					continue;
-				}
-
-				writer.AddFrameElement(
-					std::get<0>(m_elementsData[i]),
-					std::get<1>(m_elementsData[i]),
-					std::get<2>(m_elementsData[i]),
-					matrix,
-					color
-				);
+				releaseFrameElement(symbol, writer, i);
 			}
 		}
 
@@ -180,6 +189,8 @@ namespace sc {
 				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement = frameElements[i];
 
 				// Symbol info
+
+				// TODO move to seperate class
 				uint16_t id = 0xFFFF;
 				std::u16string instance_name = u"";
 				FCM::BlendMode blendMode = FCM::BlendMode::NORMAL_BLEND_MODE;
@@ -214,6 +225,8 @@ namespace sc {
 
 				// Symbol
 				if (libraryElement) {
+					m_last_element = FrameBuilder::LastElementType::Symbol;
+
 					FCM::AutoPtr<DOM::ILibraryItem> libraryItem;
 					libraryElement->GetLibraryItem(libraryItem.m_Ptr);
 
@@ -242,6 +255,8 @@ namespace sc {
 
 				// Textfield
 				else if (textfieldElement) {
+					m_last_element = FrameBuilder::LastElementType::TextField;
+
 					TextElement textfield;
 
 					{
@@ -340,21 +355,19 @@ namespace sc {
 
 				// Fills / Stroke
 				else if (filledShapeItem) {
-					if (symbol.slice_scaling.should_accumulate)
-					{
-						symbol.slice_scaling.elements.emplace_back(symbol, filledShapeItem, *matrix);
-						continue;
-					}
-					else
-					{
-						FilledElement shape(symbol, filledShapeItem);
+					m_filled_elements.emplace_back(symbol, filledShapeItem);
 
-						id = m_resources.GetIdentifer(shape);
-
-						if (id == UINT16_MAX) {
-							id = m_resources.AddFilledElement(shape);
+					if (m_last_element != FrameBuilder::LastElementType::None)
+					{
+						if (m_last_element != FrameBuilder::LastElementType::FilledElement)
+						{
+							releaseFilledElements(symbol);
 						}
 					}
+
+					m_last_element = FrameBuilder::LastElementType::FilledElement;
+
+					continue;
 				}
 
 				// Groups
@@ -370,6 +383,15 @@ namespace sc {
 					// TODO: make it more detailed
 					context.print("Unknown resource in library. Make sure symbols don't contain unsupported elements.");
 					continue;
+				}
+
+				if (m_last_element != LastElementType::None)
+				{
+					// Just in case if keyfrane has both element types
+					if (m_last_element != LastElementType::FilledElement && !m_filled_elements.empty())
+					{
+						releaseFilledElements(symbol);
+					}
 				}
 
 				if (id == 0xFFFF) {
@@ -394,6 +416,34 @@ namespace sc {
 					color
 				);
 			}
+		}
+
+		void FrameBuilder::releaseFilledElements(SymbolContext& symbol)
+		{
+			uint16_t element_id = m_resources.AddFilledElement(symbol, m_filled_elements);
+			size_t element_index = m_elementsData.size();
+
+			// TODO : matrices
+			m_elementsData.push_back(
+				{
+					element_id,
+					FCM::BlendMode::NORMAL_BLEND_MODE,
+					u""
+				}
+			);
+
+			m_matrices.push_back(nullptr);
+			m_colors.push_back(nullptr);
+
+			m_filled_elements.clear();
+		}
+
+		void FrameBuilder::inheritFilledElements(const FrameBuilder& frame)
+		{
+			m_filled_elements.insert(
+				m_filled_elements.begin(),
+				frame.filledElements().begin(), frame.filledElements().end()
+			);
 		}
 	}
 }

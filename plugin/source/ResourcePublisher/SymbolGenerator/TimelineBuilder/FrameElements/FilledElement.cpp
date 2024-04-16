@@ -67,82 +67,61 @@ namespace sc {
 				{
 				case DOM::Utils::SegmentType::LINE_SEGMENT:
 				{
-					Point2D begin = *reinterpret_cast<Point2D*>(&segment.line.endPoint1);
-					Point2D end = *reinterpret_cast<Point2D*>(&segment.line.endPoint2);
+					Point2D begin(segment.line.endPoint1.x, segment.line.endPoint1.y);
+					Point2D end(segment.line.endPoint2.x, segment.line.endPoint2.y);
 
-					bool validPoint = false;
-					for (uint32_t p = 0; points.size() > p; p++) {
-						if (points[p] == begin) {
-							points.insert(points.begin() + p, end);
-							validPoint = true;
-							break;
-						}
-					}
-
-					if (!validPoint) {
+					if (points.size() >= 1 && points[points.size() - 1] != begin)
+					{
 						points.push_back(begin);
-						points.push_back(end);
 					}
+
+					points.push_back(end);
 				}
 				break;
 
 				case DOM::Utils::SegmentType::CUBIC_BEZIER_SEGMENT:
 				case DOM::Utils::SegmentType::QUAD_BEZIER_SEGMENT:
-					if (config.filledShapeOptimization) {
-						Point2D begin = *reinterpret_cast<Point2D*>(&segment.quadBezierCurve.anchor1);
-						Point2D end = *reinterpret_cast<Point2D*>(&segment.quadBezierCurve.anchor2);
+					m_is_complex = true;
+					if (segment.segmentType == DOM::Utils::SegmentType::QUAD_BEZIER_SEGMENT) {
+						Point2D anchor1(segment.quadBezierCurve.anchor1.x, segment.quadBezierCurve.anchor1.y);
+						Point2D control(segment.quadBezierCurve.control.x, segment.quadBezierCurve.control.y);
+						Point2D anchor2(segment.quadBezierCurve.anchor2.x, segment.quadBezierCurve.anchor2.y);
 
-						bool validPoint = false;
-						for (uint32_t p = 0; points.size() > p; p++) {
-							if (points[p] == begin) {
-								points.insert(points.begin() + p, end);
-								validPoint = true;
-								break;
-							}
-						}
+						Point2D distance(0, 0);
+						distance.x += std::abs(anchor1.x - control.x);
+						distance.y += std::abs(anchor1.y - control.y);
 
-						if (!validPoint) {
-							points.push_back(begin);
-							points.push_back(end);
-						}
+						distance.x += std::abs(control.x - anchor2.x);
+						distance.y += std::abs(control.y - anchor2.y);
+
+						float step = (1.0f / distance.x) + (1.0f / distance.y);
+
+						Curve::rasterizeQuadBezier(
+							points,
+							anchor1,
+							control,
+							anchor2,
+							step
+						);
 					}
-					else {
-						if (segment.segmentType == DOM::Utils::SegmentType::QUAD_BEZIER_SEGMENT) {
-							Point2D anchor1 = { segment.quadBezierCurve.anchor1.x, segment.quadBezierCurve.anchor1.y };
-							Point2D control = { segment.quadBezierCurve.control.x, segment.quadBezierCurve.control.y };
-							Point2D anchor2 = { segment.quadBezierCurve.anchor2.x, segment.quadBezierCurve.anchor2.y };
+					else if (segment.segmentType == DOM::Utils::SegmentType::CUBIC_BEZIER_SEGMENT) {
+						Point2D anchor1(segment.cubicBezierCurve.anchor1.x, segment.cubicBezierCurve.anchor1.y);
+						Point2D anchor2(segment.cubicBezierCurve.anchor2.x, segment.cubicBezierCurve.anchor2.y);
+						Point2D control1(segment.cubicBezierCurve.control1.x, segment.cubicBezierCurve.control1.y);
+						Point2D control2(segment.cubicBezierCurve.control2.x, segment.cubicBezierCurve.control2.y);
 
-							Point2D distance = { std::abs(anchor2.x - anchor1.x), std::abs(anchor2.y - anchor1.y) };
+						Point2D distance = { std::abs(anchor2.x - anchor1.x), std::abs(anchor2.y - anchor1.y) };
 
-							float t = (5 / distance.x) + (5 / distance.y);
+						float step = (1.0f / distance.x) + (1.0f / distance.y);
 
-							Curve::rasterizeQuadBezier(
-								points,
-								anchor1,
-								control,
-								anchor2,
-								t
-							);
-						}
-						else if (segment.segmentType == DOM::Utils::SegmentType::CUBIC_BEZIER_SEGMENT) {
-							Point2D anchor1 = { segment.cubicBezierCurve.anchor1.x , segment.cubicBezierCurve.anchor1.y };
-							Point2D anchor2 = { segment.cubicBezierCurve.anchor2.x , segment.cubicBezierCurve.anchor2.y };
-							Point2D control1 = { segment.cubicBezierCurve.control1.x , segment.cubicBezierCurve.control1.y };
-							Point2D control2 = { segment.cubicBezierCurve.control2.x , segment.cubicBezierCurve.control2.y };
-
-							Point2D distance = { std::abs(anchor2.x - anchor1.x), std::abs(anchor2.y - anchor1.y) };
-
-							float t = (5 / distance.x) + (5 / distance.y);
-
-							Curve::rasterizeCubicBezier(
-								points,
-								anchor1,
-								anchor2,
-								control1,
-								control2,
-								t
-							);
-						}
+						Curve::rasterizeCubicBezier(
+							points,
+							anchor1,
+							anchor2,
+							control1,
+							control2,
+							step
+						);
 					}
 					break;
 
@@ -230,6 +209,59 @@ namespace sc {
 			return true;
 		}
 
+		bool FilledElementRegion::IsComplex() const
+		{
+			if (contour.IsComplex()) { return true; }
+
+			for (const FilledElementPath& hole : holes)
+			{
+				if (hole.IsComplex())
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		DOM::Utils::RECT FilledElementRegion::Bound() const
+		{
+			DOM::Utils::RECT result;
+			result.bottomRight.x = std::min_element(
+				contour.points.begin(), contour.points.end(),
+				[](const Point2D& a, const Point2D& b)
+				{
+					return a.x < b.x;
+				}
+			)->x;
+
+			result.bottomRight.y = std::min_element(
+				contour.points.begin(), contour.points.end(),
+				[](const Point2D& a, const Point2D& b)
+				{
+					return a.y < b.y;
+				}
+			)->y;
+
+			result.topLeft.x = std::max_element(
+				contour.points.begin(), contour.points.end(),
+				[](const Point2D& a, const Point2D& b)
+				{
+					return a.x < b.x;
+				}
+			)->x;
+
+			result.topLeft.y = std::max_element(
+				contour.points.begin(), contour.points.end(),
+				[](const Point2D& a, const Point2D& b)
+				{
+					return a.y < b.y;
+				}
+			)->y;
+
+			return result;
+		}
+
 #pragma endregion Region
 
 #pragma region
@@ -289,6 +321,33 @@ namespace sc {
 
 				elements.emplace_back(symbol, region);
 			}
+		}
+
+		DOM::Utils::RECT FilledElement::Bound() const
+		{
+			DOM::Utils::RECT result;
+
+			for (const FilledElementRegion& region : fill)
+			{
+				const DOM::Utils::RECT region_bound = region.Bound();
+
+				result.bottomRight.x = std::min(region_bound.bottomRight.x, result.bottomRight.x);
+				result.bottomRight.y = std::min(region_bound.bottomRight.y, result.bottomRight.y);
+				result.topLeft.x = std::min(region_bound.topLeft.x, result.topLeft.x);
+				result.topLeft.y = std::min(region_bound.topLeft.y, result.topLeft.y);
+			}
+
+			for (const FilledElementRegion& region : stroke)
+			{
+				const DOM::Utils::RECT region_bound = region.Bound();
+
+				result.bottomRight.x = std::min(region_bound.bottomRight.x, result.bottomRight.x);
+				result.bottomRight.y = std::min(region_bound.bottomRight.y, result.bottomRight.y);
+				result.topLeft.x = std::min(region_bound.topLeft.x, result.topLeft.x);
+				result.topLeft.y = std::min(region_bound.topLeft.y, result.topLeft.y);
+			}
+
+			return result;
 		}
 	}
 #pragma endregion Element

@@ -4,6 +4,8 @@ include(FetchContent)
 set(TARGET ScAnimatePlugin)
 project(${TARGET})
 
+option(SC_ANIMATE_IMAGE_DEBUG "SC Plugin Image Debug Mode" OFF)
+
 # SC Flash
 FetchContent_Declare(
     SupercellFlash
@@ -12,6 +14,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SupercellFlash)
 
+if (${SC_ANIMATE_IMAGE_DEBUG})
+	set(BUILD_LIST CACHE INTERNAL ""
+			core
+			imgproc
+			imgcodecs
+			highgui
+	)
+endif()
+
+
 # AtlasGenerator
 FetchContent_Declare(
     AtlasGenerator
@@ -19,6 +31,12 @@ FetchContent_Declare(
     GIT_TAG main
 )
 FetchContent_MakeAvailable(AtlasGenerator)
+
+if (${SC_ANIMATE_IMAGE_DEBUG})
+	target_include_directories("AtlasGenerator" PUBLIC
+		${OPENCV_MODULE_opencv_highgui_LOCATION}/include
+	)
+endif()
 
 # wxWidgets
 set(wxBUILD_SHARED OFF)
@@ -70,8 +88,8 @@ set_target_properties(${TARGET} PROPERTIES SUFFIX ".fcm")
 target_compile_definitions(
 	${TARGET} PRIVATE
 	$<${SC_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
+	$<$<BOOL:${SC_ANIMATE_IMAGE_DEBUG}>: CV_DEBUG >
 )
-
 
 target_link_libraries(${TARGET} PUBLIC 
     SupercellFlash
@@ -79,6 +97,7 @@ target_link_libraries(${TARGET} PUBLIC
     CDT
     wx::core wx::base
     nlohmann_json::nlohmann_json
+	$<$<BOOL:${SC_ANIMATE_IMAGE_DEBUG}>: opencv_highgui>
 )
 
 target_include_directories(${TARGET}

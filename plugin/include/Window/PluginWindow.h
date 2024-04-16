@@ -6,6 +6,7 @@
 #include "Components/StatusComponent.h"
 #include "Components/ErrorDialog.h"
 #include "Events/CreateProgress.h"
+#include "Events/DestroyProgress.h"
 
 namespace sc {
 	namespace Adobe {
@@ -17,6 +18,8 @@ namespace sc {
 				const std::u16string& defaultLabel = u"",
 				int range = 100
 			);
+
+			void DestroyStatusBar(StatusComponent* bar);
 
 		public:
 			PluginWindow(const std::u16string& title);
@@ -31,6 +34,7 @@ namespace sc {
 		private:
 			void OnClose(wxCloseEvent& event);
 			void OnProgressCreate(PluginCreateProgressEvent& event);
+			void OnProgressDestroy(PluginDestroyProgressEvent& event);
 
 			void ScaleByContent();
 

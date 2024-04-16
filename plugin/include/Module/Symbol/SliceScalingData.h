@@ -22,16 +22,12 @@ namespace sc
 				if (m_enabled)
 				{
 					page->GetScale9Rect(m_guides);
-					should_accumulate = true;
 				}
 			}
 
 		public:
 			bool IsEnabled() const { return m_enabled; }
-			DOM::Utils::RECT Guides() const { return m_guides; }
-
-			bool should_accumulate = false;
-			std::vector<SliceElement> elements;
+			const DOM::Utils::RECT& Guides() const { return m_guides; }
 
 		private:
 			bool m_enabled = false;

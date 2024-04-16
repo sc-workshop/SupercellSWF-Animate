@@ -56,7 +56,7 @@ namespace sc {
 
 			m_writer.Finalize();
 
-			publishStatus->Destroy();
+			context.window()->DestroyStatusBar(publishStatus);
 		}
 
 		void ResourcePublisher::GetItems(FCM::FCMListPtr libraryItems, std::vector<FCM::AutoPtr<DOM::ILibraryItem>>& result) {
@@ -131,13 +131,8 @@ namespace sc {
 					delete shape_writer;
 					return identifer;
 				}
-				else
-				{
-					goto UNKNOWN_TYPE;
-				}
 			}
 
-		UNKNOWN_TYPE:
 			throw PluginException("TID_UNKNOWN_LIBRARY_ITEM_TYPE", symbol.name.c_str());
 		}
 
@@ -165,8 +160,6 @@ namespace sc {
 			SymbolContext& symbol,
 			FCM::AutoPtr<DOM::ITimeline1> timeline
 		) {
-			symbol.slice_scaling = SliceScalingData(timeline);
-
 			SharedMovieclipWriter* movieclip = m_writer.AddMovieclip(symbol);
 			movieClipGenerator.Generate(*movieclip, symbol, timeline);
 
@@ -238,37 +231,30 @@ namespace sc {
 		}
 
 		uint16_t ResourcePublisher::AddFilledElement(
-			FilledElement& filledShape
-		) {
-			SymbolContext symbol(u"", SymbolContext::SymbolType::Graphic);
-			SharedShapeWriter* shape = m_writer.AddShape(symbol);
-
-			uint16_t identifer = m_id++;
-
-			shape->AddFilledElement(filledShape);
-
-			shape->Finalize(identifer);
-			m_filledShapeDict.push_back({ filledShape , identifer });
-
-			delete shape;
-
-			return identifer;
-		}
-
-		uint16_t ResourcePublisher::AddSlicedElement(
 			SymbolContext& symbol,
-			std::vector<SliceElement>& elements
-		)
-		{
-			SharedShapeWriter* shape = m_writer.AddShape(symbol);
+			const std::vector<FilledElement>& elements
+		) {
+			SymbolContext shape_symbol(symbol.name, SymbolContext::SymbolType::Graphic);
+			SharedShapeWriter* shape = m_writer.AddShape(shape_symbol);
 
 			uint16_t identifer = m_id++;
 
-			shape->AddSlicedElements(elements);
+			if (symbol.slice_scaling.IsEnabled())
+			{
+				shape->AddSlicedElements(elements, symbol.slice_scaling.Guides());
+			}
+			else
+			{
+				for (const FilledElement& element : elements)
+				{
+					shape->AddFilledElement(element);
+				}
+			}
 
 			shape->Finalize(identifer);
 
 			delete shape;
+
 			return identifer;
 		}
 

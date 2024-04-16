@@ -59,7 +59,13 @@ namespace sc {
 			}
 
 		public:
+			bool IsComplex() const { return m_is_complex; }
+
+		public:
 			std::vector<Point2D> points;
+
+		private:
+			bool m_is_complex = false;
 		};
 
 		class FilledElementRegion {
@@ -80,6 +86,12 @@ namespace sc {
 				return !(*this == other);
 			}
 
+			// Returns true if region contour or holes used curves to determine whether it should be rasterized or not
+			bool IsComplex() const;
+
+			// Bound of contour
+			DOM::Utils::RECT Bound() const;
+		public:
 			ShapeType type;
 
 			DOM::Utils::COLOR solidColor{ 0 };
@@ -100,8 +112,13 @@ namespace sc {
 			}
 
 		public:
+			DOM::Utils::RECT Bound() const;
+
+		public:
 			std::vector<FilledElementRegion> fill;
 			std::vector<FilledElementRegion> stroke;
+
+			DOM::Utils::MATRIX2D transormation = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
 
 		private:
 			void AddRegions(SymbolContext& symbol, FCM::FCMListPtr regions, std::vector<FilledElementRegion>& elements);

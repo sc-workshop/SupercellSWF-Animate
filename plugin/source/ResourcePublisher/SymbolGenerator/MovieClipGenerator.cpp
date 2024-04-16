@@ -47,13 +47,18 @@ namespace sc {
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
 
-			if (symbol.slice_scaling.IsEnabled() && duration != 1)
+			if (symbol.slice_scaling.IsEnabled())
 			{
-				context.print(
-					context.locale.GetString("TID_9SLICE_FRAME_RESTRICTION", symbol.name.c_str())
-				);
-
-				symbol.slice_scaling.should_accumulate = false;
+				if (duration == 1)
+				{
+					symbol.slice_scaling = SliceScalingData(timeline);
+				}
+				else
+				{
+					context.print(
+						context.locale.GetString("TID_9SLICE_FRAME_RESTRICTION", symbol.name.c_str())
+					);
+				}
 			}
 
 			FCM::Double fps;
@@ -67,30 +72,7 @@ namespace sc {
 			std::vector<LayerBuilder> layers;
 			MovieClipGeneator::GetLayerBuilder(layersList, m_resources, symbol, layers);
 
-			for (uint32_t t = 0; duration > t; t++) {
-				size_t i = layers.size();
-				for (size_t layerIndex = 0; layers.size() > layerIndex; layerIndex++) {
-					LayerBuilder& layer = layers[--i];
-					if (layer) {
-						layer(symbol, writer);
-
-						if (!symbol.slice_scaling.elements.empty())
-						{
-							uint16_t sliced_item_id = m_resources.AddSlicedElement(symbol, symbol.slice_scaling.elements);
-							writer.AddFrameElement(
-								sliced_item_id,
-								FCM::BlendMode::NORMAL_BLEND_MODE,
-								u"",
-								nullptr,
-								nullptr
-							);
-						}
-
-						layer.next();
-					}
-				}
-				writer.next();
-			}
+			LayerBuilder::ProcessLayers(symbol, layers, writer, duration);
 		}
 	}
 }

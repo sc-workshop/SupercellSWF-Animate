@@ -3,6 +3,7 @@
 #include "ResourcePublisher/Writer/Shared/SharedGraphicWriter.h"
 #include "GraphicItem/GraphicGroup.h"
 #include "GraphicItem/SpriteItem.h"
+#include "GraphicItem/FilledItem.h"
 #include "AnimateSDK/app/ApplicationFCMPublicIDs.h"
 
 namespace sc {
@@ -21,11 +22,23 @@ namespace sc {
 
 			virtual void AddFilledElement(const FilledElement& shape);
 
-			virtual void AddSlicedElements(const std::vector<SliceElement>& elements);
+			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides);
 
 			virtual void Finalize(uint16_t id);
 
 		public:
+			void AddTriangulatedRegion(
+				const FilledElementPath& contour,
+				const std::vector<FilledElementPath>& holes,
+				const DOM::Utils::COLOR& color
+			);
+
+			void AddRasterizedRegion(
+				const FilledElementRegion& region
+			);
+
+		public:
+
 			void AddSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
 			void AddRasterizedSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
 

@@ -20,10 +20,5 @@ namespace sc
 		SpriteItem::SpriteItem(Ref<cv::Mat> image, const DOM::Utils::MATRIX2D& matrix)
 			: m_image(image), m_matrix(SpriteItem::init_matrix(matrix))
 		{};
-
-		SpriteItem SpriteItem::GetSprite()
-		{
-			return *this;
-		}
 	}
 }

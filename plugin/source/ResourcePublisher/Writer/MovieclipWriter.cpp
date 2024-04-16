@@ -11,7 +11,7 @@ namespace sc {
 			m_object.frame_rate = (uint8_t)fps;
 			m_object.frames.resize(frameCount);
 
-			if (m_symbol.slice_scaling.IsEnabled() && m_symbol.slice_scaling.should_accumulate)
+			if (m_symbol.slice_scaling.IsEnabled())
 			{
 				DOM::Utils::RECT guides = m_symbol.slice_scaling.Guides();
 
@@ -81,7 +81,7 @@ namespace sc {
 			uint16_t id,
 			FCM::BlendMode blending,
 			const std::u16string& name,
-
+				
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
 		) {
