@@ -15,8 +15,8 @@ namespace sc {
 			}
 			catch (const json::exception exception)
 			{
-				context.print("Failed to read FeatureMatrix file");
-				context.print(exception.what());
+				context.Trace("Failed to read FeatureMatrix file");
+				context.Trace(exception.what());
 			}
 
 			if (features.is_array()) {

@@ -29,7 +29,7 @@ namespace sc
 		{
 			PluginContext& context = PluginContext::Instance();
 
-			auto service = context.getService<DOM::Service::Image::IBitmapExportService>(DOM::FLA_BITMAP_SERVICE);
+			auto service = context.GetService<DOM::Service::Image::IBitmapExportService>(DOM::FLA_BITMAP_SERVICE);
 
 			FCM::Result res = service->ExportToFile(
 				m_media_item,

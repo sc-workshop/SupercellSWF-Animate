@@ -5,12 +5,12 @@
 
 namespace sc {
 	namespace Adobe {
-		void Localization::Load(std::string languageCode) {
+		void Localization::Load(std::string LanguageCode) {
 			PluginContext& context = PluginContext::Instance();
 
 			fs::path localesPath = PluginContext::CurrentPath(PluginContext::PathType::Locale);
 
-			fs::path currentLocalePath = fs::path(localesPath / languageCode.append(".json"));
+			fs::path currentLocalePath = fs::path(localesPath / LanguageCode.append(".json"));
 
 			if (!fs::exists(localesPath)) {
 				currentLocalePath = fs::path(localesPath / "en_EN.json");
@@ -23,8 +23,8 @@ namespace sc {
 			}
 			catch (const json::exception& exception)
 			{
-				context.print("Failed to load localization");
-				context.print(exception.what());
+				context.Trace("Failed to load localization");
+				context.Trace(exception.what());
 			}
 		};
 

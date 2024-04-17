@@ -21,7 +21,6 @@ namespace sc {
 
 			outputFilepath = fs::path(Localization::ToUtf16(data["output"]));
 
-			filledShapeOptimization = data["filledShapeOptimization"];
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
 
 			exportToExternal = data["exportToExternal"];

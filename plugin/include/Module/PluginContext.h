@@ -57,7 +57,7 @@ namespace sc {
 
 		public:
 			template<typename T>
-			FCM::AutoPtr<T> getService(FCM::SRVCID id) {
+			FCM::AutoPtr<T> GetService(FCM::SRVCID id) {
 				FCM::AutoPtr<FCM::IFCMUnknown> service;
 
 				FCM::Result res = callback->GetService(id, service.m_Ptr);
@@ -68,10 +68,8 @@ namespace sc {
 				return (FCM::AutoPtr<T>)service;
 			};
 
-			std::string languageCode();
-
 			template <class ... Args>
-			void print(const char* message, Args ... args) {
+			void Trace(const char* message, Args ... args) {
 				char buffer[1024];
 				std::snprintf(buffer, 1024, message, args...);
 
@@ -80,7 +78,7 @@ namespace sc {
 			}
 
 			template <class ... Args>
-			void print(const char16_t* message, Args ... args)
+			void Trace(const char16_t* message, Args ... args)
 			{
 				wchar_t buffer[1024];
 				std::swprintf(buffer, 1024, (const wchar_t*)message, args...);
@@ -92,14 +90,17 @@ namespace sc {
 			}
 
 			template <class ... Args>
-			void print(const std::u16string& message, Args ... args)
+			void Trace(const std::u16string& message, Args ... args)
 			{
-				print(message.c_str(), args...);
+				Trace(message.c_str(), args...);
 			}
 
-			void initializeWindow();
-			void destroyWindow();
-			PluginWindow* window();
+		public:
+			std::string LanguageCode();
+
+			void InitializeWindow();
+			void DestroyWindow();
+			PluginWindow* Window();
 
 		public:
 			enum class PathType

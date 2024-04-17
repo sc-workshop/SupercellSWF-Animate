@@ -25,8 +25,8 @@ namespace sc
 				m_message = Localization::ToUtf8(m_exceptionTitle);
 			};
 
-			virtual const char16_t* title() const;
-			virtual const char16_t* description() const;
+			virtual const char16_t* Title() const;
+			virtual const char16_t* Description() const;
 		};
 	}
 }

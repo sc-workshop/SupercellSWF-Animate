@@ -21,7 +21,7 @@ namespace sc {
 			std::thread progressWindow(
 				[&context, &isWindowReady]()
 				{
-					context.initializeWindow();
+					context.InitializeWindow();
 					wxEntryStart(0, nullptr);
 					wxTheApp->CallOnInit();
 
@@ -31,7 +31,7 @@ namespace sc {
 					wxTheApp->OnExit();
 					wxEntryCleanup();
 
-					context.destroyWindow();
+					context.DestroyWindow();
 				}
 			);
 
@@ -53,25 +53,25 @@ namespace sc {
 					}
 					catch (const PluginException& exception)
 					{
-						context.window()->ThrowException((wchar_t*)exception.title());
-						context.print(u"%s\n%s", exception.title(), exception.description());
+						context.window()->ThrowException((wchar_t*)exception.Title());
+						context.Trace(u"%s\n%s", exception.title(), exception.Description());
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const sc::GeneralRuntimeException& exception) {
 						context.window()->ThrowException(exception.what());
-						context.print(exception.message());
+						context.Trace(exception.message());
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (...) {
-						context.print(
+						context.Trace(
 							context.locale.GetString("TID_UNKNOWN_EXCEPTION")
 						);
 						result = FCM_EXPORT_FAILED;
 					}
 #endif
 
-					context.window()->readyToExit = true;
-					context.window()->Close();
+					context.Window()->readyToExit = true;
+					context.Window()->Close();
 				}
 			);
 
@@ -81,7 +81,7 @@ namespace sc {
 			auto end = std::chrono::high_resolution_clock::now();
 
 			long long executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-			context.print(
+			context.Trace(
 				context.locale.GetString("TID_EXPORT_TIME_STATUS"), executionTime
 			);
 

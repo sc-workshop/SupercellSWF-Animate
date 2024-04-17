@@ -269,10 +269,10 @@ namespace sc {
 			PluginContext& context = PluginContext::Instance();
 
 			auto stroke_generator =
-				context.getService<DOM::Service::Shape::IShapeService>(DOM::FLA_SHAPE_SERVICE);
+				context.GetService<DOM::Service::Shape::IShapeService>(DOM::FLA_SHAPE_SERVICE);
 
 			auto region_generator =
-				context.getService<DOM::Service::Shape::IRegionGeneratorService>(DOM::FLA_REGION_GENERATOR_SERVICE);
+				context.GetService<DOM::Service::Shape::IRegionGeneratorService>(DOM::FLA_REGION_GENERATOR_SERVICE);
 
 			{
 				FCM::FCMListPtr regions;

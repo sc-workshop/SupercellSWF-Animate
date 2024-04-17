@@ -6,7 +6,7 @@ namespace sc {
 			PluginContext& context = PluginContext::Instance();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 
-			StatusComponent* publishStatus = context.window()->CreateStatusBar(
+			StatusComponent* publishStatus = context.Window()->CreateStatusBar(
 				context.locale.GetString("TID_STATUS_INIT")
 			);
 
@@ -38,8 +38,8 @@ namespace sc {
 
 				m_writer.AddExportName(id, exportName);
 
-				if (context.window()->aboutToExit) {
-					context.destroyWindow();
+				if (context.Window()->aboutToExit) {
+					context.DestroyWindow();
 					return;
 				}
 				publishStatus->SetProgress(i + 1);
@@ -52,11 +52,11 @@ namespace sc {
 
 			// Disable Close Button for writer finalizing process
 			// TODO: make it possible to stop in finalize
-			context.window()->EnableCloseButton(false);
+			context.Window()->EnableCloseButton(false);
 
 			m_writer.Finalize();
 
-			context.window()->DestroyStatusBar(publishStatus);
+			context.Window()->DestroyStatusBar(publishStatus);
 		}
 
 		void ResourcePublisher::GetItems(FCM::FCMListPtr libraryItems, std::vector<FCM::AutoPtr<DOM::ILibraryItem>>& result) {

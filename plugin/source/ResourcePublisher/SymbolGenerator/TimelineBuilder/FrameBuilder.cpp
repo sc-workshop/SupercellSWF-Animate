@@ -72,7 +72,7 @@ namespace sc {
 				bool hasColorTweener = checkTweener(kDOMColorProperty, colorGuid);
 				bool hasShapeTweener = checkTweener(kDOMShapeProperty, shapeGuid);
 
-				FCM::AutoPtr<DOM::Service::Tween::ITweenerService> TweenerService = context.getService<DOM::Service::Tween::ITweenerService>(DOM::Service::Tween::TWEENER_SERVICE);
+				FCM::AutoPtr<DOM::Service::Tween::ITweenerService> TweenerService = context.GetService<DOM::Service::Tween::ITweenerService>(DOM::Service::Tween::TWEENER_SERVICE);
 
 				FCM::AutoPtr<FCM::IFCMUnknown> unknownTweener;
 				if (hasMatrixTweener) {
@@ -294,7 +294,7 @@ namespace sc {
 
 						// TODO: Move to writer
 						if (paragraphsCount > 1) {
-							context.print("Warning. Some of TextField has multiple paragraph");
+							context.Trace("Warning. Some of TextField has multiple paragraph");
 						}
 
 						FCM::AutoPtr<DOM::FrameElement::IParagraph> paragraph = paragraphs[0];
@@ -307,7 +307,7 @@ namespace sc {
 						textRuns->Count(textRunCount);
 
 						if (textRunCount > 1) {
-							context.print("Warning. Some of TextField has multiple textRun");
+							context.Trace("Warning. Some of TextField has multiple textRun");
 						}
 
 						FCM::AutoPtr<DOM::FrameElement::ITextRun> textRun = textRuns[0];
@@ -381,7 +381,7 @@ namespace sc {
 
 				else {
 					// TODO: make it more detailed
-					context.print("Unknown resource in library. Make sure symbols don't contain unsupported elements.");
+					context.Trace("Unknown resource in library. Make sure symbols don't contain unsupported elements.");
 					continue;
 				}
 
@@ -396,7 +396,7 @@ namespace sc {
 
 				if (id == 0xFFFF) {
 					// TODO: this too, probably
-					context.print("Failed to get object id. Invalid FrameElement.");
+					context.Trace("Failed to get object id. Invalid FrameElement.");
 					continue;
 				}
 

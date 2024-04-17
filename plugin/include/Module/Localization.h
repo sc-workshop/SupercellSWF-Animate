@@ -19,7 +19,7 @@ namespace sc {
 			json m_locale;
 
 		public:
-			void Load(std::string languageCode);
+			void Load(std::string LanguageCode);
 
 			std::string GetUTF(const std::string& TID);
 

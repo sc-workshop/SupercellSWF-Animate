@@ -23,7 +23,6 @@ namespace sc {
 					CLSID_FeatureMatrix,
 					ID_IFEATURE_MATRIX,
 					(FCM::PPVoid)&m_features);
-
 			}
 
 			pFeatureMatrix = m_features;
@@ -99,7 +98,7 @@ namespace sc {
 							(FCM::U_Int32)str_name_uni.length() + 1);
 
 						// Add plugin description - Appears in the "New Document Dialog"
-						// Plugin description can be localized depending on the languageCode.
+						// Plugin description can be localized depending on the LanguageCode.
 						std::string str_desc = "";
 						res = pCategory->Add(
 							(const FCM::StringRep8)kApplicationDocTypeKey_Desc,

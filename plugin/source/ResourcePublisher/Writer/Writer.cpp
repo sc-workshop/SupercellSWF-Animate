@@ -284,7 +284,7 @@ namespace sc {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 			PluginContext& context = PluginContext::Instance();
 
-			StatusComponent* status = context.window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBar(
 				context.locale.GetString("TID_STATUS_SPRITE_PACK")
 			);
 
@@ -408,7 +408,7 @@ namespace sc {
 				}
 			}
 
-			context.window()->DestroyStatusBar(status);
+			context.Window()->DestroyStatusBar(status);
 		}
 
 		void SCWriter::Finalize() {
@@ -424,7 +424,7 @@ namespace sc {
 				END = 4
 			};
 
-			StatusComponent* status = context.window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBar(
 				context.locale.GetString("TID_STATUS_INIT"),
 				u"",
 				END
@@ -460,7 +460,7 @@ namespace sc {
 
 			swf.save(filepath, config.compression);
 
-			context.window()->DestroyStatusBar(status);
+			context.Window()->DestroyStatusBar(status);
 		}
 	}
 }

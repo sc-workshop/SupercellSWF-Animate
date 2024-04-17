@@ -55,7 +55,7 @@ namespace sc {
 				}
 				else
 				{
-					context.print(
+					context.Trace(
 						context.locale.GetString("TID_9SLICE_FRAME_RESTRICTION", symbol.name.c_str())
 					);
 				}

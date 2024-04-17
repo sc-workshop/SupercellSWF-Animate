@@ -81,7 +81,7 @@ namespace sc {
 			uint16_t id,
 			FCM::BlendMode blending,
 			const std::u16string& name,
-				
+
 			DOM::Utils::MATRIX2D* matrix,
 			DOM::Utils::COLOR_MATRIX* color
 		) {
@@ -165,7 +165,7 @@ namespace sc {
 				m_object.frame_elements.clear();
 				m_object.instances.clear();
 
-				context.print("Failed to pack transfroms into MovieClip \"%s\", so it will be empty", m_symbol.name);
+				context.Trace("Failed to pack transfroms into MovieClip \"%s\", so it will be empty", m_symbol.name);
 			}
 		}
 

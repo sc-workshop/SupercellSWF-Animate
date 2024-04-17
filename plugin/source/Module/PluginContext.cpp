@@ -14,30 +14,30 @@ namespace sc
 		void PluginContext::UpdateCallback(FCM::PIFCMCallback active_callback)
 		{
 			callback = active_callback;
-			falloc = getService<FCM::IFCMCalloc>(FCM::SRVCID_Core_Memory);
-			console = getService<Application::Service::IOutputConsoleService>(Application::Service::APP_OUTPUT_CONSOLE_SERVICE);
-			appService = getService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
-			locale.Load(languageCode());
+			falloc = GetService<FCM::IFCMCalloc>(FCM::SRVCID_Core_Memory);
+			console = GetService<Application::Service::IOutputConsoleService>(Application::Service::APP_OUTPUT_CONSOLE_SERVICE);
+			appService = GetService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
+			locale.Load(LanguageCode());
 		}
 
-		std::string PluginContext::languageCode() {
+		std::string PluginContext::LanguageCode() {
 			FCM::StringRep8 languageCodePtr;
 			appService->GetLanguageCode(&languageCodePtr);
 
-			std::string languageCode((const char*)languageCodePtr);
+			std::string LanguageCode((const char*)languageCodePtr);
 
 			falloc->Free(languageCodePtr);
 
-			return languageCode;
+			return LanguageCode;
 		}
 
-		void PluginContext::initializeWindow()
+		void PluginContext::InitializeWindow()
 		{
 			m_app = new PluginWindowApp();
 			wxApp::SetInstance(m_app);
 		}
 
-		void PluginContext::destroyWindow()
+		void PluginContext::DestroyWindow()
 		{
 			if (m_app)
 			{
@@ -45,7 +45,7 @@ namespace sc
 			}
 		}
 
-		PluginWindow* PluginContext::window()
+		PluginWindow* PluginContext::Window()
 		{
 			if (m_app)
 			{

@@ -173,14 +173,13 @@ namespace sc {
 		void LayerBuilder::ProcessLayers(SymbolContext& symbol, std::vector<LayerBuilder>& layers, SharedMovieclipWriter& writer, uint32_t range)
 		{
 			PluginContext& context = PluginContext::Instance();
-			StatusComponent* status = context.window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBar(
 				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
 				symbol.name, range
 			);
 
 			for (uint32_t t = 0; range > t; t++) {
 				// First iteration to preprocess filled elements
-
 				size_t layer_index = layers.size();
 				for (size_t i = 0; layers.size() > i; i++) {
 					size_t last_layer_index = layer_index;
@@ -209,7 +208,7 @@ namespace sc {
 				status->SetProgress(t);
 			}
 
-			context.window()->DestroyStatusBar(status);
+			context.Window()->DestroyStatusBar(status);
 		}
 	}
 }
