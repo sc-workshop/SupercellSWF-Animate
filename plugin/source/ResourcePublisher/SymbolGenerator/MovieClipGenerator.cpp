@@ -47,11 +47,12 @@ namespace sc {
 			uint32_t duration = 0;
 			timeline->GetMaxFrameCount(duration);
 
-			if (symbol.slice_scaling.IsEnabled())
+			SliceScalingData slice_scaling = SliceScalingData(timeline);
+			if (slice_scaling.IsEnabled())
 			{
 				if (duration == 1)
 				{
-					symbol.slice_scaling = SliceScalingData(timeline);
+					symbol.slice_scaling = slice_scaling;
 				}
 				else
 				{

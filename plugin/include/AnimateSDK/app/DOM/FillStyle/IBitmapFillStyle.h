@@ -126,9 +126,3 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
-
-
-#include "FCMPostConfig.h"
-
-#endif // IBITMAP_FILL_STYLE_H_
-

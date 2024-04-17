@@ -20,9 +20,9 @@ namespace sc {
 
 		public:
 			void Load(std::string LanguageCode);
-
 			std::string GetUTF(const std::string& TID);
 
+		public:
 			template <class ... Args>
 			std::u16string GetString(const std::string& TID, Args ... args)
 			{

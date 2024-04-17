@@ -93,6 +93,12 @@ namespace sc {
 				FilledItem& filled_item
 			);
 
+			void ProcessSlicedItem(
+				Shape& shape,
+				AtlasGenerator::Item& atlas_item,
+				SlicedItem& sprite_item
+			);
+
 		private:
 			// Storage for Atlas Generator guys.
 			// Represents swf shapes and must have the same size

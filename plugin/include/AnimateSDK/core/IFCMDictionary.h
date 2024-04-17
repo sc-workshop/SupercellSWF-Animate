@@ -281,6 +281,9 @@ namespace FCM
                 return false;
             }
 
+            // Strip null character
+            result.resize(valueLen - 1);
+
             return true;
         }
 

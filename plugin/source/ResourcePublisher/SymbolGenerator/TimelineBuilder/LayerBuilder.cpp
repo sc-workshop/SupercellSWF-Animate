@@ -162,10 +162,7 @@ namespace sc {
 					layer.releaseFilledElements();
 				}
 
-				// FUCK THIS
-				// IM TIRED
-				// HEEEELP MEEE
-
+				layer.frame().ApplyName(writer);
 				layer(writer);
 			}
 		}

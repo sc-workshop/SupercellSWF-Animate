@@ -230,8 +230,6 @@ namespace sc {
 		)
 		{
 			ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			Matrix2x3<float> matrix = sprite_item.transformation();
-
 			shape_command.texture_index = atlas_item.texture_index;
 
 			for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
@@ -245,6 +243,88 @@ namespace sc {
 			}
 
 			ProcessCommandTransform(shape_command, atlas_item.transform, sprite_item);
+		}
+
+		void SCWriter::ProcessSlicedItem(
+			Shape& shape,
+			AtlasGenerator::Item& atlas_item,
+			SlicedItem& sliced_item
+		)
+		{
+			uint8_t begin = (uint8_t)AtlasGenerator::Item::SlicedArea::BottomLeft;
+			uint8_t end = (uint8_t)AtlasGenerator::Item::SlicedArea::TopRight;
+			for (uint8_t i = begin; end >= i; i++)
+			{
+				Rect<int32_t> xy;
+				Rect<uint16_t> uv;
+
+				Matrix2x3<float> matrix = sliced_item.transformation();
+
+				float rotation_sin = matrix.b;
+				float rotation_cos = matrix.c;
+
+				AtlasGenerator::Item::Transformation transform(
+					atan2(rotation_sin, rotation_cos),
+					{ (int32_t)std::ceil(matrix.tx), (int32_t)std::ceil(matrix.ty) }
+				);
+
+				atlas_item.get_sliced_area(
+					(AtlasGenerator::Item::SlicedArea)i,
+					sliced_item.Guides(),
+					xy,
+					uv,
+					transform
+				);
+
+				if (xy.width <= 0 || xy.height <= 0)
+				{
+					continue;
+				}
+
+				ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
+				shape_command.texture_index = atlas_item.texture_index;
+
+				{
+					ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
+					vertex.u = uv.x;
+					vertex.v = uv.y;
+					vertex.x = xy.x;
+					vertex.y = xy.y;
+				}
+
+				{
+					ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
+					vertex.u = uv.x + uv.width;
+					vertex.v = uv.y;
+					vertex.x = xy.x + xy.width;
+					vertex.y = xy.y;
+				}
+
+				{
+					ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
+					vertex.u = uv.x + uv.width;
+					vertex.v = uv.y + uv.height;
+					vertex.x = xy.x + xy.width;
+					vertex.y = xy.y + uv.height;
+				}
+
+				{
+					ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
+					vertex.u = uv.x;
+					vertex.v = uv.y + uv.height;
+					vertex.x = xy.x;
+					vertex.y = xy.y + uv.height;
+				}
+
+				for (ShapeDrawBitmapCommandVertex& vertex : shape_command.vertices)
+				{
+					Point<float> uv(vertex.u, vertex.v);
+					atlas_item.transform.transform_point(uv);
+
+					vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
+					vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
+				}
+			}
 		}
 
 		void SCWriter::ProcessFilledItem(
@@ -288,7 +368,7 @@ namespace sc {
 				context.locale.GetString("TID_STATUS_SPRITE_PACK")
 			);
 
-			std::vector<Ref<AtlasGenerator::Item>> items;
+			std::vector<AtlasGenerator::Item> items;
 
 			for (GraphicGroup& group : m_graphic_groups)
 			{
@@ -296,18 +376,21 @@ namespace sc {
 				{
 					GraphicItem& item = group.getItem(i);
 
-					Ref<AtlasGenerator::Item>& atlas_item = items.emplace_back();
-
 					if (item.IsSprite())
 					{
 						SpriteItem& sprite_item = *(SpriteItem*)&item;
 
-						atlas_item = CreateRef<AtlasGenerator::Item>(sprite_item.image());
+						items.emplace_back(
+							sprite_item.image(),
+							item.IsSliced() ?
+							AtlasGenerator::Item::Type::Sliced : AtlasGenerator::Item::Type::Sprite
+						);
 					}
 					else if (item.IsFilledShape())
 					{
 						FilledItem& filled_item = *(FilledItem*)&item;
-						atlas_item = CreateRef<AtlasGenerator::Item>(filled_item.Color());
+
+						items.emplace_back(filled_item.Color());
 					}
 					else
 					{
@@ -386,15 +469,25 @@ namespace sc {
 
 				for (uint32_t group_item_index = 0; group.size() > group_item_index; group_item_index++)
 				{
-					AtlasGenerator::Item& atlas_item = *items[command_index];
+					AtlasGenerator::Item& atlas_item = items[command_index];
 					GraphicItem& item = group.getItem(group_item_index);
 
 					if (item.IsSprite())
 					{
-						SpriteItem& sprite_item = *(SpriteItem*)&item;
-						ProcessSpriteItem(
-							shape, atlas_item, sprite_item
-						);
+						if (item.IsSliced())
+						{
+							SlicedItem& sliced_item = *(SlicedItem*)&item;
+							ProcessSlicedItem(
+								shape, atlas_item, sliced_item
+							);
+						}
+						else
+						{
+							SpriteItem& sprite_item = *(SpriteItem*)&item;
+							ProcessSpriteItem(
+								shape, atlas_item, sprite_item
+							);
+						}
 					}
 					else if (item.IsFilledShape())
 					{

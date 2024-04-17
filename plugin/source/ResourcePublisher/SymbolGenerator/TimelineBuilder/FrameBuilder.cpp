@@ -167,10 +167,6 @@ namespace sc {
 		}
 
 		void FrameBuilder::operator()(SymbolContext& symbol, SharedMovieclipWriter& writer) {
-			if (!m_label.empty()) {
-				writer.SetLabel(m_label);
-			}
-
 			uint32_t i = (uint32_t)m_elementsData.size();
 			for (uint32_t elementIndex = 0; m_elementsData.size() > elementIndex; elementIndex++) {
 				i--;

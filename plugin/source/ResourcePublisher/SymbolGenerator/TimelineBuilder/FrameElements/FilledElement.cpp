@@ -226,7 +226,13 @@ namespace sc {
 
 		DOM::Utils::RECT FilledElementRegion::Bound() const
 		{
-			DOM::Utils::RECT result;
+			DOM::Utils::RECT result{
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()
+			};
+
 			result.bottomRight.x = std::min_element(
 				contour.points.begin(), contour.points.end(),
 				[](const Point2D& a, const Point2D& b)
@@ -325,26 +331,31 @@ namespace sc {
 
 		DOM::Utils::RECT FilledElement::Bound() const
 		{
-			DOM::Utils::RECT result;
+			DOM::Utils::RECT result{
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()
+			};
 
 			for (const FilledElementRegion& region : fill)
 			{
 				const DOM::Utils::RECT region_bound = region.Bound();
 
+				result.topLeft.x = std::max(region_bound.topLeft.x, result.topLeft.x);
+				result.topLeft.y = std::max(region_bound.topLeft.y, result.topLeft.y);
 				result.bottomRight.x = std::min(region_bound.bottomRight.x, result.bottomRight.x);
 				result.bottomRight.y = std::min(region_bound.bottomRight.y, result.bottomRight.y);
-				result.topLeft.x = std::min(region_bound.topLeft.x, result.topLeft.x);
-				result.topLeft.y = std::min(region_bound.topLeft.y, result.topLeft.y);
 			}
 
 			for (const FilledElementRegion& region : stroke)
 			{
 				const DOM::Utils::RECT region_bound = region.Bound();
 
+				result.topLeft.x = std::max(region_bound.topLeft.x, result.topLeft.x);
+				result.topLeft.y = std::max(region_bound.topLeft.y, result.topLeft.y);
 				result.bottomRight.x = std::min(region_bound.bottomRight.x, result.bottomRight.x);
 				result.bottomRight.y = std::min(region_bound.bottomRight.y, result.bottomRight.y);
-				result.topLeft.x = std::min(region_bound.topLeft.x, result.topLeft.x);
-				result.topLeft.y = std::min(region_bound.topLeft.y, result.topLeft.y);
 			}
 
 			return result;

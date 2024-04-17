@@ -29,10 +29,7 @@ namespace sc {
 			FCM::BlendMode _blending,
 			std::string name
 		) {
-			// For Compability with SWF blend modes indices
-			DisplayObjectInstance::BlendMode blending = (DisplayObjectInstance::BlendMode)((uint8_t)
-				_blending + (_blending == FCM::BlendMode::NORMAL_BLEND_MODE ? 0 : 1)
-				);
+			DisplayObjectInstance::BlendMode blending = (DisplayObjectInstance::BlendMode)(_blending);
 
 			uint16_t frameInstancesOffset = 0;
 			uint32_t frameElementsLastIndex = m_object.frame_elements.size() - 1;

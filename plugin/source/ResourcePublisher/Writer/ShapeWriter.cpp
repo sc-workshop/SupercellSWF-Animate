@@ -15,7 +15,6 @@ namespace sc {
 			m_group.AddItem<SpriteItem>(image, matrix);
 		}
 
-		// TODO: rework
 		void SCShapeWriter::AddFilledElement(const FilledElement& shape) {
 			for (const FilledElementRegion& region : shape.fill) {
 				AddFilledShapeRegion(region);
@@ -94,20 +93,15 @@ namespace sc {
 		}
 
 		void SCShapeWriter::AddRasterizedRegion(
-			const FilledElementRegion& region
+			const FilledElementRegion& region,
+			cv::Mat& canvas,
+			Point<int32_t> offset
 		)
 		{
-			const DOM::Utils::RECT region_bound = region.Bound();
-			Point<int32_t> image_position_offset(region_bound.bottomRight.x, region_bound.bottomRight.y);
-			cv::Size image_size(
-				ceil(region_bound.topLeft.x - image_position_offset.x),
-				ceil(region_bound.topLeft.y - image_position_offset.y)
-			);
-
-			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
+			cv::Size canvas_size = canvas.size();
 
 			// Creating fill mask
-			cv::Mat canvas_mask(image_size, CV_8UC1, cv::Scalar(0x00));
+			cv::Mat canvas_mask(canvas_size, CV_8UC1, cv::Scalar(0x00));
 
 			const int contour_shift = 8;
 
@@ -117,8 +111,8 @@ namespace sc {
 				for (const Point2D& point : region.contour.points)
 				{
 					points.emplace_back(
-						(point.x - image_position_offset.x) * pow(2, contour_shift),
-						(point.y - image_position_offset.y) * pow(2, contour_shift)
+						(point.x - offset.x) * pow(2, contour_shift),
+						(point.y - offset.y) * pow(2, contour_shift)
 					);
 				}
 
@@ -136,8 +130,8 @@ namespace sc {
 					for (const Point2D& point : path.points)
 					{
 						path_points.emplace_back(
-							(point.x - image_position_offset.x) * pow(2, contour_shift),
-							(point.y - image_position_offset.y) * pow(2, contour_shift)
+							(point.x - offset.x) * pow(2, contour_shift),
+							(point.y - offset.y) * pow(2, contour_shift)
 						);
 					}
 
@@ -150,7 +144,7 @@ namespace sc {
 #endif
 			}
 
-			cv::Mat filling_image(image_size, CV_8UC4, cv::Scalar(0x00000000));
+			cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
 
 			// Filling
 			switch (region.type)
@@ -171,9 +165,9 @@ namespace sc {
 				break;
 			}
 
-			for (int h = 0; image_size.height > h; h++)
+			for (int h = 0; canvas_size.height > h; h++)
 			{
-				for (int w = 0; image_size.width > w; w++)
+				for (int w = 0; canvas_size.width > w; w++)
 				{
 					cv::Vec4b& origin = canvas.at<cv::Vec4b>(h, w);
 					cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
@@ -197,6 +191,22 @@ namespace sc {
 			cv::imshow("Canvas Fill", canvas);
 			cv::waitKey(0);
 #endif
+		}
+
+		void SCShapeWriter::AddRasterizedRegion(
+			const FilledElementRegion& region
+		)
+		{
+			const DOM::Utils::RECT region_bound = region.Bound();
+			Point<int32_t> image_position_offset(region_bound.bottomRight.x, region_bound.bottomRight.y);
+			cv::Size image_size(
+				ceil(region_bound.topLeft.x - image_position_offset.x),
+				ceil(region_bound.topLeft.y - image_position_offset.y)
+			);
+
+			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
+
+			AddRasterizedRegion(region, canvas, image_position_offset);
 
 			const DOM::Utils::MATRIX2D transform = {
 				1.0f,
@@ -211,15 +221,22 @@ namespace sc {
 			m_group.AddItem<SpriteItem>(CreateRef<cv::Mat>(canvas), transform);
 		}
 
-		void SCShapeWriter::AddFilledShapeRegion(const FilledElementRegion& region) {
+		bool SCShapeWriter::IsValidFilledShapeRegion(const FilledElementRegion& region)
+		{
 			if (region.type == FilledElementRegion::ShapeType::SolidColor)
 			{
 				// Skip all regions with zero mask_alpha
 				if (region.solidColor.alpha <= 0)
 				{
-					return;
+					return false;
 				}
 			}
+
+			return true;
+		}
+
+		void SCShapeWriter::AddFilledShapeRegion(const FilledElementRegion& region) {
+			if (!IsValidFilledShapeRegion(region)) return;
 
 			bool should_rasterize =
 				region.type != FilledElementRegion::ShapeType::SolidColor ||
@@ -250,7 +267,62 @@ namespace sc {
 
 		void SCShapeWriter::AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides)
 		{
-			return;
+			DOM::Utils::RECT elements_bound{
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()
+			};
+
+			for (const FilledElement element : elements)
+			{
+				const DOM::Utils::RECT bound = element.Bound();
+
+				elements_bound.topLeft.x = std::max(bound.topLeft.x, elements_bound.topLeft.x);
+				elements_bound.topLeft.y = std::max(bound.topLeft.y, elements_bound.topLeft.y);
+				elements_bound.bottomRight.x = std::min(bound.bottomRight.x, elements_bound.bottomRight.x);
+				elements_bound.bottomRight.y = std::min(bound.bottomRight.y, elements_bound.bottomRight.y);
+			}
+
+			Point<int32_t> image_position_offset(elements_bound.bottomRight.x, elements_bound.bottomRight.y);
+			cv::Size image_size(
+				ceil(elements_bound.topLeft.x - image_position_offset.x),
+				ceil(elements_bound.topLeft.y - image_position_offset.y)
+			);
+
+			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
+
+			for (const FilledElement& element : elements)
+			{
+				for (const FilledElementRegion region : element.fill)
+				{
+					if (!IsValidFilledShapeRegion(region)) continue;
+
+					AddRasterizedRegion(
+						region, canvas, image_position_offset
+					);
+				}
+
+				for (const FilledElementRegion region : element.stroke)
+				{
+					if (!IsValidFilledShapeRegion(region)) continue;
+
+					AddRasterizedRegion(
+						region, canvas, image_position_offset
+					);
+				}
+			}
+
+			const DOM::Utils::MATRIX2D transform = {
+				1.0f,
+				0.0f,
+				0.0f,
+				1.0f,
+				(FCM::Float)image_position_offset.x,
+				(FCM::Float)image_position_offset.y
+			};
+
+			m_group.AddItem<SlicedItem>(CreateRef<cv::Mat>(canvas), transform, guides);
 		}
 
 		void SCShapeWriter::Finalize(uint16_t id) {

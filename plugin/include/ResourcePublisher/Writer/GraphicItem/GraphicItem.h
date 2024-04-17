@@ -23,6 +23,11 @@ namespace sc
 				return false;
 			}
 
+			virtual bool IsSliced() const
+			{
+				return false;
+			}
+
 			virtual bool IsFilledShape() const
 			{
 				return false;

@@ -121,6 +121,13 @@ namespace sc {
 				return m_filled_elements;
 			}
 
+			void ApplyName(SharedMovieclipWriter& writer) const
+			{
+				if (!m_label.empty()) {
+					writer.SetLabel(m_label);
+				}
+			}
+
 			void releaseFilledElements(SymbolContext& symbol);
 			void inheritFilledElements(const FrameBuilder& frame);
 

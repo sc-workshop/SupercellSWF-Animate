@@ -4,6 +4,7 @@
 #include "GraphicItem/GraphicGroup.h"
 #include "GraphicItem/SpriteItem.h"
 #include "GraphicItem/FilledItem.h"
+#include "GraphicItem/SlicedItem.h"
 #include "AnimateSDK/app/ApplicationFCMPublicIDs.h"
 
 namespace sc {
@@ -34,6 +35,12 @@ namespace sc {
 			);
 
 			void AddRasterizedRegion(
+				const FilledElementRegion& region,
+				cv::Mat& canvas,
+				Point<int32_t> offset = { 0, 0 }
+			);
+
+			void AddRasterizedRegion(
 				const FilledElementRegion& region
 			);
 
@@ -43,6 +50,8 @@ namespace sc {
 			void AddRasterizedSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
 
 			void AddFilledShapeRegion(const FilledElementRegion& region);
+
+			bool IsValidFilledShapeRegion(const FilledElementRegion& region);
 
 		private:
 			SCWriter& m_writer;
