@@ -3,6 +3,7 @@
 /node_modules
 /include/PluginConfiguration.h
 /bin
+/build_release
 
 *.vcxproj
 *.vcxproj.*

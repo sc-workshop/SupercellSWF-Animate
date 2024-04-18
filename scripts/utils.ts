@@ -32,7 +32,11 @@ export function progress(val: string, color?: ColorName) {
 
 export function removeDirs(path: string) {
     if (existsSync(path)) {
-        
+        if (!lstatSync(path).isDirectory())
+        {
+            unlinkSync(path)
+        }
+
         const folder = readdirSync(path);
 
         for (const file of folder) {
