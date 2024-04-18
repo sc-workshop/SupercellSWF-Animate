@@ -6,10 +6,11 @@ namespace sc
 {
 	namespace Adobe
 	{
-		class SpriteItem;
-
 		class GraphicItem
 		{
+		public:
+			virtual ~GraphicItem() = default;
+
 		public:
 			virtual Matrix2x3<float> transformation() const
 			{

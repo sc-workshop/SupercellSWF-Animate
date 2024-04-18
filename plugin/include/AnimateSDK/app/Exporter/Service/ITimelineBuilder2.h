@@ -23,9 +23,9 @@
  *        ITimelineBuilder2 represents a builder to build a timeline.
  */
 #pragma once
-
 #include "ITimelineBuilder.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -97,3 +97,5 @@ namespace Exporter
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

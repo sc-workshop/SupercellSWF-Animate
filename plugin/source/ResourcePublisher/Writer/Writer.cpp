@@ -318,11 +318,11 @@ namespace sc {
 
 				for (ShapeDrawBitmapCommandVertex& vertex : shape_command.vertices)
 				{
-					Point<float> uv(vertex.u, vertex.v);
-					atlas_item.transform.transform_point(uv);
+					Point<float> vertex_uv(vertex.u, vertex.v);
+					atlas_item.transform.transform_point(vertex_uv);
 
-					vertex.u = uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
-					vertex.v = uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
+					vertex.u = vertex_uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
+					vertex.v = vertex_uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
 				}
 			}
 		}
@@ -364,7 +364,7 @@ namespace sc {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 			PluginContext& context = PluginContext::Instance();
 
-			StatusComponent* status = context.Window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_SPRITE_PACK")
 			);
 
@@ -517,19 +517,19 @@ namespace sc {
 				END = 4
 			};
 
-			StatusComponent* status = context.Window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT"),
 				u"",
 				END
 			);
 
 			status->SetProgress(ATLAS_FINALIZE);
-			status->SetLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
+			status->SetStatusLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
 			FinalizeAtlas();
 
 			if (config.exportToExternal) {
 				status->SetProgress(EXTERNAL_LOADING);
-				status->SetLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
+				status->SetStatusLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
 				LoadExternal();
 			}
 
@@ -545,7 +545,7 @@ namespace sc {
 			fs::path basename = filepath.filename();
 
 			status->SetProgress(EXTERNAL_LOADING);
-			status->SetLabel(
+			status->SetStatusLabel(
 				context.locale.GetString(
 					"TID_FILE_SAVE", basename.u16string().c_str()
 				)

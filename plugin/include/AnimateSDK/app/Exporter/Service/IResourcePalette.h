@@ -24,10 +24,10 @@
  *        to a resource palette.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -224,3 +224,5 @@ namespace Exporter
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

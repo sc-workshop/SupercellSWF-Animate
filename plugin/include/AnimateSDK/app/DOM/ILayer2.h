@@ -24,12 +24,12 @@
 */
 
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 #include "AnimateSDK/core/IFCMList.h"
 #include "ILayer1.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 namespace DOM
 {
@@ -76,3 +76,5 @@ namespace DOM
 	END_DECLARE_INTERFACE
 
 }
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

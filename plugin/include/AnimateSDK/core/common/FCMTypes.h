@@ -23,8 +23,6 @@
  */
 
 #pragma once
-
-#include "FCMPreConfig.h"
 #if defined(__GNUC__) && defined(__APPLE__)
 #include <sys/types.h>
 #endif
@@ -35,7 +33,8 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
- //#include <codecvt>
+
+#include "FCMPreConfig.h"
 
 namespace FCM
 {

@@ -23,9 +23,9 @@
  *        ITimelineBuilderFactory represents a factory for a timeline builder.
  */
 #pragma once
-
 #include "IFrameCommandGenerator.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -83,3 +83,5 @@ namespace Exporter
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

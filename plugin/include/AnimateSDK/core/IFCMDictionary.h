@@ -24,11 +24,11 @@
  */ 
 
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "IFCMUnknown.h"
 #include <string>
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -293,3 +293,5 @@ namespace FCM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

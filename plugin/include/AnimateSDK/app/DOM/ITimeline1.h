@@ -24,9 +24,10 @@
 *        both main timeline and the movie-clip.
 */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "ITimeline.h"
+
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -87,3 +88,5 @@ namespace DOM
 };
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

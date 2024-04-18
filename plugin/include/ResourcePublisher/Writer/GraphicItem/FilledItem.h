@@ -35,16 +35,18 @@ namespace sc
 				const DOM::Utils::COLOR& color,
 				const DOM::Utils::MATRIX2D& matrix = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }
 			) :
+				contours(contour),
+				m_matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty),
 				m_color(
 					color.blue,
 					color.green,
 					color.red,
 					color.alpha
-				),
-				contours(contour),
-				m_matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty)
+				)
 			{
 			};
+
+			virtual ~FilledItem() = default;
 
 		public:
 			virtual bool IsFilledShape() const

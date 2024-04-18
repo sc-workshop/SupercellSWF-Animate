@@ -7,7 +7,7 @@ namespace sc
 	namespace Adobe
 	{
 		SliceElement::SliceElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape, DOM::Utils::MATRIX2D& matrix) :
-			fill(symbol, shape), transform(matrix)
+			transform(matrix), fill(symbol, shape)
 		{
 		}
 	}

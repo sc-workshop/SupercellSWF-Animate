@@ -25,9 +25,9 @@
  */
 
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -345,3 +345,5 @@ namespace DocType
 
     END_DECLARE_INTERFACE 
 } 
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

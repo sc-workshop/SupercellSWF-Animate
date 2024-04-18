@@ -13,7 +13,7 @@ namespace sc {
 		class PluginWindow : public wxFrame
 		{
 		public:
-			StatusComponent* CreateStatusBar(
+			StatusComponent* CreateStatusBarComponent(
 				const std::u16string& title = u"",
 				const std::u16string& defaultLabel = u"",
 				int range = 100

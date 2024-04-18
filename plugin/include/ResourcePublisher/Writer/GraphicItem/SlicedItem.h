@@ -12,6 +12,7 @@ namespace sc
 		{
 		public:
 			SlicedItem(Ref<cv::Mat> image, const DOM::Utils::MATRIX2D& matrix, const DOM::Utils::RECT guides);
+			virtual ~SlicedItem() = default;
 
 		public:
 			virtual bool IsSliced() const

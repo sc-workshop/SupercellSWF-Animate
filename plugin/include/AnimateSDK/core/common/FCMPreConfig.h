@@ -9,7 +9,7 @@
 * the property of Adobe Systems Incorporated and its suppliers,
 * if any.  The intellectual and technical concepts contained
 * herein are proprietary to Adobe Systems Incorporated and its
-* suppliers and are protected by all applicable intellectual 
+* suppliers and are protected by all applicable intellectual
 * property laws, including trade secret and copyright laws.
 * Dissemination of this information or reproduction of this material
 * is strictly forbidden unless prior written permission is obtained
@@ -18,53 +18,59 @@
 
 // Must be balanced with FCMPostConfig.h!!!!!
 
+#ifdef __FCM__CONFIG__
+	#error "FCMPostConfig.h is not included in last file"
+#endif
+
 #ifndef __FCM__
 #define __FCM__
 #endif // !__FCM__
 
-
 #if defined(__x86_64__) || defined(_M_X64)
-#    define FCM_OS_64
+	#define FCM_OS_64
 #elif defined(__ppc64__)
-#    define FCM_OS_64
+	#define FCM_OS_64
 #else
-#    error "Unsupported FCM architecture"
+	#error "Unsupported FCM architecture"
 #endif
-
 
 #if defined(_WIN64)
-    #define FCM_OS_WIN
+#define FCM_OS_WIN
 #elif defined(__MWERKS__) || defined(__APPLE__)
-    #define FCM_OS_MAC
+#define FCM_OS_MAC
 #else
-    #error "Unsupported platform"
+#error "Unsupported platform"
 #endif
 
-#if defined(FCM_OS_64) 
-    #define FCM_ALIGNMENT 16
+#if defined(FCM_OS_64)
+	#define FCM_ALIGNMENT 16
 #else
-    #error "Unsupported platform bit depth"
+	#error "Unsupported platform bit depth"
 #endif
-
 
 #ifdef FCM_OS_WIN
+	#pragma warning(push)
 
-    /**   Disabled Warnings **/
+	/**   Disabled Warnings **/
 
-    //An include file uses the pack pragma to change the default structure alignment.
-    #pragma warning( disable : 4103)
+	// An include file uses the pack pragma to change the default structure alignment.
+	#pragma warning( disable : 4103)
 
+	// Most of classes anyway does not have accessible constructor or destructor
+	// So we dont need virtual destructors
+	#pragma warning( disable : 5204)
+	
+	// We know for sure that pop will be called and we can provide a guarantee at compiler level
+	#pragma warning( disable : 5031)
 
-    #pragma warning(push)
-    #include "win/FCMPreAlign_WIN.h"
+	#include "win/FCMPreAlign_WIN.h"
+
 #elif defined(FCM_OS_MAC)
-    #include "mac/FCMPreAlign_MAC.h"
+
+	#include "mac/FCMPreAlign_MAC.h"
+
 #else
-    #error "Unsupported platform"
+	#error "Unsupported platform"
 #endif
 
-#ifndef FCM_PRE_CONFIG_H_
-#define FCM_PRE_CONFIG_H_
-
-#endif // FCM_PRE_CONFIG_H_
-
+#define __FCM__CONFIG__

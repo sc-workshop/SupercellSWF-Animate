@@ -272,10 +272,10 @@ namespace sc {
 		void SCShapeWriter::AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides)
 		{
 			DOM::Utils::RECT elements_bound{
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::max(),
-				std::numeric_limits<float>::max()
+				{std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min()},
+				{std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()}
 			};
 
 			for (const FilledElement element : elements)

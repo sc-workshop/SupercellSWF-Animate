@@ -41,7 +41,7 @@ namespace sc {
 				});
 		}
 
-		StatusComponent* PluginWindow::CreateStatusBar(
+		StatusComponent* PluginWindow::CreateStatusBarComponent(
 			const std::u16string& title,
 			const std::u16string& defaultLabel,
 			int range

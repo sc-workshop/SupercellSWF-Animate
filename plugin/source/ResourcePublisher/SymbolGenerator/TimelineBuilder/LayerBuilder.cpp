@@ -172,7 +172,7 @@ namespace sc {
 		void LayerBuilder::ProcessLayers(SymbolContext& symbol, std::vector<LayerBuilder>& layers, SharedMovieclipWriter& writer, uint32_t range)
 		{
 			PluginContext& context = PluginContext::Instance();
-			StatusComponent* status = context.Window()->CreateStatusBar(
+			StatusComponent* status = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
 				symbol.name, range
 			);

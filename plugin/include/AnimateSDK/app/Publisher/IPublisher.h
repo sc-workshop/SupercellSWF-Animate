@@ -27,13 +27,14 @@
  */
 
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/core/IFCMDictionary.h"
 #include "AnimateSDK/app/DOM/IFLADocument.h"
 #include "AnimateSDK/app/DOM/ITimeline.h"
 #include "AnimateSDK/app/Exporter/Service/IFrameCommandGenerator.h"
+
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
  /* -------------------------------------------------- Forward Decl */
 
@@ -133,3 +134,5 @@ namespace Publisher
 };
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

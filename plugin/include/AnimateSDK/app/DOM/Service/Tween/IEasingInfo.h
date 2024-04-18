@@ -23,12 +23,13 @@
  *        represents a easing of a property.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 #include "AnimateSDK/app/DOM/ITween.h"
 #include "AnimateSDK/app/DOM/FrameElement/IShape.h"
 #include "AnimateSDK/app/DOM/Service/Shape/IPath.h"
+
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -92,3 +93,5 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

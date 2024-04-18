@@ -23,10 +23,9 @@
  */
 
 #pragma once
-
-#include "FCMPreConfig.h"
 #include "FCMTypes.h"
 
+#include "FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 

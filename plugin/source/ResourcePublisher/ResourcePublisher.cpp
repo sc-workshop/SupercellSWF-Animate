@@ -6,7 +6,7 @@ namespace sc {
 			PluginContext& context = PluginContext::Instance();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 
-			StatusComponent* publishStatus = context.Window()->CreateStatusBar(
+			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT")
 			);
 
@@ -17,7 +17,7 @@ namespace sc {
 			GetItems(libraryItems, items);
 
 			publishStatus->SetRange(items.size());
-			publishStatus->SetLabel(
+			publishStatus->SetStatusLabel(
 				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS")
 			);
 
@@ -45,7 +45,7 @@ namespace sc {
 				publishStatus->SetProgress(i + 1);
 			}
 
-			publishStatus->SetLabel(
+			publishStatus->SetStatusLabel(
 				context.locale.GetString("TID_STATUS_SAVE")
 			);
 			publishStatus->SetStatus(u"");

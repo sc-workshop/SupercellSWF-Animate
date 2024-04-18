@@ -16,6 +16,7 @@ namespace sc
 		{
 		public:
 			SpriteItem(Ref<cv::Mat> image, const DOM::Utils::MATRIX2D& matrix);
+			virtual ~SpriteItem() = default;
 
 		public:
 			virtual Matrix2x3<float> transformation() const

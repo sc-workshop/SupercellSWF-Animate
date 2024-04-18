@@ -417,7 +417,6 @@ namespace sc {
 		void FrameBuilder::releaseFilledElements(SymbolContext& symbol)
 		{
 			uint16_t element_id = m_resources.AddFilledElement(symbol, m_filled_elements);
-			size_t element_index = m_elementsData.size();
 
 			// TODO : matrices
 			m_elementsData.push_back(

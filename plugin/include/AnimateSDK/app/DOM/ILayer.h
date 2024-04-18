@@ -23,10 +23,10 @@
  *        interface represents a layer in the timeline. 
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/core/IFCMUnknown.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -332,3 +332,5 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

@@ -23,9 +23,9 @@
  *        interface represents the information related to a folder item.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -88,3 +88,5 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"
