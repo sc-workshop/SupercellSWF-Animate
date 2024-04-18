@@ -3,6 +3,8 @@
 
 #include "ResourcePublisher/ResourcePublisher.h"
 
+#include <random>
+
 namespace sc {
 	namespace Adobe {
 		PluginWindowApp::PluginWindowApp()
@@ -39,8 +41,18 @@ namespace sc {
 					files.push_back(entry.path().wstring());
 				}
 
+				size_t animation_index = 0;
+
+				{
+					std::random_device seed;
+					std::mt19937 generator(seed());
+					std::uniform_int_distribution<> distr(0, files.size());
+
+					animation_index = distr(generator);
+				}
+
 				wxAnimationCtrl* animation = new wxAnimationCtrl(window, wxID_ANY, wxNullAnimation, wxPoint(335, 5));
-				animation->LoadFile(files[rand() % files.size()]);
+				animation->LoadFile(files[animation_index]);
 				animation->Play();
 			}
 
