@@ -117,6 +117,8 @@ namespace sc {
 		{
 			if (m_frameBuilder.duration() != next_layer.frame().duration()) return true;
 
+			if (m_frameBuilder.position() != next_layer.frame().position()) return true;
+
 			if (next_layer.frame().last_element() != FrameBuilder::LastElementType::FilledElement) return true;
 
 			return false;
