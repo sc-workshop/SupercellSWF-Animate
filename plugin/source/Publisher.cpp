@@ -1,4 +1,5 @@
 #include "Publisher.h"
+#include <shared_mutex>
 
 #if SC_MSVC
 #define TIME_TYPE "%I64d"
@@ -23,7 +24,7 @@ namespace sc {
 
 			auto start = std::chrono::high_resolution_clock::now();
 
-			std::mutex publishing_ui;
+			std::shared_mutex publishing_ui;
 			// Must be unlocked when ui is ready to use
 			publishing_ui.lock();
 

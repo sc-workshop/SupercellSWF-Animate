@@ -159,7 +159,7 @@ namespace sc {
 					bind.id += idOffset;
 				}
 
-				object.bank_index += swf.matrixBanks.size();
+				object.bank_index += base_swf.matrixBanks.size();
 
 				base_swf.movieclips.push_back(object);
 			}
@@ -180,7 +180,7 @@ namespace sc {
 				object.id += idOffset;
 
 				for (ShapeDrawBitmapCommand& bitmap : object.commands) {
-					bitmap.texture_index += swf.textures.size();
+					bitmap.texture_index += base_swf.textures.size();
 				}
 
 				base_swf.shapes.push_back(object);
