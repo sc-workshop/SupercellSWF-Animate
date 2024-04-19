@@ -4,7 +4,7 @@
 	"TID_STATUS_INIT": "Инициализация",
 	"TID_STATUS_SAVE": "Сохранение...",
 	"TID_UNKNOWN_EXCEPTION": "Неизсветное исключение",
-	"TID_EXPORT_TIME_STATUS": "Завершено за %llu секунд",
+	"TID_EXPORT_TIME_STATUS": "Завершено за %lld секунд(-ы)",
 	"TID_FCM_SERVICE_INIT_FAILED": "Не удалось инициализировать FCM сервис",
 	"TID_BITMAP_SERVICE_EXPORT_FAILED": "Не удалось экспортировать изображение спрайта",
 	"TID_UNKNOWN_LIBRARY_ITEM_TYPE": "Неизвестный тип символа: \"%ls\"",
@@ -17,16 +17,13 @@
 	"TID_EXTERNAL_FILE_LOAD": "Загрузка внешнего файла",
 	"TID_FILE_SAVE": "Сохранение: %ls",
 	
+	"TID_9SLICE_FRAME_RESTRICTION": "9slice Символ имеет более одного кадра: \"%ls\"\nЭта возможность будет отключена в этом символе\n",
+	
 	// Exceptions
 	"TID_UNKNOWN_FILL_STYLE_TYPE": "Неизвестный или не поддерживаемый тип заливки региона в символе \"%ls\"",
 	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Убедитесь что символ не имеет Графических или Градиентной заливок",
 	
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "Внешний файл по пути \"%ls\" не существует",
-	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Убедитесь что путь введён правильно и файл доступен для чтения, и затем повторите попытку",
-	
-	"TID_SWF_ATLAS_GENERATOR_TYPE": "[Генератор Атласа]",
-	"TID_SWF_ATLAS_GENERATOR_BAD_POLYGON": "Не удалось сгенерировать полигон",
-	"TID_SWF_ATLAS_GENERATOR_TOO_MANY_IMAGES": "Слишком много спрайтов",
-	"TID_SWF_ATLAS_GENERATOR_TOO_BIG_SPRITES": "Какие-то спрайты слишком большые"	
+	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Убедитесь что путь введён правильно и файл доступен для чтения, и затем повторите попытку"
 }

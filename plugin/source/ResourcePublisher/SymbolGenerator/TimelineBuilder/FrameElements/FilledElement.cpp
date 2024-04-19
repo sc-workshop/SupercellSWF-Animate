@@ -227,10 +227,10 @@ namespace sc {
 		DOM::Utils::RECT FilledElementRegion::Bound() const
 		{
 			DOM::Utils::RECT result{
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::max(),
-				std::numeric_limits<float>::max()
+				{std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min()},
+				{std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()}
 			};
 
 			result.bottomRight.x = std::min_element(
@@ -332,10 +332,10 @@ namespace sc {
 		DOM::Utils::RECT FilledElement::Bound() const
 		{
 			DOM::Utils::RECT result{
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::max(),
-				std::numeric_limits<float>::max()
+				{std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min()},
+				{std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()}
 			};
 
 			for (const FilledElementRegion& region : fill)

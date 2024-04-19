@@ -5,7 +5,7 @@
 namespace sc {
 	namespace Adobe {
 		SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol)
-			: m_symbol(symbol), m_writer(writer) {};
+			: m_writer(writer), m_symbol(symbol) {};
 
 		void SCMovieclipWriter::InitializeTimeline(double fps, uint32_t frameCount) {
 			m_object.frame_rate = (uint8_t)fps;

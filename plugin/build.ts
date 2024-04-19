@@ -1,6 +1,6 @@
 import which from "which";
 import { join } from "path";
-import { copyDir, isMac, isWindows, makeLink, processExecError, progress } from "../scripts/utils";
+import { copyDir, isMac, isWindows, makeLink, progress } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, writeFileSync, existsSync } from "fs";
 import { version } from "./package.json"
@@ -42,6 +42,25 @@ const cmakeFlags = [
 
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
+const defaultBuildDirectory = join(__dirname, "build");
+
+const releaseBuildDirectory = join(__dirname, "build_release");
+
+const buildDirectory = isDev ? defaultBuildDirectory : releaseBuildDirectory;
+
+const ReleaseCmakeFlags = [
+    "-DBUILD_SHARED_LIBS=OFF",
+    "-DSC_ANIMATE_IMAGE_DEBUG=OFF",
+    "-DBUILD_WITH_STATIC_CRT=OFF",
+    `-DFETCHCONTENT_BASE_DIR=${join(defaultBuildDirectory, "_deps")}`
+]
+const DebugCmakeFlags = [
+    "-DBUILD_SHARED_LIBS=ON",
+    "-DSC_ANIMATE_IMAGE_DEBUG=ON",
+]
+
+const CmakeFlags = (isDev ? DebugCmakeFlags : ReleaseCmakeFlags).join(" ");
+
 function buildWindows() {
     const cmakePath = which.sync("cmake");
     if (cmakePath.length <= 0) {
@@ -63,8 +82,7 @@ function buildWindows() {
         return;
     }
 
-    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${cmakeFlags.join(" ")}"`);
-    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
 
     copyDir(binaryDirectory, outputDirectory);
     progress("Done");

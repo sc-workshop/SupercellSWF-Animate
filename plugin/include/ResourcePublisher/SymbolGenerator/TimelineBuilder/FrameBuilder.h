@@ -106,6 +106,11 @@ namespace sc {
 				return m_duration;
 			}
 
+			uint32_t position() const
+			{
+				return m_position;
+			}
+
 			LastElementType last_element() const
 			{
 				return m_last_element;

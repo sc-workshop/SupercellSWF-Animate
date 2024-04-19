@@ -67,10 +67,6 @@ namespace sc {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
 			}
 
-			if (data["multiResolutinSuffix"].is_string()) {
-				multiResolutionSuffix = data["multiResolutinSuffix"];
-			}
-
 			if (data["lowResolutionSuffix"].is_string()) {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
 			}

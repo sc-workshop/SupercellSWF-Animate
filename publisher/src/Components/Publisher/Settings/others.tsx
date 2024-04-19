@@ -15,16 +15,6 @@ export default function OtherSettings() {
         },
         value => (Settings.setParam("compressionMethod", parseInt(value))),
     )
-    
-    const shapeOptimization = BoolField(
-        Locale.Get("TID_SWF_SETTINGS_FILLED_SHAPE_OPTIMIZATION"),
-        "filled_shape_optimization",
-        Settings.getParam("filledShapeOptimization"),
-        {
-            marginBottom: "7px"
-        },
-        value => (Settings.setParam("filledShapeOptimization", value)),
-    );
 
     const precisionMatrix = BoolField(
         Locale.Get("TID_SWF_SETTINGS_PRECISION_MATRIX"),
@@ -53,7 +43,6 @@ export default function OtherSettings() {
             marginBottom: "20%"
         },
         compressionType,
-        shapeOptimization,
         precisionMatrix,
     )
 }

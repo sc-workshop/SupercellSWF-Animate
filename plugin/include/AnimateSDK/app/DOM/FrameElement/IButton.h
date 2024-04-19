@@ -24,9 +24,9 @@
  *        stage.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Enums */
 
@@ -105,7 +105,4 @@ namespace DOM
 /* -------------------------------------------------- Inline / Functions */
 
 
-#include "FCMPostConfig.h"
-
-#endif // IBUTTON_INSTANCE_H_
-
+#include "AnimateSDK/core/common/FCMPostConfig.h"

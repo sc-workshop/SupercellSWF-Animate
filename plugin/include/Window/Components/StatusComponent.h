@@ -21,7 +21,7 @@ namespace sc {
 			);
 
 		public:
-			void SetLabel(const std::u16string& label);
+			void SetStatusLabel(const std::u16string& label);
 			void SetStatus(const std::u16string& status);
 			void SetRange(int range);
 			void SetProgress(int value);

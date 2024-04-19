@@ -23,11 +23,11 @@
  *        a font table containing information about a font family.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/core/IFCMUnknown.h"
 #include "AnimateSDK/app/DOM/FrameElement/ITextBehaviour.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -179,8 +179,4 @@ namespace DOM
 
 /* -------------------------------------------------- Inline / Functions */
 
-
-#include "FCMPostConfig.h"
-
-#endif // IFONT_TABLE_H_
-
+#include "AnimateSDK/core/common/FCMPostConfig.h"

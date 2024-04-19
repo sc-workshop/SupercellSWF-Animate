@@ -18,7 +18,7 @@ namespace sc {
 			m_status->SetForegroundColour(wxColor(0xFFFFFF));
 		}
 
-		void StatusComponent::SetLabel(const std::u16string& label) {
+		void StatusComponent::SetStatusLabel(const std::u16string& label) {
 			m_label->SetLabel((const wchar_t*)label.c_str());
 		}
 

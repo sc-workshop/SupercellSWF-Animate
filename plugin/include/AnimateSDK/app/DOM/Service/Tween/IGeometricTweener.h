@@ -23,11 +23,11 @@
  *        represents a geometric tweener. 
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 #include "AnimateSDK/app/DOM/ITween.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -104,3 +104,5 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

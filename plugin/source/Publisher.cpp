@@ -1,5 +1,11 @@
 #include "Publisher.h"
 
+#if SC_MSVC
+#define TIME_TYPE "%I64d"
+#else
+#define TIME_TYPE "%lld"
+#endif
+
 namespace sc {
 	namespace Adobe {
 		FCM::Result SCPublisher::Publish(
@@ -80,9 +86,10 @@ namespace sc {
 
 			auto end = std::chrono::high_resolution_clock::now();
 
-			long long executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+			long long int executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
 			context.Trace(
-				context.locale.GetString("TID_EXPORT_TIME_STATUS"), executionTime
+				context.locale.GetString("TID_EXPORT_TIME_STATUS", executionTime)
 			);
 
 			return result;

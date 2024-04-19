@@ -23,13 +23,12 @@
  *        represents a service that provides tween information for a frame, display element or a shape.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 #include "AnimateSDK/app/DOM/IFrame.h"
 #include "AnimateSDK/app/DOM/FrameElement/IFrameDisplayElement.h"
 
-
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -124,3 +123,5 @@ namespace DOM
         }
     }
 }
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

@@ -23,11 +23,11 @@
  *        stroke width associated with the stroke.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -77,8 +77,4 @@ namespace DOM
 
 /* -------------------------------------------------- Inline / Functions */
 
-
-#include "FCMPostConfig.h"
-
-#endif // ISTROKE_WIDTH_H_
-
+#include "AnimateSDK/core/common/FCMPostConfig.h"

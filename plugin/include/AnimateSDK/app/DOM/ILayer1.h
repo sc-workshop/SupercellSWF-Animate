@@ -23,9 +23,10 @@
 *        interface represents a layer in the timeline.
 */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "ILayer.h"
+
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 namespace DOM
 {
@@ -74,3 +75,5 @@ namespace DOM
 		END_DECLARE_INTERFACE
 	
 }
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

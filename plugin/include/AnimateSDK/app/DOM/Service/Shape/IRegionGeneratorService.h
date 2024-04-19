@@ -23,9 +23,9 @@
  *        contains methods to generate filled regions and strokes for a shape.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMPluginInterface.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -132,3 +132,5 @@ namespace DOM
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

@@ -22,9 +22,10 @@
  * @brief This file contains the types used for DOM traversal and access.
  */
 #pragma once
-
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/core/IFCMUnknown.h"
+
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
  /* -------------------------------------------------- Forward Decl */
 
@@ -440,3 +441,5 @@ namespace DOM
 /* -------------------------------------------------- Class Decl */
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"

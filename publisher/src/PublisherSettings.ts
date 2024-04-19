@@ -38,7 +38,6 @@ interface PublisherSettingsData {
 
     // Additional settings
     compressionMethod: CompressionMethods,
-    filledShapeOptimization: boolean,
     hasPrecisionMatrices: boolean,
     //useSpritesForNineSlice: boolean,
 
@@ -65,7 +64,6 @@ export class PublisherSettings {
         output: "",
 
         compressionMethod: CompressionMethods.ZSTD,
-        filledShapeOptimization: true,
         hasPrecisionMatrices: false,
         //useSpritesForNineSlice: false,
 

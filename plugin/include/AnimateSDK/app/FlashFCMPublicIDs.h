@@ -26,9 +26,9 @@
  */
 
 #pragma once
-
 #include "ApplicationFCMPublicIDs.h"
 
+#include "AnimateSDK/core/common/FCMPreConfig.h"
 
 /* -------------------------------------------------- Forward Decl */
 
@@ -158,3 +158,5 @@ namespace Application
 
 
 /* -------------------------------------------------- Inline / Functions */
+
+#include "AnimateSDK/core/common/FCMPostConfig.h"
