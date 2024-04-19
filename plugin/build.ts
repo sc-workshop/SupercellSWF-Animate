@@ -66,7 +66,7 @@ function buildWindows() {
     }
 
     exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
-    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
 
     copyDir(binaryDirectory, outputDirectory);
     progress("Done");

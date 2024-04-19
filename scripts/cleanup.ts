@@ -6,14 +6,7 @@ import { progress, removeDirs as removeFiles } from "./utils";
 export function cleanup(extensions: string[] = []) {
     progress('Cleaning dist files...');
     if (existsSync("dist")) {
-        for (const filename of readdirSync("dist")){
-            if (extensions.length != 0) {
-                if (extensions.indexOf(filename) === -1) {
-                    continue;
-                } 
-            }
-            removeFiles(join("dist", filename));
-        }
+        removeFiles("dist")
     }
 
     for (const extensionName of Object.keys(config.extensions)) {
