@@ -190,6 +190,13 @@ namespace sc {
 			for (MatrixBank& bank : swf.matrixBanks) {
 				base_swf.matrixBanks.push_back(bank);
 			}
+
+			// Additional texture preprocessing
+			for (SWFTexture& texture : base_swf.textures)
+			{
+				texture.encoding(config.textureEncoding)
+			}
+
 			for (SWFTexture& texture : swf.textures) {
 				base_swf.textures.push_back(texture);
 			}
@@ -461,6 +468,8 @@ namespace sc {
 				}
 			}
 
+			context.Window()->DestroyStatusBar(status);
+
 			uint16_t command_index = 0;
 			for (uint32_t shape_index = 0; swf.shapes.size() > shape_index; shape_index++)
 			{
@@ -500,8 +509,6 @@ namespace sc {
 					command_index++;
 				}
 			}
-
-			context.Window()->DestroyStatusBar(status);
 		}
 
 		void SCWriter::Finalize() {
