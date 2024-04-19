@@ -32,7 +32,9 @@ const buildDirectory = join(__dirname, isDev ? "build" : "build_release");
 const outputDirectory = join(libPath, "win");
 const binaryDirectory = join(buildDirectory, "animate_bin", activeConfiguration);
 
-const cmakeFlags = [
+const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
+
+const CmakeFlagsList = [
     "-DBUILD_SHARED_LIBS=OFF",
     "-DSC_ANIMATE_IMAGE_DEBUG=OFF",
     "-DBUILD_WITH_STATIC_CRT=OFF",
@@ -40,26 +42,7 @@ const cmakeFlags = [
     "-DLIBNEST2D_HEADER_ONLY=OFF"
 ]
 
-const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
-
-const defaultBuildDirectory = join(__dirname, "build");
-
-const releaseBuildDirectory = join(__dirname, "build_release");
-
-const buildDirectory = isDev ? defaultBuildDirectory : releaseBuildDirectory;
-
-const ReleaseCmakeFlags = [
-    "-DBUILD_SHARED_LIBS=OFF",
-    "-DSC_ANIMATE_IMAGE_DEBUG=OFF",
-    "-DBUILD_WITH_STATIC_CRT=OFF",
-    `-DFETCHCONTENT_BASE_DIR=${join(defaultBuildDirectory, "_deps")}`
-]
-const DebugCmakeFlags = [
-    "-DBUILD_SHARED_LIBS=ON",
-    "-DSC_ANIMATE_IMAGE_DEBUG=ON",
-]
-
-const CmakeFlags = (isDev ? DebugCmakeFlags : ReleaseCmakeFlags).join(" ");
+const CmakeFlags = CmakeFlagsList.join(" ");
 
 function buildWindows() {
     const cmakePath = which.sync("cmake");
@@ -81,7 +64,7 @@ function buildWindows() {
         progress("Now you can compile Binaries from IDE")
         return;
     }
-    
+
     exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
     exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
 
