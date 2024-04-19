@@ -53,7 +53,8 @@ namespace sc {
 			GetEventHandler()->QueueEvent(event);
 
 			// await result
-			while (!result);
+			std::unique_lock<std::mutex> guard(m_window_mut);
+			m_window_cv.wait(guard, [&result]{return result != nullptr; });
 
 			return result;
 		}
@@ -66,7 +67,8 @@ namespace sc {
 			GetEventHandler()->QueueEvent(event);
 
 			// await result
-			while (!destroyed);
+			std::unique_lock<std::mutex> guard(m_window_mut);
+			m_window_cv.wait(guard, [&destroyed] {return destroyed; });
 		}
 
 		void PluginWindow::ThrowException(const wxString& what) {
@@ -108,6 +110,8 @@ namespace sc {
 			ScaleByContent();
 
 			event.result = progressBar;
+
+			m_window_cv.notify_all();
 		}
 
 		void PluginWindow::OnProgressDestroy(PluginDestroyProgressEvent& event)
@@ -116,6 +120,8 @@ namespace sc {
 			ScaleByContent();
 
 			*event.destroyed = true;
+
+			m_window_cv.notify_all();
 		}
 	}
 }

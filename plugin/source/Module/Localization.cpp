@@ -29,8 +29,9 @@ namespace sc {
 		};
 
 		std::string Localization::GetUTF(const std::string& TID) {
-			if (m_locale[TID].is_string()) {
-				return m_locale[TID];
+			auto value = m_locale.at(TID);
+			if (value.is_string()) {
+				return value;
 			}
 			else {
 				return TID;

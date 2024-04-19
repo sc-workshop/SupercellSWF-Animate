@@ -23,15 +23,18 @@ namespace sc {
 
 			auto start = std::chrono::high_resolution_clock::now();
 
-			bool isWindowReady = false;
+			std::mutex publishing_ui;
+			// Must be unlocked when ui is ready to use
+			publishing_ui.lock();
+
 			std::thread progressWindow(
-				[&context, &isWindowReady]()
+				[&context, &publishing_ui]()
 				{
 					context.InitializeWindow();
 					wxEntryStart(0, nullptr);
 					wxTheApp->CallOnInit();
 
-					isWindowReady = true;
+					publishing_ui.unlock();
 
 					wxTheApp->OnRun();
 					wxTheApp->OnExit();
@@ -42,10 +45,10 @@ namespace sc {
 			);
 
 			FCM::Result result = FCM_SUCCESS;
-			std::thread publishing([&context, &result, &isWindowReady]()
+			std::thread publishing([&context, &result, &publishing_ui]()
 				{
-					// Do nothing until window is ready
-					while (!isWindowReady);
+					// Block thread until publishing ui is ready
+					publishing_ui.lock();
 
 					// Removes Exception catch in debug mode
 #if !(SC_DEBUG)
@@ -75,7 +78,7 @@ namespace sc {
 						result = FCM_EXPORT_FAILED;
 					}
 #endif
-
+					publishing_ui.unlock();
 					context.Window()->readyToExit = true;
 					context.Window()->Close();
 				}

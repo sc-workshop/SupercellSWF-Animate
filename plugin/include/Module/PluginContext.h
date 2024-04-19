@@ -54,7 +54,6 @@ namespace sc {
 
 			// Plugin Localization
 			Localization locale;
-
 		public:
 			template<typename T>
 			FCM::AutoPtr<T> GetService(FCM::SRVCID id) {

@@ -26,7 +26,7 @@ namespace sc {
 			template <class ... Args>
 			std::u16string GetString(const std::string& TID, Args ... args)
 			{
-				auto text = m_locale[TID];
+				auto text = m_locale.at(TID);
 				if (!text.is_string()) return Localization::ToUtf16(TID);
 
 				std::u16string format = Localization::ToUtf16(text);

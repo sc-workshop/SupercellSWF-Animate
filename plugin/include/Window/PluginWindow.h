@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <thread>
 #include <wx/wx.h>
 
@@ -41,6 +42,9 @@ namespace sc {
 			wxBoxSizer* panelSizer;
 			wxBoxSizer* contentSizer;
 			wxPanel* panel;
+
+			std::condition_variable m_window_cv;
+			std::mutex m_window_mut;
 
 			wxDECLARE_EVENT_TABLE();
 		};
