@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 include(FetchContent)
 
 set(TARGET ScAnimatePlugin)
@@ -15,14 +15,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SupercellFlash)
 
 if (${SC_ANIMATE_IMAGE_DEBUG})
-	set(BUILD_LIST CACHE INTERNAL ""
-			core
-			imgproc
-			imgcodecs
-			highgui
-	)
+	set(BUILD_LIST "imgproc,imgcodecs,highgui" CACHE STRING "")
 endif()
-
 
 # AtlasGenerator
 FetchContent_Declare(
@@ -39,7 +33,7 @@ if (${SC_ANIMATE_IMAGE_DEBUG})
 endif()
 
 # wxWidgets
-set(wxBUILD_SHARED OFF)
+set(wxBUILD_SHARED ${BUILD_SHARED_LIBS})
 FetchContent_Declare(
     wxWidgets
     GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
@@ -77,9 +71,9 @@ sc_core_base_setup(${TARGET})
 
 set_target_properties(${TARGET}
     PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
 )
 
 set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "Plugin")
@@ -104,3 +98,12 @@ target_include_directories(${TARGET}
     PUBLIC
     "include/"
 )
+
+if (WIN32 AND BUILD_SHARED_LIBS)
+    add_custom_command(
+        TARGET ${TARGET} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${TARGET}> $<TARGET_FILE_DIR:${TARGET}>
+        COMMAND_EXPAND_LISTS
+    )
+
+endif()

@@ -53,12 +53,12 @@ namespace sc {
 					}
 					catch (const PluginException& exception)
 					{
-						context.window()->ThrowException((wchar_t*)exception.Title());
-						context.Trace(u"%s\n%s", exception.title(), exception.Description());
+						context.Window()->ThrowException((wchar_t*)exception.Title());
+						context.Trace(u"%s\n%s", exception.Title(), exception.Description());
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const sc::GeneralRuntimeException& exception) {
-						context.window()->ThrowException(exception.what());
+						context.Window()->ThrowException(exception.what());
 						context.Trace(exception.message());
 						result = FCM_EXPORT_FAILED;
 					}

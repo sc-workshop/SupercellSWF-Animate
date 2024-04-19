@@ -108,7 +108,7 @@ export function extensionsFolder() {
 }
 
 export function makeLink(src: string, dst: string) {
-    const type = isWindows ? 'junction' : 'dir'
+    progress(`Creating link from \"${src}\" to \"${dst}\"`, "blue")
 
-    symlinkSync(src, dst, type)
+    symlinkSync(src, dst, "dir")
 }

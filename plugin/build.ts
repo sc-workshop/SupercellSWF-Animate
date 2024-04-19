@@ -28,6 +28,18 @@ const doctypeId = "com.scwmake.SupercellSWF";
 
 const assetsFolder = "resources"
 
+const buildDirectory = join(__dirname, isDev ? "build" : "build_release");
+const outputDirectory = join(libPath, "win");
+const binaryDirectory = join(buildDirectory, "animate_bin", activeConfiguration);
+
+const cmakeFlags = [
+    "-DBUILD_SHARED_LIBS=OFF",
+    "-DSC_ANIMATE_IMAGE_DEBUG=OFF",
+    "-DBUILD_WITH_STATIC_CRT=OFF",
+    "-DRP_BUILD_SHARED_LIBS=OFF",
+    "-DLIBNEST2D_HEADER_ONLY=OFF"
+]
+
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 function buildWindows() {
@@ -43,20 +55,16 @@ function buildWindows() {
     });
     }
 
-    const buildDirectory = join(__dirname, "build");
-    const outputDirectory = join(libPath, "win");
-    const binaryDirectory = join(buildDirectory, "bin", activeConfiguration);
-
-    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}"`);
-
     if (isDev)
     {
         mkdirSync(binaryDirectory, { recursive: true });
         makeLink(binaryDirectory, outputDirectory);
+        progress("Now you can compile Binaries from IDE")
         return;
     }
 
-    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
+    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${cmakeFlags.join(" ")}"`);
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
 
     copyDir(binaryDirectory, outputDirectory);
     progress("Done");
