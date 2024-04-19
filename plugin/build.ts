@@ -81,7 +81,8 @@ function buildWindows() {
         progress("Now you can compile Binaries from IDE")
         return;
     }
-
+    
+    exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
     exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} -DBUILD_SHARED_LIBS=OFF`);
 
     copyDir(binaryDirectory, outputDirectory);
