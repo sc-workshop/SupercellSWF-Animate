@@ -1,5 +1,9 @@
 #include "Module/PluginContext.h"
 
+#include <sstream>
+
+#include "PluginConfiguration.h"
+
 #ifdef _WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
@@ -11,6 +15,16 @@ namespace sc
 {
 	namespace Adobe
 	{
+		PluginContext::PluginContext()
+		{
+			const std::string log_name = std::string(DOCTYPE_UNIVERSAL_NAME "_log.txt");
+			const fs::path log_path = fs::temp_directory_path() / log_name;
+
+			logger = spdlog::basic_logger_mt(DOCTYPE_NAME, log_path.string());
+			logger->set_pattern("[%H:%M:%S] [%l] >> %v");
+			spdlog::set_default_logger(logger);
+		}
+
 		void PluginContext::UpdateCallback(FCM::PIFCMCallback active_callback)
 		{
 			callback = active_callback;
@@ -84,6 +98,42 @@ namespace sc
 			default:
 				return modulePath;
 			}
+		}
+
+		std::string PluginContext::SystemInfo()
+		{
+#if SC_MSVC
+			std::stringstream result;
+
+			HMODULE module = LoadLibrary(TEXT("ntdll.dll"));
+			if (module) {
+				typedef void (WINAPI* RtlGetVersion_FUNC) (OSVERSIONINFOEXW*);
+				RtlGetVersion_FUNC func = (RtlGetVersion_FUNC)GetProcAddress(module, "RtlGetVersion");
+				if (func == 0) {
+					FreeLibrary(module);
+					return "Unknown";
+				}
+
+				OSVERSIONINFOEXW info;
+				ZeroMemory(&info, sizeof(info));
+
+				info.dwOSVersionInfoSize = sizeof(info);
+				func(&info);
+
+				result << "Windows ";
+				result << info.dwMajorVersion << "." << info.dwMinorVersion << "." << info.dwBuildNumber << " ";
+			}
+			else
+			{
+				return "Unknown";
+			}
+
+			FreeLibrary(module);
+
+			return result.str();
+#else
+#error not implemented
+#endif
 		}
 	}
 }

@@ -5,35 +5,6 @@
 #include "Module/PluginContext.h"
 #include "Module/Symbol/SymbolContext.h"
 
-// namespace sc {
-// 	namespace Adobe {
-// 		namespace Curve {
-// 			// De Casteljau's algorithm to rasterize a Bezier curve
-// 			void rasterizeQuadBezier(std::vector<Point2D>& points, const Point2D& p0, const Point2D& p1, const Point2D& p2, float tStep) {
-// 				for (float t = 0.0f; t <= 1.0f; t += tStep) {
-// 					float mt = 1.0f - t;
-// 					float x = mt * mt * p0.x + 2 * mt * t * p1.x + t * t * p2.x;
-// 					float y = mt * mt * p0.y + 2 * mt * t * p1.y + t * t * p2.y;
-// 					points.emplace_back(x, y);
-// 				}
-// 			}
-//
-// 			void rasterizeCubicBezier(std::vector<Point2D>& points, const Point2D& p0, const Point2D& p1, const Point2D& p2, const Point2D& p3, float tStep) {
-// 				for (float t = 0.0f; t <= 1.0f; t += tStep) {
-// 					float mt = 1.0f - t;
-// 					float mt2 = mt * mt;
-// 					float t2 = t * t;
-//
-// 					float x = mt2 * mt * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t2 * t * p3.x;
-// 					float y = mt2 * mt * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t2 * t * p3.y;
-//
-// 					points.emplace_back(x, y);
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
 namespace sc {
 	namespace Adobe {
 		FilledElement::FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape) {

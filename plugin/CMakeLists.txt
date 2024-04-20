@@ -57,6 +57,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+# spdlog
+set(SPDLOG_BUILD_SHARED  ${BUILD_SHARED_LIBS})
+set(SPDLOG_ENABLE_PCH ON)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.13.0
+)
+FetchContent_MakeAvailable(spdlog)
+
 file(GLOB_RECURSE SOURCES
     "source/*"
 )
@@ -91,6 +101,7 @@ target_link_libraries(${TARGET} PUBLIC
     CDT
     wx::core wx::base
     nlohmann_json::nlohmann_json
+    spdlog::spdlog
 	$<$<BOOL:${SC_ANIMATE_IMAGE_DEBUG}>: opencv_highgui>
 )
 

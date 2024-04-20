@@ -17,6 +17,9 @@
 
 #include "Window/PluginWindowApp.h"
 
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+
 namespace sc {
 	namespace Adobe {
 		class PluginContext {
@@ -28,10 +31,10 @@ namespace sc {
 			}
 
 		private:
-			PluginContext() {}
-			~PluginContext() {}
-			PluginContext(const PluginContext&);
-			PluginContext& operator=(const PluginContext&);
+			PluginContext();
+			~PluginContext() = default;
+			PluginContext(const PluginContext&) = delete;
+			PluginContext& operator=(const PluginContext&) = delete;
 
 			// Progress Window
 			PluginWindowApp* m_app = nullptr;
@@ -54,6 +57,10 @@ namespace sc {
 
 			// Plugin Localization
 			Localization locale;
+
+			// Plugin Logger
+			std::shared_ptr<spdlog::logger> logger;
+
 		public:
 			template<typename T>
 			FCM::AutoPtr<T> GetService(FCM::SRVCID id) {
@@ -111,6 +118,8 @@ namespace sc {
 			};
 
 			static fs::path CurrentPath(PathType type = PathType::Extension);
+
+			static std::string SystemInfo();
 		};
 	}
 }

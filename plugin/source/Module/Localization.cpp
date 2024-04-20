@@ -9,6 +9,7 @@ namespace sc {
 			PluginContext& context = PluginContext::Instance();
 
 			fs::path localesPath = PluginContext::CurrentPath(PluginContext::PathType::Locale);
+			context.logger->info("Locales storage: {}", localesPath.string());
 
 			fs::path currentLocalePath = fs::path(localesPath / LanguageCode.append(".json"));
 
@@ -16,6 +17,7 @@ namespace sc {
 				currentLocalePath = fs::path(localesPath / "en_EN.json");
 			}
 
+			context.logger->info("Active locale file: {}", currentLocalePath.string());
 			std::ifstream file(currentLocalePath);
 
 			try {
@@ -23,6 +25,7 @@ namespace sc {
 			}
 			catch (const json::exception& exception)
 			{
+				context.logger->error("Failed to parse locale file: {}", exception.what());
 				context.Trace("Failed to load localization");
 				context.Trace(exception.what());
 			}

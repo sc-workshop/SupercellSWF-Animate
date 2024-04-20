@@ -1,4 +1,5 @@
 #include <AnimateSDK/core/common/FCMPluginInterface.h>
+#include "AnimateSDK/app/Application/Service/IApplicationService.h"
 
 #include "Document.h"
 #include "Publisher.h"
@@ -26,8 +27,30 @@ namespace sc {
 			FCM::Result PluginBoot(FCM::PIFCMCallback callback)
 		{
 			PluginContext& context = PluginContext::Instance();
+			context.logger->info("Called PluginBoot");
+
 			context.UpdateCallback(callback);
-			return Module.Init(callback);
+
+			context.logger->info("System Info: ");
+			auto application = context.GetService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
+
+			{
+				FCM::U_Int32 version;
+				application->GetVersion(version);
+				context.logger->info("	App: Adobe Animate {}.{}.{}.{}",
+					((version >> 24) & 0xFF),
+					((version >> 16) & 0xFF),
+					((version >> 8) & 0xFF),
+					((version) & 0xFF)
+				);
+			}
+
+			context.logger->info("	OS: {}", PluginContext::SystemInfo());
+
+			FCM::Result status = Module.Init(callback);
+			context.logger->info("Module inited with status: {}", (uint32_t)status);
+
+			return status;
 		}
 
 		extern "C" FCMPLUGIN_IMP_EXP
@@ -78,8 +101,10 @@ namespace sc {
 		extern "C" FCMPLUGIN_IMP_EXP
 			FCM::Result PluginShutdown()
 		{
-			Module.finalize();
+			PluginContext& context = PluginContext::Instance();
+			context.logger->info("Called PluginShutdown\n");
 
+			Module.finalize();
 			return FCM_SUCCESS;
 		}
 	};

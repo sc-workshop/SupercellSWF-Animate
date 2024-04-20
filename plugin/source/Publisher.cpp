@@ -15,6 +15,7 @@ namespace sc {
 			const FCM::PIFCMDictionary appConfig
 		) {
 			PluginContext& context = PluginContext::Instance();
+			context.logger->info("Called Publising");
 
 			PluginSessionConfig::Clear();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
@@ -28,6 +29,7 @@ namespace sc {
 			// Must be unlocked when ui is ready to use
 			publishing_ui.lock();
 
+			context.logger->info("Starting UI thread...");
 			std::thread progressWindow(
 				[&context, &publishing_ui]()
 				{
@@ -45,6 +47,7 @@ namespace sc {
 				}
 			);
 
+			context.logger->info("Starting Publisher thread...");
 			FCM::Result result = FCM_SUCCESS;
 			std::thread publishing([&context, &result, &publishing_ui]()
 				{
@@ -88,9 +91,12 @@ namespace sc {
 			publishing.join();
 			progressWindow.join();
 
+			context.logger->info("Publisher finished with status: {}", (uint32_t)result);
+
 			auto end = std::chrono::high_resolution_clock::now();
 
 			long long int executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+			context.logger->info("Execution time: {}", executionTime);
 
 			context.Trace(
 				context.locale.GetString("TID_EXPORT_TIME_STATUS", executionTime)

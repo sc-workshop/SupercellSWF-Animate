@@ -7,38 +7,59 @@
 namespace sc {
 	namespace Adobe {
 		void PluginSessionConfig::FromDict(const FCM::PIFCMDictionary dict) {
+			PluginContext& context = PluginContext::Instance();
+
 			std::string serializedConfig;
 			if (!dict->Get(DOCTYPE_NAME, serializedConfig))
 			{
+				context.logger->warn("Failed to load publish config for " DOCTYPE_NAME);
 				return;
 			};
 
 			if (serializedConfig.empty()) {
+				context.logger->warn("Publish settings is empty");
 				return;
 			}
+
+			context.logger->info("Successfully loaded publish settings");
+
+			context.logger->info("Publish Settings:");
 
 			json data = json::parse(serializedConfig);
 
 			outputFilepath = fs::path(Localization::ToUtf16(data["output"]));
+			context.logger->info("	outputFilepath: ", outputFilepath.string());
 
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
+			context.logger->info("	hasPrecisionMatrices: ", hasPrecisionMatrices);
 
 			exportToExternal = data["exportToExternal"];
+			context.logger->info("	exportToExternal: ", exportToExternal);
+
 			exportToExternalPath = fs::path(Localization::ToUtf16(data["exportToExternalPath"]));
+			context.logger->info("	exportToExternalPath: ", exportToExternalPath.string());
 
 			hasExternalTexture = data["hasExternalTexture"];
+			context.logger->info("	hasExternalTexture: ", hasExternalTexture);
 			hasExternalCompressedTexture = data["hasExternalCompressedTexture"];
+			context.logger->info("	hasExternalCompressedTexture: ", hasExternalCompressedTexture);
 			hasLowresTexture = data["hasLowresTexture"];
+			context.logger->info("	hasLowresTexture: ", hasLowresTexture);
 			hasMultiresTexture = data["hasMultiresTexture"];
+			context.logger->info("	hasMultiresTexture: ", hasMultiresTexture);
 			textureMaxWidth = data["textureMaxWidth"];
+			context.logger->info("	textureMaxWidth: ", textureMaxWidth);
 			textureMaxHeight = data["textureMaxHeight"];
+			context.logger->info("	textureMaxHeight: ", textureMaxHeight);
 
 			if (data["compressionMethod"].is_number_unsigned()) {
 				compression = (sc::SWFStream::Signature)(data["compressionMethod"]);
+				context.logger->info("	compression: ", (uint8_t)compression);
 			}
 
 			if (data["textureScaleFactor"].is_number_unsigned()) {
 				uint8_t scaleFactor = data["textureScaleFactor"];
+				context.logger->info("	scaleFactor: ", scaleFactor);
 				switch (scaleFactor)
 				{
 				case 0:
@@ -57,18 +78,22 @@ namespace sc {
 
 			if (data["textureEncoding"].is_number_unsigned()) {
 				textureEncoding = (SWFTexture::TextureEncoding)data["textureEncoding"];
+				context.logger->info("	textureEncoding: ", (uint8_t)textureEncoding);
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
 				textureQuality = (Quality)data["textureQuality"];
+				context.logger->info("	textureQuality: ", (uint8_t)textureQuality);
 			}
 
 			if (data["multiResolutinSuffix"].is_string()) {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
+				context.logger->info("	textureQuality: ", multiResolutionSuffix);
 			}
 
 			if (data["lowResolutionSuffix"].is_string()) {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
+				context.logger->info("	lowResolutionSuffix: ", lowResolutionSuffix);
 			}
 		}
 
