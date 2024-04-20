@@ -45,13 +45,11 @@ namespace sc {
 			);
 
 		public:
-
-			void AddSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
-			void AddRasterizedSolidColorRegion(const FilledElementPath& contour, const std::vector<FilledElementPath>& holes, const cv::Scalar& color);
-
 			void AddFilledShapeRegion(const FilledElementRegion& region);
 
 			bool IsValidFilledShapeRegion(const FilledElementRegion& region);
+
+			bool IsComplexShapeRegion(const FilledElementRegion& region);
 
 		private:
 			SCWriter& m_writer;

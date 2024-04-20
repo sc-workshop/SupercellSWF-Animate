@@ -46,27 +46,9 @@ namespace sc {
 			SupercellSWF swf;
 
 		public:
-			Ref<cv::Mat> GetBitmap(const SpriteElement& item)
-			{
-				std::u16string name = item.name();
+			Ref<cv::Mat> GetBitmap(const SpriteElement& item);
 
-				if (m_cached_images.count(name))
-				{
-					return m_cached_images[name];
-				}
-
-				item.exportImage(sprite_temp_path);
-
-				Ref<cv::Mat> image = CreateRef<cv::Mat>(cv::imread(sprite_temp_path.string(), cv::IMREAD_UNCHANGED));
-				m_cached_images[name] = image;
-
-				return image;
-			}
-
-			void AddGraphicGroup(const GraphicGroup& group)
-			{
-				m_graphic_groups.push_back(group);
-			}
+			void AddGraphicGroup(const GraphicGroup& group);
 
 		public:
 			void LoadExternal();

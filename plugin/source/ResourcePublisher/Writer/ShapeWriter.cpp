@@ -35,9 +35,25 @@ namespace sc {
 			std::vector<CDT::V2d<float>> vertices;
 			std::vector<CDT::Edge> edges;
 
-			for (const Point2D& point : contour.points) {
-				vertices.push_back({ point.x, point.y });
+			{
+				std::vector<Point2D> points;
+				contour.Rasterize(points);
+
+				for (Point2D& point : points)
+				{
+					vertices.push_back({ point.x, point.y });
+				}
 			}
+
+			// for (size_t i = 0; contour.Count() > i; i++)
+			// {
+			// 	const FilledElementPathSegment& segment = contour.GetSegment(i);
+			//
+			// 	for (Point2D& point : segment)
+			// 	{
+			// 		vertices.push_back(CDT::V2d<float>::make(point.x, point.y));
+			// 	}
+			// }
 
 			// Contour
 			for (uint32_t i = 0; vertices.size() > i; i++) {
@@ -49,16 +65,49 @@ namespace sc {
 			}
 
 			// Holes
+			// for (const FilledElementPath& hole : holes) {
+			// 	size_t point_index = 0;
+			// 	size_t vertices_offset = vertices.size();
+			// 	for (size_t i = 0; hole.Count() > i; i++)
+			// 	{
+			// 		const FilledElementPathSegment& segment = contour.GetSegment(i);
+			//
+			// 		for (auto it = segment.begin(); it != segment.end(); it++)
+			// 		{
+			// 			uint32_t second_index = vertices_offset + point_index + 1;
+			// 			if (it == segment.end())
+			// 			{
+			// 				second_index = vertices_offset;
+			// 			}
+			// 			edges.push_back(CDT::Edge(vertices_offset + point_index, second_index));
+			// 			point_index++;
+			// 		}
+			// 	}
+			//
+			// 	for (size_t i = 0; hole.Count() > i; i++)
+			// 	{
+			// 		const FilledElementPathSegment& segment = hole.GetSegment(i);
+			//
+			// 		for (Point2D& point : segment)
+			// 		{
+			// 			vertices.push_back(CDT::V2d<float>::make(point.x, point.y));
+			// 		}
+			// 	}
+			// }
+
 			for (const FilledElementPath& hole : holes) {
-				for (uint32_t i = 0; hole.points.size() > i; i++) {
+				std::vector<Point2D> points;
+				hole.Rasterize(points);
+
+				for (uint32_t i = 0; points.size() > i; i++) {
 					uint32_t secondIndex = vertices.size() + i + 1;
-					if (secondIndex >= hole.points.size() + vertices.size()) {
+					if (secondIndex >= points.size() + vertices.size()) {
 						secondIndex = vertices.size();
 					}
 					edges.push_back(CDT::Edge(vertices.size() + i, secondIndex));
 				}
 
-				for (const Point2D& point : hole.points) {
+				for (const Point2D& point : points) {
 					vertices.push_back({ point.x, point.y });
 				}
 			}
@@ -105,16 +154,24 @@ namespace sc {
 
 			const int contour_shift = 8;
 
+			auto process_points = [&offset, &contour_shift](const FilledElementPath& path, std::vector<cv::Point>& points)
+			{
+				std::vector<Point2D> rasterized;
+				path.Rasterize(rasterized);
+
+				for (Point2D curve_point : rasterized)
+				{
+					points.emplace_back(
+						(curve_point.x - offset.x) * pow(2, contour_shift),
+						(curve_point.y - offset.y) * pow(2, contour_shift)
+					);
+				}
+			};
+
 			// Contour
 			{
 				std::vector<cv::Point> points;
-				for (const Point2D& point : region.contour.points)
-				{
-					points.emplace_back(
-						(point.x - offset.x) * pow(2, contour_shift),
-						(point.y - offset.y) * pow(2, contour_shift)
-					);
-				}
+				process_points(region.contour, points);
 
 				cv::fillConvexPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
 #ifdef CV_DEBUG
@@ -127,13 +184,7 @@ namespace sc {
 				for (const FilledElementPath& path : region.holes)
 				{
 					std::vector<cv::Point> path_points;
-					for (const Point2D& point : path.points)
-					{
-						path_points.emplace_back(
-							(point.x - offset.x) * pow(2, contour_shift),
-							(point.y - offset.y) * pow(2, contour_shift)
-						);
-					}
+					process_points(path, path_points);
 
 					cv::fillConvexPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
 				}
@@ -152,10 +203,10 @@ namespace sc {
 			case FilledElementRegion::ShapeType::SolidColor:
 			{
 				const cv::Scalar color(
-					region.solidColor.blue,
-					region.solidColor.green,
-					region.solidColor.red,
-					region.solidColor.alpha
+					region.solid.color.blue,
+					region.solid.color.green,
+					region.solid.color.red,
+					region.solid.color.alpha
 				);
 
 				filling_image.setTo(color);
@@ -221,12 +272,40 @@ namespace sc {
 			m_group.AddItem<SpriteItem>(CreateRef<cv::Mat>(canvas), transform);
 		}
 
+		bool SCShapeWriter::IsComplexShapeRegion(const FilledElementRegion& region)
+		{
+			for (size_t i = 0; region.contour.Count() > i; i++)
+			{
+				const FilledElementPathSegment& segment = region.contour.GetSegment(i);
+
+				if (segment.SegmentType() != FilledElementPathSegment::Type::Line)
+				{
+					return true;
+				}
+			}
+
+			for (const FilledElementPath& path : region.holes)
+			{
+				for (size_t i = 0; path.Count() > i; i++)
+				{
+					const FilledElementPathSegment& segment = path.GetSegment(i);
+
+					if (segment.SegmentType() != FilledElementPathSegment::Type::Line)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 		bool SCShapeWriter::IsValidFilledShapeRegion(const FilledElementRegion& region)
 		{
 			if (region.type == FilledElementRegion::ShapeType::SolidColor)
 			{
 				// Skip all regions with zero mask_alpha
-				if (region.solidColor.alpha <= 0)
+				if (region.solid.color.alpha <= 0)
 				{
 					return false;
 				}
@@ -244,15 +323,16 @@ namespace sc {
 
 			bool should_rasterize =
 				region.type != FilledElementRegion::ShapeType::SolidColor ||
-				region.IsComplex();
+				IsComplexShapeRegion(region);
+
+			bool is_contour =
+				!should_rasterize &&
+				region.contour.Count() <= 4 &&
+				region.holes.empty();
 
 			bool should_triangulate =
 				!should_rasterize &&
-				region.contour.points.size() > 4;
-
-			bool is_contour =
-				!should_triangulate &&
-				region.contour.points.size() <= 4;
+				region.contour.Count() > 4;
 
 			if (should_rasterize)
 			{
@@ -260,12 +340,15 @@ namespace sc {
 			}
 			else if (should_triangulate)
 			{
-				AddTriangulatedRegion(region.contour, region.holes, region.solidColor);
+				AddTriangulatedRegion(region.contour, region.holes, region.solid.color);
 			}
 			else if (is_contour)
 			{
-				std::vector<FilledItemContour> contour = { FilledItemContour(region.contour.points) };
-				m_group.AddItem<FilledItem>(contour, region.solidColor);
+				std::vector<Point2D> points;
+				region.contour.Rasterize(points);
+
+				std::vector<FilledItemContour> contour = { FilledItemContour(points) };
+				m_group.AddItem<FilledItem>(contour, region.solid.color);
 			}
 		}
 

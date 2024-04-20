@@ -194,7 +194,7 @@ namespace sc {
 			// Additional texture preprocessing
 			for (SWFTexture& texture : base_swf.textures)
 			{
-				texture.encoding(config.textureEncoding)
+				texture.encoding(config.textureEncoding);
 			}
 
 			for (SWFTexture& texture : swf.textures) {
@@ -434,6 +434,8 @@ namespace sc {
 				throw PluginException("TODO");
 			}
 
+			context.Window()->DestroyStatusBar(status);
+
 			for (uint16_t i = 0; texture_count > i; i++) {
 				cv::Mat& atlas = generator.get_atlas(i);
 
@@ -467,8 +469,6 @@ namespace sc {
 					texture.encoding(SWFTexture::TextureEncoding::KhronosTexture);
 				}
 			}
-
-			context.Window()->DestroyStatusBar(status);
 
 			uint16_t command_index = 0;
 			for (uint32_t shape_index = 0; swf.shapes.size() > shape_index; shape_index++)
@@ -561,6 +561,28 @@ namespace sc {
 			swf.save(filepath, config.compression);
 
 			context.Window()->DestroyStatusBar(status);
+		}
+
+		Ref<cv::Mat> SCWriter::GetBitmap(const SpriteElement& item)
+		{
+			std::u16string name = item.name();
+
+			if (m_cached_images.count(name))
+			{
+				return m_cached_images[name];
+			}
+
+			item.exportImage(sprite_temp_path);
+
+			Ref<cv::Mat> image = CreateRef<cv::Mat>(cv::imread(sprite_temp_path.string(), cv::IMREAD_UNCHANGED));
+			m_cached_images[name] = image;
+
+			return image;
+		}
+
+		void SCWriter::AddGraphicGroup(const GraphicGroup& group)
+		{
+			m_graphic_groups.push_back(group);
 		}
 	}
 }
