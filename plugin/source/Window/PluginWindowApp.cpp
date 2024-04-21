@@ -22,9 +22,16 @@ namespace sc {
 
 			context.logger->info("Document name: {}", documentName.string());
 
-			window = new PluginWindow(
-				context.locale.GetString("TID_WINDOW_TITLE", documentName.u16string().c_str())
-			);
+			try
+			{
+				window = new PluginWindow(
+					context.locale.GetString("TID_WINDOW_TITLE", documentName.u16string().c_str())
+				);
+			}
+			catch (...)
+			{
+				context.logger->info("Failed to init window: {}", wxSysErrorMsgStr(0).ToStdString());
+			}
 
 			{
 				wxIcon icon;

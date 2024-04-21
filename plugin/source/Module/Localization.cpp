@@ -14,7 +14,7 @@ namespace sc {
 			fs::path currentLocalePath = fs::path(localesPath / LanguageCode.append(".json"));
 
 			if (!fs::exists(localesPath)) {
-				currentLocalePath = fs::path(localesPath / "en_EN.json");
+				currentLocalePath = fs::path(localesPath / "en_US.json");
 			}
 
 			context.logger->info("Active locale file: {}", currentLocalePath.string());
