@@ -34,6 +34,7 @@ namespace sc
 			FilledElementPathSegment& GetSegment(size_t index);
 			void Rasterize(std::vector<Point2D>& points) const;
 			size_t Count() const;
+			void Transform(const DOM::Utils::MATRIX2D&);
 
 		private:
 			std::vector<Ref<FilledElementPathSegment>> m_segments;

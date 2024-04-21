@@ -21,10 +21,12 @@ namespace sc
 
 			virtual float IterationStep() const;
 
+			virtual void Transform(const DOM::Utils::MATRIX2D& matrix);
+
 		public:
-			DOM::Utils::POINT2D begin;
-			DOM::Utils::POINT2D control;
-			DOM::Utils::POINT2D end;
+			Point2D begin;
+			Point2D control;
+			Point2D end;
 		};
 	}
 }

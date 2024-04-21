@@ -45,16 +45,6 @@ namespace sc {
 				}
 			}
 
-			// for (size_t i = 0; contour.Count() > i; i++)
-			// {
-			// 	const FilledElementPathSegment& segment = contour.GetSegment(i);
-			//
-			// 	for (Point2D& point : segment)
-			// 	{
-			// 		vertices.push_back(CDT::V2d<float>::make(point.x, point.y));
-			// 	}
-			// }
-
 			// Contour
 			for (uint32_t i = 0; vertices.size() > i; i++) {
 				uint32_t secondIndex = i + 1;
@@ -65,36 +55,6 @@ namespace sc {
 			}
 
 			// Holes
-			// for (const FilledElementPath& hole : holes) {
-			// 	size_t point_index = 0;
-			// 	size_t vertices_offset = vertices.size();
-			// 	for (size_t i = 0; hole.Count() > i; i++)
-			// 	{
-			// 		const FilledElementPathSegment& segment = contour.GetSegment(i);
-			//
-			// 		for (auto it = segment.begin(); it != segment.end(); it++)
-			// 		{
-			// 			uint32_t second_index = vertices_offset + point_index + 1;
-			// 			if (it == segment.end())
-			// 			{
-			// 				second_index = vertices_offset;
-			// 			}
-			// 			edges.push_back(CDT::Edge(vertices_offset + point_index, second_index));
-			// 			point_index++;
-			// 		}
-			// 	}
-			//
-			// 	for (size_t i = 0; hole.Count() > i; i++)
-			// 	{
-			// 		const FilledElementPathSegment& segment = hole.GetSegment(i);
-			//
-			// 		for (Point2D& point : segment)
-			// 		{
-			// 			vertices.push_back(CDT::V2d<float>::make(point.x, point.y));
-			// 		}
-			// 	}
-			// }
-
 			for (const FilledElementPath& hole : holes) {
 				std::vector<Point2D> points;
 				hole.Rasterize(points);
@@ -352,8 +312,38 @@ namespace sc {
 			}
 		}
 
-		void SCShapeWriter::AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides)
+		void SCShapeWriter::AddSlicedElements(const std::vector<FilledElement>& _elements, const DOM::Utils::RECT& _guides)
 		{
+			// 9Slice spritres are usually very pixelated
+			// So we need to scale their resolution by 2
+			// But xy coordinates must be remains the same
+
+			// So first we create a bigger guide
+			DOM::Utils::RECT guides =
+			{
+				{_guides.topLeft.x * 2.0f, _guides.topLeft.y * 2.0f},
+				{_guides.bottomRight.x * 2.0f, _guides.bottomRight.y * 2.0f}
+			};
+
+			// Then create copy of element
+			// And make their points bigger
+			std::vector<FilledElement> elements;
+			for (const FilledElement& _element : _elements)
+			{
+				FilledElement& element = elements.emplace_back(_element);
+
+				element.Tranform(
+					{
+						2.0f,
+						0.0f,
+						0.0f,
+						2.0f,
+						0.0f,
+						0.0f
+					}
+				);
+			}
+
 			DOM::Utils::RECT elements_bound{
 				{std::numeric_limits<float>::min(),
 				std::numeric_limits<float>::min()},
@@ -401,10 +391,10 @@ namespace sc {
 			}
 
 			const DOM::Utils::MATRIX2D transform = {
-				1.0f,
+				0.5f,
 				0.0f,
 				0.0f,
-				1.0f,
+				0.5f,
 				(FCM::Float)image_position_offset.x,
 				(FCM::Float)image_position_offset.y
 			};

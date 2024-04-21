@@ -96,5 +96,18 @@ namespace sc {
 
 			return result;
 		}
+
+		void FilledElement::Tranform(const DOM::Utils::MATRIX2D& matrix)
+		{
+			for (FilledElementRegion& region : fill)
+			{
+				region.Transform(matrix);
+			}
+
+			for (FilledElementRegion& region : stroke)
+			{
+				region.Transform(matrix);
+			}
+		}
 	}
 }

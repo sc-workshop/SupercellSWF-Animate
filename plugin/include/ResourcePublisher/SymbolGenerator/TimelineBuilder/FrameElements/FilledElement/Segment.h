@@ -27,16 +27,16 @@ namespace sc
 						m_step = 1.0f;
 					}
 				}
-				Iterator& operator++() { 
+				Iterator& operator++() {
 					m_step += m_it_step;
-					return *this; 
+					return *this;
 				}
-				Iterator operator++(int) { 
+				Iterator operator++(int) {
 					Iterator retval = *this;
-					++(*this); 
-					return retval; 
+					++(*this);
+					return retval;
 				}
-				bool operator==(Iterator& other) const { 
+				bool operator==(Iterator& other) const {
 					return m_step >= other.m_step;
 				}
 				bool operator!=(Iterator& other) const {
@@ -44,7 +44,7 @@ namespace sc
 				}
 
 				// Data Access
-				Point2D operator*() const { 
+				Point2D operator*() const {
 					return m_path.Rasterize(m_step);
 				}
 				Point2D operator->() const {
@@ -71,6 +71,7 @@ namespace sc
 			virtual Type SegmentType() const = 0;
 			virtual Point2D Rasterize(float t_step) const = 0;
 			virtual float IterationStep() const = 0;
+			virtual void Transform(const DOM::Utils::MATRIX2D& matrux) = 0;
 
 		public:
 			Iterator begin() const { return Iterator(*this); }

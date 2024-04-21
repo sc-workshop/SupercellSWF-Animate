@@ -94,5 +94,15 @@ namespace sc
 
 			return result;
 		}
+
+		void FilledElementRegion::Transform(const DOM::Utils::MATRIX2D& matrix)
+		{
+			contour.Transform(matrix);
+
+			for (FilledElementPath& hole : holes)
+			{
+				hole.Transform(matrix);
+			}
+		}
 	}
 }

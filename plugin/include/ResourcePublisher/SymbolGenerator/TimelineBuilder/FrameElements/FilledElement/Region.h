@@ -43,6 +43,8 @@ namespace sc
 			// Bound of contour
 			DOM::Utils::RECT Bound() const;
 
+			void Transform(const DOM::Utils::MATRIX2D& matrix);
+
 		public:
 			ShapeType type;
 

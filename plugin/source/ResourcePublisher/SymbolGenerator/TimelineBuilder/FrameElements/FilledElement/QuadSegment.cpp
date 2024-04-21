@@ -5,9 +5,9 @@ namespace sc
 	namespace Adobe
 	{
 		FilledElementPathQuadSegment::FilledElementPathQuadSegment(const DOM::Utils::SEGMENT& segment) :
-			begin(segment.quadBezierCurve.anchor1),
-			control(segment.quadBezierCurve.control),
-			end(segment.quadBezierCurve.anchor2)
+			begin(segment.quadBezierCurve.anchor1.x, segment.quadBezierCurve.anchor1.x),
+			control(segment.quadBezierCurve.control.x, segment.quadBezierCurve.control.y),
+			end(segment.quadBezierCurve.anchor2.x, segment.quadBezierCurve.anchor2.y)
 		{
 		}
 
@@ -29,5 +29,12 @@ namespace sc
 
 			return (1.0f / distance.x) + (1.0f / distance.y);
 		};
+
+		void FilledElementPathQuadSegment::Transform(const DOM::Utils::MATRIX2D& matrix)
+		{
+			begin.Transform(matrix);
+			control.Transform(matrix);
+			end.Transform(matrix);
+		}
 	}
 }

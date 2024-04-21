@@ -4,7 +4,9 @@ namespace sc
 {
 	namespace Adobe
 	{
-		FilledElementPathLineSegment::FilledElementPathLineSegment(const DOM::Utils::SEGMENT& segment) : begin(segment.line.endPoint1), end(segment.line.endPoint2)
+		FilledElementPathLineSegment::FilledElementPathLineSegment(const DOM::Utils::SEGMENT& segment) :
+			begin(segment.line.endPoint1.x, segment.line.endPoint1.y),
+			end(segment.line.endPoint2.x, segment.line.endPoint2.y)
 		{
 		}
 
@@ -18,6 +20,12 @@ namespace sc
 				return Point2D(begin.x, begin.y);
 			}
 		};
+
+		void FilledElementPathLineSegment::Transform(const DOM::Utils::MATRIX2D& matrix)
+		{
+			begin.Transform(matrix);
+			end.Transform(matrix);
+		}
 
 		float FilledElementPathLineSegment::IterationStep() const {
 			return 1.0f;

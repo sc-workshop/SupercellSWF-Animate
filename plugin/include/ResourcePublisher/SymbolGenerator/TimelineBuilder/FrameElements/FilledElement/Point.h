@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimateSDK/app/DOM/Utils/DOMTypes.h"
 
 namespace sc
 {
@@ -16,6 +17,9 @@ namespace sc
 			bool operator!=(const Point2D& other) const {
 				return !operator==(other);
 			}
+
+		public:
+			void Transform(const DOM::Utils::MATRIX2D& matrix);
 
 		public:
 			float x = 0;
