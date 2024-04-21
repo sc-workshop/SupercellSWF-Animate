@@ -5,7 +5,7 @@ namespace sc
 	namespace Adobe
 	{
 		FilledElementPathQuadSegment::FilledElementPathQuadSegment(const DOM::Utils::SEGMENT& segment) :
-			begin(segment.quadBezierCurve.anchor1.x, segment.quadBezierCurve.anchor1.x),
+			begin(segment.quadBezierCurve.anchor1.x, segment.quadBezierCurve.anchor1.y),
 			control(segment.quadBezierCurve.control.x, segment.quadBezierCurve.control.y),
 			end(segment.quadBezierCurve.anchor2.x, segment.quadBezierCurve.anchor2.y)
 		{

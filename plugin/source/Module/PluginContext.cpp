@@ -1,7 +1,5 @@
 #include "Module/PluginContext.h"
 
-#include <sstream>
-
 #include "PluginConfiguration.h"
 
 #ifdef _WINDOWS
@@ -20,7 +18,15 @@ namespace sc
 			const std::string log_name = std::string(DOCTYPE_UNIVERSAL_NAME "_log.txt");
 			const fs::path log_path = fs::temp_directory_path() / log_name;
 
-			logger = spdlog::basic_logger_mt(DOCTYPE_NAME, log_path.string());
+			if (fs::exists(log_path))
+			{
+				fs::remove(log_path);
+			}
+
+			logger_file = std::ofstream(log_path);
+			auto ostream_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(logger_file, true);
+
+			logger = std::make_shared<spdlog::logger>(DOCTYPE_NAME, ostream_sink);
 			logger->set_pattern("[%H:%M:%S] [%l] >> %v");
 			spdlog::set_default_logger(logger);
 		}

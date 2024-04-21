@@ -11,6 +11,8 @@
 #include <stdarg.h>
 #include <exception>
 #include <thread>
+#include <fstream>
+#include <sstream>
 
 #include "Module/PluginException.h"
 #include "Module/Localization.h"
@@ -18,7 +20,7 @@
 #include "Window/PluginWindowApp.h"
 
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/ostream_sink.h"
 
 namespace sc {
 	namespace Adobe {
@@ -60,6 +62,9 @@ namespace sc {
 
 			// Plugin Logger
 			std::shared_ptr<spdlog::logger> logger;
+
+			// Log File for logger
+			std::ofstream logger_file;
 
 		public:
 			template<typename T>

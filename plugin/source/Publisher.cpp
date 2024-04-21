@@ -15,7 +15,7 @@ namespace sc {
 			const FCM::PIFCMDictionary appConfig
 		) {
 			PluginContext& context = PluginContext::Instance();
-			context.logger->info("Called Publising");
+			context.logger->info("--------------------------- Called Publish -----------------------------");
 
 			PluginSessionConfig::Clear();
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
@@ -33,16 +33,23 @@ namespace sc {
 			std::thread progressWindow(
 				[&context, &publishing_ui]()
 				{
+					context.logger->info("Windows intializing has started...");
 					context.InitializeWindow();
-					wxEntryStart(0, nullptr);
-					wxTheApp->CallOnInit();
 
+					bool entry_start_status = wxEntryStart(0, nullptr);
+					context.logger->info("Windows entry initializing finished with status: {}", entry_start_status);
+
+					bool init_status = wxTheApp->CallOnInit();
+					context.logger->info("Windows init finished with status: {}", init_status);
+
+					context.logger->info("Unlocking worker mutex...");
 					publishing_ui.unlock();
 
 					wxTheApp->OnRun();
 					wxTheApp->OnExit();
 					wxEntryCleanup();
 
+					context.logger->info("Destroying window...");
 					context.DestroyWindow();
 				}
 			);
@@ -53,6 +60,7 @@ namespace sc {
 				{
 					// Block thread until publishing ui is ready
 					publishing_ui.lock();
+					context.logger->info("Publishing thread has started...");
 
 					// Removes Exception catch in debug mode
 #if !(SC_DEBUG)
@@ -80,6 +88,8 @@ namespace sc {
 							context.locale.GetString("TID_UNKNOWN_EXCEPTION")
 						);
 						result = FCM_EXPORT_FAILED;
+
+						context.logger->error("Publishing finished with unknown exception");
 					}
 #endif
 					publishing_ui.unlock();
@@ -97,6 +107,7 @@ namespace sc {
 
 			long long int executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
 			context.logger->info("Execution time: {}", executionTime);
+			context.logger->info("------------------------------------------------------------------------");
 
 			context.Trace(
 				context.locale.GetString("TID_EXPORT_TIME_STATUS", executionTime)
