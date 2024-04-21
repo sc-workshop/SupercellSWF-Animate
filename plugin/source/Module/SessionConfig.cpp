@@ -88,7 +88,7 @@ namespace sc {
 
 			if (data["multiResolutinSuffix"].is_string()) {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
-				context.logger->info("	textureQuality: {}", multiResolutionSuffix);
+				context.logger->info("	multiResolutinSuffix: {}", multiResolutionSuffix);
 			}
 
 			if (data["lowResolutionSuffix"].is_string()) {

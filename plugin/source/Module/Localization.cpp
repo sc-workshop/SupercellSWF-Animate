@@ -13,7 +13,7 @@ namespace sc {
 
 			fs::path currentLocalePath = fs::path(localesPath / LanguageCode.append(".json"));
 
-			if (!fs::exists(localesPath)) {
+			if (!fs::exists(currentLocalePath)) {
 				currentLocalePath = fs::path(localesPath / "en_US.json");
 			}
 
