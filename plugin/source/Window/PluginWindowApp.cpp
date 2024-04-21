@@ -20,6 +20,8 @@ namespace sc {
 			fs::path documentName = fs::path((const char16_t*)documentPathPtr).filename();
 			context.falloc->Free(documentPathPtr);
 
+			context.logger->info("Document name: {}", documentName.string());
+
 			window = new PluginWindow(
 				context.locale.GetString("TID_WINDOW_TITLE", documentName.u16string().c_str())
 			);
@@ -27,6 +29,7 @@ namespace sc {
 			{
 				wxIcon icon;
 				fs::path iconPath = PluginContext::CurrentPath(PluginContext::PathType::Assets) / "window.ico";
+				context.logger->info("Loading icon by path: {}", iconPath.string());
 				icon.LoadFile(iconPath.wstring(), wxBITMAP_TYPE_ICO);
 				if (icon.IsOk()) {
 					window->SetIcon(icon);
@@ -35,6 +38,8 @@ namespace sc {
 
 			{
 				fs::path animFolder = PluginContext::CurrentPath(PluginContext::PathType::Assets) / "loading";
+				context.logger->info("Anims storage path: {}", animFolder.string());
+
 				std::vector<std::wstring> files;
 
 				for (const auto& entry : fs::directory_iterator(animFolder)) {
@@ -51,14 +56,23 @@ namespace sc {
 					animation_index = distr(generator);
 				}
 
+				context.logger->info("Animation index: {}", animation_index);
 				wxAnimationCtrl* animation = new wxAnimationCtrl(window, wxID_ANY, wxNullAnimation, wxPoint(335, 5));
-				animation->LoadFile(files[animation_index]);
-				animation->Play();
+				if (animation->LoadFile(files[animation_index]))
+				{
+					animation->Play();
+				};
 			}
 
-			window->Show();
-			SetTopWindow(window);
+			context.logger->info("Calling window->Show()");
+			bool window_showed = window->Show(true);
+			if (!window_showed)
+			{
+				auto message = wxSysErrorMsgStr(0);
+				context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
+			}
 
+			context.logger->info("Window succesfully inited");
 			return true;
 		}
 	}

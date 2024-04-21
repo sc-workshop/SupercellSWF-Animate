@@ -38,9 +38,19 @@ namespace sc {
 
 					bool entry_start_status = wxEntryStart(0, nullptr);
 					context.logger->info("Windows entry initializing finished with status: {}", entry_start_status);
+					if (!entry_start_status)
+					{
+						auto message = wxSysErrorMsgStr(0);
+						context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
+					}
 
 					bool init_status = wxTheApp->CallOnInit();
 					context.logger->info("Windows init finished with status: {}", init_status);
+					if (!init_status)
+					{
+						auto message = wxSysErrorMsgStr(0);
+						context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
+					}
 
 					context.logger->info("Unlocking worker mutex...");
 					publishing_ui.unlock();

@@ -28,38 +28,38 @@ namespace sc {
 			json data = json::parse(serializedConfig);
 
 			outputFilepath = fs::path(Localization::ToUtf16(data["output"]));
-			context.logger->info("	outputFilepath: ", outputFilepath.string());
+			context.logger->info("	outputFilepath: {}", outputFilepath.string());
 
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
-			context.logger->info("	hasPrecisionMatrices: ", hasPrecisionMatrices);
+			context.logger->info("	hasPrecisionMatrices: {}", hasPrecisionMatrices);
 
 			exportToExternal = data["exportToExternal"];
-			context.logger->info("	exportToExternal: ", exportToExternal);
+			context.logger->info("	exportToExternal: {}", exportToExternal);
 
 			exportToExternalPath = fs::path(Localization::ToUtf16(data["exportToExternalPath"]));
-			context.logger->info("	exportToExternalPath: ", exportToExternalPath.string());
+			context.logger->info("	exportToExternalPath: {}", exportToExternalPath.string());
 
 			hasExternalTexture = data["hasExternalTexture"];
 			context.logger->info("	hasExternalTexture: ", hasExternalTexture);
 			hasExternalCompressedTexture = data["hasExternalCompressedTexture"];
-			context.logger->info("	hasExternalCompressedTexture: ", hasExternalCompressedTexture);
+			context.logger->info("	hasExternalCompressedTexture: {}", hasExternalCompressedTexture);
 			hasLowresTexture = data["hasLowresTexture"];
-			context.logger->info("	hasLowresTexture: ", hasLowresTexture);
+			context.logger->info("	hasLowresTexture: {}", hasLowresTexture);
 			hasMultiresTexture = data["hasMultiresTexture"];
-			context.logger->info("	hasMultiresTexture: ", hasMultiresTexture);
+			context.logger->info("	hasMultiresTexture: {}", hasMultiresTexture);
 			textureMaxWidth = data["textureMaxWidth"];
-			context.logger->info("	textureMaxWidth: ", textureMaxWidth);
+			context.logger->info("	textureMaxWidth: {}", textureMaxWidth);
 			textureMaxHeight = data["textureMaxHeight"];
-			context.logger->info("	textureMaxHeight: ", textureMaxHeight);
+			context.logger->info("	textureMaxHeight: {}", textureMaxHeight);
 
 			if (data["compressionMethod"].is_number_unsigned()) {
 				compression = (sc::SWFStream::Signature)(data["compressionMethod"]);
-				context.logger->info("	compression: ", (uint8_t)compression);
+				context.logger->info("	compression: {}", (uint8_t)compression);
 			}
 
 			if (data["textureScaleFactor"].is_number_unsigned()) {
 				uint8_t scaleFactor = data["textureScaleFactor"];
-				context.logger->info("	scaleFactor: ", scaleFactor);
+				context.logger->info("	scaleFactor: {}", scaleFactor);
 				switch (scaleFactor)
 				{
 				case 0:
@@ -78,22 +78,22 @@ namespace sc {
 
 			if (data["textureEncoding"].is_number_unsigned()) {
 				textureEncoding = (SWFTexture::TextureEncoding)data["textureEncoding"];
-				context.logger->info("	textureEncoding: ", (uint8_t)textureEncoding);
+				context.logger->info("	textureEncoding: {}", (uint8_t)textureEncoding);
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
 				textureQuality = (Quality)data["textureQuality"];
-				context.logger->info("	textureQuality: ", (uint8_t)textureQuality);
+				context.logger->info("	textureQuality: {}", (uint8_t)textureQuality);
 			}
 
 			if (data["multiResolutinSuffix"].is_string()) {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
-				context.logger->info("	textureQuality: ", multiResolutionSuffix);
+				context.logger->info("	textureQuality: {}", multiResolutionSuffix);
 			}
 
 			if (data["lowResolutionSuffix"].is_string()) {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
-				context.logger->info("	lowResolutionSuffix: ", lowResolutionSuffix);
+				context.logger->info("	lowResolutionSuffix: {}", lowResolutionSuffix);
 			}
 		}
 
