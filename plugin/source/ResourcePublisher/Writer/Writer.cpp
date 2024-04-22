@@ -328,6 +328,9 @@ namespace sc {
 					Point<float> vertex_uv(vertex.u, vertex.v);
 					atlas_item.transform.transform_point(vertex_uv);
 
+					vertex.x = vertex.x * matrix.a;
+					vertex.y = vertex.y * matrix.d;
+
 					vertex.u = vertex_uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
 					vertex.v = vertex_uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
 				}
@@ -431,6 +434,11 @@ namespace sc {
 			}
 			catch (const AtlasGenerator::PackagingException& exception)
 			{
+				switch (exception.reason())
+				{
+				default:
+					break;
+				}
 				throw PluginException("TODO");
 			}
 

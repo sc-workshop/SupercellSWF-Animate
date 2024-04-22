@@ -228,11 +228,6 @@ namespace sc {
 
 					SymbolContext librarySymbol(libraryItem);
 
-					id = m_resources.GetIdentifer(librarySymbol.name);
-					if (id == UINT16_MAX) {
-						id = m_resources.AddLibraryItem(librarySymbol, libraryItem);
-					}
-
 					if (symbolItem) {
 						color = std::make_shared<COLOR_MATRIX>();
 						symbolItem->GetColorMatrix(*color);
@@ -246,6 +241,11 @@ namespace sc {
 						context.falloc->Free(instanceNamePtr);
 
 						movieClipElement->GetBlendMode(blendMode);
+					}
+
+					id = m_resources.GetIdentifer(librarySymbol.name);
+					if (id == UINT16_MAX) {
+						id = m_resources.AddLibraryItem(librarySymbol, libraryItem);
 					}
 				}
 
