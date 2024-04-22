@@ -114,7 +114,13 @@ namespace sc {
 
 			const int contour_shift = 8;
 
-			auto process_points = [&offset, &contour_shift](const FilledElementPath& path, std::vector<cv::Point>& points)
+			auto process_points = [
+#ifdef CV_DEBUG
+				canvas,
+#endif
+					& offset,
+					&contour_shift
+			](const FilledElementPath& path, std::vector<cv::Point>& points)
 			{
 				std::vector<Point2D> rasterized;
 				path.Rasterize(rasterized);
@@ -126,81 +132,138 @@ namespace sc {
 						(curve_point.y - offset.y) * pow(2, contour_shift)
 					);
 				}
+
+#ifdef CV_DEBUG
+				cv::Mat point_canvas(canvas);
+
+				for (size_t i = 0; path.Count() > i; i++)
+				{
+					const FilledElementPathSegment& segment = path.GetSegment(i);
+
+					switch (segment.SegmentType())
+					{
+					case FilledElementPathSegment::Type::Line:
+					{
+						const FilledElementPathLineSegment& line = *(FilledElementPathLineSegment*)&segment;
+
+						cv::Point begin(line.begin.x - offset.x, line.begin.y - offset.y);
+						cv::Point end(line.end.x - offset.x, line.end.y - offset.y);
+
+						cv::circle(point_canvas, begin, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, end, 6, 0xFF00FF, 2);
+
+						cv::line(point_canvas, begin, end, 0x00FF00, 2);
+					}
+					case FilledElementPathSegment::Type::Cubic:
+					{
+						const FilledElementPathCubicSegment& line = *(FilledElementPathCubicSegment*)&segment;
+
+						cv::Point begin(line.begin.x - offset.x, line.begin.y - offset.y);
+						cv::Point control_l(line.control_l.x - offset.x, line.control_l.y - offset.y);
+						cv::Point control_r(line.control_r.x - offset.x, line.control_r.y - offset.y);
+						cv::Point end(line.end.x - offset.x, line.end.y - offset.y);
+
+						cv::circle(point_canvas, begin, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, control_l, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, control_r, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, end, 6, 0xFF00FF, 2);
+					}
+					case FilledElementPathSegment::Type::Quad:
+					{
+						const FilledElementPathQuadSegment& line = *(FilledElementPathQuadSegment*)&segment;
+
+						cv::Point begin(line.begin.x - offset.x, line.begin.y - offset.y);
+						cv::Point control(line.control.x - offset.x, line.control.y - offset.y);
+						cv::Point end(line.end.x - offset.x, line.end.y - offset.y);
+
+						cv::circle(point_canvas, begin, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, control, 6, 0xFF00FF, 2);
+						cv::circle(point_canvas, end, 6, 0xFF00FF, 2);
+					}
+					break;
+					default:
+						break;
+					}
+
+					cv::imshow("Drawed segment", point_canvas);
+					cv::waitKey(0);
+				}
+#endif
 			};
 
-			// Contour
-			{
-				std::vector<cv::Point> points;
-				process_points(region.contour, points);
-
-				cv::fillConvexPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
-#ifdef CV_DEBUG
-				cv::imshow("Contour Mask", canvas_mask);
-				cv::waitKey(0);
-#endif
-			}
-
-			{
-				for (const FilledElementPath& path : region.holes)
+				// Contour
 				{
-					std::vector<cv::Point> path_points;
-					process_points(path, path_points);
+					std::vector<cv::Point> points;
+					process_points(region.contour, points);
 
-					cv::fillConvexPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
+					cv::fillPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
+#ifdef CV_DEBUG
+					cv::imshow("Contour Mask", canvas_mask);
+					cv::waitKey(0);
+#endif
 				}
 
+				{
+					for (const FilledElementPath& path : region.holes)
+					{
+						std::vector<cv::Point> path_points;
+						process_points(path, path_points);
+
+						cv::fillPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
+					}
+
 #ifdef CV_DEBUG
-				cv::imshow("Contour Holes", canvas_mask);
-				cv::waitKey(0);
+					cv::imshow("Contour Holes", canvas_mask);
+					cv::waitKey(0);
 #endif
-			}
+				}
 
-			cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
+				cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
 
-			// Filling
-			switch (region.type)
-			{
-			case FilledElementRegion::ShapeType::SolidColor:
-			{
-				const cv::Scalar color(
-					region.solid.color.blue,
-					region.solid.color.green,
-					region.solid.color.red,
-					region.solid.color.alpha
-				);
+				// Filling
+				switch (region.type)
+				{
+				case FilledElementRegion::ShapeType::SolidColor:
+				{
+					const cv::Scalar color(
+						region.solid.color.blue,
+						region.solid.color.green,
+						region.solid.color.red,
+						region.solid.color.alpha
+					);
 
-				filling_image.setTo(color);
-			}
-			break;
-			default:
+					filling_image.setTo(color);
+				}
 				break;
-			}
-
-			for (int h = 0; canvas_size.height > h; h++)
-			{
-				for (int w = 0; canvas_size.width > w; w++)
-				{
-					cv::Vec4b& origin = canvas.at<cv::Vec4b>(h, w);
-					cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
-					uchar& mask_alpha = canvas_mask.at<uchar>(h, w);
-
-					if (destination[3] == 0) continue;
-
-					destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
-
-					float alpha_factor = destination[3] / 0xFF;
-
-					origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
-					origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
-					origin[2] = (origin[2] * (255 - destination[3]) + destination[2] * destination[3]) / 255;
-
-					origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
+				default:
+					break;
 				}
-			}
+
+				for (int h = 0; canvas_size.height > h; h++)
+				{
+					for (int w = 0; canvas_size.width > w; w++)
+					{
+						cv::Vec4b& origin = canvas.at<cv::Vec4b>(h, w);
+						cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
+						uchar& mask_alpha = canvas_mask.at<uchar>(h, w);
+
+						if (destination[3] == 0) continue;
+
+						destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
+
+						float alpha_factor = destination[3] / 0xFF;
+
+						origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
+						origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
+						origin[2] = (origin[2] * (255 - destination[3]) + destination[2] * destination[3]) / 255;
+
+						origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
+					}
+				}
 
 #ifdef CV_DEBUG
-			cv::imshow("Canvas Fill", canvas);
-			cv::waitKey(0);
+				cv::imshow("Canvas Fill", canvas);
+				cv::waitKey(0);
 #endif
 		}
 

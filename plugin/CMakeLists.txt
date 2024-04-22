@@ -15,7 +15,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SupercellFlash)
 
 if (${SC_ANIMATE_IMAGE_DEBUG})
-	set(BUILD_LIST "imgproc,imgcodecs,highgui" CACHE STRING "")
+	set(BUILD_LIST CACHE INTERNAL ""
+        core
+        imgproc
+        imgcodecs
+        highgui
+    )
 endif()
 
 # AtlasGenerator
