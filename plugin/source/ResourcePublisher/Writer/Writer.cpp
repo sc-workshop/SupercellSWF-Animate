@@ -434,12 +434,56 @@ namespace sc {
 			}
 			catch (const AtlasGenerator::PackagingException& exception)
 			{
+				// [AtlasGenerator] Reason / symbol name
+				// or in case of unknown exception just reason
+				if (exception.reason() == AtlasGenerator::PackagingException::Reason::Unknown)
+				{
+					throw PluginException("[AtlasGenerator] %ls", context.locale.GetString("TID_SWF_ATLAS_UNKNOWN").c_str());
+				}
+
+				const char* base_format = "[AtlasGenerator] %ls %ls";
+
+				std::u16string reason;
+				std::u16string symbol_name;
+
 				switch (exception.reason())
 				{
+				case AtlasGenerator::PackagingException::Reason::UnsupportedImage:
+					reason = context.locale.GetString("TID_SWF_ATLAS_UNSUPORTED_IMAGE");
+					break;
+				case AtlasGenerator::PackagingException::Reason::InvalidPolygon:
+					reason = context.locale.GetString("TID_SWF_ATLAS_INVALID_POLYGON");
+					break;
+				case AtlasGenerator::PackagingException::Reason::TooBigImage:
+					reason = context.locale.GetString("TID_SWF_ATLAS_TOO_BIG_IMAGE");
+					break;
 				default:
 					break;
 				}
-				throw PluginException("TODO");
+
+				if (exception.index() != SIZE_MAX)
+				{
+					size_t atlas_item_index = 0;
+					size_t group_index = 0;
+					for (; m_graphic_groups.size() >= group_index; group_index++)
+					{
+						GraphicGroup& group = m_graphic_groups[group_index];
+						for (size_t group_item_index = 0; group.size() > group_item_index; group_item_index++)
+						{
+							if (atlas_item_index == exception.index()) goto RESULT_GROUP;
+
+							atlas_item_index++;
+						}
+					}
+				RESULT_GROUP:
+					symbol_name = m_graphic_groups[group_index].symbol.name;
+				}
+				else
+				{
+					symbol_name = context.locale.GetString("TID_SWF_ATLAS_UNKNOWN_SYMBOL");
+				}
+
+				throw PluginException(base_format, reason.c_str(), symbol_name.c_str());
 			}
 
 			context.Window()->DestroyStatusBar(status);

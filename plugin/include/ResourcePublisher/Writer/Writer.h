@@ -17,6 +17,7 @@
 #include "Module/PluginContext.h"
 #include "Module/SessionConfig.h"
 #include "Module/PluginException.h"
+#include "Module/Localization.h"
 
 namespace sc {
 	namespace Adobe {

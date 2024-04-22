@@ -32,7 +32,7 @@ namespace sc {
 		};
 
 		std::string Localization::GetUTF(const std::string& TID) {
-			auto value = m_locale.at(TID);
+			auto value = m_locale[TID];
 			if (value.is_string()) {
 				return value;
 			}

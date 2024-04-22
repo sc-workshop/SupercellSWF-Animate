@@ -25,5 +25,10 @@
 	
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "External file at path \"%ls\" does not exist",
-	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again"
+	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again",
+	"TID_SWF_ATLAS_UNSUPORTED_IMAGE": "Unknown image type in",
+	"TID_SWF_ATLAS_INVALID_POLYGON": "Failed to generate polygon in",
+	"TID_SWF_ATLAS_TOO_BIG_IMAGE": "Too big image in",
+	"TID_SWF_ATLAS_UNKNOWN": "Unknown exception",
+	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Unknown symbol"
 }

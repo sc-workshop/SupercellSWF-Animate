@@ -25,5 +25,10 @@
 	
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "Внешний файл по пути \"%ls\" не существует",
-	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Убедитесь что путь введён правильно и файл доступен для чтения, и затем повторите попытку"
+	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Убедитесь что путь введён правильно и файл доступен для чтения, и затем повторите попытку",
+	"TID_SWF_ATLAS_UNSUPORTED_IMAGE": "Неизвестный тип изображения в",
+	"TID_SWF_ATLAS_INVALID_POLYGON": "Не удалось сгенерировать полигон в",
+	"TID_SWF_ATLAS_TOO_BIG_IMAGE": "Слишком большое изображение в",
+	"TID_SWF_ATLAS_UNKNOWN": "Неизвестная ошибка",
+	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Неизвестном символе"
 }
