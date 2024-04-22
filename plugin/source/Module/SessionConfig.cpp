@@ -33,6 +33,9 @@ namespace sc {
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
 			context.logger->info("	hasPrecisionMatrices: {}", hasPrecisionMatrices);
 
+			hasPrecisionMatrices = data["writeCustomProperties"];
+			context.logger->info("	writeCustomProperties: {}", writeCustomProperties);
+
 			exportToExternal = data["exportToExternal"];
 			context.logger->info("	exportToExternal: {}", exportToExternal);
 

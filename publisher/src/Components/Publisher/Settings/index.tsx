@@ -6,22 +6,44 @@ import SubMenu from "../../Shared/SubMenu";
 import TextureSettings from "./textures";
 import BoolField from "../../Shared/BoolField";
 import FileField from "../../Shared/FileField";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import OtherSettings from "./others";
+import { GetPublishContext } from "../../../Context";
 
 export default function SettingsMenu() {
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
+    const { toggleBackwardCompatibility } = GetPublishContext();
 
-    const exportToExternal = BoolField(
-        Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL"),
-        "export_to_external_select",
-        Settings.getParam("exportToExternal"),
+    const exportToExternal = new BoolField(
         {
-            marginBottom: "7px"
-        },
-        [isExportToExternal, setExportToExternal]
-    )
+            name: Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL"),
+            keyName: "export_to_external_select",
+            defaultValue: Settings.getParam("exportToExternal"),
+            style: {
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center"
+            },
+            callback: [isExportToExternal, setExportToExternal],
+            tip_tid: "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP"
+        }
+    ).render()
     Settings.data["exportToExternal"] = isExportToExternal;
+
+    const backwardCompatibility = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY"),
+            keyName: "backward_compatibility_select",
+            defaultValue: false,
+            style: {
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center"
+            },
+            callback: toggleBackwardCompatibility,
+            tip_tid: "TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP"
+        }
+    ).render()
 
     let externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
@@ -30,7 +52,9 @@ export default function SettingsMenu() {
         "sc",
         {
             marginLeft: "2%",
-            marginBottom: "7px"
+            marginBottom: "10px",
+            display: "flex",
+            alignItems: "center"
         },
         function (value) { Settings.setParam("exportToExternalPath", value) },
         Settings.getParam("exportToExternalPath")
@@ -44,6 +68,7 @@ export default function SettingsMenu() {
         },
         exportToExternal,
         isExportToExternal ? externalFilePath : undefined,
+        backwardCompatibility,
         TextureSettings(),
         OtherSettings()
     )

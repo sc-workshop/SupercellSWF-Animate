@@ -1,7 +1,7 @@
 import { getInterface, isCEP } from "./CEP"
 
-enum Locales {
-    en_EN = "LilitaOne.ttf",
+export enum Locales {
+    en_US = "LilitaOne.ttf",
     ru_RU = "Pusia-Bold.otf"
 }
 
@@ -21,12 +21,17 @@ class LocaleInterface {
             }
         }
 
-        this.locale = require(`./locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`);
+        this.Load();
     }
 
     locale: { [TID: string]: any } = {};
 
-    code: Locales = Locales.en_EN;
+    code: Locales = Locales.en_US;
+
+    Load()
+    {
+        this.locale = require(`./locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`)
+    }
 
     Get(TID: string): any {
         const value = this.locale[TID];

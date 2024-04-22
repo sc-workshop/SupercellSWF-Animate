@@ -11,17 +11,20 @@ namespace sc {
 			EVT_CLOSE(PluginWindow::OnClose)
 			SC_EVT_CREATE_PROGRESS(wxID_ANY, PluginWindow::OnProgressCreate)
 			SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
-			wxEND_EVENT_TABLE();
+		wxEND_EVENT_TABLE();
 
-		PluginWindow::PluginWindow(const std::u16string& title)
+		PluginWindow::PluginWindow(wxString& title)
 			: wxFrame(
 				nullptr,
 				wxID_ANY,
-				(const wchar_t*)title.c_str(),
+				title,
 				wxDefaultPosition,
 				wxDefaultSize,
 				wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
 		{
+			PluginContext& context = PluginContext::Instance();
+			context.logger->info("PluginWindow initialized. Creating elements...");
+
 			Center();
 			SetBackgroundColour(wxColor(0x333333));
 
@@ -32,6 +35,8 @@ namespace sc {
 			panelSizer->Add(panel, 1, wxEXPAND);
 			panel->SetSizer(contentSizer);
 			SetSizer(panelSizer);
+
+			context.logger->info("Elements sucessfully created");
 
 			Bind(WX_EVT_ERROR_RAISE, [&](wxCommandEvent& event) {
 				ErrorDialog* dialog = new ErrorDialog(m_parent, event.GetString());
@@ -54,7 +59,7 @@ namespace sc {
 
 			// await result
 			std::unique_lock<std::mutex> guard(m_window_mut);
-			m_window_cv.wait(guard, [&result]{return result != nullptr; });
+			m_window_cv.wait(guard, [&result] {return result != nullptr; });
 
 			return result;
 		}

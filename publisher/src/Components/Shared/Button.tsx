@@ -5,7 +5,7 @@ export default function Button(
     text: string,
     keyName: string,
     style: CSSProperties,
-    callback: (value: boolean) => void
+    callback: () => void
     )  {
     const [isFocus, setIsFocus] = useState(false);
 
@@ -13,7 +13,8 @@ export default function Button(
         text,
         {
             color: "#ffffff",
-            marginRight: "5px"
+            marginRight: "5px",
+            userSelect: "none"
         }
     );
 
@@ -21,7 +22,10 @@ export default function Button(
         "button",
         {
             key: `button_${keyName}`,
-            onClick: callback,
+            onMouseDown: (event) => {
+                event.persist();
+                callback();
+            },
             style: {
                 width: "fit-content",
                 height: "35px",
@@ -29,6 +33,8 @@ export default function Button(
                 background: "rgba(0,0,0,0.0)",
                 borderRadius: "20px",
                 outline: isFocus ? "2px solid #337ed4" : "none",
+                diplsay: "flex",
+                alignItem: "center"
             },
             onFocus: function () {
                 setIsFocus(true);

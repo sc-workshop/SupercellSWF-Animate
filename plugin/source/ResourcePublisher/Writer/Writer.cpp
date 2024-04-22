@@ -547,6 +547,7 @@ namespace sc {
 			swf.low_resolution_suffix = sc::SWFString(config.multiResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.use_external_texture_files = config.hasExternalCompressedTexture;
+			swf.save_custom_property = config.writeCustomProperties;
 
 			fs::path filepath = config.outputFilepath.replace_extension("sc");
 			fs::path basename = filepath.filename();

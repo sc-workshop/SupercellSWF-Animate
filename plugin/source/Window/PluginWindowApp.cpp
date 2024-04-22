@@ -2,6 +2,7 @@
 #include "Module/PluginContext.h"
 
 #include "ResourcePublisher/ResourcePublisher.h"
+#include "PluginConfiguration.h"
 
 #include <random>
 
@@ -22,16 +23,7 @@ namespace sc {
 
 			context.logger->info("Document name: {}", documentName.string());
 
-			try
-			{
-				window = new PluginWindow(
-					context.locale.GetString("TID_WINDOW_TITLE", documentName.u16string().c_str())
-				);
-			}
-			catch (...)
-			{
-				context.logger->info("Failed to init window: {}", wxSysErrorMsgStr(0).ToStdString());
-			}
+			window = new PluginWindow(wxString(DOCTYPE_NAME));
 
 			{
 				wxIcon icon;

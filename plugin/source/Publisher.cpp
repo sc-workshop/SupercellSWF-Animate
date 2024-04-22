@@ -80,6 +80,7 @@ namespace sc {
 						ResourcePublisher publisher(writer);
 						publisher.Publish();
 
+
 #if !(SC_DEBUG)
 					}
 					catch (const PluginException& exception)
@@ -89,6 +90,10 @@ namespace sc {
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const sc::GeneralRuntimeException& exception) {
+						const size_t exception_buffer_size = 1024;
+						char description_buffer[exception_buffer_size] = { 0 };
+						std::snprintf(description_buffer, exception_buffer_size, "[%s] %s", exception.type(), exception.what());
+
 						context.Window()->ThrowException(exception.what());
 						context.Trace(exception.message());
 						result = FCM_EXPORT_FAILED;

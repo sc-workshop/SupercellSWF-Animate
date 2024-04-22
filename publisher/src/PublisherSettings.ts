@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CSEvent, getInterface, isCEP } from "./CEP"
 
 export enum CompressionMethods {
@@ -39,7 +40,7 @@ interface PublisherSettingsData {
     // Additional settings
     compressionMethod: CompressionMethods,
     hasPrecisionMatrices: boolean,
-    //useSpritesForNineSlice: boolean,
+    writeCustomProperties: boolean,
 
     // Export to another file settings
     exportToExternal: boolean,
@@ -65,7 +66,7 @@ export class PublisherSettings {
 
         compressionMethod: CompressionMethods.ZSTD,
         hasPrecisionMatrices: false,
-        //useSpritesForNineSlice: false,
+        writeCustomProperties: true,
 
         exportToExternal: false,
         exportToExternalPath: "",

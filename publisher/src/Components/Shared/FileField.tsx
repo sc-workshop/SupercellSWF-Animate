@@ -61,9 +61,7 @@ export default function FileField(
             style: {
                 width: "20px",
                 height: "20px",
-                position: 'relative',
-                top: "3px",
-                left: "4px"
+                marginLeft: "5px"
             },
             onClick: async function (event: React.MouseEvent<HTMLElement>) {
                 if (!isCEP()) {

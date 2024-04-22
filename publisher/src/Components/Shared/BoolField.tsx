@@ -1,66 +1,109 @@
 import { CSSProperties, Dispatch, SetStateAction, createElement, useState } from "react";
 import TextField from "./TextField";
+import FloatTip from "./FloatTip";
+import React from "react";
+import { ReferenceType } from "@floating-ui/react";
 
 type callback = (value: boolean) => void;
 type state = [boolean, Dispatch<SetStateAction<boolean>>];
 
-export default function BoolField(
-    name: string,
-    keyName: string,
-    defaultValue: boolean,
-    style: CSSProperties,
-    callback: callback | state
-    )  {
-    const [isFocus, setIsFocus] = useState(false);
+interface Props {
+    name: string
+    keyName: string
+    defaultValue: boolean
+    style: CSSProperties
+    callback: callback | state,
+    tip_tid?: string
+}
 
-    const label = TextField(
-        `${name} :`,
-        {
-            color: "#727776",
-            marginRight: "5px"
-        }
-    );
+interface State {
+    focus: boolean
+    checked: boolean
+}
 
-    const checkbox = createElement(
-        "input",
-        {
-            key: `boolfield_${keyName}_input`,
-            type: "checkbox",
-            onChange: function (event: React.FormEvent<HTMLInputElement>) {
-                if (typeof callback == "function") {
-                    callback(event.currentTarget.checked);
-                } else {
-                    callback[1](event.currentTarget.checked);
-                }
-            },
-            style: {
-                width: `15px`,
-                height: "15px",
-                accentColor: "black",
-                color: "black",
-                backgroundColor: "black",
-                borderRadius: "30px",
-                outline: isFocus ? "2px solid #337ed4" : "none",
-                border: "2px solid #363636",
-            },
-            defaultValue: defaultValue,
-            defaultChecked: defaultValue,
-            onFocus: function () {
-                setIsFocus(true);
-            },
-            onBlur: function () {
-                setIsFocus(false);
+export default class BoolField extends React.Component<Props, State> {
+    public static readonly defaultProps = {
+        tip_tid: undefined,
+    };
+
+    state: State = {
+        focus: false,
+        checked: false,
+    };
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state.checked = props.defaultValue;
+    }
+
+    render() {
+        let label = TextField(
+            `${this.props.name} :`,
+            {
+                color: "#727776",
+                marginRight: "5px"
             }
-        }
-    );
+        );
 
-    return createElement(
-        "div",
+        if (this.props.tip_tid !== undefined)
         {
-            key: `boolfield_${keyName}`,
-            style: style
-        },
-        label,
-        checkbox
-    )
+            let [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
+            label = createElement(
+                "div",
+                {
+                    ref: tip_reference
+                },
+                label,
+                tip_element as any,
+                ...props as any
+            );
+        }
+
+        const current_element = this;
+        const checkbox = createElement(
+            "input",
+            {
+                key: `boolfield_${this.props.keyName}_input`,
+                type: "checkbox",
+                onChange: function (event: React.FormEvent<HTMLInputElement>) {
+                    current_element.state.checked = current_element.state.checked == false;
+
+                    if (typeof current_element.props.callback == "function") {
+                        current_element.props.callback(current_element.state.checked);
+                    } else {
+                        current_element.props.callback[1](current_element.state.checked);
+                    }
+                },
+                style: {
+                    width: `15px`,
+                    height: "15px",
+                    accentColor: "black",
+                    color: "black",
+                    backgroundColor: "black",
+                    borderRadius: "30px",
+                    outline: current_element.state.focus ? "2px solid #337ed4" : "none",
+                    border: "2px solid #363636",
+                },
+                defaultValue: current_element.props.defaultValue,
+                defaultChecked: current_element.props.defaultValue,
+                onFocus: function () {
+                    current_element.state.focus = true;
+                },
+                onBlur: function () {
+                    current_element.state.focus = false;
+                }
+            }
+        );
+            
+        return createElement(
+            "div",
+            {
+                key: `boolfield_${current_element.props.keyName}`,
+                style: current_element.props.style
+            },
+            label,
+            checkbox,
+        );
+    }
 }

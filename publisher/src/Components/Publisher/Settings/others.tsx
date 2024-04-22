@@ -3,46 +3,69 @@ import BoolField from "../../Shared/BoolField";
 import EnumField from "../../Shared/EnumField";
 import SubMenu from "../../Shared/SubMenu";
 import { CompressionMethods, Settings } from "../../../PublisherSettings";
+import { GetPublishContext } from "../../../Context";
 
 export default function OtherSettings() {
-    const compressionType = EnumField(
-        Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
-        "file_compression_select",
-        CompressionMethods,
-        Settings.getParam("compressionMethod"),
-        {
-            marginBottom: "7px"
-        },
-        value => (Settings.setParam("compressionMethod", parseInt(value))),
-    )
+    const { useBackwardCompatibility } = GetPublishContext();
 
-    const precisionMatrix = BoolField(
-        Locale.Get("TID_SWF_SETTINGS_PRECISION_MATRIX"),
-        "precision_matrix",
-        Settings.getParam("hasPrecisionMatrices"),
-        {
-            marginBottom: "7px"
+    const compressionType = new EnumField({
+        name: Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
+        keyName: "file_compression_select",
+        enumeration: CompressionMethods,
+        defaultValue: Settings.getParam("compressionMethod"),
+        style: {
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px"
         },
-        value => (Settings.setParam("hasPrecisionMatrices", value)),
+        callback: value => (Settings.setParam("compressionMethod", parseInt(value))),
+    })
+
+    const precisionMatrix = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_PRECISION_MATRIX"),
+            keyName: "precision_matrix",
+            defaultValue: Settings.getParam("hasPrecisionMatrices"),
+            style: {
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px"
+            },
+            callback: value => (Settings.setParam("hasPrecisionMatrices", value)),
+        }
     );
 
-    //const NineSliceSprites = BoolField(
-    //    Locale.Get("TID_SWF_SETTINGS_NINE_SLICE_SPRITES"),
-    //    "9_slice_sprites",
-    //    Settings.getParam("useSpritesForNineSlice"),
-    //    {
-    //        marginBottom: "6px"
-    //    },
-    //    value => (Settings.setParam("useSpritesForNineSlice", value)),
-    //);
-    
+    const writeCustomProperties = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_WRITE_CUSTOM_PROPERTIES"),
+            keyName: "custom_properties",
+            defaultValue: Settings.getParam("writeCustomProperties"),
+            style: {
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px"
+            },
+            callback: value => (Settings.setParam("writeCustomProperties", value)),
+        }
+    );
+
+    if (useBackwardCompatibility)
+    {
+        Settings.setParam("hasPrecisionMatrices", false);
+        precisionMatrix.state.checked = false;
+
+        Settings.setParam("writeCustomProperties", false);
+        writeCustomProperties.state.checked = false;
+    }
+
     return SubMenu(
         Locale.Get("TID_OTHER_LABEL"),
         "other_settings",
         {
             marginBottom: "20%"
         },
-        compressionType,
-        precisionMatrix,
+        compressionType.render(),
+        !useBackwardCompatibility ? writeCustomProperties.render() : undefined,
+        !useBackwardCompatibility ? precisionMatrix.render() : undefined,
     )
 }

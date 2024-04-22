@@ -64,6 +64,7 @@ namespace sc {
 			uint32_t textureMaxWidth = 2048;
 			uint32_t textureMaxHeight = 2048;
 
+			bool writeCustomProperties = true;
 			bool hasPrecisionMatrices = false;
 		public:
 			void FromDict(const FCM::PIFCMDictionary dict);

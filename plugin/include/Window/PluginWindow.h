@@ -23,7 +23,10 @@ namespace sc {
 			void DestroyStatusBar(StatusComponent* bar);
 
 		public:
-			PluginWindow(const std::u16string& title);
+			PluginWindow(wxString& title);
+
+		private:
+			PluginWindow(PluginWindow&) = delete;
 
 		public:
 			void ThrowException(const wxString& what);

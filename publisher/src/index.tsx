@@ -5,6 +5,18 @@ import { AppColor } from './Components/themes';
 import { getInterface, CSEvent, isCEP } from './CEP';
 import { Settings } from './PublisherSettings';
 import Locale from './Localization';
+import { PublisherContextProvider } from './Context';
+
+export const loadFont = async (callback: () => void) => {
+  const font = new FontFace("PublisherFont", `url(${require("./fonts/" + Locale.code)})`, {
+    style: "normal",
+  });
+  await font.load();
+  if (font.status == "loaded") {
+    document.fonts.add(font);
+  }
+  callback();
+};
 
 function App() {
   const [publisherStateData, setPublisherStateData] = useState<string | undefined>(undefined);
@@ -12,17 +24,12 @@ function App() {
 
   useEffect(() => {
     // Font
-    const loadFont = async () => {
-      const font = new FontFace("PublisherFont", `url(${require("./fonts/" + Locale.code)})`, {
-        style: "normal",
-      });
-      await font.load();
-      if (font.status == "loaded") {
-        document.fonts.add(font);
+
+    loadFont(
+      () => {
+        setIsFontLoaded(true)
       }
-      setIsFontLoaded(true);
-    }
-    loadFont();
+    );
 
     // Publisher Data
     if (!isCEP()) {
@@ -72,7 +79,9 @@ function App() {
           position: "relative"
         }
       },
-      <Publisher></Publisher>
+      <PublisherContextProvider backwardCompatibility={false}>
+        <Publisher></Publisher>
+      </PublisherContextProvider>
     );
   } else {
     return null;

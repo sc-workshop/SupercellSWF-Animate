@@ -23,10 +23,9 @@ export default function SubMenu(
         {
             key: `menu_${keyName}_storage`,
             style: {
-                paddingLeft: "5%"
+                paddingLeft: "5%",
             }
         },
-        delim,
         ...items
     );
 
@@ -57,32 +56,15 @@ export default function SubMenu(
         }
     )
 
-    if (active) {
-
-        return createElement(
-            "div",
-            {
-                key: `menu_${keyName}`,
-                style: style
-            },
-            button,
-            label,
-            storage
-        );
-
-    } else {
-
-        return createElement(
-            "div",
-            {
-                key: `menu_${keyName}`,
-                style: style
-            },
-            button,
-            label
-        );
-
-    }
-
-
+    return createElement(
+        "div",
+        {
+            key: `menu_${keyName}`,
+            style: style
+        },
+        button,
+        label,
+        delim,
+        active ? storage : undefined
+    );
 }
