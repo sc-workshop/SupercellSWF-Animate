@@ -598,8 +598,13 @@ namespace sc {
 			swf.multi_resolution_suffix = sc::SWFString(config.multiResolutionSuffix);
 			swf.low_resolution_suffix = sc::SWFString(config.multiResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
-			swf.use_external_texture_files = config.hasExternalCompressedTexture;
 			swf.save_custom_property = config.writeCustomProperties;
+
+			// Raw textures can be stored only inside texture files
+			if (config.textureEncoding != SWFTexture::TextureEncoding::Raw)
+			{
+				swf.use_external_texture_files = config.hasExternalCompressedTexture;
+			}
 
 			fs::path filepath = config.outputFilepath.replace_extension("sc");
 			fs::path basename = filepath.filename();
