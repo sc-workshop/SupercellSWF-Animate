@@ -40,7 +40,7 @@ function Publisher() {
       if (localeCode !== undefined) {
         Locale.code = localeCode;
         Locale.Load();
-        loadFont(() => {})
+        loadFont(() => { })
       }
     },
   })
@@ -69,7 +69,11 @@ function Publisher() {
       id: "publisher",
       style: {
         width: "100%",
-        height: "100%"
+        height: "100%",
+        userSelect: "none",
+        MozUserSelect: "none",
+        KhtmlUserSelect: "none",
+        WebkitUserSelect: "none",
       },
       children: [
         Header(),

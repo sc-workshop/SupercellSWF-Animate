@@ -11,30 +11,15 @@ import {
     useDismiss,
     useRole,
     useInteractions,
-    FloatingPortal
+    FloatingPortal,
+    FloatingDelayGroup 
 } from "@floating-ui/react";
+
 import { useSpring, animated } from "react-spring";
 import wrapText = require("wrap-text")
 import Locale from "../../Localization"
 
 export default function FloatTip(tip_tid: string) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const { refs, floatingStyles, context } = useFloating({
-        open: isOpen,
-        onOpenChange: setIsOpen,
-        placement: "top-start",
-
-        whileElementsMounted: autoUpdate,
-        middleware: [
-            offset(5),
-            flip({
-                fallbackAxisSideDirection: "start"
-            }),
-            shift()
-        ]
-    });
-
     const animation_style = useSpring({
         from: {
             opacity: 0
@@ -48,16 +33,28 @@ export default function FloatTip(tip_tid: string) {
         }
     })
 
-    const hover = useHover(context, { move: false });
+    const [isOpen, setIsOpen] = useState(false);
+
+    const { refs, floatingStyles, context } = useFloating({
+        open: isOpen,
+        onOpenChange: setIsOpen,
+        placement: "top-start",
+        middleware: [offset(10), flip(), shift()],
+        whileElementsMounted: autoUpdate,
+    });
+
+    const hover = useHover(context, { move: true, delay: 200 });
     const focus = useFocus(context);
     const dismiss = useDismiss(context);
-    const role = useRole(context, { role: "tooltip" });
-
+    const role = useRole(context, {
+        role: 'tooltip'
+    });
+   
     const { getReferenceProps, getFloatingProps } = useInteractions([
         hover,
         focus,
         dismiss,
-        role
+        role,
     ]);
 
     const text = Locale.Get(tip_tid);
@@ -83,8 +80,11 @@ export default function FloatTip(tip_tid: string) {
                 borderRadius: '4px',
                 fontSize: "110%",
                 width: "max-content",
-                whiteSpace: "pre-wrap"
-
+                whiteSpace: "pre-wrap",
+                userSelect: "none",
+                MozUserSelect: "none",
+                KhtmlUserSelect: "none",
+                WebkitUserSelect: "none",
             }
         },
         tip_text
@@ -93,7 +93,7 @@ export default function FloatTip(tip_tid: string) {
     return [
         refs.setReference,
         getReferenceProps(),
-        <FloatingPortal>
+        <>
             {isOpen && (
                 <animated.div style={animation_style}>
                     <div
@@ -106,6 +106,6 @@ export default function FloatTip(tip_tid: string) {
                     </div>
                 </animated.div>
             )}
-        </FloatingPortal>
+        </>
     ]
 }
