@@ -160,6 +160,8 @@ namespace sc {
 			SymbolContext& symbol,
 			FCM::AutoPtr<DOM::ITimeline1> timeline
 		) {
+			PluginContext& context = PluginContext::Instance();
+
 			SharedMovieclipWriter* movieclip = m_writer.AddMovieclip(symbol);
 			movieClipGenerator.Generate(*movieclip, symbol, timeline);
 
@@ -170,6 +172,8 @@ namespace sc {
 
 			delete movieclip;
 
+			context.logger->info("Added MovieClip: {}", Localization::ToUtf8(symbol.name));
+
 			return identifer;
 		};
 
@@ -177,8 +181,9 @@ namespace sc {
 			SymbolContext& symbol,
 			FCM::AutoPtr <DOM::ITimeline1> timeline
 		) {
-			bool isShape = GraphicGenerator::Validate(timeline);
+			PluginContext& context = PluginContext::Instance();
 
+			bool isShape = GraphicGenerator::Validate(timeline);
 			if (!isShape) {
 				return UINT16_MAX;
 			}
@@ -194,16 +199,21 @@ namespace sc {
 
 			delete shape;
 
+			context.logger->info("Added Shape: {}", Localization::ToUtf8(symbol.name));
+
 			return identifer;
 		}
 
 		uint16_t ResourcePublisher::AddModifier(
 			MaskedLayerState type
 		) {
+			PluginContext& context = PluginContext::Instance();
 			uint16_t identifer = m_id++;
 
 			m_writer.AddModifier(identifer, type);
 			m_modifierDict.push_back({ type, identifer });
+
+			context.logger->info("Added Modifier: {}", (uint8_t)type);
 
 			return identifer;
 		}
@@ -212,10 +222,14 @@ namespace sc {
 			SymbolContext& symbol,
 			TextElement& field
 		) {
+			PluginContext& context = PluginContext::Instance();
+
 			uint16_t identifer = m_id++;
 
 			m_writer.AddTextField(identifer, symbol, field);
 			m_textfieldDict.push_back({ field, identifer });
+
+			context.logger->info("Added TextField from: {}", Localization::ToUtf8(symbol.name));
 
 			return identifer;
 		}
@@ -234,6 +248,8 @@ namespace sc {
 			SymbolContext& symbol,
 			const std::vector<FilledElement>& elements
 		) {
+			PluginContext& context = PluginContext::Instance();
+
 			SymbolContext shape_symbol(symbol.name, SymbolContext::SymbolType::Graphic);
 			SharedShapeWriter* shape = m_writer.AddShape(shape_symbol);
 
@@ -254,6 +270,8 @@ namespace sc {
 			shape->Finalize(identifer);
 
 			delete shape;
+
+			context.logger->info("Added FilledElement from: {}", Localization::ToUtf8(symbol.name));
 
 			return identifer;
 		}

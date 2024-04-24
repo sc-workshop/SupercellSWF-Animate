@@ -19,6 +19,7 @@
 
 #include "Window/PluginWindowApp.h"
 
+#include <fmt/xchar.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
 

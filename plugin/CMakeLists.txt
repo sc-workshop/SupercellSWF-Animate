@@ -62,7 +62,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG 10.2.1
+)
+FetchContent_MakeAvailable(fmt)
+
 # spdlog
+set(SPDLOG_FMT_EXTERNAL ON)
 set(SPDLOG_BUILD_SHARED  ${BUILD_SHARED_LIBS})
 set(SPDLOG_ENABLE_PCH ON)
 FetchContent_Declare(
@@ -106,6 +114,7 @@ target_link_libraries(${TARGET} PUBLIC
     CDT
     wx::core wx::base
     nlohmann_json::nlohmann_json
+	fmt::fmt
     spdlog::spdlog
 	$<$<BOOL:${SC_ANIMATE_IMAGE_DEBUG}>: opencv_highgui>
 )
