@@ -601,7 +601,11 @@ namespace sc {
 			swf.save_custom_property = config.writeCustomProperties;
 
 			// Raw textures can be stored only inside texture files
-			if (config.textureEncoding != SWFTexture::TextureEncoding::Raw)
+			if (config.textureEncoding == SWFTexture::TextureEncoding::Raw)
+			{
+				swf.use_external_texture_files = false;
+			}
+			else
 			{
 				swf.use_external_texture_files = config.hasExternalCompressedTexture;
 			}
