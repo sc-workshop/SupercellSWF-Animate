@@ -25,6 +25,7 @@ namespace sc {
 
 			std::u16string text;
 			AA_MODE_PROP renderingMode;
+			FCM::Boolean isSelectable;
 
 			// IClassicText -> IParagraph
 

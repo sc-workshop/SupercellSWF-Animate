@@ -283,6 +283,8 @@ namespace sc {
 						FCM::AutoPtr<DOM::FrameElement::ITextBehaviour> textfieldElementBehaviour;
 						textfieldElement->GetTextBehaviour(textfieldElementBehaviour.m_Ptr);
 
+						textfieldElementBehaviour->IsSelectable(textfield.isSelectable);
+
 						// Instance name
 
 						FCM::AutoPtr<DOM::FrameElement::IModifiableTextBehaviour> modifiableTextfieldBehaviour = textfieldElementBehaviour;

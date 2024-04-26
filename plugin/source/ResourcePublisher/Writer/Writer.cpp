@@ -79,11 +79,13 @@ namespace sc {
 				break;
 			}
 
-			textfield.left = (int16_t)ceil(object.bound.topLeft.x);
-			textfield.top = (int16_t)ceil(object.bound.topLeft.y);
+			textfield.unknown_align2 = object.isSelectable;
 
-			textfield.right = (int16_t)ceil(object.bound.bottomRight.x);
-			textfield.bottom = (int16_t)ceil(object.bound.bottomRight.y);
+			textfield.left = (int16_t)floor(object.bound.topLeft.x);
+			textfield.top = (int16_t)floor(object.bound.topLeft.y);
+
+			textfield.right = (int16_t)floor(object.bound.bottomRight.x);
+			textfield.bottom = (int16_t)floor(object.bound.bottomRight.y);
 
 			if (object.fontStyle != DOM::FrameElement::REGULAR_STYLE_STR) {
 				if (object.fontStyle != DOM::FrameElement::ITALIC_STYLE_STR) {
@@ -103,7 +105,10 @@ namespace sc {
 			}
 
 			textfield.is_outlined = object.isOutlined;
-			textfield.outline_color = *(uint32_t*)&object.outlineColor;
+			if (object.isOutlined)
+			{
+				textfield.outline_color = *(uint32_t*)&object.outlineColor;
+			}
 			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
 			textfield.is_multiline =
 				object.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
