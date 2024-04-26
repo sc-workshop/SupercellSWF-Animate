@@ -1,5 +1,7 @@
 #include "Module/Symbol/SliceScalingData.h"
 
+#include "Module/AdobeWheelchair.h"
+
 namespace sc
 {
 	namespace Adobe
@@ -8,15 +10,14 @@ namespace sc
 
 		SliceScalingData::SliceScalingData(FCM::AutoPtr<DOM::ITimeline1> timeline)
 		{
-			const size_t is_enabled_offset = 1624;
-			const size_t grid_data_offset = 1628;
+			AdobeWheelchair& wheelchair = AdobeWheelchair::Instance();
 
 			uint8_t* page = (uint8_t*)timeline->GetDocPage();
-			m_enabled = *((bool*)page + is_enabled_offset);
+			m_enabled = *((bool*)page + wheelchair.CPicPage_Is9SliceEnabled);
 
 			if (m_enabled)
 			{
-				uint8_t* grid = page + grid_data_offset;
+				uint8_t* grid = page + wheelchair.CPicPage_9SliceGuides;
 
 				const size_t stride = sizeof(int32_t);
 

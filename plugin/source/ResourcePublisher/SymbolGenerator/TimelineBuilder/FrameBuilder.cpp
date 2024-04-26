@@ -9,8 +9,21 @@
 #include "AnimateSDK/app/DOM/IFilterable.h"
 #include "AnimateSDK/app/DOM/GraphicFilter/IGlowFilter.h"
 
+#include "Module/AdobeWheelchair.h"
+
 namespace sc {
+	typedef struct CPicSymbol CPicSymbol;
+	typedef struct CPropertyInstance CPropertyInstance;
+	typedef struct SymbolInstance SymbolInstance;
+	typedef void ImplGraphic_GetCPic(intptr_t, CPicSymbol*&);
+	
 	namespace Adobe {
+		std::string FrameBuilder::GetInstanceName(FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbol_instance)
+		{
+			// TODO: 
+
+			return std::string("");
+		}
 		void FrameBuilder::Update(SymbolContext& symbol, DOM::IFrame* frame) {
 			PluginContext& context = PluginContext::Instance();
 
@@ -91,7 +104,7 @@ namespace sc {
 
 			// Frame elements processing
 			FCM::FCMListPtr frameElements;
-			frame->GetFrameElements(frameElements.m_Ptr);
+			frame->GetFrameElementsByType(DOM::FrameElement::IID_IFRAME_DISPLAY_ELEMENT, frameElements.m_Ptr);
 			AddFrameElementArray(symbol, frameElements);
 		}
 
@@ -231,6 +244,7 @@ namespace sc {
 					if (symbolItem) {
 						color = std::make_shared<COLOR_MATRIX>();
 						symbolItem->GetColorMatrix(*color);
+						instance_name = Localization::ToUtf16(FrameBuilder::GetInstanceName(symbolItem));
 					}
 
 					if (movieClipElement) {

@@ -1,12 +1,6 @@
 #include "Publisher.h"
 #include <shared_mutex>
 
-#if SC_MSVC
-#define TIME_TYPE "%I64d"
-#else
-#define TIME_TYPE "%lld"
-#endif
-
 namespace sc {
 	namespace Adobe {
 		FCM::Result SCPublisher::Publish(
@@ -15,6 +9,7 @@ namespace sc {
 			const FCM::PIFCMDictionary appConfig
 		) {
 			PluginContext& context = PluginContext::Instance();
+
 			context.logger->info("--------------------------- Called Publish -----------------------------");
 
 			PluginSessionConfig::Clear();

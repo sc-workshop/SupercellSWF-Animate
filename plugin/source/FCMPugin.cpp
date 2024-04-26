@@ -3,6 +3,7 @@
 
 #include "Document.h"
 #include "Publisher.h"
+#include "Module/AdobeWheelchair.h"
 
 #include "FeatureMatrix/FeatureMatrix.h"
 
@@ -13,15 +14,15 @@ namespace sc {
 
 			BEGIN_CLASS_ENTRY
 
-			CLASS_ENTRY(CLSID_DocType, GenericDocumentType)
-			CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
-			CLASS_ENTRY(CLSID_Publisher, SCPublisher)
+				CLASS_ENTRY(CLSID_DocType, GenericDocumentType)
+				CLASS_ENTRY(CLSID_FeatureMatrix, FeatureMatrix)
+				CLASS_ENTRY(CLSID_Publisher, SCPublisher)
 
 			END_CLASS_ENTRY
 
-			END_MODULE
+		END_MODULE
 
-			ModuleInterface Module;
+		ModuleInterface Module;
 
 		extern "C" FCMPLUGIN_IMP_EXP
 			FCM::Result PluginBoot(FCM::PIFCMCallback callback)
@@ -35,8 +36,17 @@ namespace sc {
 			auto application = context.GetService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
 
 			{
+				AdobeWheelchair& wheelchair = AdobeWheelchair::Instance();
+
 				FCM::U_Int32 version;
 				application->GetVersion(version);
+				FCM::Result status = wheelchair.RunWheelchair(version);
+				if (status != FCM_SUCCESS)
+				{
+					context.logger->error("Wheelchair returns FAIL");
+					return status;
+				}
+
 				context.logger->info("	App: Adobe Animate {}.{}.{}.{}",
 					((version >> 24) & 0xFF),
 					((version >> 16) & 0xFF),

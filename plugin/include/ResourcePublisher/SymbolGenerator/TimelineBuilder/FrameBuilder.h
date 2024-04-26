@@ -54,6 +54,11 @@ namespace sc {
 				SpriteElement
 			};
 
+		public:
+			// A biiig workaround with magic numbers to get instance name from Graphic items
+			// i hope it works on other Animate versions except 23.x
+			static std::string GetInstanceName(FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbol);
+
 		private:
 			ResourcePublisher& m_resources;
 			// Frame duration
