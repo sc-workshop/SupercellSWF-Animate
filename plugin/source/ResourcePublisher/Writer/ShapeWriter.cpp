@@ -414,7 +414,7 @@ namespace sc {
 				std::numeric_limits<float>::max()}
 			};
 
-			for (const FilledElement element : elements)
+			for (const FilledElement& element : elements)
 			{
 				const DOM::Utils::RECT bound = element.Bound();
 
@@ -424,10 +424,41 @@ namespace sc {
 				elements_bound.bottomRight.y = std::min(bound.bottomRight.y, elements_bound.bottomRight.y);
 			}
 
-			Point<int32_t> image_position_offset(elements_bound.bottomRight.x, elements_bound.bottomRight.y);
+			auto round_number = [](float number)
+			{
+				float base_number = std::trunc(number);
+				float decimal = std::abs(number - base_number);
+
+				if (decimal >= 0.1f)
+				{
+					if (base_number >= 0)
+					{
+						return base_number + 1.0f;
+					}
+					else
+					{
+						return base_number - 1.0f;
+					}
+				}
+
+				return (float)base_number;
+			};
+
+			{
+				elements_bound.bottomRight.x = round_number(elements_bound.bottomRight.x);
+				elements_bound.bottomRight.y = round_number(elements_bound.bottomRight.y);
+				elements_bound.topLeft.x = round_number(elements_bound.topLeft.x);
+				elements_bound.topLeft.y = round_number(elements_bound.topLeft.y);
+			}
+
+			Point<int32_t> image_position_offset(
+				elements_bound.bottomRight.x,
+				elements_bound.bottomRight.y
+			);
+
 			cv::Size image_size(
-				ceil(elements_bound.topLeft.x - image_position_offset.x),
-				ceil(elements_bound.topLeft.y - image_position_offset.y)
+				elements_bound.topLeft.x - image_position_offset.x,
+				elements_bound.topLeft.y - image_position_offset.y
 			);
 
 			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
