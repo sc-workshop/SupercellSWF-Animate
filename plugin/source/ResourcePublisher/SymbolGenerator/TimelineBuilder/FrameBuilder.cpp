@@ -210,10 +210,10 @@ namespace sc {
 
 				if (base_transform != nullptr)
 				{
-					matrix->a += base_transform->a;
+					matrix->a *= base_transform->a;
 					matrix->b += base_transform->b;
 					matrix->c += base_transform->c;
-					matrix->d += base_transform->d;
+					matrix->d *= base_transform->d;
 					matrix->tx += base_transform->tx;
 					matrix->ty += base_transform->ty;
 				}
@@ -367,7 +367,7 @@ namespace sc {
 
 				// Fills / Stroke
 				else if (filledShapeItem) {
-					m_filled_elements.emplace_back(symbol, filledShapeItem);
+					m_filled_elements.emplace_back(symbol, filledShapeItem, *matrix);
 
 					if (m_last_element != FrameBuilder::LastElementType::None)
 					{
@@ -387,7 +387,7 @@ namespace sc {
 					FCM::FCMListPtr groupElements;
 					groupedElemenets->GetMembers(groupElements.m_Ptr);
 
-					AddFrameElementArray(symbol, groupElements);
+					AddFrameElementArray(symbol, groupElements, matrix.get());
 					continue;
 				}
 

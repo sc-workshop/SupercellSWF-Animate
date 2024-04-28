@@ -396,6 +396,10 @@ namespace sc {
 				FilledElement& element = elements.emplace_back(_element);
 
 				element.Tranform(
+					element.transormation
+				);
+
+				element.Tranform(
 					{
 						2.0f,
 						0.0f,

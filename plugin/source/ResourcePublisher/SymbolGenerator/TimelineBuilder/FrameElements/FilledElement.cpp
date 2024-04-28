@@ -7,6 +7,12 @@
 
 namespace sc {
 	namespace Adobe {
+		FilledElement::FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape, const DOM::Utils::MATRIX2D& matrix)
+			: FilledElement(symbol, shape)
+		{
+			transormation = matrix;
+		}
+
 		FilledElement::FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape) {
 			PluginContext& context = PluginContext::Instance();
 

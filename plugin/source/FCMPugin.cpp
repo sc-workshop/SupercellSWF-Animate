@@ -32,6 +32,8 @@ namespace sc {
 
 			context.UpdateCallback(callback);
 
+			context.logger->info("	Plugin info: {}", PluginVersion);
+
 			context.logger->info("System Info: ");
 			auto application = context.GetService<Application::Service::IApplicationService>(Application::Service::APP_SERVICE);
 

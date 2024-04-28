@@ -107,7 +107,10 @@ namespace sc {
 			textfield.is_outlined = object.isOutlined;
 			if (object.isOutlined)
 			{
-				textfield.outline_color = *(uint32_t*)&object.outlineColor;
+				textfield.outline_color = (static_cast<uint32_t>(object.outlineColor.red) << 24) |
+					(static_cast<uint32_t>(object.outlineColor.green) << 16) |
+					(static_cast<uint32_t>(object.outlineColor.blue) << 8) |
+					static_cast<uint32_t>(object.outlineColor.alpha);
 			}
 			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
 			textfield.is_multiline =

@@ -25,6 +25,7 @@ namespace sc {
 
 		class FilledElement {
 		public:
+			FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape, const DOM::Utils::MATRIX2D& matrix);
 			FilledElement(SymbolContext& symbol, FCM::AutoPtr<DOM::FrameElement::IShape> shape);
 
 		public:
