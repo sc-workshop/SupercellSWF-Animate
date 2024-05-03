@@ -75,13 +75,15 @@ namespace sc {
 						ResourcePublisher publisher(writer);
 						publisher.Publish();
 
-
+						context.Window()->readyToExit = true;
+						context.Window()->Close();
 #if !(SC_DEBUG)
 					}
 					catch (const PluginException& exception)
 					{
 						context.Window()->ThrowException((wchar_t*)exception.Title());
 						context.Trace(u"%s\n%s", exception.Title(), exception.Description());
+						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const sc::GeneralRuntimeException& exception) {
@@ -91,21 +93,22 @@ namespace sc {
 
 						context.Window()->ThrowException(exception.what());
 						context.Trace(exception.message());
+						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (...) {
 						context.Trace(
 							context.locale.GetString("TID_UNKNOWN_EXCEPTION")
 						);
-						result = FCM_EXPORT_FAILED;
 
 						context.logger->error("Publishing finished with unknown exception");
-					}
+
+						context.Window()->readyToExit = true;
+						result = FCM_EXPORT_FAILED;
+				}
 #endif
 					publishing_ui.unlock();
-					context.Window()->readyToExit = true;
-					context.Window()->Close();
-				}
+		}
 			);
 
 			publishing.join();
@@ -124,7 +127,7 @@ namespace sc {
 			);
 
 			return result;
-		}
+	}
 
 		FCM::Result RegisterPublisher(FCM::PIFCMDictionary plugins, FCM::FCMCLSID docId)
 		{
@@ -220,5 +223,5 @@ namespace sc {
 
 			return result;
 		}
-	}
+}
 }
