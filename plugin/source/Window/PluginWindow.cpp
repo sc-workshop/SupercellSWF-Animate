@@ -11,7 +11,7 @@ namespace sc {
 			EVT_CLOSE(PluginWindow::OnClose)
 			SC_EVT_CREATE_PROGRESS(wxID_ANY, PluginWindow::OnProgressCreate)
 			SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
-		wxEND_EVENT_TABLE();
+			wxEND_EVENT_TABLE();
 
 		PluginWindow::PluginWindow(wxString& title)
 			: wxFrame(
@@ -41,8 +41,10 @@ namespace sc {
 			Bind(WX_EVT_ERROR_RAISE, [&](wxCommandEvent& event) {
 				ErrorDialog* dialog = new ErrorDialog(m_parent, event.GetString());
 				dialog->ShowModal();
+
 				dialog->Destroy();
 				readyToExit = true;
+				this->Close();
 				});
 		}
 

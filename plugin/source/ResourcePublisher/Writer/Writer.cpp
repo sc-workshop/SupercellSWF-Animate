@@ -48,6 +48,8 @@ namespace sc {
 		}
 
 		void SCWriter::AddTextField(uint16_t id, SymbolContext& symbol, TextElement& object) {
+			PluginSessionConfig& config = PluginSessionConfig::Instance();
+
 			TextField& textfield = swf.textfields.emplace_back();
 
 			std::string text = Localization::ToUtf8(object.text);
@@ -100,10 +102,6 @@ namespace sc {
 				}
 			}
 
-			if (object.renderingMode.aaMode == DOM::FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
-				textfield.use_device_font = true;
-			}
-
 			textfield.is_outlined = object.isOutlined;
 			if (object.isOutlined)
 			{
@@ -112,9 +110,17 @@ namespace sc {
 					(static_cast<uint32_t>(object.outlineColor.blue) << 8) |
 					static_cast<uint32_t>(object.outlineColor.alpha);
 			}
-			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
+
 			textfield.is_multiline =
 				object.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
+
+			if (config.backwardCompatibility) return;
+
+			if (object.renderingMode.aaMode == DOM::FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
+				textfield.use_device_font = true;
+			}
+
+			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
 		}
 
 		void SCWriter::AddExportName(uint16_t id, const std::string& name) {
@@ -446,10 +452,13 @@ namespace sc {
 				// or in case of unknown exception just reason
 				if (exception.reason() == AtlasGenerator::PackagingException::Reason::Unknown)
 				{
-					throw PluginException("[AtlasGenerator] %ls", context.locale.GetString("TID_SWF_ATLAS_UNKNOWN").c_str());
+					throw PluginException(
+						Localization::Format(
+							u"[AtlasGenerator] %ls",
+							context.locale.GetString("TID_SWF_ATLAS_UNKNOWN").c_str()
+						)
+					);
 				}
-
-				const char* base_format = "[AtlasGenerator] %ls %ls";
 
 				std::u16string reason;
 				std::u16string symbol_name;
@@ -491,7 +500,11 @@ namespace sc {
 					symbol_name = context.locale.GetString("TID_SWF_ATLAS_UNKNOWN_SYMBOL");
 				}
 
-				throw PluginException(base_format, reason.c_str(), symbol_name.c_str());
+				throw PluginException(
+					Localization::Format(
+						u"[AtlasGenerator] %ls %ls", reason.c_str(), symbol_name.c_str()
+					)
+				);
 			}
 
 			context.Window()->DestroyStatusBar(status);
@@ -604,7 +617,7 @@ namespace sc {
 			swf.use_low_resolution = config.hasLowresTexture;
 			swf.use_multi_resolution = config.hasMultiresTexture;
 			swf.multi_resolution_suffix = sc::SWFString(config.multiResolutionSuffix);
-			swf.low_resolution_suffix = sc::SWFString(config.multiResolutionSuffix);
+			swf.low_resolution_suffix = sc::SWFString(config.lowResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.save_custom_property = config.writeCustomProperties;
 

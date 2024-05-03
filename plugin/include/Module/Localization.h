@@ -31,9 +31,15 @@ namespace sc {
 
 				std::u16string format = Localization::ToUtf16(text);
 
+				return Localization::Format(format, args...);
+			}
+
+			template <class ... Args>
+			static std::u16string Format(const std::u16string& message, Args ... args)
+			{
 				const size_t bufferSize = 1024;
 				wchar_t buffer[bufferSize] = { 0 };
-				std::swprintf(buffer, bufferSize, reinterpret_cast<const wchar_t*>(format.c_str()), args...);
+				std::swprintf(buffer, bufferSize, reinterpret_cast<const wchar_t*>(message.c_str()), args...);
 
 				return std::u16string(reinterpret_cast<const char16_t*>(buffer));
 			}

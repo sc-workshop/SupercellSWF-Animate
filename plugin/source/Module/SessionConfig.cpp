@@ -30,6 +30,9 @@ namespace sc {
 			outputFilepath = fs::path(Localization::ToUtf16(data["output"]));
 			context.logger->info("	outputFilepath: {}", outputFilepath.string());
 
+			backwardCompatibility = data["backwardCompatibility"];
+			context.logger->info("	backwardCompatibility: {}", backwardCompatibility);
+
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
 			context.logger->info("	hasPrecisionMatrices: {}", hasPrecisionMatrices);
 

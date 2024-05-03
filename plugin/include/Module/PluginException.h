@@ -24,9 +24,11 @@ namespace sc
 				m_exceptionDescription = context.locale.GetString(std::string(exceptionId) + "_description");
 				m_message = Localization::ToUtf8(m_exceptionTitle);
 
-				context.logger->critical("Throwed PluginException");
-				context.logger->critical("	Message: {}", m_message);
+				context.logger->error("Throwed PluginException");
+				context.logger->error("	Message: {}", m_message);
 			};
+
+			PluginException(const std::u16string& reason);
 
 			virtual const char16_t* Title() const;
 			virtual const char16_t* Description() const;

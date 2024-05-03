@@ -82,7 +82,16 @@ namespace sc {
 					catch (const PluginException& exception)
 					{
 						context.Window()->ThrowException((wchar_t*)exception.Title());
-						context.Trace(u"%s\n%s", exception.Title(), exception.Description());
+						if (!exception.Title().empty())
+						{
+							context.Trace(exception.Title());
+
+							if (!exception.Description().empty())
+							{
+								context.Trace(exception.Description());
+							}
+						}
+
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}

@@ -37,6 +37,8 @@ interface PublisherSettingsData {
     //Basic settings
     output: string,
 
+    backwardCompatibility: boolean,
+
     // Additional settings
     compressionMethod: CompressionMethods,
     hasPrecisionMatrices: boolean,
@@ -63,6 +65,8 @@ interface PublisherSettingsData {
 export class PublisherSettings {
     data: PublisherSettingsData = {
         output: "",
+
+        backwardCompatibility: false,
 
         compressionMethod: CompressionMethods.ZSTD,
         hasPrecisionMatrices: false,
@@ -119,7 +123,7 @@ export class PublisherSettings {
                 Object.assign(this.data, JSON.parse(data.SupercellSWF));
             }
         } catch (error) {
-            alert("Failed to load publisher settings");
+            // alert("Failed to load publisher settings");
         }
 
     }

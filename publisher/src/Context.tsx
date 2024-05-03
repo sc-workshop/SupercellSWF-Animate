@@ -1,4 +1,5 @@
 import React, { useCallback, useState, ReactNode } from "react"
+import { Settings } from "./PublisherSettings";
 
 interface ContextProps {
     backwardCompatibility: boolean
@@ -18,6 +19,8 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
     const toggleBackwardCompatibility = () =>
     {
         setBackwardCompatibility(backwardCompatibility == false)
+
+        Settings.setParam("backwardCompatibility", backwardCompatibility == false)
     }
 
     return {

@@ -48,6 +48,8 @@ namespace sc {
 		public:
 			fs::path outputFilepath = "";
 
+			bool backwardCompatibility = false;
+
 			sc::SWFStream::Signature compression = sc::SWFStream::Signature::Zstandard;
 			bool exportToExternal = false;
 			fs::path exportToExternalPath = "";
