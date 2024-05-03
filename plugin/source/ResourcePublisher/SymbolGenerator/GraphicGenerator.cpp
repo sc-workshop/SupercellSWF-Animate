@@ -63,7 +63,7 @@ namespace sc {
 				// Fills / Stroke
 				else if (shape)
 				{
-					FilledElement filledShape(symbol, shape);
+					FilledElement filledShape(symbol, shape, transformation);
 					writer.AddFilledElement(filledShape);
 				}
 

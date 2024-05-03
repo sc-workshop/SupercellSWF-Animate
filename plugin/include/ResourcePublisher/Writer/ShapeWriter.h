@@ -45,7 +45,7 @@ namespace sc {
 			);
 
 		public:
-			void AddFilledShapeRegion(const FilledElementRegion& region);
+			void AddFilledShapeRegion(const FilledElementRegion& region, const DOM::Utils::MATRIX2D& matrix);
 
 			bool IsValidFilledShapeRegion(const FilledElementRegion& region);
 

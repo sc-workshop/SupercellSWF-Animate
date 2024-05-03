@@ -17,11 +17,11 @@ namespace sc {
 
 		void SCShapeWriter::AddFilledElement(const FilledElement& shape) {
 			for (const FilledElementRegion& region : shape.fill) {
-				AddFilledShapeRegion(region);
+				AddFilledShapeRegion(region, shape.transormation);
 			}
 
 			for (const FilledElementRegion& region : shape.stroke) {
-				AddFilledShapeRegion(region);
+				AddFilledShapeRegion(region, shape.transormation);
 			}
 		}
 
@@ -341,7 +341,10 @@ namespace sc {
 			return true;
 		}
 
-		void SCShapeWriter::AddFilledShapeRegion(const FilledElementRegion& region) {
+		void SCShapeWriter::AddFilledShapeRegion(
+			const FilledElementRegion& region,
+			const DOM::Utils::MATRIX2D& matrix
+		) {
 			if (!IsValidFilledShapeRegion(region)) return;
 
 			bool should_rasterize =
@@ -356,6 +359,9 @@ namespace sc {
 			bool should_triangulate =
 				!should_rasterize &&
 				region.contour.Count() > 4;
+
+			FilledElementRegion transformed_region = region;
+			transformed_region.Transform(matrix);
 
 			if (should_rasterize)
 			{
