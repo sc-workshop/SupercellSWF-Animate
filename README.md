@@ -205,7 +205,7 @@ You can find a list of all available examples in ["examples"](/examples/README.m
 <br/>
 
 # Issues
-If you find any problem with the export process, please report it in Problems or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
+If you find any problem with the export process, please report it in [Issues](https://github.com/sc-workshop/SupercellSWF-Animate/issues) or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
 Also, native part of plugin saves logs in "%temp%/com.scwmake.SupercellSWF_log.txt", please provide them along with a description for a faster solution to the problem.
 
 <br/>
