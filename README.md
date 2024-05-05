@@ -15,12 +15,13 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Export features](#export-features)
 - [How to use](#how-to-use)
 - [Limitations](#limitations)
-- [Publisher options](#publisher-options)
+- [Issues](#issues)
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Dependecies](#dependecies)
 - [Building](#building)
 - [Examples](#examples)
+- [Changelog](#changelog)
 - [Authors](#authors)
 - [Support](#support)
 
@@ -74,7 +75,7 @@ Absolutely all types of animation tweens and their types of interpolation are su
 Full support. Be careful when using it, the result can be very unoptimized.
 
 - Nine-slice ✅  
-Full support.
+Full support. But keep in mind that on Animate 2024 and above this may not work correctly.
 <br/>
 
 # How to use
@@ -203,13 +204,19 @@ You can find a list of all available examples in ["examples"](/examples/README.m
 
 <br/>
 
+# Issues
+If you find any problem with the export process, please report it in Problems or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
+Also, native part of plugin saves logs in "%temp%/com.scwmake.SupercellSWF_log.txt", please provide them along with a description for a faster solution to the problem.
+
+<br/>
+
 # Changelog
 ## v 1.2.0
-- Complete refactoring of code.
-- Changed and improved design of Publisher Settings.
+- Complete refactoring of code
+- Changed and improved design of Publisher Settings
 - More animations for Publisher progress window
-- Improved support for Fills and Strokes. Added rasterization to sprites.
-- Added minor algorithms to reduce shape object count 
+- Improved support for Fills and Strokes. Added rasterization to sprites
+- Added new algorithm to reduce shape object count 
 - Added support for 9slice scaling
 - More bugs
 ## v 1.1.0
