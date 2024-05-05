@@ -1,4 +1,4 @@
-import { ReactElement, createElement, useState } from "react"
+import { createElement, useState } from "react"
 import TextField from "./TextField"
 import {
     useFloating,
@@ -10,9 +10,7 @@ import {
     useFocus,
     useDismiss,
     useRole,
-    useInteractions,
-    FloatingPortal,
-    FloatingDelayGroup 
+    useInteractions
 } from "@floating-ui/react";
 
 import { useSpring, animated } from "react-spring";

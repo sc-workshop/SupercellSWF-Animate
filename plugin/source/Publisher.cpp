@@ -66,7 +66,6 @@ namespace sc {
 					// Block thread until publishing ui is ready
 					publishing_ui.lock();
 					context.logger->info("Publishing thread has started...");
-
 					// Removes Exception catch in debug mode
 #if !(SC_DEBUG)
 					try {
@@ -81,7 +80,7 @@ namespace sc {
 					}
 					catch (const PluginException& exception)
 					{
-						context.Window()->ThrowException((wchar_t*)exception.Title());
+						context.Window()->ThrowException((wchar_t*)exception.Title().c_str());
 						if (!exception.Title().empty())
 						{
 							context.Trace(exception.Title());
@@ -114,10 +113,10 @@ namespace sc {
 
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
-				}
+					}
 #endif
 					publishing_ui.unlock();
-		}
+				}
 			);
 
 			publishing.join();
@@ -136,7 +135,7 @@ namespace sc {
 			);
 
 			return result;
-	}
+		}
 
 		FCM::Result RegisterPublisher(FCM::PIFCMDictionary plugins, FCM::FCMCLSID docId)
 		{
@@ -232,5 +231,5 @@ namespace sc {
 
 			return result;
 		}
-}
+	}
 }

@@ -30,8 +30,8 @@ namespace sc
 
 			PluginException(const std::u16string& reason);
 
-			virtual const char16_t* Title() const;
-			virtual const char16_t* Description() const;
+			virtual const std::u16string& Title() const;
+			virtual const std::u16string& Description() const;
 		};
 	}
 }

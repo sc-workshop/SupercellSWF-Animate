@@ -17,14 +17,14 @@ namespace sc
 			context.logger->error("	Message: {}", m_message);
 		};
 
-		const char16_t* PluginException::Title() const
+		const std::u16string& PluginException::Title() const
 		{
-			return m_exceptionTitle.c_str();
+			return m_exceptionTitle;
 		}
 
-		const char16_t* PluginException::Description() const
+		const std::u16string& PluginException::Description() const
 		{
-			return m_exceptionDescription.c_str();
+			return m_exceptionDescription;
 		}
 	}
 }
