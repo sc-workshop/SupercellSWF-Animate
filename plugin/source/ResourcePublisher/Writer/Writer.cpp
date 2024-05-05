@@ -114,11 +114,11 @@ namespace sc {
 			textfield.is_multiline =
 				object.lineMode == DOM::FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
 
-			if (config.backwardCompatibility) return;
-
 			if (object.renderingMode.aaMode == DOM::FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
 				textfield.use_device_font = true;
 			}
+
+			if (config.backwardCompatibility) return;
 
 			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
 		}
