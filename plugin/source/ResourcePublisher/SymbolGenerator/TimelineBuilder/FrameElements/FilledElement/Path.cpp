@@ -92,12 +92,11 @@ namespace sc
 		bool FilledElementPath::operator==(const FilledElementPath& other) const {
 			if (Count() != other.Count()) { return false; }
 
-			throw std::exception("not implemented");
-			// for (uint32_t i = 0; points.size() > i; i++) {
-			// 	if (points[i] != other.points[i]) {
-			// 		return false;
-			// 	}
-			// }
+			for (uint32_t i = 0; m_segments.size() > i; i++) {
+				if (m_segments[i] != other.m_segments[i]) {
+					return false;
+				}
+			}
 
 			return true;
 		}

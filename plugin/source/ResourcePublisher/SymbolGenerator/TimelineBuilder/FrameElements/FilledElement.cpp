@@ -43,13 +43,13 @@ namespace sc {
 		bool FilledElement::operator==(const FilledElement& other) const {
 			if (fill.size() != other.fill.size() || stroke.size() != other.stroke.size()) { return false; }
 
-			for (uint32_t i = 0; fill.size() > i; i++) {
+			for (size_t i = 0; fill.size() > i; i++) {
 				if (fill[i] != other.fill[i]) {
 					return false;
 				}
 			}
 
-			for (uint32_t i = 0; stroke.size() > i; i++) {
+			for (size_t i = 0; stroke.size() > i; i++) {
 				if (stroke[i] != other.stroke[i]) {
 					return false;
 				}

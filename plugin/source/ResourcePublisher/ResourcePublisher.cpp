@@ -209,7 +209,7 @@ namespace sc {
 			uint16_t identifer = m_id++;
 
 			m_writer.AddModifier(identifer, type);
-			m_modifierDict.push_back({ type, identifer });
+			m_modifierDict[type] = identifer;
 
 			context.logger->info("Added Modifier: {}", (uint8_t)type);
 
@@ -225,14 +225,14 @@ namespace sc {
 			uint16_t identifer = m_id++;
 
 			m_writer.AddTextField(identifer, symbol, field);
-			m_textfieldDict.push_back({ field, identifer });
+			m_textfieldDict.push_back({ field ,identifer });
 
 			context.logger->info("Added TextField from: {}", Localization::ToUtf8(symbol.name));
 
 			return identifer;
 		}
 
-		uint16_t ResourcePublisher::GetIdentifer(const std::u16string& name) {
+		uint16_t ResourcePublisher::GetIdentifer(const std::u16string& name) const {
 			auto it = m_symbolsData.find(name);
 			if (it != m_symbolsData.end()) {
 				return it->second;
@@ -274,39 +274,38 @@ namespace sc {
 				return UINT16_MAX;
 			}
 
+			m_filledShapeDict.push_back({ elements, identifer });
+
 			context.logger->info("Added FilledElement from: {}", Localization::ToUtf8(symbol.name));
 
 			return identifer;
 		}
 
-		uint16_t ResourcePublisher::GetIdentifer(
-			MaskedLayerState type
-		) {
-			for (auto modifier : m_modifierDict) {
-				if (modifier.first == type) {
-					return modifier.second;
+		uint16_t ResourcePublisher::GetIdentifer(const MaskedLayerState& type) const {
+			ModifierDict::const_iterator pos = m_modifierDict.find(type);
+			if (pos != m_modifierDict.end())
+			{
+				return pos->second;
+			}
+
+			return UINT16_MAX;
+		}
+
+		uint16_t ResourcePublisher::GetIdentifer(const TextElement& field) const {
+			for (const TextsDictValue& data : m_textfieldDict)
+			{
+				if (data.first == field)
+				{
+					return data.second;
 				}
 			}
 
 			return UINT16_MAX;
 		}
 
-		uint16_t ResourcePublisher::GetIdentifer(
-			TextElement field
-		) {
-			for (auto textfield : m_textfieldDict) {
-				if (textfield.first == field) {
-					return textfield.second;
-				}
-			}
-
-			return UINT16_MAX;
-		}
-
-		uint16_t ResourcePublisher::GetIdentifer(
-			FilledElement shape
-		) {
-			for (auto shapePair : m_filledShapeDict) {
+		uint16_t ResourcePublisher::GetIdentifer(const std::vector<FilledElement>& shape) const
+		{
+			for (const FilledDictValue& shapePair : m_filledShapeDict) {
 				if (shapePair.first == shape) {
 					return shapePair.second;
 				}

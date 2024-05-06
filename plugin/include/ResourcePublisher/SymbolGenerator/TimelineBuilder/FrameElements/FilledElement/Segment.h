@@ -76,6 +76,13 @@ namespace sc
 		public:
 			Iterator begin() const { return Iterator(*this); }
 			Iterator end() const { return Iterator(*this, true); }
+
+		public:
+			bool operator==(const FilledElementPathSegment& other) const;
+			bool operator!=(const FilledElementPathSegment& other) const
+			{
+				return !operator==(other);
+			};
 		};
 	}
 }

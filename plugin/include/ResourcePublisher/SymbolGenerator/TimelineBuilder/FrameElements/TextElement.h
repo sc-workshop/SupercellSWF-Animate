@@ -18,6 +18,11 @@ namespace sc {
 		public:
 			bool operator==(TextElement const& other) const;
 
+			bool operator!=(TextElement const& other) const
+			{
+				return !operator==(other);
+			}
+
 		public:
 			DOM::Utils::RECT bound;
 

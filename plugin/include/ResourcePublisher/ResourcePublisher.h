@@ -54,23 +54,30 @@ namespace sc {
 				std::vector<FCM::AutoPtr<DOM::ILibraryItem>>& paths
 			);
 
+		private:
+			// Shape / Id
+			using FilledDictValue = std::pair<std::vector<FilledElement>, uint16_t>;
+			using FilledDict = std::vector<FilledDictValue>;
+
+			// Name  /  Id
+			using SymbolDict = std::unordered_map<std::u16string, uint16_t>;
+
+			// Type / Id
+			using ModifierDict = std::unordered_map<MaskedLayerState, uint16_t>;
+
+			// Info / Id
+			using TextsDictValue = std::pair<TextElement, uint16_t>;
+			using TextsDict = std::vector<TextsDictValue>;
+
 		public:
 			SharedWriter& m_writer;
 
 			MovieClipGeneator movieClipGenerator;
 			GraphicGenerator graphicGenerator;
-
-			// Name  /  Id
-			std::unordered_map<std::u16string, uint16_t> m_symbolsData;
-
-			// Type / Id
-			std::vector<std::pair<MaskedLayerState, uint16_t>> m_modifierDict;
-
-			// Info / Id
-			std::vector<std::pair<TextElement, uint16_t>> m_textfieldDict;
-
-			// Shape / Id
-			std::vector<std::pair<FilledElement, uint16_t>> m_filledShapeDict;
+			SymbolDict m_symbolsData;
+			ModifierDict m_modifierDict;
+			TextsDict m_textfieldDict;
+			FilledDict m_filledShapeDict;
 
 			uint32_t m_id = 0;
 			uint8_t m_current_fps = 30;
@@ -106,19 +113,19 @@ namespace sc {
 
 			uint16_t GetIdentifer(
 				const std::u16string& name
-			);
+			) const;
 
 			uint16_t GetIdentifer(
-				MaskedLayerState type
-			);
+				const MaskedLayerState& type
+			) const;
 
 			uint16_t GetIdentifer(
-				TextElement field
-			);
+				const TextElement& field
+			) const;
 
 			uint16_t GetIdentifer(
-				FilledElement shape
-			);
+				const std::vector<FilledElement>& shape
+			) const;
 
 		private:
 			uint16_t AddMovieclip(
