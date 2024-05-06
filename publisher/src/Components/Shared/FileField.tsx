@@ -2,7 +2,6 @@ import { CSSProperties, createElement, useState } from "react";
 
 import TextField from "./TextField";
 import { getInterface, isCEP } from "../../CEP";
-import { AppTheme, AppThemes } from "../themes";
 
 type FileFieldMode = "read" | "write"
 
@@ -12,7 +11,7 @@ export default function FileField(
     mode: FileFieldMode,
     ext: string,
     style: CSSProperties,
-    callback: (value: any) => void,
+    callback: (value: string) => void,
     defaultValue: string = "") {
     const [input, setInput] = useState(defaultValue);
     const [isFocus, setIsFocus] = useState(false);
@@ -57,13 +56,13 @@ export default function FileField(
         {
             key: `filefield_${keyName}_button`,
             type: "image",
-            src: require(`../../images/${AppThemes[AppTheme]}/folderOpen.png`),
+            src: require(`../../images/folderOpen.png`),
             style: {
                 width: "20px",
                 height: "20px",
                 marginLeft: "5px"
             },
-            onClick: async function (event: React.MouseEvent<HTMLElement>) {
+            onClick: async function () {
                 if (!isCEP()) {
                     return;
                 }

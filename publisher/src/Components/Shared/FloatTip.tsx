@@ -55,9 +55,8 @@ export default function FloatTip(tip_tid: string) {
         role,
     ]);
 
-    const text = Locale.Get(tip_tid);
     const tip_text = TextField(
-        wrapText(text, 50),
+        wrapText(Locale.Get(tip_tid), 50),
         {
 
         },

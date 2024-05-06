@@ -24,7 +24,7 @@ class LocaleInterface {
         this.Load();
     }
 
-    locale: { [TID: string]: any } = {};
+    locale: { [TID: string]: unknown } = {};
 
     code: Locales = Locales.en_US;
 
@@ -33,12 +33,12 @@ class LocaleInterface {
         this.locale = require(`./locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`)
     }
 
-    Get(TID: string): any {
+    Get(TID: string): string {
         const value = this.locale[TID];
         if (value === undefined) {
             return TID;
         } else {
-            return value;
+            return String(value);
         }
     }
 }

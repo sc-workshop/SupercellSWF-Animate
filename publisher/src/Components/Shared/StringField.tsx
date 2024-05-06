@@ -6,7 +6,7 @@ export default function StringField(
     name: string,
     keyName: string,
     style: CSSProperties,
-    callback: (value: any) => void,
+    callback: (value: string) => void,
     defaultValue: string = "") {
     const [input, setInput] = useState(defaultValue);
     const [isFocus, setIsFocus] = useState(false);

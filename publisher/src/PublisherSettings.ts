@@ -1,10 +1,14 @@
-import { useState } from "react";
 import { CSEvent, getInterface, isCEP } from "./CEP"
 
 export enum CompressionMethods {
     LZMA,
     LZHAM,
     ZSTD
+}
+
+export enum BaseCompressionMethods {
+    LZMA = CompressionMethods.LZMA,
+    LZHAM = CompressionMethods.LZHAM
 }
 
 export enum TextureScaleFactor {
@@ -31,9 +35,9 @@ export enum Quality {
     high,
     medium,
     low
-} 
+}
 
-interface PublisherSettingsData {
+type PublisherSettingsData = {
     //Basic settings
     output: string,
 
@@ -89,11 +93,11 @@ export class PublisherSettings {
         textureMaxHeight: 2048,
     };
 
-    getParam(name: keyof PublisherSettingsData): any {
+    getParam<K extends keyof PublisherSettingsData>(name: K) {
         return this.data[name];
     }
 
-    setParam(name: keyof PublisherSettingsData, value: any) {
+    setParam<K extends keyof PublisherSettingsData>(name: K, value: PublisherSettingsData[K]) {
         this.data[name] = value as never;
     }
 
@@ -115,7 +119,8 @@ export class PublisherSettings {
         });
         CSInterface.dispatchEvent(event);
     }
-    
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     restore(data: any) {
         console.log(data)
         try {

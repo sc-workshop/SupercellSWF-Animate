@@ -1,13 +1,12 @@
-import { CSSProperties, Dispatch, SetStateAction, createElement, useState } from "react";
+import { CSSProperties, Dispatch, SetStateAction, createElement } from "react";
 import TextField from "./TextField";
 import FloatTip from "./FloatTip";
 import React from "react";
-import { ReferenceType } from "@floating-ui/react";
 
 type callback = (value: boolean) => void;
 type state = [boolean, Dispatch<SetStateAction<boolean>>];
 
-interface Props {
+type Props = {
     name: string
     keyName: string
     defaultValue: boolean
@@ -16,7 +15,7 @@ interface Props {
     tip_tid?: string
 }
 
-interface State {
+type State = {
     focus: boolean
     checked: boolean
 }
@@ -48,25 +47,26 @@ export default class BoolField extends React.Component<Props, State> {
 
         if (this.props.tip_tid !== undefined)
         {
-            let [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
+            const [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
             label = createElement(
                 "div",
                 {
                     ref: tip_reference
                 },
                 label,
-                tip_element as any,
-                ...props as any
+                tip_element as never,
+                ...props as unknown as never[]
             );
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const current_element = this;
         const checkbox = createElement(
             "input",
             {
                 key: `boolfield_${this.props.keyName}_input`,
                 type: "checkbox",
-                onChange: function (event: React.FormEvent<HTMLInputElement>) {
+                onChange: function () {
                     current_element.state.checked = current_element.state.checked == false;
 
                     if (typeof current_element.props.callback == "function") {

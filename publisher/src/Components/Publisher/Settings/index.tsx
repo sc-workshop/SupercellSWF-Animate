@@ -6,7 +6,7 @@ import SubMenu from "../../Shared/SubMenu";
 import TextureSettings from "./textures";
 import BoolField from "../../Shared/BoolField";
 import FileField from "../../Shared/FileField";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import OtherSettings from "./others";
 import { GetPublishContext } from "../../../Context";
 
@@ -45,7 +45,7 @@ export default function SettingsMenu() {
         }
     ).render()
 
-    let externalFilePath = FileField(
+    const externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
         "export_to_external_path",
         "read",

@@ -1,7 +1,7 @@
-import { CSSProperties, LegacyRef } from "react";
+import { CSSProperties } from "react";
 
 let id = 0;
-export default function TextField(text: string, style: CSSProperties, keyName: string = "", reference: any = undefined) {
+export default function TextField(text: string, style: CSSProperties, keyName: string = "", reference: unknown = undefined) {
     const key = keyName == "" ? `txt_${id++}` : keyName;
-    return <span key={key} style={style} ref={reference as any}>{text}</span>
+    return <span key={key} style={style} ref={reference as never}>{text}</span>
 }

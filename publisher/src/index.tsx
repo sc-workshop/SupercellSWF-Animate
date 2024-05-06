@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import Publisher from './Publisher';
 import React, { useState, createElement, useEffect } from 'react';
-import { AppColor } from './Components/themes';
 import { getInterface, CSEvent, isCEP } from './CEP';
 import { Settings } from './PublisherSettings';
 import Locale from './Localization';
@@ -35,7 +34,7 @@ function App() {
     if (!isCEP()) {
       setPublisherStateData("{}");
       return;
-    };
+    }
 
     const CSInterface = getInterface();
     const getData = async () => {
@@ -43,9 +42,9 @@ function App() {
         CSInterface.addEventListener("com.adobe.events.flash.extension.setstate", function (event: CSEvent) {
 
           if (event.data === undefined) {
-            setPublisherStateData({} as any);
+            setPublisherStateData("{}");
           } else {
-            setPublisherStateData(event.data as any);
+            setPublisherStateData(event.data);
           }
 
           resolve(undefined);
@@ -75,7 +74,7 @@ function App() {
         key: "publisher_body",
         style: {
           fontFamily: "PublisherFont",
-          backgroundColor: `#${AppColor.toString(16)}`,
+          backgroundColor: `#333333`,
           position: "relative"
         }
       },

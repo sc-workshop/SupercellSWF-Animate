@@ -2,7 +2,7 @@ import Locale from "../../../Localization";
 import BoolField from "../../Shared/BoolField";
 import EnumField from "../../Shared/EnumField";
 import SubMenu from "../../Shared/SubMenu";
-import { CompressionMethods, Settings } from "../../../PublisherSettings";
+import { BaseCompressionMethods, CompressionMethods, Settings } from "../../../PublisherSettings";
 import { GetPublishContext } from "../../../Context";
 
 export default function OtherSettings() {
@@ -11,7 +11,7 @@ export default function OtherSettings() {
     const compressionType = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
         keyName: "file_compression_select",
-        enumeration: CompressionMethods,
+        enumeration: useBackwardCompatibility ? BaseCompressionMethods : CompressionMethods,
         defaultValue: Settings.getParam("compressionMethod"),
         style: {
             display: "flex",
@@ -56,6 +56,8 @@ export default function OtherSettings() {
 
         Settings.setParam("writeCustomProperties", false);
         writeCustomProperties.state.checked = false;
+
+        Settings.setParam("compressionMethod", CompressionMethods.LZMA);
     }
 
     return SubMenu(

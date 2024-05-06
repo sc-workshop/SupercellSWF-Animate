@@ -1,11 +1,11 @@
-import { CSSProperties, Dispatch, createElement, SetStateAction } from "react";
+import { CSSProperties, Dispatch, createElement, SetStateAction, ReactNode } from "react";
 import TextField from "./TextField";
 import FloatTip from "./FloatTip";
 import React from "react";
 
-interface Enum {
-    [id: number]: any;
-    [id: string]: any;
+type Enum = {
+    [id: number]: unknown;
+    [id: string]: unknown;
 }
 
 type EnumArray = string[] | number[];
@@ -13,18 +13,20 @@ type EnumArray = string[] | number[];
 type callback = (value: string) => void;
 type state = [string, Dispatch<SetStateAction<string>>];
 
-interface Props {
+type Props = {
     name: string,
     keyName: string,
     enumeration: Enum | EnumArray,
-    defaultValue: string,
+    defaultValue: string | number,
     style: CSSProperties,
     callback: callback | state,
     tip_tid?: string
 }
 
-interface State {
+type State = {
     focus: boolean
+    value: unknown,
+    options: ReactNode[]
 }
 
 export default class EnumField extends React.Component<Props, State> {
@@ -34,14 +36,14 @@ export default class EnumField extends React.Component<Props, State> {
 
     state: State = {
         focus: false,
+        value: undefined,
+        options: []
     };
 
     constructor(props: Props) {
         super(props);
-    }
 
-    render() {
-        const options = [];
+        this.state.value = this.props.defaultValue;
 
         let maxEnumSize = 0;
         if (Array.isArray(this.props.enumeration)) {
@@ -52,7 +54,7 @@ export default class EnumField extends React.Component<Props, State> {
                     maxEnumSize = key.length;
                 }
 
-                options.push(
+                this.state.options.push(
                     <option key={`enumfield_${this.props.keyName}_${key}`} value={i}>{key}</option>
                 );
             }
@@ -69,12 +71,14 @@ export default class EnumField extends React.Component<Props, State> {
                     maxEnumSize = keyStr.length;
                 }
 
-                options.push(
+                this.state.options.push(
                     <option key={`enumfield_${this.props.keyName}_${enumValue}`} value={enumValue}>{enumKey}</option>
                 );
             }
         }
+    }
 
+    render() {
         let label = TextField(
             `${this.props.name} :`,
             {
@@ -83,19 +87,20 @@ export default class EnumField extends React.Component<Props, State> {
         )
 
         if (this.props.tip_tid !== undefined) {
-            let [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
+            const [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
             label = createElement(
                 "div",
                 {
                     ref: tip_reference
                 },
                 label,
-                tip_element as any,
-                ...props as any
+                tip_element as never,
+                ...props as unknown as never[]
             );
         }
 
-        let currentElement = this;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const currentElement = this;
         const selector = createElement(
             "select",
             {
@@ -117,17 +122,17 @@ export default class EnumField extends React.Component<Props, State> {
                     } else {
                         currentElement.props.callback[1](event.currentTarget.value);
                     }
+
+                    currentElement.state.value = event.currentTarget.value;
                 },
                 onFocus: function () {
                     currentElement.state.focus = true;
-                    //setIsFocus(true);
                 },
                 onBlur: function () {
                     currentElement.state.focus = false;
-                    //setIsFocus(false);
                 }
             },
-            options
+            this.state.options
         )
 
         return createElement(

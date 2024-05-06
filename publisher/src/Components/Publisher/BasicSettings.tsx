@@ -1,4 +1,4 @@
-import { createElement, useState } from "react";
+import { createElement } from "react";
 import { Settings } from "../../PublisherSettings";
 import Locale from "../../Localization";
 

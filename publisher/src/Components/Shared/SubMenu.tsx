@@ -1,5 +1,4 @@
 import { CSSProperties, ReactNode, createElement } from "react";
-import { AppTheme, AppThemes } from "../themes";
 import { useState } from "react";
 import TextField from "./TextField";
 
@@ -33,7 +32,7 @@ export default function SubMenu(
         "input",
         {
             type: "image",
-            src: require(`../../images/${AppThemes[AppTheme]}/arrow.png`),
+            src: require(`../../images/arrow.png`),
             style: {
                 transform: active ? "rotate(180deg)" : "",
                 transition: 'transform 100ms ease-in-out',

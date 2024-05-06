@@ -2,6 +2,7 @@ import { createElement } from "react";
 import TextField from "../Shared/TextField";
 import Locale from "../../Localization";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Version = require("../../../package.json").version;
 
 export function Header() {

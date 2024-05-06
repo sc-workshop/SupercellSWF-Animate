@@ -167,26 +167,26 @@ export default function TextureSettings() {
         name: Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH"),
         keyName: "texture_width_select",
         enumeration: TextureDimensions,
-        defaultValue: TextureDimensions.indexOf(Settings.getParam("textureMaxWidth")) as any,
+        defaultValue: TextureDimensions.indexOf(Settings.getParam("textureMaxWidth")) as never,
         style: {
             display: "flex",
             alignItems: "center",
             marginBottom: "10px"
         },
-        callback: value => (Settings.setParam("textureMaxWidth", TextureDimensions[value as any])),
+        callback: value => (Settings.setParam("textureMaxWidth", TextureDimensions[value as never])),
     }).render();
 
     const textureHeight = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT"),
         keyName: "texture_height_select",
         enumeration: TextureDimensions,
-        defaultValue: TextureDimensions.indexOf(Settings.getParam("textureMaxHeight")) as any,
+        defaultValue: TextureDimensions.indexOf(Settings.getParam("textureMaxHeight")) as never,
         style: {
             display: "flex",
             alignItems: "center",
             marginBottom: "10px"
         },
-        callback: value => (Settings.setParam("textureMaxHeight", TextureDimensions[value as any])),
+        callback: value => (Settings.setParam("textureMaxHeight", TextureDimensions[value as never])),
     }).render();
 
     let texture_props: ReactNode[] = []
