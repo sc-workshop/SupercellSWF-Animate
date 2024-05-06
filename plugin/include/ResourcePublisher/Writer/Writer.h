@@ -35,8 +35,6 @@ namespace sc {
 
 			virtual void AddTextField(uint16_t id, SymbolContext& symbol, TextElement& field);
 
-			virtual void AddExportName(uint16_t id, const std::string& name);
-
 			virtual void Finalize();
 
 		public:

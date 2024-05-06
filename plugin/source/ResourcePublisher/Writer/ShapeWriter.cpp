@@ -506,11 +506,18 @@ namespace sc {
 			m_group.AddItem<SlicedItem>(CreateRef<cv::Mat>(canvas), transform, guides);
 		}
 
-		void SCShapeWriter::Finalize(uint16_t id) {
+		bool SCShapeWriter::Finalize(uint16_t id) {
+			if (m_group.size() == 0)
+			{
+				return false;
+			}
+
 			sc::Shape& shape = m_writer.swf.shapes.emplace_back();
 			shape.id = id;
 
 			m_writer.AddGraphicGroup(m_group);
+
+			return true;
 		}
 	}
 }

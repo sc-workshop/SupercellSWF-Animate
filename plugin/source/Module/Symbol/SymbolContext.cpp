@@ -5,7 +5,7 @@ namespace sc
 {
 	namespace Adobe
 	{
-		SymbolContext::SymbolContext(DOM::ILibraryItem* item) : name(GetName(item)), type(GetType(item))
+		SymbolContext::SymbolContext(FCM::AutoPtr<DOM::ILibraryItem> item, const std::string& linkage) : name(GetName(item)), type(GetType(item)), linkage_name(linkage)
 		{
 		}
 
@@ -13,7 +13,7 @@ namespace sc
 		{
 		}
 
-		std::u16string SymbolContext::GetName(DOM::ILibraryItem* symbol)
+		std::u16string SymbolContext::GetName(FCM::AutoPtr<DOM::ILibraryItem> symbol)
 		{
 			PluginContext& context = PluginContext::Instance();
 
@@ -25,7 +25,7 @@ namespace sc
 			return itemName;
 		}
 
-		SymbolContext::SymbolType SymbolContext::GetType(DOM::ILibraryItem* symbol)
+		SymbolContext::SymbolType SymbolContext::GetType(FCM::AutoPtr<DOM::ILibraryItem> symbol)
 		{
 			FCM::AutoPtr<FCM::IFCMDictionary> properties;
 			symbol->GetProperties(properties.m_Ptr);

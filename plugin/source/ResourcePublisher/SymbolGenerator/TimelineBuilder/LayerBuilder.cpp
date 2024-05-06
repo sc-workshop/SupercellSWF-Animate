@@ -23,8 +23,8 @@ namespace sc {
 				identifer,
 				FCM::BlendMode::NORMAL_BLEND_MODE,
 				u"",
-				nullptr,
-				nullptr
+				std::nullopt,
+				std::nullopt
 			);
 		}
 

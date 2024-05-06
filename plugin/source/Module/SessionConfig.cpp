@@ -46,7 +46,7 @@ namespace sc {
 			context.logger->info("	exportToExternalPath: {}", exportToExternalPath.string());
 
 			hasExternalTexture = data["hasExternalTexture"];
-			context.logger->info("	hasExternalTexture: ", hasExternalTexture);
+			context.logger->info("	hasExternalTexture: {}", hasExternalTexture);
 			hasExternalCompressedTexture = data["hasExternalCompressedTexture"];
 			context.logger->info("	hasExternalCompressedTexture: {}", hasExternalCompressedTexture);
 			hasLowresTexture = data["hasLowresTexture"];

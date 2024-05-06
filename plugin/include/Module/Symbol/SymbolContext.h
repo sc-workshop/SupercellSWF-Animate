@@ -24,18 +24,19 @@ namespace sc
 			};
 
 		public:
-			SymbolContext(DOM::ILibraryItem* item);
+			SymbolContext(FCM::AutoPtr<DOM::ILibraryItem> item, const std::string& linkage_name = "");
 			SymbolContext(const std::u16string& name, SymbolType type);
 
 		public:
 			const std::u16string name;
+			const std::string linkage_name;
 			const SymbolType type = SymbolType::Unknown;
 
 			SliceScalingData slice_scaling;
 
 		private:
-			static std::u16string GetName(DOM::ILibraryItem* symbol);
-			static SymbolType GetType(DOM::ILibraryItem* symbol);
+			static std::u16string GetName(FCM::AutoPtr<DOM::ILibraryItem> symbol);
+			static SymbolType GetType(FCM::AutoPtr<DOM::ILibraryItem> symbol);
 		};
 	}
 }

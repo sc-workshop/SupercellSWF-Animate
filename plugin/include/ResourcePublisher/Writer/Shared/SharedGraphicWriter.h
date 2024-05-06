@@ -25,7 +25,7 @@ namespace sc {
 
 			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides) = 0;
 
-			virtual void Finalize(uint16_t id) = 0;
+			virtual bool Finalize(uint16_t id) = 0;
 		};
 	}
 }

@@ -16,8 +16,8 @@ namespace sc {
 
 			MovieClip m_object;
 
-			SWFVector<Ref<Matrix2D>> m_matrices;
-			SWFVector<Ref<ColorTransform>> m_colors;
+			SWFVector<std::optional<Matrix2D>> m_matrices;
+			SWFVector<std::optional<ColorTransform>> m_colors;
 
 			// Helper functions
 
@@ -44,11 +44,11 @@ namespace sc {
 				uint16_t id,
 				FCM::BlendMode blending,
 				const std::u16string& name,
-				DOM::Utils::MATRIX2D* matrix,
-				DOM::Utils::COLOR_MATRIX* color
+				std::optional<DOM::Utils::MATRIX2D> matrix,
+				std::optional<DOM::Utils::COLOR_MATRIX> color
 			);
 
-			void Finalize(uint16_t id);
+			bool Finalize(uint16_t id);
 		};
 	}
 }

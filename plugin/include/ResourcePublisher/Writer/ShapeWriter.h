@@ -25,7 +25,7 @@ namespace sc {
 
 			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides);
 
-			virtual void Finalize(uint16_t id);
+			virtual bool Finalize(uint16_t id);
 
 		public:
 			void AddTriangulatedRegion(

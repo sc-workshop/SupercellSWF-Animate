@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <tuple>
+#include <optional>
 
 // FCM stuff
 #include "AnimateSDK/core/common/FCMTypes.h"
@@ -56,7 +57,6 @@ namespace sc {
 
 		public:
 			// A biiig workaround with magic numbers to get instance name from Graphic items
-			// i hope it works on other Animate versions except 23.x
 			static std::string GetInstanceName(FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbol);
 
 		private:
@@ -73,8 +73,8 @@ namespace sc {
 			std::vector<std::tuple<uint16_t, FCM::BlendMode, std::u16string>> m_elementsData;
 
 			// Transforms for each frame element
-			std::vector<std::shared_ptr<MATRIX2D>> m_matrices;
-			std::vector<std::shared_ptr<COLOR_MATRIX>> m_colors;
+			std::vector<std::optional<MATRIX2D>> m_matrices;
+			std::vector<std::optional<COLOR_MATRIX>> m_colors;
 
 			// Tweeners
 			FCM::AutoPtr<DOM::ITween> m_tween = nullptr;
@@ -90,7 +90,7 @@ namespace sc {
 		public:
 			FrameBuilder(ResourcePublisher& resources) : m_resources(resources) { };
 
-			void Update(SymbolContext& symbol, DOM::IFrame* frame);
+			void Update(SymbolContext& symbol, FCM::AutoPtr<DOM::IFrame> frame);
 
 			void releaseFrameElement(SymbolContext& symbol, SharedMovieclipWriter& writer, size_t index);
 
@@ -142,10 +142,10 @@ namespace sc {
 			void inheritFilledElements(const FrameBuilder& frame);
 
 		private:
-			void AddFrameElementArray(
+			void DeclareFrameElements(
 				SymbolContext& symbol,
 				FCM::FCMListPtr frameElements,
-				MATRIX2D* base_transform = nullptr
+				std::optional<MATRIX2D> base_transform = std::nullopt
 			);
 		};
 	}

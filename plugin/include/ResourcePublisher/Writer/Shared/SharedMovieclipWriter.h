@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <optional>
 
 #include "AnimateSDK/core/common/FCMTypes.h"
 #include "AnimateSDK/app/DOM/FrameElement/IFrameDisplayElement.h"
@@ -30,10 +31,10 @@ namespace sc {
 				uint16_t id,
 				FCM::BlendMode blending,
 				const std::u16string& name,
-				DOM::Utils::MATRIX2D* matrix,
-				DOM::Utils::COLOR_MATRIX* color) = 0;
+				std::optional<DOM::Utils::MATRIX2D> matrix,
+				std::optional<DOM::Utils::COLOR_MATRIX> color) = 0;
 
-			virtual void Finalize(uint16_t id) = 0;
+			virtual bool Finalize(uint16_t id) = 0;
 		};
 	}
 }

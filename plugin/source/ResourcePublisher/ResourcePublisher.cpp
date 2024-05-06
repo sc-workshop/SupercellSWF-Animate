@@ -25,18 +25,23 @@ namespace sc {
 			{
 				FCM::AutoPtr<DOM::ILibraryItem>& item = items[i];
 
-				SymbolContext symbol(item);
+				FCM::AutoPtr<FCM::IFCMDictionary> dict;
+				item->GetProperties(dict.m_Ptr);
+
+				std::string linkage;
+				dict->Get(kLibProp_LinkageClass_DictKey, linkage);
+
+				if (linkage.empty()) continue;
+
+				SymbolContext symbol(item, linkage);
 				publishStatus->SetStatus(symbol.name);
 
 				uint16_t id = AddLibraryItem(symbol, item);
 
-				FCM::AutoPtr<FCM::IFCMDictionary> dict;
-				item->GetProperties(dict.m_Ptr);
-
-				std::string exportName;
-				dict->Get(kLibProp_LinkageClass_DictKey, exportName);
-
-				m_writer.AddExportName(id, exportName);
+				if (id == UINT16_MAX)
+				{
+					throw PluginException("TID_FAILED_TO_EXPORT_SYMBOL", symbol.name.c_str());
+				}
 
 				if (context.Window()->aboutToExit) {
 					context.DestroyWindow();
@@ -81,20 +86,6 @@ namespace sc {
 					FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbolItem = item;
 					if (!symbolItem) continue;
 
-					FCM::AutoPtr<FCM::IFCMDictionary> dict;
-					FCM::Result status = item->GetProperties(dict.m_Ptr);
-
-					if (FCM_FAILURE_CODE(status) || dict == nullptr) continue;
-
-					FCM::U_Int32 valueLen;
-					FCM::FCMDictRecTypeID type;
-
-					status = dict->GetInfo(kLibProp_LinkageClass_DictKey, type, valueLen);
-					if (FCM_FAILURE_CODE(status) || type != FCM::FCMDictRecTypeID::kFCMDictType_StringRep8)
-					{
-						continue;
-					}
-
 					result.push_back(item);
 				}
 			}
@@ -102,7 +93,7 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddLibraryItem(
 			SymbolContext& symbol,
-			DOM::ILibraryItem* item
+			FCM::AutoPtr<DOM::ILibraryItem> item
 		) {
 			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbol_item = item;
 			FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media_item = item;
@@ -124,11 +115,17 @@ namespace sc {
 					shape_writer->AddGraphic(element, { 1, 0, 0, 1, 0, 0 });
 
 					uint16_t identifer = m_id++;
-					shape_writer->Finalize(identifer);
+					bool sucess = shape_writer->Finalize(identifer);
+					delete shape_writer;
+
+					if (!sucess)
+					{
+						m_id--;
+						return UINT16_MAX;
+					}
 
 					m_symbolsData[symbol.name] = identifer;
 
-					delete shape_writer;
 					return identifer;
 				}
 			}
@@ -138,22 +135,16 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddSymbol(
 			SymbolContext& symbol,
-			DOM::LibraryItem::ISymbolItem* item
+			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> item
 		) {
 			FCM::AutoPtr<DOM::ITimeline> timeline;
 			item->GetTimeLine(timeline.m_Ptr);
 
-			uint16_t result = UINT16_MAX;
-
-			if (symbol.type != SymbolContext::SymbolType::MovieClip) {
-				result = AddShape(symbol, timeline);
+			if (symbol.type != SymbolContext::SymbolType::MovieClip && GraphicGenerator::Validate(timeline)) {
+				return AddShape(symbol, timeline);
 			}
 
-			if (result == UINT16_MAX) {
-				return AddMovieclip(symbol, timeline);
-			}
-
-			return result;
+			return AddMovieclip(symbol, timeline);
 		};
 
 		uint16_t ResourcePublisher::AddMovieclip(
@@ -166,11 +157,16 @@ namespace sc {
 			movieClipGenerator.Generate(*movieclip, symbol, timeline);
 
 			uint16_t identifer = m_id++;
-			m_symbolsData[symbol.name] = identifer;
-
-			movieclip->Finalize(identifer);
-
+			bool sucess = movieclip->Finalize(identifer);
 			delete movieclip;
+
+			if (!sucess)
+			{
+				m_id--;
+				return UINT16_MAX;
+			}
+
+			m_symbolsData[symbol.name] = identifer;
 
 			context.logger->info("Added MovieClip: {}", Localization::ToUtf8(symbol.name));
 
@@ -183,21 +179,21 @@ namespace sc {
 		) {
 			PluginContext& context = PluginContext::Instance();
 
-			bool isShape = GraphicGenerator::Validate(timeline);
-			if (!isShape) {
-				return UINT16_MAX;
-			}
-
 			SharedShapeWriter* shape = m_writer.AddShape(symbol);
 
 			graphicGenerator.Generate(symbol, *shape, timeline);
 
 			uint16_t identifer = m_id++;
-
-			shape->Finalize(identifer);
-			m_symbolsData[symbol.name] = identifer;
-
+			bool sucess = shape->Finalize(identifer);
 			delete shape;
+
+			if (!sucess)
+			{
+				m_id--;
+				return UINT16_MAX;
+			}
+
+			m_symbolsData[symbol.name] = identifer;
 
 			context.logger->info("Added Shape: {}", Localization::ToUtf8(symbol.name));
 
@@ -267,9 +263,14 @@ namespace sc {
 				}
 			}
 
-			shape->Finalize(identifer);
-
+			bool sucess = shape->Finalize(identifer);
 			delete shape;
+
+			if (!sucess)
+			{
+				m_id--;
+				return UINT16_MAX;
+			}
 
 			context.logger->info("Added FilledElement from: {}", Localization::ToUtf8(symbol.name));
 

@@ -79,8 +79,8 @@ namespace sc {
 			FCM::BlendMode blending,
 			const std::u16string& name,
 
-			DOM::Utils::MATRIX2D* matrix,
-			DOM::Utils::COLOR_MATRIX* color
+			std::optional<DOM::Utils::MATRIX2D> matrix,
+			std::optional<DOM::Utils::COLOR_MATRIX> color
 		) {
 			MovieClipFrame& frame = m_object.frames[m_position];
 
@@ -97,11 +97,11 @@ namespace sc {
 			frame.elements_count += 1;
 
 			// matrices.size = colors.size = object.frameElements.size
-			Ref<Matrix2D> transformMatrix = nullptr;
-			Ref<ColorTransform> transformColor = nullptr;
+			std::optional<Matrix2D> transformMatrix = std::nullopt;
+			std::optional<ColorTransform> transformColor = std::nullopt;
 
-			if (matrix != nullptr) {
-				transformMatrix = CreateRef<Matrix2D>();
+			if (matrix) {
+				transformMatrix = Matrix2D();
 
 				transformMatrix->a = matrix->a;
 				transformMatrix->b = matrix->b;
@@ -111,8 +111,8 @@ namespace sc {
 				transformMatrix->ty = matrix->ty;
 			}
 
-			if (color != nullptr) {
-				transformColor = CreateRef<ColorTransform>();
+			if (color) {
+				transformColor = ColorTransform();
 
 				transformColor->alpha = (uint8_t)std::clamp(
 					(int)((color->matrix[3][3] * 255) + color->matrix[3][4]),
@@ -132,12 +132,28 @@ namespace sc {
 			m_colors.push_back(transformColor);
 		}
 
-		void SCMovieclipWriter::Finalize(uint16_t id) {
+		bool SCMovieclipWriter::Finalize(uint16_t id) {
 			m_object.id = id;
+
+			if (m_symbol.linkage_name.empty())
+			{
+				if (m_object.instances.empty())
+				{
+					return false;
+				}
+			}
+			else
+			{
+				ExportName& export_name = m_writer.swf.exports.emplace_back();
+				export_name.name = SWFString(m_symbol.linkage_name);
+				export_name.id = id;
+			}
 
 			FinalizeTransforms();
 
 			m_writer.swf.movieclips.push_back(m_object);
+
+			return true;
 		}
 
 		void SCMovieclipWriter::FinalizeTransforms() {

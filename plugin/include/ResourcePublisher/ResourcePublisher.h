@@ -82,22 +82,12 @@ namespace sc {
 
 			uint16_t AddLibraryItem(
 				SymbolContext& symbol,
-				DOM::ILibraryItem* item
+				FCM::AutoPtr<DOM::ILibraryItem> item
 			);
 
 			uint16_t AddSymbol(
 				SymbolContext& symbol,
-				DOM::LibraryItem::ISymbolItem* item
-			);
-
-			uint16_t AddMovieclip(
-				SymbolContext& symbol,
-				FCM::AutoPtr<DOM::ITimeline1> timeline
-			);
-
-			uint16_t AddShape(
-				SymbolContext& symbol,
-				FCM::AutoPtr <DOM::ITimeline1> timeline
+				FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> item
 			);
 
 			uint16_t AddModifier(
@@ -128,6 +118,17 @@ namespace sc {
 
 			uint16_t GetIdentifer(
 				FilledElement shape
+			);
+
+		private:
+			uint16_t AddMovieclip(
+				SymbolContext& symbol,
+				FCM::AutoPtr<DOM::ITimeline1> timeline
+			);
+
+			uint16_t AddShape(
+				SymbolContext& symbol,
+				FCM::AutoPtr <DOM::ITimeline1> timeline
 			);
 		};
 	}

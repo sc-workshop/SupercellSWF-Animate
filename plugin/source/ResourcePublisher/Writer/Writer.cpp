@@ -123,12 +123,6 @@ namespace sc {
 			textfield.auto_kern = object.autoKern == FCM::Boolean(true);
 		}
 
-		void SCWriter::AddExportName(uint16_t id, const std::string& name) {
-			ExportName& exportName = swf.exports.emplace_back();
-			exportName.id = id;
-			exportName.name = SWFString(name);
-		}
-
 		void SCWriter::LoadExternal() {
 			PluginSessionConfig& config = PluginSessionConfig::Instance();
 

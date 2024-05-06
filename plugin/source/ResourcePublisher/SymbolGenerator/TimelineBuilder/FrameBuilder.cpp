@@ -16,15 +16,15 @@ namespace sc {
 	typedef struct CPropertyInstance CPropertyInstance;
 	typedef struct SymbolInstance SymbolInstance;
 	typedef void ImplGraphic_GetCPic(intptr_t, CPicSymbol*&);
-	
+
 	namespace Adobe {
 		std::string FrameBuilder::GetInstanceName(FCM::AutoPtr<DOM::FrameElement::ISymbolInstance> symbol_instance)
 		{
-			// TODO: 
+			// TODO:
 
 			return std::string("");
 		}
-		void FrameBuilder::Update(SymbolContext& symbol, DOM::IFrame* frame) {
+		void FrameBuilder::Update(SymbolContext& symbol, FCM::AutoPtr<DOM::IFrame> frame) {
 			PluginContext& context = PluginContext::Instance();
 
 			// cleaning
@@ -105,19 +105,17 @@ namespace sc {
 			// Frame elements processing
 			FCM::FCMListPtr frameElements;
 			frame->GetFrameElementsByType(DOM::FrameElement::IID_IFRAME_DISPLAY_ELEMENT, frameElements.m_Ptr);
-			AddFrameElementArray(symbol, frameElements);
+			DeclareFrameElements(symbol, frameElements);
 		}
 
 		void FrameBuilder::releaseFrameElement(SymbolContext& symbol, SharedMovieclipWriter& writer, size_t index)
 		{
-			DOM::Utils::MATRIX2D* matrix = nullptr;
-			DOM::Utils::COLOR_MATRIX* color = nullptr;
+			std::optional<DOM::Utils::MATRIX2D>& matrix = m_matrices[index];
+			std::optional<COLOR_MATRIX>& color = m_colors[index];
 
 			if (m_matrices[index]) {
-				matrix = new DOM::Utils::MATRIX2D(*(m_matrices[index].get()));
-
 				if (m_matrixTweener) {
-					DOM::Utils::MATRIX2D baseMatrix(*matrix);
+					DOM::Utils::MATRIX2D baseMatrix(matrix.value());
 					DOM::Utils::MATRIX2D transformMatrix;
 					m_matrixTweener->GetGeometricTransform(m_tween, m_position, transformMatrix);
 
@@ -132,16 +130,13 @@ namespace sc {
 				}
 			}
 			else if (m_matrixTweener) {
-				matrix = new DOM::Utils::MATRIX2D();
+				matrix = DOM::Utils::MATRIX2D();
 				m_matrixTweener->GetGeometricTransform(m_tween, m_position, *matrix);
 			}
 
 			if (m_colorTweener) {
-				color = new DOM::Utils::COLOR_MATRIX();
+				color = DOM::Utils::COLOR_MATRIX();
 				m_colorTweener->GetColorMatrix(m_tween, m_position, *color);
-			}
-			else if (m_colors[index]) {
-				color = m_colors[index].get();
 			}
 
 			if (m_shapeTweener) {
@@ -188,7 +183,7 @@ namespace sc {
 			}
 		}
 
-		void FrameBuilder::AddFrameElementArray(SymbolContext& symbol, FCM::FCMListPtr frameElements, MATRIX2D* base_transform) {
+		void FrameBuilder::DeclareFrameElements(SymbolContext& symbol, FCM::FCMListPtr frameElements, std::optional<MATRIX2D> base_transform) {
 			PluginContext& context = PluginContext::Instance();
 
 			uint32_t frameElementsCount = 0;
@@ -205,20 +200,20 @@ namespace sc {
 				FCM::BlendMode blendMode = FCM::BlendMode::NORMAL_BLEND_MODE;
 
 				// Transform
-				std::shared_ptr<MATRIX2D> matrix = std::make_shared<MATRIX2D>();
-				frameElement->GetMatrix(*matrix);
+				MATRIX2D matrix;
+				frameElement->GetMatrix(matrix);
 
-				if (base_transform != nullptr)
+				if (base_transform)
 				{
-					matrix->a *= base_transform->a;
-					matrix->b += base_transform->b;
-					matrix->c += base_transform->c;
-					matrix->d *= base_transform->d;
-					matrix->tx += base_transform->tx;
-					matrix->ty += base_transform->ty;
+					matrix.a *= base_transform->a;
+					matrix.b += base_transform->b;
+					matrix.c += base_transform->c;
+					matrix.d *= base_transform->d;
+					matrix.tx += base_transform->tx;
+					matrix.ty += base_transform->ty;
 				}
 
-				std::shared_ptr<COLOR_MATRIX> color = nullptr;
+				std::optional<COLOR_MATRIX> color = std::nullopt;
 
 				// Game "guess who i am"
 				FCM::AutoPtr<DOM::FrameElement::IInstance> libraryElement = frameElement;
@@ -230,8 +225,6 @@ namespace sc {
 				FCM::AutoPtr<DOM::FrameElement::IShape> filledShapeItem = frameElement;
 				FCM::AutoPtr<DOM::FrameElement::IGroup> groupedElemenets = frameElement;
 
-				// Transform
-
 				// Symbol
 				if (libraryElement) {
 					m_last_element = FrameBuilder::LastElementType::Symbol;
@@ -242,7 +235,7 @@ namespace sc {
 					SymbolContext librarySymbol(libraryItem);
 
 					if (symbolItem) {
-						color = std::make_shared<COLOR_MATRIX>();
+						color = COLOR_MATRIX();
 						symbolItem->GetColorMatrix(*color);
 						instance_name = Localization::ToUtf16(FrameBuilder::GetInstanceName(symbolItem));
 					}
@@ -367,7 +360,7 @@ namespace sc {
 
 				// Fills / Stroke
 				else if (filledShapeItem) {
-					m_filled_elements.emplace_back(symbol, filledShapeItem, *matrix);
+					m_filled_elements.emplace_back(symbol, filledShapeItem, matrix);
 
 					if (m_last_element != FrameBuilder::LastElementType::None)
 					{
@@ -387,7 +380,7 @@ namespace sc {
 					FCM::FCMListPtr groupElements;
 					groupedElemenets->GetMembers(groupElements.m_Ptr);
 
-					AddFrameElementArray(symbol, groupElements, matrix.get());
+					DeclareFrameElements(symbol, groupElements, matrix);
 					continue;
 				}
 
@@ -406,9 +399,8 @@ namespace sc {
 					}
 				}
 
-				if (id == 0xFFFF) {
-					// TODO: this too, probably
-					context.Trace("Failed to get object id. Invalid FrameElement.");
+				if (id == UINT16_MAX) {
+					context.logger->info("Object by name {} was stripped", Localization::ToUtf8(symbol.name));
 					continue;
 				}
 
@@ -434,7 +426,6 @@ namespace sc {
 		{
 			uint16_t element_id = m_resources.AddFilledElement(symbol, m_filled_elements);
 
-			// TODO : matrices
 			m_elementsData.push_back(
 				{
 					element_id,
@@ -443,8 +434,8 @@ namespace sc {
 				}
 			);
 
-			m_matrices.push_back(nullptr);
-			m_colors.push_back(nullptr);
+			m_matrices.push_back(std::nullopt);
+			m_colors.push_back(std::nullopt);
 
 			m_filled_elements.clear();
 		}
