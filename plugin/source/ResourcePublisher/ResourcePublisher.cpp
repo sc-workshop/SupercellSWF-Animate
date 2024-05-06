@@ -26,7 +26,9 @@ namespace sc {
 				FCM::AutoPtr<DOM::ILibraryItem>& item = items[i];
 
 				FCM::AutoPtr<FCM::IFCMDictionary> dict;
-				item->GetProperties(dict.m_Ptr);
+				FCM::Result status = item->GetProperties(dict.m_Ptr);
+
+				if (FCM_FAILURE_CODE(status) || dict == nullptr) continue;
 
 				std::string linkage;
 				dict->Get(kLibProp_LinkageClass_DictKey, linkage);

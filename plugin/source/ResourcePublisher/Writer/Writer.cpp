@@ -362,6 +362,7 @@ namespace sc {
 			for (const FilledItemContour& contour : filled_item.contours)
 			{
 				ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
+				shape_command.texture_index = atlas_item.texture_index;
 
 				for (const Point2D& point : contour.Contour())
 				{
