@@ -3,26 +3,35 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const SRC_PATH = path.join(__dirname, "src")
-const BUILD_PATH = path.join(__dirname, "build")
 
 const node_env = process.env.NODE_ENV == "development" ? "development" : "production"
 const current_env = process.env.NODE_ENV === undefined ? "production" : node_env;
+
+import crypto from 'crypto';
+
+/**
+ * The MD4 algorithm is not available anymore in Node.js 17+ (because of library SSL 3).
+ * In that case, silently replace MD4 by the MD5 algorithm.
+ */
+try {
+  crypto.createHash('md4');
+} catch (e) {
+  const origCreateHash = crypto.createHash;
+  crypto.createHash = (alg, opts) => {
+    return origCreateHash(alg === 'md4' ? 'md5' : alg, opts);
+  };
+}
 
 const config: webpack.Configuration = {
     entry: "./src/index.tsx",
     mode: current_env,
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: "index.bundle.js",
+        filename: "index.bundle.js"
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
-    //devServer: {
-    //    static: {
-    //      directory: path.join(BUILD_PATH, 'public'),
-    //    },
-    //},
     devtool: "source-map",
     module: {
         strictExportPresence: true,
