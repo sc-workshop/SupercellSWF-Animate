@@ -110,8 +110,8 @@ namespace sc {
 
 		void FrameBuilder::releaseFrameElement(SymbolContext& symbol, SharedMovieclipWriter& writer, size_t index)
 		{
-			std::optional<DOM::Utils::MATRIX2D>& matrix = m_matrices[index];
-			std::optional<COLOR_MATRIX>& color = m_colors[index];
+			std::optional<DOM::Utils::MATRIX2D> matrix = m_matrices[index];
+			std::optional<COLOR_MATRIX> color = m_colors[index];
 
 			if (m_matrices[index]) {
 				if (m_matrixTweener) {
