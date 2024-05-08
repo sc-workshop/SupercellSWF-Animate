@@ -1,0 +1,35 @@
+{
+	"TID_WINDOW_TITLE": "Publikowanie: %ls",
+	
+	"TID_STATUS_INIT": "Inicjowanie",
+	"TID_STATUS_SAVE": "Zapisywanie...",
+	"TID_UNKNOWN_EXCEPTION": "Nieznany błąd",
+	"TID_EXPORT_TIME_STATUS": "Ukończono w %lld sekund(-y)",
+	"TID_FCM_SERVICE_INIT_FAILED": "Nie udało się zainicjować serwisu FCM",
+	"TID_BITMAP_SERVICE_EXPORT_FAILED": "Nie udało się wyeksportować obrazu duszka",
+	"TID_UNKNOWN_LIBRARY_ITEM_TYPE": "Nieznany typ symbolu: \"%ls\"",
+	
+	"TID_BAR_LABEL_LIBRARY_ITEMS": "Elementy biblioteki :",
+	
+	"TID_BAR_LABEL_TEXURE_PACK": "Duszki :",
+	"TID_STATUS_SPRITE_PACK": "Pakowanie duszków",
+	"TID_STATUS_TEXTURE_SAVE": "Zapisywanie tekstury",
+	"TID_EXTERNAL_FILE_LOAD": "Ładowanie zewnętrznego pliku",
+	"TID_FILE_SAVE": "Zapisywanie: %ls",
+	
+	"TID_9SLICE_FRAME_RESTRICTION": "Symbol 9Slice ma więcej niż jedną klatke: \"%ls\"\nTa opcja zostanie wyłączona w tym symbolu",
+	
+	// Exceptions
+	"TID_FAILED_TO_EXPORT_SYMBOL": "Nie udało się wyeksportować symbolu \"%ls\" z nieznanej przyczyny wewnętrznej",
+	"TID_UNKNOWN_FILL_STYLE_TYPE": "Nieznany lub nieobsługiwany typ Wypełnionego Kształtu w \"%ls\"",
+	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Upewnij się, że symbol nie zawiera żadnych wypełnień Graficznych i Gradientowych",
+	
+	// SWF Exceptions
+	"TID_SWF_MISSING_EXTERNAL_FILE": "Zewnętrzny plik w ścieżce \"%ls\" nie istnieje",
+	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Upewniej się, że ścieżka jest wpisana poprawnie i plik jest możliwy do odczytania, i spróbuj ponownie",
+	"TID_SWF_ATLAS_UNSUPORTED_IMAGE": "Nieznany typ obrazu w",
+	"TID_SWF_ATLAS_INVALID_POLYGON": "Nie udało się wygenerować kształtu w",
+	"TID_SWF_ATLAS_TOO_BIG_IMAGE": "Zbyt duży obraz w",
+	"TID_SWF_ATLAS_UNKNOWN": "Nieznany błąd",
+	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Nieznany symbol"
+}

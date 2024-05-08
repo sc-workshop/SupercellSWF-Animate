@@ -1,0 +1,52 @@
+{
+    "TID_VERSION": "Wersja",
+	"TID_PUBLISH": "Opublikuj dokument",
+
+	"TID_HIGHEST": "Najwyższa",
+	"TID_HIGH": "Wysoka",
+	"TID_MEDIUM": "Średnia",
+	"TID_LOW": "Niska",
+
+    "TID_OUTPUT": "Wyjście",
+	"TID_PUBLISH_METHOD": "Typ wyjścia",
+
+	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY": "Kompatybilność wsteczna",
+	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP": "Wyłącza niektóre funkcje, ale umożliwia działanie pliku końcowego w starszych wersjach gier",
+
+	"TID_ADDITIONAL_SETTINGS_LABEL": "Zaawansowane",
+    "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Eksportuj dokument do pliku zewnętrznego",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP": "Zapisuje wszystkie symbole z bieżącego projektu do innego pliku .sc. \nNie zastępuje zawartości pliku zewnętrznego.",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Plik zewnętrzny",
+
+	"TID_TEXTURES_LABEL": "Tekstury",
+	"TID_SWF_SETTINGS_HAS_TEXTURE": "Napisz plik zewnętrzny",
+	"TID_SWF_SETTINGS_HAS_TEXTURE_TIP": "Zapisuje wszystkie tekstury do pliku _tex.sc",
+
+	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Metoda kodowania",
+	"TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP": "Surowa - Przechowuje tekstury w nieskompresowanym strumieniu danych.\nKTX - Kompresuje dane tekstury w Teksture Khronos. Proces kompresji może być dość długi.",
+
+	"TID_SWF_SETTINGS_TEXTURE_QUALITY": "Jakość tekstury",
+
+	"TID_SWF_SETTINGS_SCALE_FACTOR": "Współczynnik skali tekstury",
+	"TID_SWF_SETTINGS_SCALE_FACTOR_TIP": "Mnoży rozdzielczość tekstury w pliku przez określoną liczbę",
+
+	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Maks. szerokość Tekstur",
+	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Maks. wysokość Tekstur",
+
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE": "Zapisuj skompresowane tekstury do plików zewnętrznych",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE_TIP": "Zapisuje każdą teksturę do pliku .zktx",
+
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Ma teksturę o Wielu Rozdzielczościach",
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Zapisuje teksturę z przyrostkiem multires",
+
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES": "Ma teksturę o Niskiej Rozdzielczości",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP": "Zapisuje teksturę o niższej jakości dla słabych urządzeń",
+
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Sufiks tekstury o Wielu Rozdzielczościach",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Sufiks Niskiej Rozdzielczości",
+
+	"TID_OTHER_LABEL": "Inne",
+	"TID_SWF_SETTINGS_COMPRESSION": "Metoda kompresji",
+	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Napisz niestandardowe właściwości",
+	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precyzuj matryce"
+}
