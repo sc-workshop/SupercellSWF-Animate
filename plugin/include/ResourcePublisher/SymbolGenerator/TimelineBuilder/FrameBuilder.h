@@ -96,9 +96,9 @@ namespace sc {
 
 			void operator()(SymbolContext& symbol, SharedMovieclipWriter& writer);
 
-			bool empty() const
+			bool can_flush() const
 			{
-				return m_elementsData.size() == 0;
+				return !m_elementsData.empty() || !m_filled_elements.empty();
 			}
 
 			void next()

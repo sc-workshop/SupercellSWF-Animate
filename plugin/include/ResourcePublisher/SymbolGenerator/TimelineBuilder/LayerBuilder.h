@@ -38,8 +38,7 @@ namespace sc {
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> m_layer;
 			ResourcePublisher& m_resources;
 
-			FrameBuilder m_frameBuilder;
-			std::vector<LayerBuilder> m_maskedLayers;
+			bool m_mask_layer = false;
 
 			void UpdateFrame(SymbolContext& symbol);
 
@@ -59,29 +58,27 @@ namespace sc {
 			}
 
 		public:
-
 			void next();
 
-			void total_duration() const
-			{
-				m_duration;
-			}
-
-			const FrameBuilder& frame() const
-			{
-				return m_frameBuilder;
-			}
-
-			bool canReleaseFilledElements() const { return !m_frameBuilder.filledElements().empty(); };
+			bool canReleaseFilledElements() const { return !frameBuilder.filledElements().empty(); };
 
 			bool shouldReleaseFilledElements(const LayerBuilder& next_layer);
 
 			void inheritFilledElements(const LayerBuilder& last_layer)
 			{
-				m_frameBuilder.inheritFilledElements(last_layer.frame());
+				frameBuilder.inheritFilledElements(last_layer.frameBuilder);
 			}
 
 			void releaseFilledElements();
+
+			bool IsMaskLayer() {
+				return m_mask_layer;
+			}
+
+		public:
+			std::vector<LayerBuilder> maskedLayers;
+			FrameBuilder frameBuilder;
+
 		public:
 			static void ProcessLayerFrame(
 				std::vector<LayerBuilder>& layers,
@@ -90,6 +87,7 @@ namespace sc {
 				bool is_begin, bool is_end
 			);
 
+			static void ProcessLayers(SymbolContext& context, std::vector<LayerBuilder>& layers, SharedMovieclipWriter& writer);
 			static void ProcessLayers(SymbolContext& context, std::vector<LayerBuilder>& layers, SharedMovieclipWriter& writer, uint32_t range);
 		};
 	}
