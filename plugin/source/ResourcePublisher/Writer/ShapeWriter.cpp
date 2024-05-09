@@ -506,10 +506,21 @@ namespace sc {
 			m_group.AddItem<SlicedItem>(CreateRef<cv::Mat>(canvas), transform, guides);
 		}
 
-		bool SCShapeWriter::Finalize(uint16_t id) {
+		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
 			if (m_group.size() == 0)
 			{
-				return false;
+				if (required)
+				{
+					// Small workaround to avoid crashes with empty shapes but keep it required
+					MovieClip& movieclip = m_writer.swf.movieclips.emplace_back();
+					movieclip.id = id;
+
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 
 			sc::Shape& shape = m_writer.swf.shapes.emplace_back();

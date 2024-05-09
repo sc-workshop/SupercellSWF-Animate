@@ -34,7 +34,13 @@ namespace sc {
 				std::optional<DOM::Utils::MATRIX2D> matrix,
 				std::optional<DOM::Utils::COLOR_MATRIX> color) = 0;
 
-			virtual bool Finalize(uint16_t id) = 0;
+			/// <summary>
+			/// Writer must finalize object and add it to its own resource palette here
+			/// </summary>
+			/// <param name="id"> Identifier of object </param>
+			/// <param name="required"> If True then writer must return positive status, else writer can skip object writing and return False </param>
+			/// <returns> True if object was written </returns>
+			virtual bool Finalize(uint16_t id, bool required) = 0;
 		};
 	}
 }

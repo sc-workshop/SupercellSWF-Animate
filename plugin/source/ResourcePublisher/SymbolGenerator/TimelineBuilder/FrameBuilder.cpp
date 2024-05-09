@@ -144,23 +144,8 @@ namespace sc {
 				m_shapeTweener->GetShape(m_tween, m_position, filledShape.m_Ptr);
 
 				// TODO: check
+				m_last_element = FrameBuilder::LastElementType::FilledElement;
 				m_filled_elements.emplace_back(symbol, filledShape);
-
-				//FilledElement shape(symbol, filledShape);
-				//
-				//uint16_t id = m_resources.GetIdentifer(shape);
-				//
-				//if (id == UINT16_MAX) {
-				//	id = m_resources.AddFilledElement(m_symbol, shape);
-				//}
-				//
-				//writer.AddFrameElement(
-				//	id,
-				//	std::get<1>(m_elementsData[i]),
-				//	std::get<2>(m_elementsData[i]),
-				//	matrix,
-				//	color
-				//);
 
 				return;
 			}
@@ -225,6 +210,11 @@ namespace sc {
 				FCM::AutoPtr<DOM::FrameElement::IShape> filledShapeItem = frameElement;
 				FCM::AutoPtr<DOM::FrameElement::IGroup> groupedElemenets = frameElement;
 
+				auto is_required = [&instance_name]()
+				{
+					return !instance_name.empty();
+				};
+
 				// Symbol
 				if (libraryElement) {
 					m_last_element = FrameBuilder::LastElementType::Symbol;
@@ -252,7 +242,7 @@ namespace sc {
 
 					id = m_resources.GetIdentifer(librarySymbol.name);
 					if (id == UINT16_MAX) {
-						id = m_resources.AddLibraryItem(librarySymbol, libraryItem);
+						id = m_resources.AddLibraryItem(librarySymbol, libraryItem, is_required());
 					}
 				}
 
@@ -366,12 +356,11 @@ namespace sc {
 					{
 						if (m_last_element != FrameBuilder::LastElementType::FilledElement)
 						{
-							releaseFilledElements(symbol);
+							releaseFilledElements(symbol, instance_name);
 						}
 					}
 
 					m_last_element = FrameBuilder::LastElementType::FilledElement;
-
 					continue;
 				}
 
@@ -393,9 +382,9 @@ namespace sc {
 				if (m_last_element != LastElementType::None)
 				{
 					// Just in case if keyfrane has both element types
-					if (m_last_element != LastElementType::FilledElement && !m_filled_elements.empty())
+					if (m_last_element != LastElementType::FilledElement)
 					{
-						releaseFilledElements(symbol);
+						releaseFilledElements(symbol, std::u16string(u""));
 					}
 				}
 
@@ -422,8 +411,10 @@ namespace sc {
 			}
 		}
 
-		void FrameBuilder::releaseFilledElements(SymbolContext& symbol)
+		void FrameBuilder::releaseFilledElements(SymbolContext& symbol, std::u16string& name)
 		{
+			if (m_filled_elements.empty()) return;
+
 			uint16_t element_id = m_resources.GetIdentifer(m_filled_elements);
 
 			if (element_id == UINT16_MAX)
@@ -431,11 +422,16 @@ namespace sc {
 				element_id = m_resources.AddFilledElement(symbol, m_filled_elements);
 			}
 
+			if (element_id == UINT16_MAX)
+			{
+				return;
+			}
+
 			m_elementsData.push_back(
 				{
 					element_id,
 					FCM::BlendMode::NORMAL_BLEND_MODE,
-					u""
+					name
 				}
 			);
 

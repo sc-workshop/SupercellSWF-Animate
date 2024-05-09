@@ -132,12 +132,12 @@ namespace sc {
 			m_colors.push_back(transformColor);
 		}
 
-		bool SCMovieclipWriter::Finalize(uint16_t id) {
+		bool SCMovieclipWriter::Finalize(uint16_t id, bool required) {
 			m_object.id = id;
 
 			if (m_symbol.linkage_name.empty())
 			{
-				if (m_object.instances.empty())
+				if (m_object.instances.empty() && !required)
 				{
 					return false;
 				}

@@ -25,7 +25,13 @@ namespace sc {
 
 			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides) = 0;
 
-			virtual bool Finalize(uint16_t id) = 0;
+			/// <summary>
+			/// Writer must finalize object and add it to its own resource palette here
+			/// </summary>
+			/// <param name="id"> Identifier of object </param>
+			/// <param name="required"> If True then writer must return positive status, else writer can skip object writing and return False </param>
+			/// <returns> True if object was written </returns>
+			virtual bool Finalize(uint16_t id, bool required) = 0;
 		};
 	}
 }

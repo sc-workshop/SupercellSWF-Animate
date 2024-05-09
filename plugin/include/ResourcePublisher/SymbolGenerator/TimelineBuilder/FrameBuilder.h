@@ -138,7 +138,7 @@ namespace sc {
 				}
 			}
 
-			void releaseFilledElements(SymbolContext& symbol);
+			void releaseFilledElements(SymbolContext& symbol, std::u16string& name);
 			void inheritFilledElements(const FrameBuilder& frame);
 
 		private:

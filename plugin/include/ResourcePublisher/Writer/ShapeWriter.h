@@ -18,14 +18,13 @@ namespace sc {
 			virtual ~SCShapeWriter() = default;
 
 		public:
-
 			virtual void AddGraphic(const SpriteElement& item, const DOM::Utils::MATRIX2D& matrix);
 
 			virtual void AddFilledElement(const FilledElement& shape);
 
 			virtual void AddSlicedElements(const std::vector<FilledElement>& elements, const DOM::Utils::RECT& guides);
 
-			virtual bool Finalize(uint16_t id);
+			virtual bool Finalize(uint16_t id, bool required);
 
 		public:
 			void AddTriangulatedRegion(

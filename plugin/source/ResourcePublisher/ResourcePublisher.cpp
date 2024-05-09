@@ -38,7 +38,7 @@ namespace sc {
 				SymbolContext symbol(item, linkage);
 				publishStatus->SetStatus(symbol.name);
 
-				uint16_t id = AddLibraryItem(symbol, item);
+				uint16_t id = AddLibraryItem(symbol, item, true);
 
 				if (id == UINT16_MAX)
 				{
@@ -95,13 +95,14 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddLibraryItem(
 			SymbolContext& symbol,
-			FCM::AutoPtr<DOM::ILibraryItem> item
+			FCM::AutoPtr<DOM::ILibraryItem> item,
+			bool required
 		) {
 			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> symbol_item = item;
 			FCM::AutoPtr<DOM::LibraryItem::IMediaItem> media_item = item;
 
 			if (symbol_item) {
-				return AddSymbol(symbol, symbol_item);
+				return AddSymbol(symbol, symbol_item, required);
 			}
 			else if (media_item) {
 				FCM::AutoPtr<FCM::IFCMUnknown> unknownMedia;
@@ -117,7 +118,7 @@ namespace sc {
 					shape_writer->AddGraphic(element, { 1, 0, 0, 1, 0, 0 });
 
 					uint16_t identifer = m_id++;
-					bool sucess = shape_writer->Finalize(identifer);
+					bool sucess = shape_writer->Finalize(identifer, true);
 					delete shape_writer;
 
 					if (!sucess)
@@ -137,21 +138,23 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddSymbol(
 			SymbolContext& symbol,
-			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> item
+			FCM::AutoPtr<DOM::LibraryItem::ISymbolItem> item,
+			bool required
 		) {
 			FCM::AutoPtr<DOM::ITimeline> timeline;
 			item->GetTimeLine(timeline.m_Ptr);
 
 			if (symbol.type != SymbolContext::SymbolType::MovieClip && GraphicGenerator::Validate(timeline)) {
-				return AddShape(symbol, timeline);
+				return AddShape(symbol, timeline, required);
 			}
 
-			return AddMovieclip(symbol, timeline);
+			return AddMovieclip(symbol, timeline, required);
 		};
 
 		uint16_t ResourcePublisher::AddMovieclip(
 			SymbolContext& symbol,
-			FCM::AutoPtr<DOM::ITimeline1> timeline
+			FCM::AutoPtr<DOM::ITimeline1> timeline,
+			bool required
 		) {
 			PluginContext& context = PluginContext::Instance();
 
@@ -159,7 +162,7 @@ namespace sc {
 			movieClipGenerator.Generate(*movieclip, symbol, timeline);
 
 			uint16_t identifer = m_id++;
-			bool sucess = movieclip->Finalize(identifer);
+			bool sucess = movieclip->Finalize(identifer, required);
 			delete movieclip;
 
 			if (!sucess)
@@ -177,7 +180,8 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddShape(
 			SymbolContext& symbol,
-			FCM::AutoPtr <DOM::ITimeline1> timeline
+			FCM::AutoPtr <DOM::ITimeline1> timeline,
+			bool required
 		) {
 			PluginContext& context = PluginContext::Instance();
 
@@ -186,7 +190,7 @@ namespace sc {
 			graphicGenerator.Generate(symbol, *shape, timeline);
 
 			uint16_t identifer = m_id++;
-			bool sucess = shape->Finalize(identifer);
+			bool sucess = shape->Finalize(identifer, required);
 			delete shape;
 
 			if (!sucess)
@@ -244,7 +248,8 @@ namespace sc {
 
 		uint16_t ResourcePublisher::AddFilledElement(
 			SymbolContext& symbol,
-			const std::vector<FilledElement>& elements
+			const std::vector<FilledElement>& elements,
+			bool required
 		) {
 			PluginContext& context = PluginContext::Instance();
 
@@ -265,7 +270,7 @@ namespace sc {
 				}
 			}
 
-			bool sucess = shape->Finalize(identifer);
+			bool sucess = shape->Finalize(identifer, required);
 			delete shape;
 
 			if (!sucess)

@@ -11,6 +11,7 @@ namespace sc {
 		class SCWriter;
 
 		class SCMovieclipWriter : public SharedMovieclipWriter {
+		private:
 			SCWriter& m_writer;
 			SymbolContext& m_symbol;
 
@@ -36,11 +37,11 @@ namespace sc {
 			SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol);
 			virtual ~SCMovieclipWriter() = default;
 
-			void InitializeTimeline(double fps, uint32_t frameCount);
+			virtual void InitializeTimeline(double fps, uint32_t frameCount);
 
-			void SetLabel(const std::u16string& label);
+			virtual void SetLabel(const std::u16string& label);
 
-			void AddFrameElement(
+			virtual void AddFrameElement(
 				uint16_t id,
 				FCM::BlendMode blending,
 				const std::u16string& name,
@@ -48,7 +49,7 @@ namespace sc {
 				std::optional<DOM::Utils::COLOR_MATRIX> color
 			);
 
-			bool Finalize(uint16_t id);
+			virtual bool Finalize(uint16_t id, bool required);
 		};
 	}
 }

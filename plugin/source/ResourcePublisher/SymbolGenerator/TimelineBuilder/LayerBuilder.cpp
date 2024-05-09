@@ -80,7 +80,7 @@ namespace sc {
 
 		void LayerBuilder::releaseFilledElements()
 		{
-			frameBuilder.releaseFilledElements(m_symbol);
+			frameBuilder.releaseFilledElements(m_symbol, std::u16string(u""));
 		}
 
 		void LayerBuilder::ProcessLayerFrame(
