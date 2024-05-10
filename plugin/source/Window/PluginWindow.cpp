@@ -44,8 +44,8 @@ namespace sc {
 
 				dialog->Destroy();
 				readyToExit = true;
-				this->Close();
-				});
+				this->Close(true);
+			});
 		}
 
 		StatusComponent* PluginWindow::CreateStatusBarComponent(

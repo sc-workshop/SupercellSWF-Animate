@@ -22,6 +22,17 @@ In ["Brawl Stars/Face"](./Brawl%20Stars/Face/README.md) you can find facial anim
 
 </br>
 
+<h1 style="font-size: 22px;"> Game Loading </h1>  
+
+The first impression is very important!  
+In ["Brawl Stars/Loading"](./Brawl%20Stars/Loading/README.md) you can sample project to create your own loading screen.
+
+<p align="center">
+<img src="./Brawl Stars/Loading/loading.gif">
+</p>
+
+</br>
+
 <h1 align="center" style="font-size: 26px;"> Clash royale </h1>
 
 <h1 style="font-size: 22px;"> Character </h1>  
