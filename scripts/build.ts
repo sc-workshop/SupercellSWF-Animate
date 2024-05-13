@@ -1,13 +1,12 @@
-import { cleanup } from "./cleanup";
 import { generateCSXS, config, distFolder } from "./manifest";
 import { progress, isDev, processPath, processExecError } from "./utils";
 import { join, resolve } from "path"
 import { execSync } from "child_process"
+import { deploy } from "./deploy";
 
 const extensions = process.argv.slice(3);
 
 progress(`BUILD for ${isDev ? "Development" : "Production"}`, 'blue');
-cleanup(extensions);
 
 progress('Generating manifest..');
 generateCSXS(config);
@@ -26,4 +25,7 @@ for (const extensionName of Object.keys(config.extensions)) {
     }
 }
 
-
+if (isDev)
+{
+    deploy()
+}

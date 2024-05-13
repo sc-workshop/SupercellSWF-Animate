@@ -4,7 +4,6 @@ import { join } from "path"
 import { execSync } from "child_process"
 import { existsSync, unlinkSync } from "fs"
 import cert from "./cert";
-import { platform } from "os"
 import { version } from "../package.json"
 
 const rebuild_package = process.argv.indexOf("--raw-package") == -1 || !existsSync(distFolder)

@@ -17,6 +17,7 @@ interface Icon {
 }
 
 export interface Extension {
+    type: "extension"
     root: string
     path: string
     scriptPath?: string

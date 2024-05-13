@@ -5,8 +5,8 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "webpack serve --mode=development",
-    "build:prod": "webpack --mode=production && ts-node build.ts production ",
-    "build:dev": "webpack --mode=development && ts-node build.ts development"
+    "build:prod": "webpack --mode=production --output-path build && ts-node build.ts production",
+    "build:dev": "webpack --mode=development --output-path build_debug && ts-node build.ts development"
   },
   "keywords": [],
   "author": "DaniilSV",

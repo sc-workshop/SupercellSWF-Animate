@@ -3,8 +3,8 @@ import { join } from "path";
 import { existsSync } from "fs";
 
 const args = process.argv;
-const buildFolder = join(__dirname, "build");
-const isDebug = args[2] === "development";
+const isDebug = args[2] === "development"
+const buildFolder = join(__dirname, isDebug ? "build_debug" : "build");
 const outputPath = args[3];
 
 progress(`Copying files to ${outputPath}`)

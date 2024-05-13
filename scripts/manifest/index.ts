@@ -7,8 +7,9 @@ import { config } from "../../bundle";
 import { isDev, processPath } from "../utils";
 export { config } from "../../bundle";
 
-export const bundleId = `com.${config.organization}.${name}`;
-export const distFolder = joinPath(process.cwd(), "dist", bundleId);
+const modeName = isDev ? "development" : "production"
+export const bundleId = `org.${config.organization}.${name}`;
+export const distFolder = joinPath(process.cwd(), "dist", modeName, bundleId);
 
 export function generateCSXS(config: ConfigInterface) {
     const root = CreateXML({ version: '1.0', encoding: "UTF-8" });

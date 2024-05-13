@@ -1,7 +1,7 @@
 import { ConfigInterface } from "./scripts/manifest/interfaces";
 
 export const config: ConfigInterface = {
-    organization: "scwmake",
+    organization: "scWorkshop",
     cep_version: "9.0",
     environment: {
         apps: {
@@ -14,6 +14,7 @@ export const config: ConfigInterface = {
     },
     extensions: {
         PublishSettings: {
+            type: "extension",
             root: "./publisher",
             path: "./index.html",
             params: [
@@ -30,6 +31,7 @@ export const config: ConfigInterface = {
             }
         },
         Plugin: {
+            type: "extension",
             root: "./plugin",
             path: "./fcm.xml",
             ui: {
