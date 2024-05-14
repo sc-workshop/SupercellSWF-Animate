@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "None",
+        "noLib": true,
+        "types": [
+            "types-for-adobe/Animate/22.0",
+        ]
+    }, 
+    "exclude": [
+        "node_modules",
+        "build.ts"
+    ],
+    "include": [
+        "source/**/*",
+        "source/scope.d.ts"
+    ]
+}

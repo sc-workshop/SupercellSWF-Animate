@@ -17,6 +17,7 @@ export function cleanup(extensions: string[] = []) {
             }
         }
         const extension = config.extensions[extensionName];
+        if (extension.type !== "extension") continue; 
 
         const content = readdirSync(extension.root);
 

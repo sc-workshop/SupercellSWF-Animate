@@ -7,15 +7,14 @@
   "scripts": {
     "build:dev": "ts-node scripts/build.ts development",
     "build:prod": "ts-node scripts/build.ts production",
-    "deploy:dev": "ts-node scripts/deploy.ts development",
-    "deploy:prod": "ts-node scripts/deploy.ts production",
-    "package": "ts-node scripts/package.ts"
+    "package": "ts-node scripts/package.ts production"
   },
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^20.5.9",
     "picocolors": "^1.0.0",
+    "registry-js": "^1.16.0",
     "ts-node": "^10.9.1",
     "url": "^0.11.0",
     "xmlbuilder2": "^3.0.2"

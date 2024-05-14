@@ -9,7 +9,9 @@ export { config } from "../../bundle";
 
 const modeName = isDev ? "development" : "production"
 export const bundleId = `org.${config.organization}.${name}`;
-export const distFolder = joinPath(process.cwd(), "dist", modeName, bundleId);
+export const distFolder = joinPath(process.cwd(), "dist", modeName);
+export const packageFolder = joinPath(process.cwd(), "dist", "package");
+export const extensionDistFolder = joinPath(distFolder, "extension");
 
 export function generateCSXS(config: ConfigInterface) {
     const root = CreateXML({ version: '1.0', encoding: "UTF-8" });
@@ -68,6 +70,8 @@ export function generateCSXS(config: ConfigInterface) {
 
     for (const extensionName of Object.keys(config.extensions)) {
         const extension = config.extensions[extensionName];
+        if (extension.type !== "extension") continue;
+
         const extensionRoot = resolvePath(processPath, extension.root);
         const extensionPackage = JSON.parse(
             readFileSync(
@@ -171,7 +175,7 @@ export function generateCSXS(config: ConfigInterface) {
         }
     }
 
-    const outputFolder = joinPath(distFolder, "CSXS");
+    const outputFolder = joinPath(extensionDistFolder, "CSXS");
     mkdirSync(outputFolder, { recursive: true });
     writeFileSync(
         joinPath(outputFolder, "manifest.xml"),
@@ -181,7 +185,7 @@ export function generateCSXS(config: ConfigInterface) {
 
     if (isDev) {
         writeFileSync(
-            joinPath(distFolder, ".debug"),
+            joinPath(extensionDistFolder, ".debug"),
             debugRoot.toString({ prettyPrint: true }),
             'utf-8'
         );

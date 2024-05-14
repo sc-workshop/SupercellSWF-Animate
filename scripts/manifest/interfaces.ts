@@ -19,6 +19,7 @@ interface Icon {
 export interface Extension {
     type: "extension"
     root: string
+    parent?: string,
     path: string
     scriptPath?: string
     params?: string[]
@@ -36,11 +37,24 @@ export interface Extension {
     }
 }
 
+export interface CommandExtension
+{
+    type: "command"
+    path: string
+}
+
+export interface NativeExtension
+{
+    type: "native"
+    path: string
+}
+
 export interface ConfigInterface {
-    organization: string
+    organization: string // Name for package signing
+    organization_name?: string // Organization name but more readable
     cep_version: string
     environment: EnvironmentInterface
     extensions: {
-        [name: string]: Extension
+        [name: string]: Extension | CommandExtension | NativeExtension
     }
 }

@@ -1,0 +1,22 @@
+diff --git a/node_modules/types-for-adobe/Animate/22.0/index.d.ts b/node_modules/types-for-adobe/Animate/22.0/index.d.ts
+index 85b4691..04adcfa 100644
+--- a/node_modules/types-for-adobe/Animate/22.0/index.d.ts
++++ b/node_modules/types-for-adobe/Animate/22.0/index.d.ts
+@@ -321,7 +321,7 @@ declare class FLfileClass {
+    * @returns A string representing a platform-specific path.
+    * @param fileURI A string, expressed as a file:/// URI, specifying the filename you want to convert.
+    */
+-  uriToPlatformPath(fileURI: string): void
++  uriToPlatformPath(fileURI: string): string
+   /**
+    * Writes the specified string to the specified file (as UTF-8). If the specified file does not exist, it is created. However, the folder in which you are placing the file must exist before you use this method. To create folders, use FLfile.createFolder().
+    * @returns A Boolean value of true if successful; false otherwise.
+@@ -330,6 +330,8 @@ declare class FLfileClass {
+    * @param strAppendMode An optional string with the value "append", which specifies that you want to append textToWrite to the existing file. If omitted, fileURI is overwritten with textToWrite.
+    */
+   write(fileURI: string, textToWrite: string, strAppendMode?: string): boolean
++
++  runCommandLine(script: string): 1 | 0;
+ }
+ 
+ /**

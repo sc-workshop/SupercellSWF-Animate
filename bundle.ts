@@ -2,6 +2,7 @@ import { ConfigInterface } from "./scripts/manifest/interfaces";
 
 export const config: ConfigInterface = {
     organization: "scWorkshop",
+    organization_name: "SC Workshop",
     cep_version: "9.0",
     environment: {
         apps: {
@@ -15,6 +16,7 @@ export const config: ConfigInterface = {
     extensions: {
         PublishSettings: {
             type: "extension",
+            parent: "Plugin",
             root: "./publisher",
             path: "./index.html",
             params: [
@@ -39,6 +41,10 @@ export const config: ConfigInterface = {
                 type: "ModalDialog",
                 size: { width: 1, height: 1 }
             }
+        },
+        ImportCommand: {
+            type: "command",
+            path: "importer/import_sc.jsfl"
         }
     }
 }

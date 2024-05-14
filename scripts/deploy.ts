@@ -1,7 +1,7 @@
-import { copyDir, extensionsFolder, error, isDev, isWindows, processExecError, progress, removeDirs, makeLink } from "./utils";
-import { existsSync, lstatSync, unlinkSync } from "fs";
+import { copyDir, extensionsFolder, error, isDev, isWindows, processExecError, progress, removeFiles, makeLink } from "./utils";
 import { execSync } from "child_process"
-import { bundleId, config, distFolder } from "./manifest";
+import { bundleId, config, extensionDistFolder } from "./manifest";
+import winreg from 'registry-js'
 
 import { join } from "path";
 
@@ -13,10 +13,7 @@ export function deploy() {
     progress('Cleaning deploy target');
 
     try {
-        if (existsSync(deployFolder) && lstatSync(deployFolder).isSymbolicLink()) {
-            unlinkSync(deployFolder)
-        }
-        removeDirs(deployFolder)
+        removeFiles([deployFolder]);
     } catch (err) {
         error(err as any)
     }
@@ -28,7 +25,9 @@ export function deploy() {
             progress(`PlayerDebug for CEP ${csxsVersion} patching`);
 
             if (isWindows) {
-                execSync(`REG ADD HKEY_CURRENT_USER\\Software\\Adobe\\CSXS.${csxsVersion} /v PlayerDebugMode /t REG_SZ /d 1 /f`)
+                const subkey = `Software\\Adobe\\CSXS.${csxsVersion}`;
+                winreg.createKeySafe(winreg.HKEY.HKEY_CURRENT_USER, subkey);
+                winreg.setValueSafe(winreg.HKEY.HKEY_CURRENT_USER, subkey, "PlayerDebugMode", winreg.RegistryValueType.REG_SZ, "1");
             } else {
                 execSync(`defaults write com.adobe.CSXS.${csxsVersion} PlayerDebugMode 1`, { stdio: [0, 1, 2] })
             }
@@ -39,7 +38,7 @@ export function deploy() {
         progress('Creating symlink into extensions folder')
 
         try {
-            makeLink(distFolder, deployFolder);
+            makeLink(extensionDistFolder, deployFolder);
         } catch (err) {
             error(err as any)
         }
@@ -47,7 +46,7 @@ export function deploy() {
     } else {
         progress('Copying into extensions folder')
         try {
-            copyDir(distFolder, deployFolder);
+            copyDir(extensionDistFolder, deployFolder);
 
         } catch (err) {
             error(err as any)

@@ -30,25 +30,28 @@ export function progress(val: string, color?: ColorName) {
     console.log(pc[c](val))
 }
 
+export function removeFiles(files: string[], basepath: string = "") {
+    for (const file of files) {
+        var curPath = join(basepath, file)
+        if (!existsSync(curPath)) continue;
+
+        if (lstatSync(curPath).isDirectory()) { // recurse
+            if (lstatSync(curPath).isSymbolicLink()) {
+                unlinkSync(curPath);
+            } else {
+                removeDirs(curPath)
+            }
+        } else { // delete file
+            unlinkSync(curPath)
+        }
+    }
+}
+
 export function removeDirs(path: string) {
     if (existsSync(path)) {
-        if (!lstatSync(path).isDirectory())
-        {
-            unlinkSync(path)
-        }
-
         const folder = readdirSync(path);
-
-        for (const file of folder) {
-            var curPath = join(path, file)
-            if (lstatSync(curPath).isDirectory()) { // recurse
-                removeDirs(curPath)
-            } else { // delete file
-                unlinkSync(curPath)
-            }
-        }
-
-        rmdirSync(path)
+        removeFiles(folder, path);
+        rmdirSync(path);
     }
 }
 
@@ -115,4 +118,8 @@ export function makeLink(src: string, dst: string) {
     progress(`Creating link from \"${src}\" to \"${dst}\"`, "blue")
 
     symlinkSync(src, dst, "dir")
+}
+
+export function getPreferencesFolder() {
+
 }
