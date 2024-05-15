@@ -15,7 +15,7 @@ namespace sc
 	{
 		PluginContext::PluginContext()
 		{
-			const std::string log_name = std::string(DOCTYPE_UNIVERSAL_NAME "_log.txt");
+			const std::string log_name = std::string(DOCTYPE_UNIVERSAL_NAME "_export_log.txt");
 			const fs::path log_path = fs::temp_directory_path() / log_name;
 
 			if (fs::exists(log_path))

@@ -42,9 +42,9 @@ export const config: ConfigInterface = {
                 size: { width: 1, height: 1 }
             }
         },
-        ImportCommand: {
-            type: "command",
-            path: "importer/import_sc.jsfl"
-        }
+        // ImportCommand: {
+        //     type: "command",
+        //     path: "importer/import_sc.jsfl"
+        // }
     }
 }

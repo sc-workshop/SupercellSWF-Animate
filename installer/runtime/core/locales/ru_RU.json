@@ -4,6 +4,10 @@
     "TID_WINDOW_CLOSE": "Закройте это окно и перезапустите Adobe Animate",
     "TID_EXTENSION_INSTALL": "Установка расширения...",
     "TID_COMMAND_INSTALL": "Установка команд...",
+    "TID_CURRENT_VERSION": "Текущая версия: ",
+    "TID_UNINSTALL_PROPOSE": "Хотите удалить текущую версию плагина?",
+    "TID_UNINSTALL": "Удалить",
+    "TID_UNINSTALL_PROCESS": "Удаление...",
 
     "TID_COMMAND_ImportCommand_NAME": "Импортировать .sc"
 }

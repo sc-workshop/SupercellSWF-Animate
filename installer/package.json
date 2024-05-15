@@ -1,5 +1,6 @@
 {
   "name": "SupercellSWF-Animate-Installer",
+  "private": true,
   "version": "1.0.0",
   "description": "Installer for SupercellSWF Animate Plugin",
   "main": "runtime/install.jsfl",
@@ -10,9 +11,7 @@
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
-    "types-for-adobe": "^7.2.1"
-  },
-  "devDependencies": {
-    "patch-package": "^8.0.0"
+    "types-for-adobe": "7.2.1",
+    "patch-package": "8.0.0"
   }
 }

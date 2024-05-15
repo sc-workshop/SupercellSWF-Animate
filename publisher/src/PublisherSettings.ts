@@ -111,7 +111,7 @@ export class PublisherSettings {
             "com.adobe.events.flash.extension.savestate",
             "APPLICATION",
             CSInterface.getApplicationID(),
-            "com.scwmake.SupercellSWF.PublishSettings"
+            "org.scWorkshop.SupercellSWF.PublishSettings"
         );
 
         event.data = JSON.stringify({

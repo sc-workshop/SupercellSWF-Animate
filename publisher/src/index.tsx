@@ -55,7 +55,7 @@ function App() {
         "com.adobe.events.flash.extensionLoaded",
         "APPLICATION",
         undefined,
-        "com.scwmake.SupercellSWF.PublishSettings"
+        "org.scWorkshop.SupercellSWF.PublishSettings"
       );
       event.data = "SupercellSWF publisher loaded";
       CSInterface.dispatchEvent(event);

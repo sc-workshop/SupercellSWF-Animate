@@ -57,6 +57,7 @@ const extensionPackagePath = join(packageDistFolder, `${package_name}.zxp`)
 build_extension_package(extensionPackagePath);
 
 const packageManifest: any = {
+    name: bundleId,
     version: version,
     extensions: [
         {

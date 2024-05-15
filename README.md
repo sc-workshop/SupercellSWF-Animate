@@ -129,13 +129,7 @@ Please note that support for a macOS devices is <em><strong>possible</strong></e
 <br/>
 
 # Installing
-To install, you will need to download and install ["Anastasiy's Extension Manager"](https://install.anastasiy.com/)  
-Then download zxp package from [releases](https://github.com/Daniil-SV/SupercellSWF-Animate/releases)
-Open extension manager, click on "Install" button and then select zxp package you downloaded  
-After a successful installation notification, you can close program and open Adobe Animate for use
 
-## Alternative installing
-Go to folder `C:\Users\{USER NAME}\AppData\Roaming\Adobe\CEP\extensions` (If some folders do not exist, create) then create folder `com.scwmake.SupercellSWF`, open .zxp package as zip and unzip to created folder. 
 
 <br/>
 
@@ -206,11 +200,13 @@ You can find a list of all available examples in ["examples"](/examples/README.m
 
 # Issues
 If you find any problem with the export process, please report it in [Issues](https://github.com/sc-workshop/SupercellSWF-Animate/issues) or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
-Also, native part of plugin saves logs in "%temp%/com.scwmake.SupercellSWF_log.txt", please provide them along with a description for a faster solution to the problem.
+Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.
 
 <br/>
 
 # Changelog
+## v 1.2.1
+- Added experimental installer
 ## v 1.2.0
 - Complete refactoring of code
 - Changed and improved design of Publisher Settings

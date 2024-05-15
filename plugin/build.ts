@@ -20,11 +20,11 @@ mkdirSync(libPath, { recursive: true });
 const activeConfiguration = isDev ? "Debug" : "RelWithDebInfo"
 
 const publisherName = "SupercellSWF"
-const publisherId = "com.scwmake.SupercellSWF.Publisher";
-const publisherUi = "com.scwmake.SupercellSWF.PublishSettings"
+const publisherId = "org.scWorkshop.SupercellSWF.Publisher";
+const publisherUi = "org.scWorkshop.SupercellSWF.PublishSettings"
 
 const doctypeName = "SupercellSWF";
-const doctypeId = "com.scwmake.SupercellSWF";
+const doctypeId = "org.scWorkshop.SupercellSWF";
 
 const assetsFolder = "resources"
 

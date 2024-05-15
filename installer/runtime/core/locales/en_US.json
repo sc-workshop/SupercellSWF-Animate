@@ -4,6 +4,10 @@
     "TID_WINDOW_CLOSE": "Now close this window and restart Adobe Animate",
     "TID_EXTENSION_INSTALL": "Extensions installing...",
     "TID_COMMAND_INSTALL": "Commands installing...",
+    "TID_CURRENT_VERSION": "Current version: ",
+    "TID_UNINSTALL_PROPOSE": "Want to remove the current version of plugin?",
+    "TID_UNINSTALL": "Uninstall",
+    "TID_UNINSTALL_PROCESS": "Uninstalling...",
 
     "TID_COMMAND_ImportCommand_NAME": "Import .sc"
 }

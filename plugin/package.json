@@ -1,5 +1,5 @@
 {
-  "name": "sc-animate-plugin",
+  "name": "SupercellSWF-Animate-Native",
   "version": "1.2.0",
   "private": "true",
   "description": "Native plugin for Adobe Animate",
@@ -11,8 +11,8 @@
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^20.5.9",
-    "@types/which": "^3.0.0",
-    "which": "^3.0.0"
+    "@types/node": "20.5.9",
+    "@types/which": "3.0.0",
+    "which": "3.0.0"
   }
 }

@@ -9,6 +9,7 @@ declare global {
     }
 
     interface InstallManifest {
+        name: string,
         version: string,
         extensions: Extension[]
     }
@@ -16,8 +17,22 @@ declare global {
     interface ManifestWindow extends Window {
         SupercellSWF?: {
             cwd: string,
+
+            // Package manifest
+            manifest_path: string,
             manifest: InstallManifest,
+            
+            // User manifest. Undefined when user already has installed extension
+            user_manifest_path: string,
+            user_manifest?: InstallManifest
+
             locale: Localization,
+            error_message: string,
+            
+            // Path to CEP folder with user extensions
+            user_cep: () => string,
+            // cached variable
+            _user_cep?: string,
         }
     }
 
