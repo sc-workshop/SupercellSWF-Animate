@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "None",
+        "module": "ES2015",
         "noLib": true,
         "types": [
             "types-for-adobe/Animate/22.0",

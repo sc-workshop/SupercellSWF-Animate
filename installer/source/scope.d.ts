@@ -21,4 +21,15 @@ declare global {
     }
 
     var window: ManifestWindow;
+
+    // Polyfills. Some ECMAScript functions not available in Animate 20-21 so just fill with our own functions
+    interface String {
+        trim(): string;
+    }
 }
+
+declare interface JSONClass {
+    parse(data: string): any;
+}
+
+declare const JSON: JSONClass;

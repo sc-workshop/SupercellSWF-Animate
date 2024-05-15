@@ -1,6 +1,9 @@
 {
     "TID_INIT": "Инициализация...",
     "TID_DONE": "Завершено",
-    "TID_WINDOW_CLOSE": "Теперь закройте окно и перезапустите Adobe Animate",
-    "TID_EXTENSION_INSTALL": "Установка расширения..."
+    "TID_WINDOW_CLOSE": "Закройте это окно и перезапустите Adobe Animate",
+    "TID_EXTENSION_INSTALL": "Установка расширения...",
+    "TID_COMMAND_INSTALL": "Установка команд...",
+
+    "TID_COMMAND_ImportCommand_NAME": "Импортировать .sc"
 }

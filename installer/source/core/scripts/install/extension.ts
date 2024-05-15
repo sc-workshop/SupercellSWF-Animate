@@ -1,8 +1,3 @@
-function string_trim(str: string)
-{
-    return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-}
-
 function install_windows(extension: Extension) {
     const package_path = FLfile.uriToPlatformPath(window.SupercellSWF.cwd + extension.path);
     const archiver_bin = FLfile.uriToPlatformPath(window.SupercellSWF.cwd + "core/bin/windows/7z.exe");
@@ -10,7 +5,7 @@ function install_windows(extension: Extension) {
     const unpack_log = window.SupercellSWF.cwd + "unpack_log.txt";
 
     FLfile.runCommandLine("echo %CommonProgramFiles% > \"" + FLfile.uriToPlatformPath(program_data_file) + "\"");
-    const program_files_path = FLfile.platformPathToURI(string_trim(FLfile.read(program_data_file).split("\r\n")[0]));
+    const program_files_path = FLfile.platformPathToURI(FLfile.read(program_data_file).split("\r\n")[0].trim());
     FLfile.remove(program_data_file);
 
     const extensions_folder = program_files_path + "/Adobe/CEP/extensions/";
