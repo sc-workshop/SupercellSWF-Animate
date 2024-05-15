@@ -16,7 +16,8 @@ declare global {
     interface ManifestWindow extends Window {
         SupercellSWF?: {
             cwd: string,
-            manifest: InstallManifest
+            manifest: InstallManifest,
+            locale: Localization,
         }
     }
 
@@ -26,6 +27,17 @@ declare global {
     interface String {
         trim(): string;
     }
+
+    
+    interface Array<T>
+    {
+        indexOf(element: T, fromIndex?: number) : number | -1;
+    }
+}
+
+declare class Localization
+{
+    get(tid: string): string;
 }
 
 declare interface JSONClass {

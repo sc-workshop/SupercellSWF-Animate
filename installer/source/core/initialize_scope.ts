@@ -9,7 +9,7 @@ class Localization {
         this.data = JSON.parse(FLfile.read(locale_path));
     }
 
-    get(tid: string) {
+    get(tid: string): string {
         if (this.data[tid] === undefined) {
             return tid;
         }
@@ -17,8 +17,8 @@ class Localization {
         return this.data[tid];
     }
 
-    public lang = fl.languageCode;
-    public data: object = {};
+    private lang = fl.languageCode;
+    private data: object = {};
 }
 
 (
@@ -27,6 +27,7 @@ class Localization {
 
         // Initialize polyfills
         fl.runScript(current_path + "core/polyfill/string.jsfl")
+        fl.runScript(current_path + "core/polyfill/array.jsfl")
         fl.runScript(current_path + "core/polyfill/JSON.jsfl")
         
         // Initializing global object
