@@ -18,6 +18,7 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Issues](#issues)
 - [Requirements](#requirements)
 - [Installing](#installing)
+- [Update](#update)
 - [Dependencies](#dependecies)
 - [Building](#building)
 - [Examples](#examples)
@@ -136,6 +137,8 @@ By default, ```.jsfl``` is associated with Animate, so you can double-click on i
 After installation is complete, be sure to restart Animate.
 If you want to remove plugin, run ```install.jsfl``` again, and this time you will see a confirmation button.
 
+<br/>
+
 # Update
 If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
 
@@ -171,12 +174,18 @@ Before starting you need to have:
 - [Typescript and ts-node](https://www.npmjs.com/package/ts-node)
 - MSVC Build tools (Visual Studio)
 
-Instruction will be divided into 2 parts, instructions for building Plugin and Publish settings
+Instruction will be divided into 3 parts, instructions for building Plugin and Publish settings
 
-- PublishSettings  
-    Open console in "publisher" folder and enter following command to install all dependencies needed for build:  
+- Installer
+    Install node modules inside the ```installer``` folder with command:
     `
-    npm i --save-dev
+    npm install
+    `  
+
+- Publish Settings  
+    Open console in ```publisher``` folder and enter following command to install all dependencies needed for build:  
+    `
+    npm install --save-dev
     `  
     After installation, try to start local server with command:  
     `
@@ -185,7 +194,11 @@ Instruction will be divided into 2 parts, instructions for building Plugin and P
     Try opening `localhost:8080` in your browser. If page works and you see the publisher interface, then everything is OK!
 
 - Plugin  
-    Make sure you have installed Visual Studio with C++ build tools and also cmake which should be in system variables or PATH. That's all!  
+    Install node modules inside the ```plugin``` folder with command:
+    `
+    npm install
+    `  
+    And make sure you have installed Visual Studio with C++ build tools and also cmake which should be in system variables or PATH. That's all!  
 
 Next, after preparing all modules, you need to open console in root of repository.
 - Debug  
