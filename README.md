@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./assets/scwmake.png"  width="10%">
+<img src="./assets/workshop.png"  width="10%">
 <h1 align="center" style="font-size: 32px;"> Supercell Animate </h1>
 </p>
 
@@ -18,7 +18,7 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Issues](#issues)
 - [Requirements](#requirements)
 - [Installing](#installing)
-- [Dependecies](#dependecies)
+- [Dependencies](#dependecies)
 - [Building](#building)
 - [Examples](#examples)
 - [Changelog](#changelog)
@@ -61,7 +61,7 @@ Full support except for "Button" type
     - Blending modes ✅  
     Full support. But note that some modes may not work or crash.
 
-    - Trasform ✅ 
+    - Transform ✅ 
     2D Transforms are fully supported. 3D transformations have a potentially small range of uses and a small chance of being supported.
 
 - Layers ✅  
@@ -72,7 +72,7 @@ Also note that all symbols from guide layer will be ignored and will only be use
 Absolutely all types of animation tweens and their types of interpolation are supported.
 
  - Shape animation ✅  
-Full support. Be careful when using it, the result can be very unoptimized.
+Full support. Be careful when using it, the result can be very unstable.
 
 - Nine-slice ✅  
 Full support. But keep in mind that on Animate 2024 and above this may not work correctly.
@@ -129,6 +129,19 @@ Please note that support for a macOS devices is <em><strong>possible</strong></e
 <br/>
 
 # Installing
+First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
+Unpack zip to any place convenient for you.  
+Inside archive there is a file ```install.jsfl```. You need to run it in Adobe Animate.  
+By default, ```.jsfl``` is associated with Animate, so you can double-click on it and run it as a command, but if something is wrong, you can open it in Animate itself as a script and click on run button.  
+After installation is complete, be sure to restart Animate.
+If you want to remove plugin, run ```install.jsfl``` again, and this time you will see a confirmation button.
+
+# Update
+If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
+
+
+### IMPORTANT
+If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
 
 
 <br/>
