@@ -176,8 +176,8 @@ Before starting you need to have:
 
 Instruction will be divided into 3 parts, instructions for building Plugin and Publish settings
 
-- Installer
-    Install node modules inside the ```installer``` folder with command:
+- Installer  
+    Install node modules inside the ```installer``` folder with command:  
     `
     npm install
     `  
@@ -202,20 +202,18 @@ Instruction will be divided into 3 parts, instructions for building Plugin and P
 
 Next, after preparing all modules, you need to open console in root of repository.
 - Debug  
-    If you want to use a debug build you need to use several commands:  
+    If you want to use a debug build you need to use this command:  
     `
     npm run build:dev
     `  
-    `
-    npm run deploy
-    `  
     After that, extension should load into Adobe Animate.
-- Release
-    To build a zxp package, you need to fill in certificate details in `scripts/cert.ts` and then run following command:
+- Release  
+    To build a zxp package, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
     `
     npm run package
     `
-    After command completes, you should have an zxp package at root of repository that you can install.
+    After the command completes, installer files will be available in `dist/package` folder.  
+    You can run it or zip and share.
 
 <br/>
 
