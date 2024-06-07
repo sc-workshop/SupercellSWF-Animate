@@ -18,8 +18,12 @@ namespace sc {
 			FCM::StringRep16 documentPathPtr;
 			config.document->GetPath(&documentPathPtr);
 
-			fs::path documentName = fs::path((const char16_t*)documentPathPtr).filename();
-			context.falloc->Free(documentPathPtr);
+			fs::path documentName = "Untitled";
+			if (documentPathPtr)
+			{
+				documentName = fs::path((const char16_t*)documentPathPtr).filename();
+				context.falloc->Free(documentPathPtr);
+			}
 
 			context.logger->info("Document name: {}", documentName.string());
 
