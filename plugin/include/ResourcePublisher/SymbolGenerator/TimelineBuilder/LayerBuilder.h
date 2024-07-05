@@ -48,7 +48,7 @@ namespace sc {
 			);
 
 		public:
-			LayerBuilder(FCM::AutoPtr<DOM::Layer::ILayerNormal> layer, ResourcePublisher& resources, SymbolContext& info);
+			LayerBuilder(FCM::AutoPtr<DOM::Layer::ILayerNormal> layer, uint32_t duration, ResourcePublisher& resources, SymbolContext& info);
 
 			void operator()(SharedMovieclipWriter& writer);
 
@@ -71,7 +71,7 @@ namespace sc {
 
 			void releaseFilledElements();
 
-			bool IsMaskLayer() {
+			bool maskLayer() {
 				return m_mask_layer;
 			}
 

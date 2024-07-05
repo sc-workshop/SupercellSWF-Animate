@@ -48,7 +48,7 @@ namespace sc
 				return true;
 			}
 			default:
-				break;
+				return false;
 			}
 		};
 	}

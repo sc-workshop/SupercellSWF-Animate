@@ -96,7 +96,7 @@ namespace sc {
 
 			void operator()(SymbolContext& symbol, SharedMovieclipWriter& writer);
 
-			bool can_flush() const
+			bool flushMask() const
 			{
 				return !m_elementsData.empty() || !m_filled_elements.empty();
 			}
@@ -145,6 +145,13 @@ namespace sc {
 			void DeclareFrameElements(
 				SymbolContext& symbol,
 				FCM::FCMListPtr frameElements,
+				std::optional<MATRIX2D> base_transform = std::nullopt,
+				bool reverse = false
+			);
+
+			void DeclareFrameElement(
+				SymbolContext& symbol,
+				FCM::AutoPtr<DOM::FrameElement::IFrameDisplayElement> frameElement,
 				std::optional<MATRIX2D> base_transform = std::nullopt
 			);
 		};

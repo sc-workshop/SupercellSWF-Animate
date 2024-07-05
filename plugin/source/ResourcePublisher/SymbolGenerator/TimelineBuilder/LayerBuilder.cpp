@@ -30,11 +30,11 @@ namespace sc {
 
 		LayerBuilder::LayerBuilder(
 			FCM::AutoPtr<DOM::Layer::ILayerNormal> layer,
+			uint32_t duration,
 			ResourcePublisher& resources,
 			SymbolContext& symbol
-		) : m_symbol(symbol), m_layer(layer), m_resources(resources), frameBuilder(resources)
+		) : m_symbol(symbol), m_duration(duration), m_layer(layer), m_resources(resources), frameBuilder(resources)
 		{
-			m_layer->GetTotalDuration(m_duration);
 			layer->GetKeyFrames(m_keyframes.m_Ptr);
 			m_keyframes->Count(m_keyframeCount);
 
@@ -91,7 +91,7 @@ namespace sc {
 		{
 			LayerBuilder& layer = layers[layer_index];
 			if (layer) {
-				if (layer.IsMaskLayer() && layer.canReleaseFilledElements())
+				if (layer.maskLayer() && layer.canReleaseFilledElements())
 				{
 					layer.releaseFilledElements();
 
@@ -143,7 +143,7 @@ namespace sc {
 				LayerBuilder& current_layer = layers[current_layer_index];
 				if (current_layer)
 				{
-					bool is_masked_frame = current_layer.IsMaskLayer() && current_layer.frameBuilder.can_flush();
+					bool is_masked_frame = current_layer.maskLayer() && current_layer.frameBuilder.flushMask();
 					if (is_masked_frame) {
 						current_layer.AddModifier(writer, MaskedLayerState::MASK_LAYER);
 					}
@@ -160,13 +160,9 @@ namespace sc {
 						LayerBuilder::ProcessLayers(context, current_layer.maskedLayers, writer);
 						current_layer.AddModifier(writer, MaskedLayerState::MASKED_LAYERS_END);
 					}
-
-					if (!is_masked_frame)
+					else
 					{
-						for (LayerBuilder& layer : current_layer.maskedLayers)
-						{
-							layer.next();
-						}
+						LayerBuilder::ProcessLayers(context, current_layer.maskedLayers, writer);
 					}
 				}
 			}

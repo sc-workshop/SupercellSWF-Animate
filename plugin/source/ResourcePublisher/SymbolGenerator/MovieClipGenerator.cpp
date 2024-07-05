@@ -35,7 +35,11 @@ namespace sc {
 					continue;
 				}
 				else if (normalLayer) {
-					result.emplace_back(normalLayer, resources, symbol);
+					uint32_t duration = 0;
+					normalLayer->GetTotalDuration(duration);
+					if (duration <= 0) continue;
+
+					result.emplace_back(normalLayer, duration, resources, symbol);
 				}
 			}
 		};

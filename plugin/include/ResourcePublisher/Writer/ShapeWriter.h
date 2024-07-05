@@ -50,6 +50,9 @@ namespace sc {
 
 			bool IsComplexShapeRegion(const FilledElementRegion& region);
 
+		public:
+			static void RoundDomRectangle(DOM::Utils::RECT& rect);
+
 		private:
 			SCWriter& m_writer;
 			SymbolContext& m_symbol;
