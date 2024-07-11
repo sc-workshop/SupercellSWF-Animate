@@ -104,20 +104,18 @@ namespace sc {
 		void SCShapeWriter::AddRasterizedRegion(
 			const FilledElementRegion& region,
 			cv::Mat& canvas,
+			DOM::Utils::RECT bound,
 			Point<int32_t> position
 		)
 		{
-			DOM::Utils::RECT local_bound = region.Bound();
-			SCShapeWriter::RoundDomRectangle(local_bound);
-
 			// Corner of current region
-			Point<int32_t> local_offset(local_bound.bottomRight.x, local_bound.bottomRight.y);
+			Point<int32_t> local_offset(bound.bottomRight.x, bound.bottomRight.y);
 
 			// Distance between shape and region corners
 			Point<int32_t> global_offset(abs(local_offset.x - position.x), abs(local_offset.y - position.y));
 
 			// Size of image to fill
-			cv::Size filling_size(abs(local_bound.bottomRight.x - local_bound.topLeft.x), abs(local_bound.bottomRight.y - local_bound.topLeft.y));
+			cv::Size filling_size(abs(bound.bottomRight.x - bound.topLeft.x), abs(bound.bottomRight.y - bound.topLeft.y));
 
 			// Creating fill mask
 			cv::Mat canvas_mask(filling_size, CV_8UC1, cv::Scalar(0x00));
@@ -131,11 +129,38 @@ namespace sc {
 				std::vector<Point2D> rasterized;
 				path.Rasterize(rasterized);
 
+				Point2D center_min(std::numeric_limits<float>().min(), std::numeric_limits<float>().min());
+				Point2D center_max(std::numeric_limits<float>().max(), std::numeric_limits<float>().max());
+
 				for (Point2D curve_point : rasterized)
 				{
+					center_min.x = std::min(curve_point.x, center_min.x);
+					center_min.y = std::min(curve_point.y, center_min.y);
+
+					center_max.x = std::max(curve_point.x, center_min.x);
+					center_max.y = std::max(curve_point.y, center_min.y);
+				}
+
+				Point2D centroid((center_max.x + center_min.x) / 2, (center_max.y + center_min.y) / 2);
+
+				for (Point2D point : rasterized)
+				{
+					float dx = point.x - centroid.x;
+					float dy = point.y - centroid.y;
+
+					float length = std::sqrt(dx * dx + dy * dy);
+
+					// Normalize the vector (to have a length of 1)
+					float unitDx = dx / length;
+					float unitDy = dy / length;
+
+					const float distance = -1.0f;
+
+					Point2D shrink_point(point.x + unitDx * distance, point.y + unitDy * distance);
+
 					points.emplace_back(
-						(curve_point.x - local_offset.x) * pow(2, contour_shift),
-						(curve_point.y - local_offset.y) * pow(2, contour_shift)
+						(shrink_point.x - local_offset.x) * pow(2, contour_shift),
+						(shrink_point.y - local_offset.y) * pow(2, contour_shift)
 					);
 				}
 
@@ -189,13 +214,13 @@ namespace sc {
 					break;
 					default:
 						break;
-				}
+					}
 
 					cv::imshow("Drawed segment", point_canvas);
 					cv::waitKey(0);
-			}
+				}
 #endif
-		};
+			};
 
 				// Contour
 				{
@@ -203,11 +228,12 @@ namespace sc {
 					process_points(region.contour, points);
 
 					cv::fillPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
+					//cv::drawContours(canvas_mask, points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
 #ifdef CV_DEBUG
 					cv::imshow("Contour Mask", canvas_mask);
 					cv::waitKey(0);
 #endif
-	}
+				}
 
 				{
 					for (const FilledElementPath& path : region.holes)
@@ -215,6 +241,7 @@ namespace sc {
 						std::vector<cv::Point> path_points;
 						process_points(path, path_points);
 
+						//cv::drawContours(canvas_mask, path_points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
 						cv::fillPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
 					}
 
@@ -265,36 +292,91 @@ namespace sc {
 
 						origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
 					}
-					}
+				}
 
 #ifdef CV_DEBUG
 				cv::imshow("Canvas Fill", canvas);
 				cv::waitKey(0);
 #endif
-				}
+		}
 
 		void SCShapeWriter::AddRasterizedRegion(
 			const FilledElementRegion& region
 		)
 		{
-			const DOM::Utils::RECT region_bound = region.Bound();
-			Point<int32_t> image_position_offset(region_bound.bottomRight.x, region_bound.bottomRight.y);
+			DOM::Utils::RECT region_bound = region.Bound();
+			SCShapeWriter::RoundDomRectangle(region_bound);
+
+			FilledElementRegion local_region = region;
+			local_region.Transform(
+				{
+					SCShapeWriter::RasterizationResolution,
+					0.0f,
+					0.0f,
+					SCShapeWriter::RasterizationResolution,
+					0.0f,
+					0.0f
+				}
+			);
+
+			DOM::Utils::RECT local_bound = local_region.Bound();
+			Point<float> region_offset_x;
+			Point<float> region_offset_y;
+
+			auto round_number = [](float& number, float& offset)
+			{
+				float base_number = std::trunc(number);
+				offset = std::abs(number - base_number);
+
+				if (offset >= 0.5f)
+				{
+					if (base_number >= 0.0f)
+					{
+						number = base_number + 1.0f;
+					}
+					else
+					{
+						number = base_number - 1.0f;
+					}
+
+					return;
+				}
+
+				number = base_number;
+			};
+
+			round_number(local_bound.topLeft.x, region_offset_y.x);
+			round_number(local_bound.topLeft.y, region_offset_y.y);
+			round_number(local_bound.bottomRight.x, region_offset_x.x);
+			round_number(local_bound.bottomRight.y, region_offset_x.y);
+
+			local_region.Transform(
+				{
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					-(std::min(region_offset_x.x, region_offset_y.x)),
+					-(std::min(region_offset_x.y, region_offset_y.y))
+				}
+			);
+
+			Point<int32_t> image_position_offset(local_bound.bottomRight.x, local_bound.bottomRight.y);
 			cv::Size image_size(
-				ceil(region_bound.topLeft.x - image_position_offset.x),
-				ceil(region_bound.topLeft.y - image_position_offset.y)
+				ceil(local_bound.topLeft.x - local_bound.bottomRight.x),
+				ceil(local_bound.topLeft.y - local_bound.bottomRight.y)
 			);
 
 			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
-
-			AddRasterizedRegion(region, canvas, image_position_offset);
+			AddRasterizedRegion(local_region, canvas, local_bound, image_position_offset);
 
 			const DOM::Utils::MATRIX2D transform = {
-				1.0f,
+				1.0f / SCShapeWriter::RasterizationResolution,
 				0.0f,
 				0.0f,
-				1.0f,
-				(FCM::Float)image_position_offset.x,
-				(FCM::Float)image_position_offset.y
+				1.0f / SCShapeWriter::RasterizationResolution,
+				(FCM::Float)region_bound.bottomRight.x,
+				(FCM::Float)region_bound.bottomRight.y
 			};
 
 			// Adding to group
@@ -359,7 +441,7 @@ namespace sc {
 
 			bool is_contour =
 				!should_rasterize &&
-				region.contour.Count() <= 4 &&
+				region.contour.Count() <= 4 && !(region.contour.Count() > 6) &&
 				region.holes.empty();
 
 			bool should_triangulate =
@@ -373,10 +455,6 @@ namespace sc {
 			{
 				AddRasterizedRegion(region);
 			}
-			else if (should_triangulate)
-			{
-				AddTriangulatedRegion(region.contour, region.holes, region.solid.color);
-			}
 			else if (is_contour)
 			{
 				std::vector<Point2D> points;
@@ -384,6 +462,10 @@ namespace sc {
 
 				std::vector<FilledItemContour> contour = { FilledItemContour(points) };
 				m_group.AddItem<FilledItem>(contour, region.solid.color);
+			}
+			else if (should_triangulate)
+			{
+				AddTriangulatedRegion(region.contour, region.holes, region.solid.color);
 			}
 		}
 
@@ -393,13 +475,11 @@ namespace sc {
 			// So we need to scale their resolution by 2
 			// But xy coordinates must be remains the same
 
-			const float resolution = 2.0f;
-
 			// So first we create a bigger guide
 			DOM::Utils::RECT guides =
 			{
-				{_guides.topLeft.x * resolution, _guides.topLeft.y * resolution},
-				{_guides.bottomRight.x * resolution, _guides.bottomRight.y * resolution}
+				{_guides.topLeft.x * SCShapeWriter::RasterizationResolution, _guides.topLeft.y * SCShapeWriter::RasterizationResolution},
+				{_guides.bottomRight.x * SCShapeWriter::RasterizationResolution, _guides.bottomRight.y * SCShapeWriter::RasterizationResolution}
 			};
 
 			// Then create copy of element
@@ -409,16 +489,16 @@ namespace sc {
 			{
 				FilledElement& element = elements.emplace_back(_element);
 
-				element.Tranform(
+				element.Transform(
 					element.transormation
 				);
 
-				element.Tranform(
+				element.Transform(
 					{
-						resolution,
+						SCShapeWriter::RasterizationResolution,
 						0.0f,
 						0.0f,
-						resolution,
+						SCShapeWriter::RasterizationResolution,
 						0.0f,
 						0.0f
 					}
@@ -461,8 +541,11 @@ namespace sc {
 				{
 					if (!IsValidFilledShapeRegion(region)) continue;
 
+					DOM::Utils::RECT local_bound = region.Bound();
+					SCShapeWriter::RoundDomRectangle(local_bound);
+
 					AddRasterizedRegion(
-						region, canvas, image_position_offset
+						region, canvas, local_bound, image_position_offset
 					);
 				}
 
@@ -470,17 +553,20 @@ namespace sc {
 				{
 					if (!IsValidFilledShapeRegion(region)) continue;
 
+					DOM::Utils::RECT local_bound = region.Bound();
+					SCShapeWriter::RoundDomRectangle(local_bound);
+
 					AddRasterizedRegion(
-						region, canvas, image_position_offset
+						region, canvas, local_bound, image_position_offset
 					);
 				}
 			}
 
 			const DOM::Utils::MATRIX2D transform = {
-				1 / resolution,
+				1 / SCShapeWriter::RasterizationResolution,
 				0.0f,
 				0.0f,
-				1 / resolution,
+				1 / SCShapeWriter::RasterizationResolution,
 				(FCM::Float)image_position_offset.x,
 				(FCM::Float)image_position_offset.y
 			};
@@ -495,9 +581,9 @@ namespace sc {
 				float base_number = std::trunc(number);
 				float decimal = std::abs(number - base_number);
 
-				if (decimal >= 0.1f)
+				if (decimal >= 0.5f)
 				{
-					if (base_number >= 0)
+					if (base_number >= 0.0f)
 					{
 						return base_number + 1.0f;
 					}
@@ -540,5 +626,5 @@ namespace sc {
 
 			return true;
 		}
-}
+	}
 }

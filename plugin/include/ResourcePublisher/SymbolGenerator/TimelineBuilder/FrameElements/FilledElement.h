@@ -37,7 +37,7 @@ namespace sc {
 
 		public:
 			DOM::Utils::RECT Bound() const;
-			void Tranform(const DOM::Utils::MATRIX2D& matrix);
+			void Transform(const DOM::Utils::MATRIX2D& matrix);
 
 		public:
 			std::vector<FilledElementRegion> fill;

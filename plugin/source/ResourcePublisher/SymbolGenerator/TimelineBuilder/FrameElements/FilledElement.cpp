@@ -103,7 +103,7 @@ namespace sc {
 			return result;
 		}
 
-		void FilledElement::Tranform(const DOM::Utils::MATRIX2D& matrix)
+		void FilledElement::Transform(const DOM::Utils::MATRIX2D& matrix)
 		{
 			for (FilledElementRegion& region : fill)
 			{
