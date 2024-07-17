@@ -307,7 +307,11 @@ namespace sc {
 					textfieldElement->GetParagraphs(paragraphs.m_Ptr);
 					paragraphs->Count(paragraphsCount);
 
-					if (paragraphsCount == 0) return;
+					if (paragraphsCount == 0)
+					{
+						context.Trace("Failed to get Paragraphs from TextField. Check logs for details.");
+						context.logger->error("TextField from {} does not have Paragraphs", Localization::ToUtf8(symbol.name));
+					};
 
 					if (paragraphsCount > 1) {
 						context.Trace("Warning. Some of TextField has multiple paragraph");
@@ -322,7 +326,11 @@ namespace sc {
 					paragraph->GetTextRuns(textRuns.m_Ptr);
 					textRuns->Count(textRunCount);
 
-					if (textRunCount == 0) return;
+					if (textRunCount == 0) {
+						context.Trace("Failed to get TextRun from TextField. Check logs for details.");
+						context.logger->error("TextField from {} does not have TextRuns", Localization::ToUtf8(symbol.name));
+						return;
+					}
 
 					if (textRunCount > 1) {
 						context.Trace("Warning. Some of TextField has multiple textRun");

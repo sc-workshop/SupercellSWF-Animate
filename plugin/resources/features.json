@@ -139,7 +139,7 @@
 				"values": [
 					{
 						"name": "StaticText",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "DynamicText",
