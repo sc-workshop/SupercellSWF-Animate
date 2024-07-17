@@ -307,7 +307,8 @@ namespace sc {
 					textfieldElement->GetParagraphs(paragraphs.m_Ptr);
 					paragraphs->Count(paragraphsCount);
 
-					// TODO: Move to writer
+					if (paragraphsCount == 0) return;
+
 					if (paragraphsCount > 1) {
 						context.Trace("Warning. Some of TextField has multiple paragraph");
 					}
@@ -320,6 +321,8 @@ namespace sc {
 					uint32_t textRunCount = 0;
 					paragraph->GetTextRuns(textRuns.m_Ptr);
 					textRuns->Count(textRunCount);
+
+					if (textRunCount == 0) return;
 
 					if (textRunCount > 1) {
 						context.Trace("Warning. Some of TextField has multiple textRun");
@@ -342,6 +345,8 @@ namespace sc {
 					textStyle->GetFontStyle(&fontStylePtr);
 					textfield.fontStyle = std::string((const char*)fontStylePtr);
 					context.falloc->Free(fontStylePtr);
+
+					
 				}
 
 				// Textfield filters
