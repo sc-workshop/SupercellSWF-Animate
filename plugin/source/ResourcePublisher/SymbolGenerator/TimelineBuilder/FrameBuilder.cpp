@@ -311,6 +311,7 @@ namespace sc {
 					{
 						context.Trace("Failed to get Paragraphs from TextField. Check logs for details.");
 						context.logger->error("TextField from {} does not have Paragraphs", Localization::ToUtf8(symbol.name));
+						return;
 					};
 
 					if (paragraphsCount > 1) {
@@ -353,8 +354,6 @@ namespace sc {
 					textStyle->GetFontStyle(&fontStylePtr);
 					textfield.fontStyle = std::string((const char*)fontStylePtr);
 					context.falloc->Free(fontStylePtr);
-
-					
 				}
 
 				// Textfield filters
