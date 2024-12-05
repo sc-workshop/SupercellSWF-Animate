@@ -28,18 +28,15 @@ const doctypeId = "org.scWorkshop.SupercellSWF";
 
 const assetsFolder = "resources"
 
-const buildDirectory = join(__dirname, isDev ? "build" : "build_release");
+const buildDirectory = join(__dirname, "build");
 const outputDirectory = join(libPath, "win");
 const binaryDirectory = join(buildDirectory, "animate_bin", activeConfiguration);
 
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 const CmakeFlagsList = [
-    "-DBUILD_SHARED_LIBS=OFF",
-    "-DSC_ANIMATE_IMAGE_DEBUG=OFF",
-    "-DBUILD_WITH_STATIC_CRT=OFF",
-    "-DRP_BUILD_SHARED_LIBS=OFF",
-    "-DLIBNEST2D_HEADER_ONLY=OFF"
+    `-DBUILD_SHARED_LIBS${isDev ? "ON" : "OFF"}`, // Build static lib for Release
+    "-DBUILD_WITH_STATIC_CRT=OFF"
 ]
 
 const CmakeFlags = CmakeFlagsList.join(" ");
@@ -79,20 +76,24 @@ function buildMac() {
 const config =
     "#pragma once\n" +
     "\n" +
-    `#define PUBLISHER_NAME						"${publisherName}"\n` +
-    `#define PUBLISHER_UNIVERSAL_NAME			"${publisherId}"\n` +
+    "namespace sc::Adobe\n" +
+    "{\n" +
+    `constexpr const char*  PUBLISHER_NAME =						"${publisherName}";\n` +
+    `constexpr const char*  PUBLISHER_UNIVERSAL_NAME =			    "${publisherId}";\n` +
     '\n' +
-    `#define PUBLISH_SETTINGS_UI_ID				"${publisherUi}"\n` +
+    `constexpr const char*  PUBLISH_SETTINGS_UI_ID =				"${publisherUi}";\n` +
     '\n' +
-    `#define DOCTYPE_NAME						"${doctypeName}"\n` +
-    `#define DOCTYPE_UNIVERSAL_NAME				"${doctypeId}"\n` +
+    `constexpr const char*  DOCTYPE_NAME =						    "${doctypeName}";\n` +
+    `constexpr const char*  DOCTYPE_UNIVERSAL_NAME =				"${doctypeId}";\n` +
     '\n' +
-    `#define PLUGIN_VERSION_MAJOR				${MAJOR}\n` +
-    `#define PLUGIN_VERSION_MINOR				${MINOR}\n` +
-    `#define PLUGIN_VERSION_MAINTENANCE			${MAINTENANCE}\n`
+    `constexpr int  PLUGIN_VERSION_MAJOR =				            ${MAJOR};\n` +
+    `constexpr int  PLUGIN_VERSION_MINOR =				            ${MINOR};\n` +
+    `constexpr int  PLUGIN_VERSION_MAINTENANCE =			        ${MAINTENANCE};\n` +
+    `#define  __SC_ANIMATE_VERSION__			                    "${MAJOR}.${MINOR}.${MAINTENANCE}"\n` +
+    "}"
 
 writeFileSync(
-    "include/PluginConfiguration.h",
+    "supercell-flash-plugin/source/PluginConfiguration.h",
     config,
     "utf-8"
 )
