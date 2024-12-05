@@ -6,7 +6,8 @@
 
 #include "Module/Localization.h"
 #include "Module/FCMClasses.h"
-#include "Publisher.h"
+#include "Plugin/Publisher.h"
+#include "Plugin/FeatureMatrix.h"
 #include "Module/Version.h"
 #include "Window/PluginWindowApp.h"
 
@@ -26,8 +27,8 @@ namespace sc {
 
 		public:
 			using Publisher = Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>;
-			using FeatureMatrix = Animate::DocType::GenericFeatureMatrix<Publisher>;
-			using DocType = Animate::DocType::GenericDocumentType<Publisher>;
+			using FeatureMatrixLoader = SCFeatureMatrixLoader;
+			using DocType = Animate::DocType::GenericDocumentType<Publisher, FeatureMatrix, FeatureMatrixLoader>;
 
 		public:
 			static SCPlugin& Instance()

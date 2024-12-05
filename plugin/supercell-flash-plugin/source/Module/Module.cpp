@@ -11,7 +11,7 @@ namespace sc::Adobe {
 
 	SCPlugin::SCPlugin(FCM::PIFCMCallback callback) : FCM::PluginModule(callback, SCPluginInfo)
 	{
-		ConstructPlugin<Publisher, DocType, FeatureMatrix >();
+		ConstructPlugin<Publisher, DocType, FeatureMatrix>();
 
 		InitializeLogger();
 		locale.Load(FCM::PluginModule::LanguageCode());
