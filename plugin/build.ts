@@ -35,8 +35,9 @@ const binaryDirectory = join(buildDirectory, "animate_bin", activeConfiguration)
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 const CmakeFlagsList = [
-    `-DBUILD_SHARED_LIBS${isDev ? "ON" : "OFF"}`, // Build static lib for Release
-    "-DBUILD_WITH_STATIC_CRT=OFF"
+    `-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
+    "-DBUILD_WITH_STATIC_CRT=OFF",
+    `${isDev ? "" : "--fresh"}` // build from fresh for each release build just to make sure that everything will be ok
 ]
 
 const CmakeFlags = CmakeFlagsList.join(" ");
