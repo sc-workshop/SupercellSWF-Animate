@@ -21,7 +21,7 @@ namespace sc
 			GraphicGroup(Animate::Publisher::SymbolContext& context);
 
 		public:
-			const Animate::Publisher::SymbolContext& symbol;
+			Animate::Publisher::SymbolContext symbol;
 
 		public:
 			template<typename T, typename ... Args>

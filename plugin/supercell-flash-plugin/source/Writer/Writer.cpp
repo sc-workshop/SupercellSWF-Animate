@@ -524,7 +524,7 @@ namespace sc {
 
 				flash::SWFTexture& texture = swf.textures.emplace_back();
 				size_t textureDataSize = atlas.total() * atlas.elemSize();
-				MemoryStream textureData(atlas.ptr(), textureDataSize);
+				SharedMemoryStream textureData(atlas.ptr(), textureDataSize);
 				texture.load_from_buffer(textureData, atlas.cols, atlas.rows, flash::SWFTexture::PixelFormat::RGBA8);
 
 				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)

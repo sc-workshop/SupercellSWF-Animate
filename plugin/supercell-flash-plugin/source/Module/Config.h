@@ -56,6 +56,7 @@ namespace sc {
 			bool hasPrecisionMatrices = false;
 		public:
 			virtual void FromDict(const FCM::PIFCMDictionary dict) override;
+			void Load(const FCM::PIFCMDictionary dict);
 			void Normalize();
 		};
 	}

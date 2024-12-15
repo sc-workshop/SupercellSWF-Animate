@@ -5,6 +5,13 @@
 namespace sc {
 	namespace Adobe {
 		void SCConfig::FromDict(const FCM::PIFCMDictionary dict) {
+			
+			Load(dict);
+			Normalize();
+		}
+
+		void SCConfig::Load(const FCM::PIFCMDictionary dict)
+		{
 			SCPlugin& context = SCPlugin::Instance();
 
 			std::string serializedConfig;
@@ -99,8 +106,6 @@ namespace sc {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
 				context.logger->info("	lowResolutionSuffix: {}", lowResolutionSuffix);
 			}
-
-			Normalize();
 		}
 
 		void SCConfig::Normalize()

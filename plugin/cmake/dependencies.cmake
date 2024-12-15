@@ -17,6 +17,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(AnimateSDK)
 
 set(BUILD_ATLAS_GENERATOR_WITH_IMAGE_CODECS ON)
+set(BUILD_ATLAS_GENERATOR_CLI OFF)
 # AtlasGenerator
 FetchContent_Declare(
     AtlasGenerator
