@@ -22,6 +22,11 @@ namespace sc {
 				Low
 			};
 
+			enum class SWFType : uint8_t {
+				SC1,
+				SC2
+			};
+
 		public:
 			SCConfig(
 				Animate::DOM::PIFLADocument document, 
@@ -33,6 +38,7 @@ namespace sc {
 
 		public:
 			fs::path outputFilepath = "";
+			SWFType type = SWFType::SC2;
 
 			bool backwardCompatibility = false;
 

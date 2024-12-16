@@ -1,10 +1,14 @@
 import { createElement } from "react";
-import { Settings } from "../../PublisherSettings";
+import { Settings, SWFType } from "../../PublisherSettings";
 import Locale from "../../Localization";
 
 import FileField from "../Shared/FileField";
+import EnumField from "../Shared/EnumField";
+import { GetPublishContext } from "../../Context";
 
 export default function BasicSettings() {
+    const { fileType, setFileType } = GetPublishContext();
+
     const output = FileField(
         Locale.Get("TID_OUTPUT"),
         "publisher_output_path",
@@ -19,6 +23,19 @@ export default function BasicSettings() {
         Settings.getParam("output")
     )
 
+    const filetype = new EnumField({
+        name: Locale.Get("TID_SWF_SETTINGS_FILETYPE"),
+        keyName: "swf_type",
+        enumeration: SWFType,
+        defaultValue: Settings.getParam("type"),
+        style: {
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px"
+        },
+        callback: value => (setFileType(parseInt(value))),
+    }).render()
+
     return createElement(
         "div",
         {
@@ -27,7 +44,7 @@ export default function BasicSettings() {
                 width: "100%"
             }
         },
-        output
-
+        output,
+        filetype
     )
 }

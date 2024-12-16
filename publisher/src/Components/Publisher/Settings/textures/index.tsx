@@ -1,5 +1,5 @@
 import Locale from "../../../../Localization";
-import { Settings, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../../../PublisherSettings";
+import { Settings, SWFType, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../../../PublisherSettings";
 
 import BoolField from "../../../Shared/BoolField";
 import SubMenu from "../../../Shared/SubMenu";
@@ -19,7 +19,7 @@ const LocalizedTextureQuality = [
 export default function TextureSettings() {
     const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
     const [useMultiresStatus, setUseMultiresStatus] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
-    const { useBackwardCompatibility } = GetPublishContext();
+    const { useBackwardCompatibility, fileType } = GetPublishContext();
 
     if (useBackwardCompatibility) {
         Settings.setParam("textureEncoding", TextureEncoding.Raw);
@@ -204,6 +204,19 @@ export default function TextureSettings() {
         }
     }
 
+    let sc1_dependent_options: ReactNode[] = []; 
+
+    if (fileType == SWFType.SC1)
+    {
+        sc1_dependent_options = [
+            exportToExternal,
+            !useBackwardCompatibility ? textureEncoding : undefined,
+            ...texture_props, 
+            useMultiresTextures,
+            useMultiresStatus ? multiresSuffix : undefined,
+            useMultiresStatus ? lowresSuffix : undefined,
+        ];
+    }
 
     return SubMenu(
         Locale.Get("TID_TEXTURES_LABEL"),
@@ -211,12 +224,7 @@ export default function TextureSettings() {
         {
             marginBottom: "6px"
         },
-        exportToExternal,
-        !useBackwardCompatibility ? textureEncoding : undefined,
-        ...texture_props,
-        useMultiresTextures,
-        useMultiresStatus ? multiresSuffix : undefined,
-        useMultiresStatus ? lowresSuffix : undefined,
+        sc1_dependent_options,
         useLowresTextures,
         scaleFactor,
         textureWidth,

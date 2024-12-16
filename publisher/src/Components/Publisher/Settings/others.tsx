@@ -2,11 +2,12 @@ import Locale from "../../../Localization";
 import BoolField from "../../Shared/BoolField";
 import EnumField from "../../Shared/EnumField";
 import SubMenu from "../../Shared/SubMenu";
-import { BaseCompressionMethods, CompressionMethods, Settings } from "../../../PublisherSettings";
+import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "../../../PublisherSettings";
 import { GetPublishContext } from "../../../Context";
+import { ReactNode } from "react";
 
 export default function OtherSettings() {
-    const { useBackwardCompatibility } = GetPublishContext();
+    const { fileType, useBackwardCompatibility } = GetPublishContext();
 
     const compressionType = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
@@ -60,14 +61,22 @@ export default function OtherSettings() {
         Settings.setParam("compressionMethod", CompressionMethods.LZMA);
     }
 
+    let sc1_dependent_options: ReactNode[] = [];
+    if (fileType == SWFType.SC1)
+    {
+        sc1_dependent_options = [
+            compressionType.render(),
+            !useBackwardCompatibility ? writeCustomProperties.render() : undefined,
+            !useBackwardCompatibility ? precisionMatrix.render() : undefined
+        ]
+    }
+
     return SubMenu(
         Locale.Get("TID_OTHER_LABEL"),
         "other_settings",
         {
             marginBottom: "20%"
         },
-        compressionType.render(),
-        !useBackwardCompatibility ? writeCustomProperties.render() : undefined,
-        !useBackwardCompatibility ? precisionMatrix.render() : undefined,
+        ...sc1_dependent_options
     )
 }

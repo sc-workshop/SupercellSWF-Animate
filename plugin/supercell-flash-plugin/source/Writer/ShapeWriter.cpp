@@ -1,5 +1,6 @@
 #include "Writer.h"
 #include "ShapeWriter.h"
+#include "Module/Module.h"
 
 #include <opencv2/opencv.hpp>
 #include <CDT.h>
@@ -540,6 +541,8 @@ namespace sc {
 		}
 
 		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
+			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+
 			if (m_group.Size() == 0)
 			{
 				if (required)

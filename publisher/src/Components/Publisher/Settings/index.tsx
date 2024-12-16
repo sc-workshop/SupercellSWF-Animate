@@ -1,6 +1,6 @@
 
 import Locale from "../../../Localization";
-import { Settings } from "../../../PublisherSettings";
+import { Settings, SWFType } from "../../../PublisherSettings";
 
 import SubMenu from "../../Shared/SubMenu";
 import TextureSettings from "./textures";
@@ -12,7 +12,9 @@ import { GetPublishContext } from "../../../Context";
 
 export default function SettingsMenu() {
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
-    const { toggleBackwardCompatibility } = GetPublishContext();
+    const { fileType, toggleBackwardCompatibility } = GetPublishContext();
+
+    let is_sc1 = fileType == SWFType.SC1;
 
     const exportToExternal = new BoolField(
         {

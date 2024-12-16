@@ -35,6 +35,18 @@ namespace sc {
 			outputFilepath = fs::path(FCM::Locale::ToUtf16(data["output"]));
 			context.logger->info("	outputFilepath: {}", outputFilepath.string());
 
+			if (data.count("type"))
+			{
+				type = data["type"];
+			}
+			else
+			{
+				// Backward compatibility with old documents
+				type = SWFType::SC1;
+			}
+
+			context.logger->info("	type: {}", (uint8_t)type);
+
 			backwardCompatibility = data["backwardCompatibility"];
 			context.logger->info("	backwardCompatibility: {}", backwardCompatibility);
 

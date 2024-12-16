@@ -23,7 +23,7 @@ function Publisher() {
     publish
   );
 
-  const available_languages = ["en_US", "ru_RU"];
+  const available_languages = ["en_US", "ru_RU", "pl_PL"];
   const language = new EnumField({
     name: "Language",
     keyName: "language_debug_sect",
@@ -36,7 +36,7 @@ function Publisher() {
     callback: value => {
       const intValue = parseInt(value);
       const localeName = available_languages[intValue];
-      const localeCode = Object.entries(Locales).find(([key, val]) => key === localeName)?.[1];
+      const localeCode = Object.entries(Locales).find(([key, _]) => key === localeName)?.[1];
       if (localeCode !== undefined) {
         Locale.code = localeCode;
         Locale.Load();

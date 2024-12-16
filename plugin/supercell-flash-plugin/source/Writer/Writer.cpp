@@ -589,6 +589,14 @@ namespace sc {
 
 					command_index++;
 				}
+
+				if (config.type == SCConfig::SWFType::SC2)
+				{
+					for (flash::ShapeDrawBitmapCommand& command : shape.commands)
+					{
+						command.sort_advanced_vertices(true);
+					}
+				}
 			}
 		}
 
@@ -632,11 +640,11 @@ namespace sc {
 			// Raw textures can be stored only inside texture files
 			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
 			{
-				swf.use_external_texture_files = false;
+				swf.use_external_textures = false;
 			}
 			else
 			{
-				swf.use_external_texture_files = config.hasExternalCompressedTexture;
+				swf.use_external_textures = config.hasExternalCompressedTexture;
 			}
 
 			fs::path filepath = fs::path(config.outputFilepath).replace_extension("sc");
@@ -649,7 +657,14 @@ namespace sc {
 				)
 			);
 
-			swf.save(filepath, config.compression);
+			if (config.type == SCConfig::SWFType::SC1)
+			{
+				swf.save(filepath, config.compression);
+			}
+			else
+			{
+				swf.save_sc2(filepath);
+			}
 
 			context.Window()->DestroyStatusBar(status);
 		}

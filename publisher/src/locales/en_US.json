@@ -8,6 +8,7 @@
 	"TID_LOW": "Low",
 	
     "TID_OUTPUT": "Output",
+	"TID_SWF_SETTINGS_FILETYPE": "File type",
 	"TID_PUBLISH_METHOD": "Output type",
 
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY": "Backward compatibility",

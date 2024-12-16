@@ -1,13 +1,17 @@
 import React, { useCallback, useState, ReactNode } from "react"
-import { Settings } from "./PublisherSettings";
+import { Settings, SWFType } from './PublisherSettings';
 
 interface ContextProps {
     backwardCompatibility: boolean
+    fileType: SWFType
 }
 
 interface ContextInterface {
     useBackwardCompatibility: boolean
     toggleBackwardCompatibility: () => void
+
+    fileType: SWFType
+    setFileType: (type: SWFType) => void
 }
 
 //@ts-ignore
@@ -15,17 +19,27 @@ const Context = React.createContext<ContextInterface>(null);
 
 export const CreatePublishAppContext = function (props: ContextProps): ContextInterface {
     const [backwardCompatibility, setBackwardCompatibility] = useState(props.backwardCompatibility);
+    const [fileType, setFileType] = useState(props.fileType);
 
-    const toggleBackwardCompatibility = () =>
+    const backwardCompatibilitySetter = () =>
     {
         setBackwardCompatibility(backwardCompatibility == false)
 
         Settings.setParam("backwardCompatibility", backwardCompatibility == false)
     }
 
+    const fileTypeSetter = (type: SWFType) =>
+    {
+        setFileType(type)
+        Settings.setParam("type", type)
+    }
+
     return {
         useBackwardCompatibility: backwardCompatibility,
-        toggleBackwardCompatibility: toggleBackwardCompatibility,
+        toggleBackwardCompatibility: backwardCompatibilitySetter,
+
+        fileType: fileType,
+        setFileType: fileTypeSetter
     };
 }
 

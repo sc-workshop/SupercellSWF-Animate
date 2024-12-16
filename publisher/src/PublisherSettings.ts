@@ -37,9 +37,15 @@ export enum Quality {
     low
 }
 
+export enum SWFType {
+    SC1,
+    SC2
+}
+
 type PublisherSettingsData = {
     //Basic settings
     output: string,
+    type: SWFType,
 
     backwardCompatibility: boolean,
 
@@ -69,6 +75,7 @@ type PublisherSettingsData = {
 export class PublisherSettings {
     data: PublisherSettingsData = {
         output: "",
+        type: SWFType.SC2,
 
         backwardCompatibility: false,
 
