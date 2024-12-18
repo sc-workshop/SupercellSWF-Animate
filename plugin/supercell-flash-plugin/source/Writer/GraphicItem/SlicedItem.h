@@ -2,6 +2,7 @@
 
 #include "SpriteItem.h"
 #include "core/math/rect.h"
+#include "core/math/point.h"
 
 namespace sc
 {
@@ -12,7 +13,7 @@ namespace sc
 		public:
 
 		public:
-			SlicedItem(wk::Ref<cv::Mat> image, const Animate::DOM::Utils::MATRIX2D& matrix, const Animate::DOM::Utils::RECT guides);
+			SlicedItem(wk::Ref<cv::Mat> image, const Animate::DOM::Utils::MATRIX2D& matrix, const Animate::DOM::Utils::RECT guides, const wk::Point& translation);
 			virtual ~SlicedItem() = default;
 
 		public:
@@ -26,8 +27,16 @@ namespace sc
 				return m_guides;
 			}
 
+			const wk::Point& translation() const
+			{
+				return m_translation;
+			}
+
+			static wk::Rect RoundScalingGrid(const Animate::DOM::Utils::RECT&);
+
 		private:
 			wk::Rect m_guides;
+			wk::Point m_translation;
 		};
 	}
 }

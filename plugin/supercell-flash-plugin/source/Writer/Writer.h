@@ -53,6 +53,13 @@ namespace sc {
 				GraphicItem& item
 			);
 
+			void ProcessVertices(
+				flash::Shape& shape,
+				const wk::AtlasGenerator::Container<wk::AtlasGenerator::Vertex>& vertices,
+				wk::AtlasGenerator::Item& atlas_item,
+				GraphicItem& item
+			);
+
 			void ProcessSpriteItem(
 				flash::Shape& shape,
 				wk::AtlasGenerator::Item& atlas_item,

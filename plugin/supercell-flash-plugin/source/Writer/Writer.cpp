@@ -253,18 +253,20 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::ProcessSpriteItem(
-			flash::Shape & shape,
+		void SCWriter::ProcessVertices(
+			flash::Shape& shape,
+			const wk::AtlasGenerator::Container<wk::AtlasGenerator::Vertex>& vertices,
 			wk::AtlasGenerator::Item& atlas_item,
-			SpriteItem& sprite_item
+			GraphicItem& item
 		)
 		{
 			using namespace wk;
+			using namespace AtlasGenerator;
 
 			flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
 			shape_command.texture_index = atlas_item.texture_index;
 
-			for (AtlasGenerator::Vertex& vertex : atlas_item.vertices)
+			for (const Vertex& vertex : vertices)
 			{
 				auto& shape_vertex = shape_command.vertices.emplace_back();
 
@@ -274,7 +276,16 @@ namespace sc {
 				shape_vertex.v = vertex.uv.v;
 			}
 
-			ProcessCommandTransform(shape_command, atlas_item.transform, sprite_item);
+			ProcessCommandTransform(shape_command, atlas_item.transform, item);
+		}
+
+		void SCWriter::ProcessSpriteItem(
+			flash::Shape & shape,
+			wk::AtlasGenerator::Item& atlas_item,
+			SpriteItem& sprite_item
+		)
+		{
+			ProcessVertices(shape, atlas_item.vertices, atlas_item, sprite_item);
 		}
 
 		void SCWriter::ProcessSlicedItem(
@@ -283,85 +294,24 @@ namespace sc {
 			SlicedItem& sliced_item
 		)
 		{
-			// TODO: 9slice
+			using namespace wk;
+			using namespace wk::AtlasGenerator;
 
-			//uint8_t begin = (uint8_t)AtlasGenerator::Item::SlicedArea::BottomLeft;
-			//uint8_t end = (uint8_t)AtlasGenerator::Item::SlicedArea::TopRight;
-			//for (uint8_t i = begin; end >= i; i++)
-			//{
-			//	Rect<int32_t> xy;
-			//	Rect<uint16_t> uv;
-			//
-			//	Matrix2x3<float> matrix = sliced_item.transformation();
-			//
-			//	float rotation_sin = matrix.b;
-			//	float rotation_cos = matrix.c;
-			//
-			//	AtlasGenerator::Item::Transformation transform(
-			//		atan2(rotation_sin, rotation_cos),
-			//		{ (int32_t)std::ceil(matrix.tx), (int32_t)std::ceil(matrix.ty) }
-			//	);
-			//
-			//	atlas_item.get_sliced_area(
-			//		(AtlasGenerator::Item::SlicedArea)i,
-			//		sliced_item.Guides(),
-			//		xy,
-			//		uv,
-			//		transform
-			//	);
-			//
-			//	if (xy.width <= 0 || xy.height <= 0)
-			//	{
-			//		continue;
-			//	}
-			//
-			//	ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			//	shape_command.texture_index = atlas_item.texture_index;
-			//
-			//	{
-			//		ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
-			//		vertex.u = uv.x;
-			//		vertex.v = uv.y;
-			//		vertex.x = xy.x;
-			//		vertex.y = xy.y;
-			//	}
-			//
-			//	{
-			//		ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
-			//		vertex.u = uv.x + uv.width;
-			//		vertex.v = uv.y;
-			//		vertex.x = xy.x + xy.width;
-			//		vertex.y = xy.y;
-			//	}
-			//
-			//	{
-			//		ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
-			//		vertex.u = uv.x + uv.width;
-			//		vertex.v = uv.y + uv.height;
-			//		vertex.x = xy.x + xy.width;
-			//		vertex.y = xy.y + uv.height;
-			//	}
-			//
-			//	{
-			//		ShapeDrawBitmapCommandVertex& vertex = shape_command.vertices.emplace_back();
-			//		vertex.u = uv.x;
-			//		vertex.v = uv.y + uv.height;
-			//		vertex.x = xy.x;
-			//		vertex.y = xy.y + uv.height;
-			//	}
-			//
-			//	for (ShapeDrawBitmapCommandVertex& vertex : shape_command.vertices)
-			//	{
-			//		Point<float> vertex_uv(vertex.u, vertex.v);
-			//		atlas_item.transform.transform_point(vertex_uv);
-			//
-			//		vertex.x = vertex.x * matrix.a;
-			//		vertex.y = vertex.y * matrix.d;
-			//
-			//		vertex.u = vertex_uv.u / (float)swf.textures[shape_command.texture_index].image()->width();
-			//		vertex.v = vertex_uv.v / (float)swf.textures[shape_command.texture_index].image()->height();
-			//	}
-			//}
+			Item::Transformation transform(
+				0,
+				sliced_item.translation()
+			);
+
+			Container<Container<Vertex>> regions;
+			atlas_item.get_9slice(
+				sliced_item.Guides(),
+				regions, transform
+			);
+
+			for (const Container<Vertex>& region : regions)
+			{
+				ProcessVertices(shape, region, atlas_item, sliced_item);
+			}
 		}
 
 		void SCWriter::ProcessFilledItem(
@@ -370,7 +320,7 @@ namespace sc {
 			FilledItem& filled_item
 		)
 		{
-			auto atlas_point = atlas_item.get_colorfill().value();
+			auto& atlas_point = atlas_item.get_colorfill().value();
 
 			for (const FilledItemContour& contour : filled_item.contours)
 			{

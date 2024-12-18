@@ -2,6 +2,7 @@
 
 #include "Writer/Writer.h"
 #include "Module/Module.h"
+#include "GraphicItem/SlicedItem.h"
 
 using namespace Animate::Publisher;
 
@@ -17,12 +18,13 @@ namespace sc {
 			if (m_symbol.slicing.IsEnabled())
 			{
 				auto& guides = m_symbol.slicing.Guides();
+				wk::Rect scaling_grid = SlicedItem::RoundScalingGrid(guides);
 
 				m_object.scaling_grid = wk::RectF();
-				m_object.scaling_grid->x = guides.topLeft.y;
-				m_object.scaling_grid->y = guides.topLeft.x;
-				m_object.scaling_grid->width = guides.bottomRight.y - guides.topLeft.y;
-				m_object.scaling_grid->height = guides.bottomRight.x - guides.topLeft.x;
+				m_object.scaling_grid->left = scaling_grid.bottom;
+				m_object.scaling_grid->top = scaling_grid.left;
+				m_object.scaling_grid->right = scaling_grid.top;
+				m_object.scaling_grid->bottom = scaling_grid.right;
 			}
 		}
 

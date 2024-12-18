@@ -505,11 +505,11 @@ namespace sc {
 				0.0f,
 				0.0f,
 				1 / SCShapeWriter::RasterizationResolution,
-				(FCM::Float)image_position_offset.x,
-				(FCM::Float)image_position_offset.y
+				0,
+				0
 			};
 
-			m_group.AddItem<SlicedItem>(wk::CreateRef<cv::Mat>(canvas), transform, guides);
+			m_group.AddItem<SlicedItem>(wk::CreateRef<cv::Mat>(canvas), transform, guides, image_position_offset);
 		}
 
 		void SCShapeWriter::RoundDomRectangle(Animate::DOM::Utils::RECT& rect)

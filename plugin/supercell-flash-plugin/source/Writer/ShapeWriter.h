@@ -14,7 +14,7 @@ namespace sc {
 			SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) : m_writer(writer), m_symbol(symbol), m_group(symbol) {};
 			virtual ~SCShapeWriter() = default;
 
-			const float RasterizationResolution = 2.0f;
+			const float RasterizationResolution = 2.f;
 
 		public:
 			virtual void AddGraphic(const Animate::Publisher::SpriteElement& item, const Animate::DOM::Utils::MATRIX2D& matrix);
