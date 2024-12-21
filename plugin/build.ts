@@ -64,7 +64,7 @@ function buildWindows() {
     }
 
     exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
-    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration}`);
+    exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} --target ScAnimatePlugin`);
 
     copyDir(binaryDirectory, outputDirectory);
     progress("Done");

@@ -17,11 +17,6 @@ set_target_properties(${TARGET}
 set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "Plugin")
 set_target_properties(${TARGET} PROPERTIES SUFFIX ".fcm")
 
-#target_compile_definitions(
-#	${TARGET} PRIVATE
-#	$<${SC_MSVC}: _CRT_SECURE_NO_WARNINGS _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING>
-#)
-
 target_link_libraries(${TARGET} PUBLIC 
     wk::atlasGenerator
     wx::core wx::base
