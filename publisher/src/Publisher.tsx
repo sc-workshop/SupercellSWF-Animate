@@ -7,8 +7,11 @@ import Button from './Components/Shared/Button';
 import Locale, { Locales } from './Localization';
 import EnumField from './Components/Shared/EnumField';
 import { loadFont } from '.';
+import { UpdateContext } from './Context';
 
 function Publisher() {
+  UpdateContext();
+
   const delim = <hr key="header_delim" style={{
     width: "99%",
     border: "2px solid #484848",

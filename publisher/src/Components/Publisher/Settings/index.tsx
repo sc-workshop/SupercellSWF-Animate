@@ -12,7 +12,7 @@ import { GetPublishContext } from "../../../Context";
 
 export default function SettingsMenu() {
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
-    const { fileType, toggleBackwardCompatibility } = GetPublishContext();
+    const { toggleBackwardCompatibility, fileType } = GetPublishContext();
 
     let is_sc1 = fileType == SWFType.SC1;
 
@@ -36,7 +36,7 @@ export default function SettingsMenu() {
         {
             name: Locale.Get("TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY"),
             keyName: "backward_compatibility_select",
-            defaultValue: false,
+            defaultValue: Settings.getParam("backwardCompatibility"),
             style: {
                 marginBottom: "10px",
                 display: "flex",
@@ -70,7 +70,7 @@ export default function SettingsMenu() {
         },
         exportToExternal,
         isExportToExternal ? externalFilePath : undefined,
-        backwardCompatibility,
+        is_sc1 ? backwardCompatibility : undefined,
         TextureSettings(),
         OtherSettings()
     )

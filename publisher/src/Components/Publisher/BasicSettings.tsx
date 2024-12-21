@@ -7,7 +7,7 @@ import EnumField from "../Shared/EnumField";
 import { GetPublishContext } from "../../Context";
 
 export default function BasicSettings() {
-    const { fileType, setFileType } = GetPublishContext();
+    const { setFileType } = GetPublishContext();
 
     const output = FileField(
         Locale.Get("TID_OUTPUT"),

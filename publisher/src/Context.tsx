@@ -43,6 +43,17 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
     };
 }
 
+export function UpdateContext()
+{
+    const {useBackwardCompatibility, toggleBackwardCompatibility, setFileType } = GetPublishContext();
+
+    setFileType(Settings.getParam("type"))
+    if (Settings.getParam("backwardCompatibility") != useBackwardCompatibility)
+    {
+        toggleBackwardCompatibility()
+    }
+}
+
 //@ts-ignore
 export const PublisherContextProvider = ({ children, ...props }) => {
     const context = CreatePublishAppContext(props as ContextProps);

@@ -192,11 +192,11 @@ export default function TextureSettings() {
     let texture_props: ReactNode[] = []
 
     if (useBackwardCompatibility) {
-        texture_props = [textureQuality];
+        //texture_props = [textureQuality];
     } else {
         switch (textureEncodingMethod) {
             case TextureEncoding.Raw:
-                texture_props = [textureQuality];
+                //texture_props = [textureQuality];
                 break;
             case TextureEncoding.KTX:
                 texture_props = [textureCompressedExternal]
