@@ -158,9 +158,9 @@ namespace sc {
 
 					Animate::Publisher::Point2D shrink_point(point.x + unitDx * distance, point.y + unitDy * distance);
 
-					cv::Point& point = points.emplace_back();
-					point.x = (shrink_point.x - local_offset.x) * std::pow(2, contour_shift);
-					point.y = (shrink_point.y - local_offset.y) * std::pow(2, contour_shift);
+					cv::Point& result = points.emplace_back();
+					result.x = (shrink_point.x - local_offset.x) * std::pow(2, contour_shift);
+					result.y = (shrink_point.y - local_offset.y) * std::pow(2, contour_shift);
 				}
 			};
 
@@ -221,8 +221,6 @@ namespace sc {
 						if (destination[3] == 0) continue;
 
 						destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
-
-						float alpha_factor = destination[3] / 0xFF;
 
 						origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
 						origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
@@ -541,8 +539,6 @@ namespace sc {
 		}
 
 		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
-			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
-
 			if (m_group.Size() == 0)
 			{
 				if (required)

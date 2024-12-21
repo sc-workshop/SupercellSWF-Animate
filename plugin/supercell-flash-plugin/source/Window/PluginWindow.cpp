@@ -13,7 +13,7 @@ namespace sc {
 			SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
 			wxEND_EVENT_TABLE();
 
-		PluginWindow::PluginWindow(wxString& title)
+		PluginWindow::PluginWindow(const wxString& title)
 			: wxFrame(
 				nullptr,
 				wxID_ANY,

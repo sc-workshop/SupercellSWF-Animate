@@ -15,7 +15,6 @@ namespace sc {
 		SCWriter::SCWriter()
 		{
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
-			SCPlugin& context = SCPlugin::Instance();
 
 			if (config.exportToExternal && !fs::exists(config.exportToExternalPath))
 			{
@@ -58,7 +57,7 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::AddTextField(uint16_t id, SymbolContext& symbol, TextElement& object) {
+		void SCWriter::AddTextField(uint16_t id, SymbolContext& /*symbol*/, TextElement& object) {
 			using namespace Animate::DOM;
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
@@ -320,7 +319,9 @@ namespace sc {
 			FilledItem& filled_item
 		)
 		{
-			auto& atlas_point = atlas_item.get_colorfill().value();
+			if (!atlas_item.get_colorfill().has_value()) return;
+
+			auto atlas_point = atlas_item.get_colorfill().value();
 
 			for (const FilledItemContour& contour : filled_item.contours)
 			{

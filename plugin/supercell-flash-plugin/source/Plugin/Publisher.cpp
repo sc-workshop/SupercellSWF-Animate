@@ -9,7 +9,7 @@ using namespace Animate::Publisher;
 
 namespace sc {
 	namespace Adobe {
-		void SCPublisher::Publish(const SCConfig& config)
+		void SCPublisher::Publish(const SCConfig& /*config*/)
 		{
 			SCPlugin& context = SCPlugin::Instance();
 
@@ -64,7 +64,7 @@ namespace sc {
 #if !(WK_DEBUG)
 					try {
 #endif
-						StartPublishing();
+						DoPublish();
 #if !(WK_DEBUG)
 					}
 					catch (const FCM::FCMPluginException& exception)
@@ -111,7 +111,7 @@ namespace sc {
 			);
 		}
 
-		void SCPublisher::StartPublishing()
+		void SCPublisher::DoPublish()
 		{
 			SCPlugin& context = SCPlugin::Instance();
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
@@ -124,6 +124,12 @@ namespace sc {
 			);
 
 			publisher.PublishDocument(config.activeDocument);
+
+			publishStatus->SetStatus(
+				context.locale.GetString("TID_STATUS_SAVE")
+			);
+
+			publisher.Finalize();
 
 			context.Window()->readyToExit = true;
 			context.Window()->Close();

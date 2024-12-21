@@ -13,7 +13,7 @@ namespace sc {
 		public:
 			virtual void Publish(const SCConfig& config);
 
-			void StartPublishing();
+			void DoPublish();
 		};
 	}
 }

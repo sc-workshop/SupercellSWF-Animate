@@ -167,8 +167,6 @@ namespace sc {
 		}
 
 		void SCMovieclipWriter::FinalizeTransforms() {
-			SCPlugin& context = SCPlugin::Instance();
-
 			if (m_writer.swf.matrixBanks.empty())
 			{
 			CREATE_NEW_BANK:
