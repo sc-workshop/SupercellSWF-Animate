@@ -123,7 +123,23 @@ namespace sc {
 				context.locale.GetString("TID_STATUS_INIT")
 			);
 
-			publisher.PublishDocument(config.activeDocument);
+			{
+				FCM::StringRep16 document_path_str = nullptr;
+				config.activeDocument->GetPath(&document_path_str);
+				fs::path document_path(std::u16string((const char16_t*)document_path_str));
+
+				publishStatus->SetStatusLabel(
+					context.locale.GetString(
+						"TID_WINDOW_TITLE", 
+						document_path.filename().u16string().c_str()
+					)
+				);
+
+				context.falloc->Free(document_path_str);
+
+				publisher.PublishDocument(config.activeDocument);
+			}
+			
 
 			publishStatus->SetStatus(
 				context.locale.GetString("TID_STATUS_SAVE")
