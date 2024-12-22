@@ -8,6 +8,7 @@
 	"TID_LOW": "Низкое",
 	
     "TID_OUTPUT": "Вывод",
+	"TID_SWF_SETTINGS_FILETYPE": "Тип файла",
 	"TID_PUBLISH_METHOD": "Тип вывода",
 
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY": "Обратная совместимость",

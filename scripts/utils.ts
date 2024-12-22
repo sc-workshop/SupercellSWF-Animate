@@ -3,7 +3,7 @@ import pc from "picocolors";
 import { join } from "path";
 import { userInfo, homedir } from "os";
 import { symlinkSync, copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
-import { Colors, type Formatter } from "picocolors/types";
+import { Colors, Formatter } from "picocolors/types";
 
 export const processPath = process.cwd();
 

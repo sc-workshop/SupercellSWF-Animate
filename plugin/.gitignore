@@ -1,7 +1,7 @@
 .vs
 /build
 /node_modules
-/include/PluginConfiguration.h
+/supercell-flash-plugin/source/PluginConfiguration.h
 /bin
 /build_release
 

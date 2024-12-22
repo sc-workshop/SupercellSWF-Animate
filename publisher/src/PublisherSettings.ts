@@ -1,4 +1,5 @@
 import { CSEvent, getInterface, isCEP } from "./CEP"
+import { UpdateContext } from "./Context";
 
 export enum CompressionMethods {
     LZMA,
@@ -13,9 +14,9 @@ export enum BaseCompressionMethods {
 
 export enum TextureScaleFactor {
     "x1.0",
+    "x0.75",
     "x0.5",
     "x0.25"
-
 }
 
 export const TextureDimensions = [
@@ -37,9 +38,15 @@ export enum Quality {
     low
 }
 
+export enum SWFType {
+    SC1,
+    SC2
+}
+
 type PublisherSettingsData = {
     //Basic settings
     output: string,
+    type: SWFType,
 
     backwardCompatibility: boolean,
 
@@ -69,6 +76,7 @@ type PublisherSettingsData = {
 export class PublisherSettings {
     data: PublisherSettingsData = {
         output: "",
+        type: SWFType.SC2,
 
         backwardCompatibility: false,
 
@@ -122,15 +130,14 @@ export class PublisherSettings {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     restore(data: any) {
-        console.log(data)
         try {
             if (data.SupercellSWF) {
                 Object.assign(this.data, JSON.parse(data.SupercellSWF));
             }
+
         } catch (error) {
             // alert("Failed to load publisher settings");
         }
-
     }
 }
 

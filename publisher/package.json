@@ -1,6 +1,6 @@
 {
   "name": "SupercellSWF-Animate-Publisher",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Publisher UI for SupercellSWF Animate Plugin",
   "main": "src/index.tsx",
   "scripts": {
@@ -44,5 +44,8 @@
     "webpack-cli": "4.10.0",
     "webpack-dev-server": "3.11.2",
     "wrap-text": "1.0.9"
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.14"
   }
 }

@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 import Publisher from './Publisher';
 import React, { useState, createElement, useEffect } from 'react';
 import { getInterface, CSEvent, isCEP } from './CEP';
-import { Settings } from './PublisherSettings';
+import { Settings, SWFType } from './PublisherSettings';
 import Locale from './Localization';
 import { PublisherContextProvider } from './Context';
 
@@ -78,7 +78,7 @@ function App() {
           position: "relative"
         }
       },
-      <PublisherContextProvider backwardCompatibility={false}>
+      <PublisherContextProvider backwardCompatibility={false} fileType={SWFType.SC2}>
         <Publisher></Publisher>
       </PublisherContextProvider>
     );

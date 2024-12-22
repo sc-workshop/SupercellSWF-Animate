@@ -765,7 +765,7 @@
 	},
 	{
 		"name": "Parenting",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "VR",
