@@ -105,7 +105,7 @@ namespace sc {
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
-				textureQuality = (Quality)data["textureQuality"];
+				// textureQuality = (Quality)data["textureQuality"];
 				context.logger->info("	textureQuality: {}", (uint8_t)textureQuality);
 			}
 
