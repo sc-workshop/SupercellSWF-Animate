@@ -11,17 +11,32 @@
                 case "extension":
                     // Let's just delete manifest folder
                     // Yes, it will leave garbage but we can't do more in such an environment
-                    path = cep_path + "extensions/" + extension.install + "CSXS";
+                    path = cep_path + "extensions/" + extension.install + "/CSXS";
                     break;
 
                 case "command":
                     path = fl.configURI + "Commands/" + extension.install;
                     break;
             }
-
+            
+            function warn_failure()
+            {
+                fl.trace("Failed to remove \"" + extension.name + "\" by path \"" + path + "\"")
+            }
+            
             if (path)
             {
-                FLfile.remove(path);
+                if (!FLfile.exists(path))
+                {
+                    warn_failure();
+                    continue;
+                }
+
+                let rem_success = FLfile.remove(path);
+                if (!rem_success)
+                {
+                    warn_failure();
+                }
             }
         }
 
