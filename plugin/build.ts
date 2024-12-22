@@ -17,7 +17,7 @@ mkdirSync(outputPath, { recursive: true });
 const libPath = join(outputPath, "lib");
 mkdirSync(libPath, { recursive: true });
 
-const activeConfiguration = isDev ? "Debug" : "RelWithDebInfo"
+const activeConfiguration = isDev ? "Debug" : "Release"
 
 const publisherName = "SupercellSWF"
 const publisherId = "org.scWorkshop.SupercellSWF.Publisher";
