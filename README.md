@@ -18,7 +18,7 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Issues](#issues)
 - [Requirements](#requirements)
 - [Installing](#installing)
-- [Update](#update)
+- [Updating](#plugin-update)
 - [Dependencies](#dependecies)
 - [Building](#building)
 - [Examples](#examples)
@@ -31,9 +31,7 @@ This repository does not provide any instructions on how to modify any Supercell
 # Support
 This project was created with the goal of exploring various interesting tools and to support a small but quite creative community of modders. I put a lot of heart and time into this creation, so if you want to support me, you can buy me a coffee right here :3  
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/daniilsivi)
-
-<br/>
-
+  
 # Export features
 - Stroke  / Fills / Brushes ✅  
 Full support. It can be unstable sometimes especially with big fills and curves so try to work more with sprites
@@ -76,9 +74,8 @@ Absolutely all types of animation tweens and their types of interpolation are su
 Full support. Be careful when using it, the result can be very unstable.
 
 - Nine-slice ✅  
-Full support. But keep in mind that on Animate 2024 and above this may not work correctly.
-<br/>
-
+Full support. But keep in mind that on Animate 2024 and above this may not work correctly.  
+  
 # How to use
 - Check [requirements](#requirements), make sure everything is satisfied
 - [Install](#installing) or [build](#building) extension
@@ -101,34 +98,28 @@ You can set all options here for the first time only once and then just press "P
 </p>
 
 - After setting all options, you can click on publish button. You are great!  
-Then you just need to wait until file is saved. Please note that in some rare cases this may take up to 10 minutes!  
-
-<br/>
-
+Then you just need to wait until file is saved. 
+  
 # Limitations
 
-## Color transforms
+- Color transforms  
 Be careful when transforming colors. Color values can only be positive, otherwise these values will be set to zero and the result will be undesirable.
 
-## Text Fields
+- Text Fields  
 Text fields are covered with a large layer of mystique.  
 But there is also support for basic things here.
 Also be careful, not all settings can somehow affect text in final file (because they cannot be disabled, Animate just crashes)  
 Also, text must have no more than 255 characters, otherwise text will not be written to file.
-To enable text outline you need to add "Glow" filter to text field
-
-<br/>
-
+To enable text outline you need to add "Glow" filter to text field  
+  
 # Requirements
 For extension to work correctly, you need:
 
 - Adobe Animate 2020 or higher
 - Windows 10 x64 or Windows 11
 
-Please note that support for a macOS devices is <em><strong>possible</strong></em>, but not implemented simply due to the fact that I do not have a device for this on which I can develop this project
-
-<br/>
-
+MacOS support will be available one day, but it is not a priority at all right now.
+  
 # Installing
 First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
 Unpack zip to any place convenient for you.  
@@ -136,48 +127,23 @@ Inside archive there is a file ```install.jsfl```. You need to run it in Adobe A
 By default, ```.jsfl``` is associated with Animate, so you can double-click on it and run it as a command, but if something is wrong, you can open it in Animate itself as a script and click on run button.  
 After installation is complete, be sure to restart Animate.
 If you want to remove plugin, run ```install.jsfl``` again, and this time you will see a confirmation button.
-
-<br/>
-
-# Update
+  
+# Plugin Update
 If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
-
-
+  
 ### IMPORTANT
 If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
-
-
-<br/>
-
-# Dependecies
-There will be a list of other people's projects that have been used here:
-- JS
-    - [React](https://github.com/facebook/react): UI framework for Publisher settings panel
-- C++
-    - [OpenCV](https://github.com/opencv/opencv) Computer vision library for image processing: [Apache License 2.0](https://github.com/opencv/opencv/blob/4.6.0/LICENSE)
-    - [Libnest2d](https://github.com/tamasmeszaros/libnest2d) Great library for packing polygons. Used to create texture atlases: [LGPL-3.0 License](https://github.com/tamasmeszaros/libnest2d/blob/master/LICENSE.txt)
-    - [wxWidgets](https://github.com/wxWidgets/wxWidgets) Cross-platform and simple library for creating an UI in C++. Used to create a progress window during export: [wxWidgets license](https://github.com/wxWidgets/wxWidgets/blob/master/docs/licence.txt)
-    - [CDT](https://github.com/artem-ogre/CDT/) Library for polygon triangulation. Used to triangulate fills and stroke: [MPL-2.0 License](./plugin/ThirdParty/CDT/LICENSE)
-    - [spdlog](https://github.com/gabime/spdlog) Fast logging tool: [MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE)
-    - [json](https://github.com/nlohmann/json) Fast json serializer/deserializer
-    - Data compression libraries:
-        - LZMA: [Source](https://7-zip.org/sdk.html)
-        - ZSTD [Git](https://github.com/facebook/zstd), [BSD / GPL2 License](./plugin/ThirdParty/SC/dependencies/Compression/dependencies/zstd/LICENSE)
-        - LZHAM: [Git](https://github.com/richgel999/lzham_codec)
-        - ASTC:  [Git](https://github.com/ARM-software/astc-encoder), [Apache License 2.0](https://github.com/ARM-software/astc-encoder/blob/main/LICENSE.txt)
-
-<br/>
-
+  
 # Building
 Before starting you need to have:
 - [npm and node.js](https://nodejs.org/)
 - [Typescript and ts-node](https://www.npmjs.com/package/ts-node)
 - MSVC Build tools (Visual Studio)
 
-Instruction will be divided into 3 parts, instructions for building Plugin and Publish settings
+Instruction will be divided into 3 parts, instructions for building Plugin, Publish settings and installer:
 
 - Installer  
-    Install node modules inside the ```installer``` folder with command:  
+    Install node modules inside ```installer``` folder with command:  
     `
     npm install
     `  
@@ -187,48 +153,47 @@ Instruction will be divided into 3 parts, instructions for building Plugin and P
     `
     npm install --save-dev
     `  
-    After installation, try to start local server with command:  
+    After installation, just if you want you can try to start test local server with command:  
     `
     npm run start
     `  
-    Try opening `localhost:8080` in your browser. If page works and you see the publisher interface, then everything is OK!
+    Try opening `localhost:8080` in your browser. If page works and you see publisher interface, then everything is OK!
 
 - Plugin  
-    Install node modules inside the ```plugin``` folder with command:
+    Install node modules inside ```plugin``` folder with command:
     `
     npm install
     `  
-    And make sure you have installed Visual Studio with C++ build tools and also cmake which should be in system variables or PATH. That's all!  
+    And make sure you have installed Visual Studio with C++ build tools and also Cmake which should be in system variables or PATH. That's all!  
 
 Next, after preparing all modules, you need to open console in root of repository.
 - Debug  
-    If you want to use a debug build you need to use this command:  
+    If you want to use a debug build then make sure you have CEP debug mode enabled. You can read more about CEP [Here](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md)  
+    After that you need to use this command:  
     `
     npm run build:dev
     `  
-    After that, extension should load into Adobe Animate.
+    After execution, extension should load into Adobe Animate.
 - Release  
-    To build a zxp package, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
+    To build a installer with all packages, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
     `
     npm run package
     `
     After the command completes, installer files will be available in `dist/package` folder.  
     You can run it or zip and share.
-
-<br/>
-
+  
 # Examples
-You can find a list of all available examples in ["examples"](/examples/README.md) folder.
-
-<br/>
-
+You can find a list of all available examples in ["examples"](/examples/README.md) folder.  
+  
 # Issues
-If you find any problem with the export process, please report it in [Issues](https://github.com/sc-workshop/SupercellSWF-Animate/issues) or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
-Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.
-
-<br/>
-
+If you find any problem with export process or you just need any help, please report it in [Issues](https://github.com/sc-workshop/SupercellSWF-Animate/issues) or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
+Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
+  
 # Changelog
+## v 1.3.0
+- Improved Atlas Generator
+- Added SC2 support
+- Many performance improvements and code refactoring
 ## v 1.2.1
 - Added experimental installer
 ## v 1.2.0
@@ -249,47 +214,3 @@ Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_ex
 - Updated localization
 ## v 1.0 
 - First release. Basic export to .sc file
-
-<br/>
-
-# Authors
-
-The idea of this project was created in my head for a year and code for the first version was written in a few months and during this time a lot of people became "authors".
-Without their support or some information at this time, this project simply would not exist and people would continue to edit sc in json files (People who do this are very patient and strong people. If you see them on the street, run).  
-And even at the time of writing this text, this is already a very big and interesting adventure for me, where for the first time I was able to "prove" myself in so many areas such as creating html "web sites" (A publisher is literally a very simple web site), creating libraries and programs with an UI in C++.  
-I hope that in the future I can continue in the same mood and continue to do programming, improving my skills as a programmer.  
-### And let's say thanks to those who somehow helped this project:
-
-<br/>
-
-<img src="https://avatars.githubusercontent.com/u/62141407" width="10%">
-
-## [Pavel Sokov](https://github.com/pavel-sokov)  
-Thanks to Fred for listening to my crazy Illuminati theories all this time and still not blocking my messages.
-Also, thanks for a lot of things like SWF module, sc2json converters, etc...
-
-<br/>
-
-<img src="https://avatars.githubusercontent.com/u/54549682" width="10%">
-
-## [Danila Schelkov](https://github.com/danila-schelkov) (Also known as Vorono4ka) 
-Famous author of the most unoptimized and most used tool for _tex.sc files - [XCoder](https://github.com/xcoder-tool/XCoder)  
-Also known a bit for [SC-editor](https://github.com/danila-schelkov/sc-editor) (I think it's because it can't edit or even export movie clips :) ).  
-Also thanks for support during this time and many other things that helped write Supercell SWF library.
-
-<br/>
-
-<img src="https://avatars.githubusercontent.com/u/9019893" width="10%">
-
-## [Barak Levy](https://github.com/baraklevy20)
-A cool author of some scripts and modules from which some implementations for plugin code were taken.
-
-<br/>
-
-<img src="./plugin/resources/loading/neco_ark.gif" width="10%">
-
-
-## And me, DaniilSV
-Dude who created this, and writes this text. Yes.
-
-<br/>
