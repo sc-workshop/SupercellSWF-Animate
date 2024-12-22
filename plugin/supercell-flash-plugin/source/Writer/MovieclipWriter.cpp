@@ -9,11 +9,26 @@ using namespace Animate::Publisher;
 namespace sc {
 	namespace Adobe {
 		SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol)
-			: m_writer(writer), m_symbol(symbol) {};
+			: m_writer(writer), m_symbol(symbol) 
+		{
+			SCPlugin& context = SCPlugin::Instance();
+
+			m_status = context.Window()->CreateStatusBarComponent(
+				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
+				symbol.name
+			);
+		};
+
+		SCMovieclipWriter::~SCMovieclipWriter()
+		{
+			SCPlugin& context = SCPlugin::Instance();
+			context.Window()->DestroyStatusBar(m_status);
+		}
 
 		void SCMovieclipWriter::InitializeTimeline(uint32_t fps, uint32_t frameCount) {
 			m_object.frame_rate = (uint8_t)fps;
 			m_object.frames.resize(frameCount);
+			m_status->SetRange(frameCount);
 
 			if (m_symbol.slicing.IsEnabled())
 			{
@@ -26,6 +41,13 @@ namespace sc {
 				m_object.scaling_grid->right = scaling_grid.top;
 				m_object.scaling_grid->bottom = scaling_grid.right;
 			}
+		}
+
+		void SCMovieclipWriter::Next()
+		{
+			SharedMovieclipWriter::Next();
+
+			m_status->SetProgress(m_position);
 		}
 
 		uint16_t SCMovieclipWriter::GetInstanceIndex(

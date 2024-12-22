@@ -4,6 +4,8 @@
 
 #include "AnimatePublisher.h"
 
+#include "Window/Components/StatusComponent.h"
+
 namespace sc {
 	namespace Adobe {
 		class SCWriter;
@@ -12,6 +14,7 @@ namespace sc {
 		private:
 			SCWriter& m_writer;
 			Animate::Publisher::SymbolContext& m_symbol;
+			StatusComponent* m_status;
 
 			// Current object
 			flash::MovieClip m_object;
@@ -32,7 +35,9 @@ namespace sc {
 
 		public:
 			SCMovieclipWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol);
-			virtual ~SCMovieclipWriter() = default;
+			virtual ~SCMovieclipWriter();
+
+			virtual void Next();
 
 			virtual void InitializeTimeline(uint32_t fps, uint32_t frameCount);
 
