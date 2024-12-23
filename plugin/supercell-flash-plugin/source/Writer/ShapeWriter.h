@@ -9,9 +9,11 @@ namespace sc {
 	namespace Adobe {
 		class SCWriter;
 
-		class SCShapeWriter : public Animate::Publisher::SharedShapeWriter{
+		class SCShapeWriter : public Animate::Publisher::SharedShapeWriter {
 		public:
-			SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) : m_writer(writer), m_symbol(symbol), m_group(symbol) {};
+			SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) :
+				Animate::Publisher::SharedShapeWriter(symbol),
+				m_writer(writer), m_group(symbol) {};
 			virtual ~SCShapeWriter() = default;
 
 			const float RasterizationResolution = 2.f;
@@ -55,8 +57,6 @@ namespace sc {
 
 		private:
 			SCWriter& m_writer;
-			Animate::Publisher::SymbolContext& m_symbol;
-
 			GraphicGroup m_group;
 		};
 	}

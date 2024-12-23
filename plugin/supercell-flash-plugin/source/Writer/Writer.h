@@ -19,12 +19,10 @@ namespace sc {
 
 		public:
 			virtual Animate::Publisher::SharedMovieclipWriter* AddMovieclip(Animate::Publisher::SymbolContext& symbol);
-
 			virtual Animate::Publisher::SharedShapeWriter* AddShape(Animate::Publisher::SymbolContext& symbol);
+			virtual Animate::Publisher::SharedTextFieldWriter* AddTextField(Animate::Publisher::SymbolContext& symbol);
 
 			virtual void AddModifier(uint16_t id, Animate::Publisher::MaskedLayerState type);
-
-			virtual void AddTextField(uint16_t id, Animate::Publisher::SymbolContext& symbol, Animate::Publisher::TextElement& field);
 
 			virtual void Finalize();
 
@@ -80,7 +78,7 @@ namespace sc {
 
 		private:
 			// Storage for Atlas Generator guys.
-			// Represents swf shapes and must have the same size
+			// Represents swf shapes and must have the same size as shapes vector
 			std::vector<GraphicGroup> m_graphic_groups;
 
 			// Name / Image

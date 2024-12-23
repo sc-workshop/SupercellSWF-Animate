@@ -8,8 +8,9 @@ using namespace Animate::Publisher;
 
 namespace sc {
 	namespace Adobe {
-		SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol)
-			: m_writer(writer), m_symbol(symbol) 
+		SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol) :
+			Animate::Publisher::SharedMovieclipWriter(symbol),
+			m_writer(writer)
 		{
 			SCPlugin& context = SCPlugin::Instance();
 

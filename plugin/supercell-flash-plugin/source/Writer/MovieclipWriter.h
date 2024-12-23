@@ -13,7 +13,6 @@ namespace sc {
 		class SCMovieclipWriter : public Animate::Publisher::SharedMovieclipWriter {
 		private:
 			SCWriter& m_writer;
-			Animate::Publisher::SymbolContext& m_symbol;
 			StatusComponent* m_status;
 
 			// Current object
