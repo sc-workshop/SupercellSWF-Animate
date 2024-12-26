@@ -61,7 +61,8 @@ type PublisherSettingsData = {
 
     // Texture category
     hasExternalTexture: boolean,
-    hasExternalCompressedTexture: boolean,
+    hasExternalTextureFile: boolean,
+    compressExternalTextureFile: boolean,
     hasLowresTexture: boolean,
     hasMultiresTexture: boolean,
     multiResolutinSuffix: string,
@@ -73,36 +74,45 @@ type PublisherSettingsData = {
     textureMaxHeight: number,
 }
 
+const PublisherDefaultSettings : PublisherSettingsData = 
+{
+    output: "",
+    type: SWFType.SC2,
+
+    backwardCompatibility: false,
+
+    compressionMethod: CompressionMethods.ZSTD,
+    hasPrecisionMatrices: false,
+    writeCustomProperties: true,
+
+    exportToExternal: false,
+    exportToExternalPath: "",
+
+    // Textures
+    hasExternalTexture: true,
+    hasExternalTextureFile: true,
+    compressExternalTextureFile: true,
+    hasLowresTexture: false,
+    hasMultiresTexture: false,
+    multiResolutinSuffix: "_highres",
+    lowResolutionSuffix: "_lowres",
+    textureEncoding: TextureEncoding.KTX,
+    textureQuality: Quality.highest,
+    textureScaleFactor: TextureScaleFactor["x1.0"],
+    textureMaxWidth: 4096,
+    textureMaxHeight: 4096,
+}
+
 export class PublisherSettings {
-    data: PublisherSettingsData = {
-        output: "",
-        type: SWFType.SC2,
-
-        backwardCompatibility: false,
-
-        compressionMethod: CompressionMethods.ZSTD,
-        hasPrecisionMatrices: false,
-        writeCustomProperties: true,
-
-        exportToExternal: false,
-        exportToExternalPath: "",
-
-        // Textures
-        hasExternalTexture: true,
-        hasExternalCompressedTexture: true,
-        hasLowresTexture: false,
-        hasMultiresTexture: false,
-        multiResolutinSuffix: "_highres",
-        lowResolutionSuffix: "_lowres",
-        textureEncoding: TextureEncoding.KTX,
-        textureQuality: Quality.highest,
-        textureScaleFactor: TextureScaleFactor["x1.0"],
-        textureMaxWidth: 2048,
-        textureMaxHeight: 2048,
-    };
+    data = PublisherDefaultSettings;
 
     getParam<K extends keyof PublisherSettingsData>(name: K) {
-        return this.data[name];
+        if (this.data[name] !== undefined)
+        {
+            return this.data[name];
+        }
+        
+        return PublisherDefaultSettings[name];
     }
 
     setParam<K extends keyof PublisherSettingsData>(name: K, value: PublisherSettingsData[K]) {

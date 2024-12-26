@@ -20,12 +20,13 @@ namespace sc {
 
 		public:
 			virtual void AddGraphic(const Animate::Publisher::SpriteElement& item, const Animate::DOM::Utils::MATRIX2D& matrix);
-
 			virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape);
-
 			virtual void AddSlicedElements(const std::vector<Animate::Publisher::FilledElement>& elements, const Animate::DOM::Utils::RECT& guides);
 
 			virtual bool Finalize(uint16_t id, bool required);
+
+		protected:
+			virtual std::size_t GenerateHash() const;
 
 		public:
 			void AddTriangulatedRegion(

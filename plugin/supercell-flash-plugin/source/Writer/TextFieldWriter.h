@@ -20,6 +20,9 @@ namespace sc::Adobe {
 
 		virtual bool Finalize(uint16_t id, bool required);
 
+	protected:
+		virtual std::size_t GenerateHash() const;
+
 	private:
 		SCWriter& m_writer;
 

@@ -4,6 +4,7 @@ import { Settings, SWFType } from './PublisherSettings';
 interface ContextProps {
     backwardCompatibility: boolean
     fileType: SWFType
+    externalTextureFiles: boolean
 }
 
 interface ContextInterface {
@@ -12,6 +13,9 @@ interface ContextInterface {
 
     fileType: SWFType
     setFileType: (type: SWFType) => void
+
+    useExternalTextureFiles: boolean
+    toggleExternalTextureFiles: () => void
 }
 
 //@ts-ignore
@@ -20,6 +24,7 @@ const Context = React.createContext<ContextInterface>(null);
 export const CreatePublishAppContext = function (props: ContextProps): ContextInterface {
     const [backwardCompatibility, setBackwardCompatibility] = useState(props.backwardCompatibility);
     const [fileType, setFileType] = useState(props.fileType);
+    const [useExternalTextureFiles, setUseExternalTextureFiles] = useState(props.externalTextureFiles);
 
     const backwardCompatibilitySetter = () =>
     {
@@ -34,23 +39,38 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
         Settings.setParam("type", type)
     }
 
+    const externalTextureFileSetter = () =>
+        {
+            setUseExternalTextureFiles(useExternalTextureFiles == false)
+    
+            Settings.setParam("hasExternalTextureFile", useExternalTextureFiles == false)
+        }
+
     return {
         useBackwardCompatibility: backwardCompatibility,
         toggleBackwardCompatibility: backwardCompatibilitySetter,
 
         fileType: fileType,
-        setFileType: fileTypeSetter
+        setFileType: fileTypeSetter,
+
+        useExternalTextureFiles: useExternalTextureFiles,
+        toggleExternalTextureFiles: externalTextureFileSetter
     };
 }
 
 export function UpdateContext()
 {
-    const {useBackwardCompatibility, toggleBackwardCompatibility, setFileType } = GetPublishContext();
+    const {useBackwardCompatibility, toggleBackwardCompatibility, setFileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
 
     setFileType(Settings.getParam("type"))
     if (Settings.getParam("backwardCompatibility") != useBackwardCompatibility)
     {
         toggleBackwardCompatibility()
+    }
+
+    if (Settings.getParam("hasExternalTextureFile") != useExternalTextureFiles)
+    {
+        toggleExternalTextureFiles()
     }
 }
 

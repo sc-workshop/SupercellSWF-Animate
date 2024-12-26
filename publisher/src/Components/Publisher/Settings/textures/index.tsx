@@ -19,7 +19,7 @@ const LocalizedTextureQuality = [
 export default function TextureSettings() {
     const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
     const [useMultiresStatus, setUseMultiresStatus] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
-    const { useBackwardCompatibility, fileType } = GetPublishContext();
+    const { useBackwardCompatibility, fileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
 
     if (useBackwardCompatibility) {
         Settings.setParam("textureEncoding", TextureEncoding.Raw);
@@ -62,18 +62,33 @@ export default function TextureSettings() {
     }
     ).render();
 
-    const textureCompressedExternal = new BoolField(
+    const textureExportExernalFile = new BoolField(
         {
-            name: Locale.Get("TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE"),
-            keyName: "external_compressed_texture_select",
-            defaultValue: Settings.getParam("hasExternalTexture"),
+            name: Locale.Get("TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE"),
+            keyName: "external_texture_file_select",
+            defaultValue: Settings.getParam("hasExternalTextureFile"),
             style: {
                 display: "flex",
                 alignItems: "center",
                 marginBottom: "10px"
             },
-            callback: value => (Settings.setParam("hasExternalTexture", value)),
-            tip_tid: "TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE_TIP"
+            callback: toggleExternalTextureFiles,
+            tip_tid: "TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE_TIP"
+        }
+    ).render();
+
+    const textureCompressExternalFIle = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE"),
+            keyName: "external_compressed_texture_file_select",
+            defaultValue: Settings.getParam("compressExternalTextureFile"),
+            style: {
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px"
+            },
+            callback: value => (Settings.setParam("compressExternalTextureFile", value)),
+            tip_tid: "TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP"
         }
     ).render();
 
@@ -192,14 +207,17 @@ export default function TextureSettings() {
     let texture_props: ReactNode[] = []
 
     if (useBackwardCompatibility) {
-        //texture_props = [textureQuality];
+        texture_props = [textureQuality];
     } else {
         switch (textureEncodingMethod) {
             case TextureEncoding.Raw:
-                //texture_props = [textureQuality];
+                texture_props = [textureQuality];
                 break;
             case TextureEncoding.KTX:
-                texture_props = [textureCompressedExternal]
+                texture_props = [
+                    textureExportExernalFile, 
+                    useExternalTextureFiles ? textureCompressExternalFIle : undefined
+                ]
                 break;
         }
     }

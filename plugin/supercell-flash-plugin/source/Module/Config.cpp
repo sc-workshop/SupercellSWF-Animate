@@ -64,8 +64,10 @@ namespace sc {
 
 			hasExternalTexture = data["hasExternalTexture"];
 			context.logger->info("	hasExternalTexture: {}", hasExternalTexture);
-			hasExternalCompressedTexture = data["hasExternalCompressedTexture"];
-			context.logger->info("	hasExternalCompressedTexture: {}", hasExternalCompressedTexture);
+			hasExternalTextureFile = data["hasExternalTextureFile"];
+			context.logger->info("	hasExternalTextureFile: {}", hasExternalTextureFile);
+			compressExternalTextureFile = data["compressExternalTextureFile"];
+			context.logger->info("	compressExternalTextureFile: {}", compressExternalTextureFile);
 			hasLowresTexture = data["hasLowresTexture"];
 			context.logger->info("	hasLowresTexture: {}", hasLowresTexture);
 			hasMultiresTexture = data["hasMultiresTexture"];
@@ -105,7 +107,7 @@ namespace sc {
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
-				// textureQuality = (Quality)data["textureQuality"];
+				textureQuality = (Quality)data["textureQuality"];
 				context.logger->info("	textureQuality: {}", (uint8_t)textureQuality);
 			}
 

@@ -60,6 +60,7 @@ namespace sc {
 					// Block thread until publishing ui is ready
 					publishing_ui.lock();
 					context.logger->info("Starting publishing...");
+
 					// Removes Exception catch in debug mode
 #if !(WK_DEBUG)
 					try {

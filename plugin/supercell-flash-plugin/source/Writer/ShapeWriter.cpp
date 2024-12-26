@@ -538,6 +538,11 @@ namespace sc {
 			rect.topLeft.y = round_number(rect.topLeft.y);
 		}
 
+		std::size_t SCShapeWriter::GenerateHash() const
+		{
+			return 0;
+		}
+
 		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
 			if (m_group.Size() == 0)
 			{

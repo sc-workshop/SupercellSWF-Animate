@@ -20,8 +20,8 @@
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Внешний файл",
 	
 	"TID_TEXTURES_LABEL": "Текстуры",
-	"TID_SWF_SETTINGS_HAS_TEXTURE": "Записать текстуру во внешний файл",
-	"TID_SWF_SETTINGS_HAS_TEXTURE_TIP": "Сохраняет внешнюю _tex.sc текстуру",
+	"TID_SWF_SETTINGS_HAS_TEXTURE": "Сохранить все текстуры в другом файле",
+	"TID_SWF_SETTINGS_HAS_TEXTURE_TIP": "Сохраняет все текстуры в _tex.sc файл. Помогает снизить нагрузку на памяьб во время загрузки файла.",
 
 	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Метод сжатия",
 	"TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP": "Raw - Сохраняет текстуры в не сжатом потоке данных.\nKTX - Сжимает данные текстуры в Khronos Texture. Процесс сжатия может быть довольно долгим.",
@@ -34,8 +34,11 @@
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Максимальная высота текстур",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Максимальная ширина текстур",
 
-	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE": "Записать текстуры во внешние сжатые файлы",
-	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE_TIP": "Сохраняет каждую текстуру в .zktx файл",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE": "Записать текстуры во внешние файлы",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE_TIP": "Сохраняет каждую текстуру в более оптимизированный формат файлов такие как .ktx или .sctx",
+
+	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE": "Сжать внешние файлы текстур",
+	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP": "Дополнительно сжимает внешние файлы текстур для более меньшого итогового веса",
 
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Сохранить текстуры Мульти Разрешения",
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Сохраняет текстуру с заданным суффиксом",

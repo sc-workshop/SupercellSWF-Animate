@@ -5,7 +5,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_library(${TARGET} SHARED ${SOURCES})
-wk_project_setup(${TARGET}) 
+wk_project_setup(${TARGET})
 
 set_target_properties(${TARGET}
     PROPERTIES

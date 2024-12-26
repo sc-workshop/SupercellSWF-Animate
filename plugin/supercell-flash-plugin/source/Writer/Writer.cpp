@@ -63,81 +63,6 @@ namespace sc {
 			return new SCTextFieldWriter(*this, symbol);
 		}
 
-		//void SCWriter::AddTextField(uint16_t id, SymbolContext& /*symbol*/, TextElement& object) {
-			// using namespace Animate::DOM;
-			// const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
-			// 
-			// flash::TextField& textfield = swf.textfields.emplace_back();
-			// 
-			// std::string text = FCM::Locale::ToUtf8(object.text);
-			// std::string fontName = FCM::Locale::ToUtf8(object.fontName);
-			// 
-			// textfield.id = id;
-			// 
-			// textfield.text = flash::SWFString(text);
-			// 
-			// textfield.font_name = flash::SWFString(fontName);
-			// textfield.font_color = *(uint32_t*)&object.fontColor;
-			// textfield.font_size = (uint8_t)object.fontSize;
-			// 
-			// switch (object.style.alignment)
-			// {
-			// case FrameElement::AlignMode::ALIGN_MODE_CENTER:
-			// 	textfield.font_horizontal_align = flash::TextField::Align::Center;
-			// 	break;
-			// case FrameElement::AlignMode::ALIGN_MODE_JUSTIFY:
-			// 	textfield.font_horizontal_align = flash::TextField::Align::Justify;
-			// 	break;
-			// case FrameElement::AlignMode::ALIGN_MODE_LEFT:
-			// 	textfield.font_horizontal_align = flash::TextField::Align::Left;
-			// 	break;
-			// case FrameElement::AlignMode::ALIGN_MODE_RIGHT:
-			// 	textfield.font_horizontal_align = flash::TextField::Align::Right;
-			// 	break;
-			// default:
-			// 	break;
-			// }
-			// 
-			// textfield.left = (int16_t)floor(object.bound.topLeft.x);
-			// textfield.top = (int16_t)floor(object.bound.topLeft.y);
-			// 
-			// textfield.right = (int16_t)floor(object.bound.bottomRight.x);
-			// textfield.bottom = (int16_t)floor(object.bound.bottomRight.y);
-			// 
-			// if (object.fontStyle != FrameElement::REGULAR_STYLE_STR) {
-			// 	if (object.fontStyle != FrameElement::ITALIC_STYLE_STR) {
-			// 		textfield.is_italic = true;
-			// 	}
-			// 	else if (object.fontStyle != FrameElement::BOLD_STYLE_STR) {
-			// 		textfield.is_bold = true;
-			// 	}
-			// 	else if (object.fontStyle != FrameElement::BOLD_ITALIC_STYLE_STR) {
-			// 		textfield.is_italic = true;
-			// 		textfield.is_bold = true;
-			// 	}
-			// }
-			// 
-			// textfield.is_outlined = object.isOutlined;
-			// if (object.isOutlined)
-			// {
-			// 	textfield.outline_color = (static_cast<uint32_t>(object.outlineColor.red) << 24) |
-			// 		(static_cast<uint32_t>(object.outlineColor.green) << 16) |
-			// 		(static_cast<uint32_t>(object.outlineColor.blue) << 8) |
-			// 		static_cast<uint32_t>(object.outlineColor.alpha);
-			// }
-			// 
-			// textfield.is_multiline =
-			// 	object.lineMode == FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
-			// 
-			// if (object.renderingMode.aaMode == FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
-			// 	textfield.use_device_font = true;
-			// }
-			// 
-			// if (config.backwardCompatibility) return;
-			// 
-			// textfield.auto_kern = object.autoKern == FCM::Boolean(true);
-		//}
-
 		void SCWriter::LoadExternal() {
 			using namespace Animate::DOM;
 
@@ -601,7 +526,8 @@ namespace sc {
 			}
 			else
 			{
-				swf.use_external_textures = config.hasExternalCompressedTexture;
+				swf.use_external_textures = config.hasExternalTextureFile;
+				swf.compress_external_textures = config.compressExternalTextureFile;
 			}
 
 			fs::path filepath = fs::path(config.outputFilepath).replace_extension("sc");

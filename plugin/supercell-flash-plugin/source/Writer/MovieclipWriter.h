@@ -35,13 +35,9 @@ namespace sc {
 		public:
 			SCMovieclipWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol);
 			virtual ~SCMovieclipWriter();
-
 			virtual void Next();
-
 			virtual void InitializeTimeline(uint32_t fps, uint32_t frameCount);
-
 			virtual void SetLabel(const std::u16string& label);
-
 			virtual void AddFrameElement(
 				uint16_t id,
 				FCM::BlendMode blending,
@@ -51,6 +47,10 @@ namespace sc {
 			);
 
 			virtual bool Finalize(uint16_t id, bool required);
+
+		protected:
+			virtual std::size_t GenerateHash() const;
+
 		};
 	}
 }

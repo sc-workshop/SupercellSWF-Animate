@@ -48,7 +48,8 @@ namespace sc {
 
 			sc::flash::SWFTexture::TextureEncoding textureEncoding = sc::flash::SWFTexture::TextureEncoding::KhronosTexture;
 			bool hasExternalTexture = false;
-			bool hasExternalCompressedTexture = true;
+			bool hasExternalTextureFile = true;
+			bool compressExternalTextureFile = true;
 			bool hasLowresTexture = false;
 			bool hasMultiresTexture = false;
 			std::string multiResolutionSuffix;

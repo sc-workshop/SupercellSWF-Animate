@@ -78,7 +78,7 @@ function App() {
           position: "relative"
         }
       },
-      <PublisherContextProvider backwardCompatibility={false} fileType={SWFType.SC2}>
+      <PublisherContextProvider>
         <Publisher></Publisher>
       </PublisherContextProvider>
     );

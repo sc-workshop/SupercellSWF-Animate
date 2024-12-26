@@ -1,7 +1,5 @@
 include(FetchContent)
 
-set(WK_SERIALIZATION_JSON ON)
-
 # SC Flash
 FetchContent_Declare(
     SupercellFlash

@@ -165,6 +165,11 @@ namespace sc {
 			}
 		}
 
+		std::size_t SCMovieclipWriter::GenerateHash() const
+		{
+			return 0;
+		}
+
 		bool SCMovieclipWriter::Finalize(uint16_t id, bool required) {
 			m_object.id = id;
 

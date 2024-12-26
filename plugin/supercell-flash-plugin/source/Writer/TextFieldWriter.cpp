@@ -2,6 +2,8 @@
 #include "TextFieldWriter.h"
 #include "Module/Module.h"
 
+#include "core/hashing/crypto/md5.h" // just for now
+
 using namespace Animate::Publisher;
 
 namespace sc::Adobe {
@@ -117,6 +119,44 @@ namespace sc::Adobe {
 			(static_cast<uint32_t>(filter.color.green) << 16) |
 			(static_cast<uint32_t>(filter.color.blue) << 8) |
 			static_cast<uint32_t>(filter.color.alpha);
+	}
+
+	std::size_t SCTextFieldWriter::GenerateHash() const
+	{
+		wk::hash::MD5 code;
+
+		code.update(m_object.text);
+		code.update(m_object.font_name);
+		code.update(m_object.font_color);
+		code.update(m_object.font_horizontal_align);
+		code.update(m_object.font_vertical_align);
+		code.update(m_object.unknown_align6);
+		code.update(m_object.unknown_align7);
+
+		code.update(m_object.left);
+		code.update(m_object.top);
+		code.update(m_object.right);
+		code.update(m_object.bottom);
+
+		code.update(m_object.is_bold);
+		code.update(m_object.is_italic);
+		code.update(m_object.is_multiline);
+		code.update(m_object.is_outlined);
+		code.update(m_object.unknown_flag3);
+
+		code.update(m_object.outline_color);
+		code.update(m_object.use_device_font);
+		code.update(m_object.auto_kern);
+		code.update(m_object.bend_angle);
+
+		code.update(m_object.unknown_flag);
+		code.update(m_object.unknown_short);
+		code.update(m_object.unknown_short2);
+
+		code.update(m_object.typography_file);
+
+		auto digest = code.digest();
+		return *(std::size_t*)digest.data();
 	}
 
 	bool SCTextFieldWriter::Finalize(uint16_t id, bool /*required*/)

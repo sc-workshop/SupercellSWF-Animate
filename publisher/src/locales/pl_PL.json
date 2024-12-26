@@ -33,8 +33,11 @@
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Maks. szerokość Tekstur",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Maks. wysokość Tekstur",
 
-	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE": "Zapisuj skompresowane tekstury do plików zewnętrznych",
-	"TID_SWF_SETTINGS_HAS_EXTERNAL_COMPRESSED_TEXTURE_TIP": "Zapisuje każdą teksturę do pliku .zktx",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE": "Write textures to external files",
+	"TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE_TIP": "Saves each texture to .ktx or .sctx file",
+
+	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE": "Compress external texture files",
+	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP": "Compresses external files using ZSTD",
 
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Ma teksturę o Wielu Rozdzielczościach",
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Zapisuje teksturę z przyrostkiem multires",
