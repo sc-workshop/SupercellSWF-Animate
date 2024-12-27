@@ -19,14 +19,48 @@ This repository does not provide any instructions on how to modify any Supercell
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Updating](#plugin-update)
-- [Dependencies](#dependecies)
 - [Building](#building)
 - [Examples](#examples)
 - [Changelog](#changelog)
-- [Authors](#authors)
 - [Support](#support)
 
 <br/>
+
+# How to use
+- Check [requirements](#requirements), make sure everything is satisfied
+- [Install](#installing) or [build](#building) extension
+- Open your Adobe Animate and go to New Document panel
+- Create new "SupercellSWF" document: 
+
+<p align="center">
+<img src="./assets/new_document_panel.png"  width="45%">
+</p>
+
+- Create something!  
+In [examples](#examples) you can find good and different use cases for extension in different games!  
+Also, before creating something, do not forget to read information about ["limitations"](#Limitations) that will help you not to create any problems.
+
+- To set export options you need to click "File -> Publish Settings.."  
+You can set all options here for the first time only once and then just press "Publish" button. You can also find a description of all options in ["Publisher options"](#publisher-options)
+
+<p align="center">
+<img src="./assets/publish_settings_select.png"  width="35%" height="30%">
+</p>
+
+- After setting all options, you can click on publish button. You are great!  
+Then you just need to wait until file is saved. 
+
+# Content creation tips
+For the most part these tips will help you make a more "correct" and more optimized project.
+
+- Be sure to pay attention to ["Limitations"](#limitations) section.
+- Pay attention to linkage name.
+    Plugin exports only MovieClips that have an linkage name, it is used as export name of symbol.
+    For details, see [Examples](#examples)
+- Avoid using sprites, and especially vector graphics in MovieClips.  
+    Animate is a fairly flexible program and you will notice very little difference between different types of symbols, but speed of export and rendering performance in general depends on how correctly you use these types.  
+    When organizing project structure, note that Shapes or so-called Graphic symbols are intended to contain sprites or vector graphics. They can have only one frame.
+    At the same time, MovieClip symbols are used to create animation using shapes. They can have an unlimited (within technical limits) number of frames and they can have a linkage name.
 
 # Support
 This project was created with the goal of exploring various interesting tools and to support a small but quite creative community of modders. I put a lot of heart and time into this creation, so if you want to support me, you can buy me a coffee right here :3  
@@ -75,31 +109,7 @@ Full support. Be careful when using it, the result can be very unstable.
 
 - Nine-slice ✅  
 Full support. But keep in mind that on Animate 2024 and above this may not work correctly.  
-  
-# How to use
-- Check [requirements](#requirements), make sure everything is satisfied
-- [Install](#installing) or [build](#building) extension
-- Open your Adobe Animate and go to New Document panel
-- Create new "SupercellSWF" document: 
 
-<p align="center">
-<img src="./assets/new_document_panel.png"  width="45%">
-</p>
-
-- Create something!  
-In [examples](#examples) you can find good and different use cases for extension in different games!  
-Also, before creating something, do not forget to read information about ["limitations"](#Limitations) that will help you not to create any problems.
-
-- To set export options you need to click "File -> Publish Settings.."  
-You can set all options here for the first time only once and then just press "Publish" button. You can also find a description of all options in ["Publisher options"](#publisher-options)
-
-<p align="center">
-<img src="./assets/publish_settings_select.png"  width="35%" height="30%">
-</p>
-
-- After setting all options, you can click on publish button. You are great!  
-Then you just need to wait until file is saved. 
-  
 # Limitations
 
 - Color transforms  
@@ -190,6 +200,10 @@ If you find any problem with export process or you just need any help, please re
 Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.1
+- Improved progress window behavior
+- Added object caching
+- Various bug fixes
 ## v 1.3.0
 - Improved Atlas Generator
 - Added SC2 support
