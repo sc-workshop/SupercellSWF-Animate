@@ -167,7 +167,7 @@ namespace sc {
 			using namespace wk;
 			using namespace wk::AtlasGenerator;
 
-			wk::Matrix2D matrix = item.transformation();
+			wk::Matrix2D matrix = item.Transformation();
 
 			for (flash::ShapeDrawBitmapCommandVertex& vertex : command.vertices)
 			{
@@ -229,7 +229,7 @@ namespace sc {
 
 			Item::Transformation transform(
 				0,
-				sliced_item.translation()
+				sliced_item.Translation()
 			);
 
 			Container<Container<Vertex>> regions;
@@ -294,16 +294,16 @@ namespace sc {
 
 					if (item.IsSprite())
 					{
-						SpriteItem& sprite_item = *(SpriteItem*)&item;
+						SpriteItem& sprite_item = (SpriteItem&)item;
 
 						items.emplace_back(
 							sprite_item.Image(),
 							item.IsSliced()
 						);
 					}
-					else if (item.IsFilledShape())
+					else if (item.IsSolidColor())
 					{
-						FilledItem& filled_item = *(FilledItem*)&item;
+						FilledItem& filled_item = (FilledItem&)item;
 
 						items.emplace_back(filled_item.Color());
 					}
@@ -461,7 +461,7 @@ namespace sc {
 							);
 						}
 					}
-					else if (item.IsFilledShape() && atlas_item.get_colorfill().has_value())
+					else if (item.IsSolidColor() && atlas_item.get_colorfill().has_value())
 					{
 						FilledItem& filled_item = *(FilledItem*)&item;
 						ProcessFilledItem(

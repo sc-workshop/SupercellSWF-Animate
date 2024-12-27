@@ -17,7 +17,7 @@ namespace sc
 			virtual ~SpriteItem() = default;
 
 		public:
-			virtual wk::Matrix2D transformation() const
+			virtual wk::Matrix2D Transformation() const
 			{
 				return m_matrix;
 			}
@@ -28,7 +28,7 @@ namespace sc
 			}
 
 		public:
-			cv::Mat& Image() const { return *m_image; }
+			virtual const cv::Mat& Image() const { return *m_image; }
 
 		private:
 			static wk::Matrix2D init_matrix(const Animate::DOM::Utils::MATRIX2D& matrix);

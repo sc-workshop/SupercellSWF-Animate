@@ -50,18 +50,18 @@ namespace sc
 			virtual ~FilledItem() = default;
 
 		public:
-			virtual bool IsFilledShape() const
+			virtual bool IsSolidColor() const
 			{
 				return true;
 			}
 
 		public:
-			const cv::Scalar& Color() const
+			virtual const cv::Scalar& Color() const
 			{
 				return m_color;
 			}
 
-			virtual wk::Matrix2D transformation() const
+			virtual wk::Matrix2D Transformation() const
 			{
 				return m_matrix;
 			}

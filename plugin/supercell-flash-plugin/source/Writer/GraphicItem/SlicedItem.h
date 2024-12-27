@@ -27,7 +27,7 @@ namespace sc
 				return m_guides;
 			}
 
-			const wk::Point& translation() const
+			const wk::Point& Translation() const
 			{
 				return m_translation;
 			}

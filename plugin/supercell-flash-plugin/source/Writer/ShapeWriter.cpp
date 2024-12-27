@@ -6,6 +6,7 @@
 #include <CDT.h>
 
 #include "core/hashing/ncrypto/xxhash.h"
+#include "core/hashing/hash.h"
 
 using namespace Animate::Publisher;
 
@@ -84,9 +85,9 @@ namespace sc {
 			std::vector<FilledItemContour> contours;
 
 			for (const CDT::Triangle& triangle : cdt.triangles) {
-				auto point1 = cdt.vertices[triangle.vertices[0]];
-				auto point2 = cdt.vertices[triangle.vertices[1]];
-				auto point3 = cdt.vertices[triangle.vertices[2]];
+				auto& point1 = cdt.vertices[triangle.vertices[0]];
+				auto& point2 = cdt.vertices[triangle.vertices[1]];
+				auto& point3 = cdt.vertices[triangle.vertices[2]];
 
 				std::vector<Animate::Publisher::Point2D> triangle_shape(
 					{
@@ -588,29 +589,38 @@ namespace wk::hash
 		template<typename T>
 		static void update(wk::hash::HashStream<T>& stream, const sc::Adobe::GraphicItem& item)
 		{
+			stream.update(item.Transformation());
 			if (item.IsSprite())
 			{
 				const sc::Adobe::SpriteItem& sprite = (const sc::Adobe::SpriteItem&)item;
 				const cv::Mat& image = sprite.Image();
-
+			
 				stream.update((const uint8_t*)image.data, image.total() * image.elemSize());
-				stream.update(sprite.transformation());
+			
+				if (sprite.IsSliced())
+				{
+					const sc::Adobe::SlicedItem& sliced = (const sc::Adobe::SlicedItem&)item;
+					stream.update(sliced.Guides());
+				}
 			}
-		}
-	};
-
-	template<>
-	struct Hash_t<wk::Matrix2D>
-	{
-		template<typename T>
-		static void update(wk::hash::HashStream<T>& stream, const wk::Matrix2D& matrix)
-		{
-			stream.update(matrix.a);
-			stream.update(matrix.b);
-			stream.update(matrix.c);
-			stream.update(matrix.d);
-			stream.update(matrix.tx);
-			stream.update(matrix.ty);
+			else if (item.IsSolidColor())
+			{
+				const sc::Adobe::FilledItem& fill = (const sc::Adobe::FilledItem&)item;
+				
+				for (uint8_t i = 0; i > 4; i++)
+				{
+					stream.update(fill.Color()[i]);
+				}
+				
+				for (auto& contour : fill.contours)
+				{
+					for (auto& point : contour.Contour())
+					{
+						stream.update(point.x);
+						stream.update(point.y);
+					}
+				}
+			}
 		}
 	};
 }

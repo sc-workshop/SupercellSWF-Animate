@@ -3,6 +3,8 @@
 #include "core/math/matrix2d.h"
 #include "core/hashing/hash_stream.h"
 #include "core/hashing/hash.h"
+#include "core/exception/exception.h"
+#include "opencv2/opencv.hpp"
 
 namespace sc
 {
@@ -14,7 +16,7 @@ namespace sc
 			virtual ~GraphicItem() = default;
 
 		public:
-			virtual wk::Matrix2D transformation() const
+			virtual wk::Matrix2D Transformation() const
 			{
 				// Returns none transform
 				return {};
@@ -31,9 +33,19 @@ namespace sc
 				return false;
 			}
 
-			virtual bool IsFilledShape() const
+			virtual bool IsSolidColor() const
 			{
 				return false;
+			}
+
+			virtual const cv::Mat& Image() const
+			{
+				throw wk::Exception();
+			}
+
+			virtual const cv::Scalar& Color() const
+			{
+				throw wk::Exception();
 			}
 		};
 	}
