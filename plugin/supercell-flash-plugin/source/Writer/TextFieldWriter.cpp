@@ -2,7 +2,7 @@
 #include "TextFieldWriter.h"
 #include "Module/Module.h"
 
-#include "core/hashing/crypto/md5.h" // just for now
+#include "core/hashing/ncrypto/xxhash.h"
 
 using namespace Animate::Publisher;
 
@@ -123,7 +123,7 @@ namespace sc::Adobe {
 
 	std::size_t SCTextFieldWriter::GenerateHash() const
 	{
-		wk::hash::MD5 code;
+		wk::hash::XxHash code;
 
 		code.update(m_object.text);
 		code.update(m_object.font_name);
@@ -155,8 +155,7 @@ namespace sc::Adobe {
 
 		code.update(m_object.typography_file);
 
-		auto digest = code.digest();
-		return *(std::size_t*)digest.data();
+		return code.digest();
 	}
 
 	bool SCTextFieldWriter::Finalize(uint16_t id, bool /*required*/)

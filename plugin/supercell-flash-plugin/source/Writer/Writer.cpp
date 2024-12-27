@@ -297,7 +297,7 @@ namespace sc {
 						SpriteItem& sprite_item = *(SpriteItem*)&item;
 
 						items.emplace_back(
-							sprite_item.image(),
+							sprite_item.Image(),
 							item.IsSliced()
 						);
 					}

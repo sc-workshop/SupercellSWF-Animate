@@ -28,7 +28,7 @@ namespace sc
 			}
 
 		public:
-			cv::Mat& image() { return *m_image; }
+			cv::Mat& Image() const { return *m_image; }
 
 		private:
 			static wk::Matrix2D init_matrix(const Animate::DOM::Utils::MATRIX2D& matrix);

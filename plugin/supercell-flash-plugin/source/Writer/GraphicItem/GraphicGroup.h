@@ -32,7 +32,7 @@ namespace sc
 				return *item;
 			}
 
-			GraphicItem& GetItem(size_t index);
+			GraphicItem& GetItem(size_t index) const;
 			size_t Size() const;
 
 		private:

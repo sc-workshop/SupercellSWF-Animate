@@ -1,6 +1,8 @@
 #pragma once
 
 #include "core/math/matrix2d.h"
+#include "core/hashing/hash_stream.h"
+#include "core/hashing/hash.h"
 
 namespace sc
 {

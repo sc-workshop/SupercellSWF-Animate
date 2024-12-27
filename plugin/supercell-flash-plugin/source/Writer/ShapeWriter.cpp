@@ -5,6 +5,8 @@
 #include <opencv2/opencv.hpp>
 #include <CDT.h>
 
+#include "core/hashing/ncrypto/xxhash.h"
+
 using namespace Animate::Publisher;
 
 namespace sc {
@@ -540,7 +542,15 @@ namespace sc {
 
 		std::size_t SCShapeWriter::GenerateHash() const
 		{
-			return 0;
+			wk::hash::XxHash code;
+
+			for (size_t i = 0; m_group.Size() > i; i++)
+			{
+				const GraphicItem& item = m_group.GetItem(i);
+				code.update(item);
+			}
+
+			return code.digest();
 		}
 
 		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
@@ -568,4 +578,39 @@ namespace sc {
 			return true;
 		}
 	}
+}
+
+namespace wk::hash
+{
+	template<>
+	struct Hash_t<sc::Adobe::GraphicItem>
+	{
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const sc::Adobe::GraphicItem& item)
+		{
+			if (item.IsSprite())
+			{
+				const sc::Adobe::SpriteItem& sprite = (const sc::Adobe::SpriteItem&)item;
+				const cv::Mat& image = sprite.Image();
+
+				stream.update((const uint8_t*)image.data, image.total() * image.elemSize());
+				stream.update(sprite.transformation());
+			}
+		}
+	};
+
+	template<>
+	struct Hash_t<wk::Matrix2D>
+	{
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const wk::Matrix2D& matrix)
+		{
+			stream.update(matrix.a);
+			stream.update(matrix.b);
+			stream.update(matrix.c);
+			stream.update(matrix.d);
+			stream.update(matrix.tx);
+			stream.update(matrix.ty);
+		}
+	};
 }

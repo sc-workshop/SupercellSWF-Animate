@@ -10,7 +10,7 @@ namespace sc
 		{
 		};
 
-		GraphicItem& GraphicGroup::GetItem(size_t index)
+		GraphicItem& GraphicGroup::GetItem(size_t index) const
 		{
 			return *m_items[index];
 		}
