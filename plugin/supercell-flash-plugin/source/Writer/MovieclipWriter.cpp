@@ -15,24 +15,35 @@ namespace sc {
 			Animate::Publisher::SharedMovieclipWriter(symbol),
 			m_writer(writer)
 		{
-			SCPlugin& context = SCPlugin::Instance();
+			
 
-			m_status = context.Window()->CreateStatusBarComponent(
-				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
-				symbol.name
-			);
+			
 		};
 
 		SCMovieclipWriter::~SCMovieclipWriter()
 		{
 			SCPlugin& context = SCPlugin::Instance();
-			context.Window()->DestroyStatusBar(m_status);
+
+			if (m_status)
+			{
+				context.Window()->DestroyStatusBar(m_status);
+			}
 		}
 
 		void SCMovieclipWriter::InitializeTimeline(uint32_t fps, uint32_t frameCount) {
+			SCPlugin& context = SCPlugin::Instance();
+
 			m_object.frame_rate = (uint8_t)fps;
 			m_object.frames.resize(frameCount);
-			m_status->SetRange(frameCount);
+
+			if (!m_status && frameCount > 1)
+			{
+				m_status = context.Window()->CreateStatusBarComponent(
+					context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
+					m_symbol.name
+				);
+				m_status->SetRange(frameCount);
+			}
 
 			if (m_symbol.slicing.IsEnabled())
 			{
@@ -51,7 +62,10 @@ namespace sc {
 		{
 			SharedMovieclipWriter::Next();
 
-			m_status->SetProgress(m_position);
+			if (m_status)
+			{
+				m_status->SetProgress(m_position);
+			}
 		}
 
 		uint16_t SCMovieclipWriter::GetInstanceIndex(

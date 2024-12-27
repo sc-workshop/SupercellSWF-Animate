@@ -13,7 +13,7 @@ namespace sc {
 		class SCMovieclipWriter : public Animate::Publisher::SharedMovieclipWriter {
 		private:
 			SCWriter& m_writer;
-			StatusComponent* m_status;
+			StatusComponent* m_status = nullptr;
 
 			// Current object
 			flash::MovieClip m_object;

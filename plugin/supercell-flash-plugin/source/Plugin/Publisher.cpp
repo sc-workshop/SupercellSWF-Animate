@@ -62,11 +62,12 @@ namespace sc {
 					context.logger->info("Starting publishing...");
 
 					// Removes Exception catch in debug mode
-#if !(WK_DEBUG)
+
+//#if !(WK_DEBUG)
 					try {
-#endif
+//#endif
 						DoPublish();
-#if !(WK_DEBUG)
+//#if !(WK_DEBUG)
 					}
 					catch (const FCM::FCMPluginException& exception)
 					{
@@ -91,7 +92,7 @@ namespace sc {
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
-#endif
+//#endif
 					publishing_ui.unlock();
 				}
 			);
