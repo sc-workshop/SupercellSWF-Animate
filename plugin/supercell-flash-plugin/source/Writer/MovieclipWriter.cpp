@@ -4,6 +4,9 @@
 #include "Module/Module.h"
 #include "GraphicItem/SlicedItem.h"
 
+#include "core/hashing/ncrypto/xxhash.h"
+#include "core/hashing/hash.h"
+
 using namespace Animate::Publisher;
 
 namespace sc {
@@ -167,7 +170,35 @@ namespace sc {
 
 		std::size_t SCMovieclipWriter::GenerateHash() const
 		{
-			return 0;
+			wk::hash::XxHash code;
+
+			code.update(m_object.frame_rate);
+			code.update(
+				(const uint8_t*)m_object.frame_elements.data(),
+				sizeof(flash::MovieClipFrameElement) * m_object.frame_elements.size()
+			);
+
+			for (auto& children : m_object.childrens)
+			{
+				code.update(children.id);
+				code.update(children.blend_mode);
+				code.update(children.name);
+			}
+
+			for (const auto& frame : m_object.frames)
+			{
+				code.update(frame.label);
+				code.update(frame.elements_count);
+			}
+
+			if (m_object.scaling_grid.has_value())
+			{
+				code.update(m_object.scaling_grid.value());
+			}
+
+			code.update(m_bank);
+
+			return code.digest();
 		}
 
 		bool SCMovieclipWriter::Finalize(uint16_t id, bool required) {
@@ -185,6 +216,8 @@ namespace sc {
 				flash::ExportName& export_name = m_writer.swf.exports.emplace_back();
 				export_name.name = flash::SWFString(m_symbol.linkage_name);
 				export_name.id = id;
+
+				if (!required) return false;
 			}
 
 			FinalizeTransforms();
@@ -303,4 +336,27 @@ namespace sc {
 			}
 		}
 	}
+}
+
+namespace wk::hash
+{
+	template<>
+	struct Hash_t<sc::flash::MatrixBank>
+	{
+		template<typename T>
+		static void update(wk::hash::HashStream<T>& stream, const sc::flash::MatrixBank& bank)
+		{
+			for (auto& matrix : bank.matrices)
+			{
+				stream.update((const uint8_t*)&matrix.elements, sizeof(matrix.elements));
+			}
+
+			for (auto& color : bank.color_transforms)
+			{
+				stream.update((const uint8_t*)&color.add.channels, sizeof(color.add.channels));
+				stream.update((const uint8_t*)&color.multiply.channels, sizeof(color.multiply.channels));
+				stream.update(color.alpha);
+			}
+		}
+	};
 }
