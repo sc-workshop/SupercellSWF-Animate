@@ -56,8 +56,8 @@ namespace sc {
 			std::string lowResolutionSuffix;
 			uint8_t textureScaleFactor = 1;
 			Quality textureQuality = Quality::Highest;
-			uint32_t textureMaxWidth = 2048;
-			uint32_t textureMaxHeight = 2048;
+			uint32_t textureMaxWidth = 4096;
+			uint32_t textureMaxHeight = 4096;
 
 			bool writeCustomProperties = true;
 			bool hasPrecisionMatrices = false;
