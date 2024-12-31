@@ -422,18 +422,21 @@ namespace sc {
 				{guides.bottomRight.x * SCShapeWriter::RasterizationResolution, guides.bottomRight.y * SCShapeWriter::RasterizationResolution}
 			};
 
-			// Then create copy of element
+			// Then create copy of elements
 			// And make their points bigger
-			std::vector<FilledElement> elements;
-			for (const FilledElement& _element : slice.Elements())
+			std::vector<FilledElement> transformed_elements;
+			const auto& elements = slice.Elements();
+			for (size_t i = 0; elements.Size() > i; i++)
 			{
-				FilledElement& element = elements.emplace_back(_element);
+				StaticElement& element = elements[i];
+				if (!element.IsFilledArea()) continue;
 
-				element.Transform(
+				FilledElement& transformed_element = transformed_elements.emplace_back((const FilledElement&)element);
+				transformed_element.Transform(
 					element.Transformation()
 				);
 
-				element.Transform(
+				transformed_element.Transform(
 					{
 						SCShapeWriter::RasterizationResolution,
 						0.0f,
@@ -452,7 +455,7 @@ namespace sc {
 				std::numeric_limits<float>::max()}
 			};
 
-			for (const FilledElement& element : elements)
+			for (const FilledElement& element : transformed_elements)
 			{
 				const Animate::DOM::Utils::RECT bound = element.Bound();
 
@@ -475,7 +478,7 @@ namespace sc {
 
 			cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
 
-			for (const FilledElement& element : elements)
+			for (const FilledElement& element : transformed_elements)
 			{
 				for (const FilledElementRegion region : element.fill)
 				{
@@ -502,6 +505,7 @@ namespace sc {
 				}
 			}
 
+			// Scale back
 			const Animate::DOM::Utils::MATRIX2D transform = {
 				1 / SCShapeWriter::RasterizationResolution,
 				0.0f,
@@ -511,7 +515,7 @@ namespace sc {
 				0
 			};
 
-			m_group.AddElement<SlicedItem>(m_symbol, wk::CreateRef<cv::Mat>(canvas), image_position_offset, slice);
+			m_group.AddElement<SlicedItem>(m_symbol, wk::CreateRef<cv::Mat>(canvas), transform, image_position_offset, element_guides);
 		}
 
 		void SCShapeWriter::RoundDomRectangle(Animate::DOM::Utils::RECT& rect)

@@ -33,7 +33,7 @@ namespace sc
 				return true;
 			}
 
-		private:
+		protected:
 			wk::Ref<cv::Mat> m_image;
 		};
 	}

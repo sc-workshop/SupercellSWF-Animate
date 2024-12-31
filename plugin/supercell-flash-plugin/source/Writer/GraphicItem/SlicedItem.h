@@ -14,8 +14,9 @@ namespace sc
 			SlicedItem(
 				Animate::Publisher::SymbolContext& context,
 				wk::Ref<cv::Mat> image,
+				const Animate::DOM::Utils::MATRIX2D& matrix,
 				const wk::Point& translation,
-				const Animate::Publisher::Slice9Element& element
+				const Animate::DOM::Utils::RECT& guides
 			);
 
 		public:
