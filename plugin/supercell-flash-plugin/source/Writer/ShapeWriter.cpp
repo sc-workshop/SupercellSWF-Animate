@@ -12,19 +12,19 @@ using namespace Animate::Publisher;
 
 namespace sc {
 	namespace Adobe {
-		void SCShapeWriter::AddGraphic(const Animate::Publisher::SpriteElement& item, const Animate::DOM::Utils::MATRIX2D& matrix) {
+		void SCShapeWriter::AddGraphic(const Animate::Publisher::BitmapElement& item) {
 			wk::Ref<cv::Mat> image = m_writer.GetBitmap(item);
 
-			m_group.AddItem<SpriteItem>(image, matrix);
+			m_group.AddElement<BitmapItem>(m_symbol, image, item.Transformation());
 		}
 
 		void SCShapeWriter::AddFilledElement(const Animate::Publisher::FilledElement& shape) {
 			for (const auto& region : shape.fill) {
-				AddFilledShapeRegion(region, shape.transformation);
+				AddFilledShapeRegion(region, shape.Transformation());
 			}
 
 			for (const auto& region : shape.stroke) {
-				AddFilledShapeRegion(region, shape.transformation);
+				AddFilledShapeRegion(region, shape.Transformation());
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace sc {
 				contours.emplace_back(triangle_shape);
 			}
 
-			m_group.AddItem<FilledItem>(contours, color);
+			m_group.AddElement<FilledItem>(m_symbol, contours, color);
 		}
 
 		void SCShapeWriter::AddRasterizedRegion(
@@ -319,7 +319,7 @@ namespace sc {
 			};
 
 			// Adding to group
-			m_group.AddItem<SpriteItem>(wk::CreateRef<cv::Mat>(canvas), transform);
+			m_group.AddElement<BitmapItem>(m_symbol, wk::CreateRef<cv::Mat>(canvas), transform);
 		}
 
 		bool SCShapeWriter::IsComplexShapeRegion(const FilledElementRegion& region)
@@ -400,7 +400,7 @@ namespace sc {
 				region.contour.Rasterize(points);
 
 				std::vector<FilledItemContour> contour = { FilledItemContour(points) };
-				m_group.AddItem<FilledItem>(contour, region.solid.color);
+				m_group.AddElement<FilledItem>(m_symbol, contour, region.solid.color);
 			}
 			else if (should_triangulate)
 			{
@@ -408,28 +408,29 @@ namespace sc {
 			}
 		}
 
-		void SCShapeWriter::AddSlicedElements(const std::vector<FilledElement>& _elements, const Animate::DOM::Utils::RECT& _guides)
+		void SCShapeWriter::AddSlicedElements(const Animate::Publisher::Slice9Element& slice)
 		{
 			// 9Slice sprites are usually very pixelated
 			// So we need to scale their resolution by 2
 			// But xy coordinates must be remains the same
 
 			// So first we create a bigger guide
-			Animate::DOM::Utils::RECT guides =
+			auto guides = slice.Guides();
+			Animate::DOM::Utils::RECT element_guides =
 			{
-				{_guides.topLeft.x * SCShapeWriter::RasterizationResolution, _guides.topLeft.y * SCShapeWriter::RasterizationResolution},
-				{_guides.bottomRight.x * SCShapeWriter::RasterizationResolution, _guides.bottomRight.y * SCShapeWriter::RasterizationResolution}
+				{guides.topLeft.x * SCShapeWriter::RasterizationResolution, guides.topLeft.y * SCShapeWriter::RasterizationResolution},
+				{guides.bottomRight.x * SCShapeWriter::RasterizationResolution, guides.bottomRight.y * SCShapeWriter::RasterizationResolution}
 			};
 
 			// Then create copy of element
 			// And make their points bigger
 			std::vector<FilledElement> elements;
-			for (const FilledElement& _element : _elements)
+			for (const FilledElement& _element : slice.Elements())
 			{
 				FilledElement& element = elements.emplace_back(_element);
 
 				element.Transform(
-					element.transformation
+					element.Transformation()
 				);
 
 				element.Transform(
@@ -510,7 +511,7 @@ namespace sc {
 				0
 			};
 
-			m_group.AddItem<SlicedItem>(wk::CreateRef<cv::Mat>(canvas), transform, guides, image_position_offset);
+			m_group.AddElement<SlicedItem>(m_symbol, wk::CreateRef<cv::Mat>(canvas), image_position_offset, slice);
 		}
 
 		void SCShapeWriter::RoundDomRectangle(Animate::DOM::Utils::RECT& rect)
@@ -547,7 +548,7 @@ namespace sc {
 
 			for (size_t i = 0; m_group.Size() > i; i++)
 			{
-				const GraphicItem& item = m_group.GetItem(i);
+				const GraphicItem& item = (const GraphicItem&)m_group[i];
 				code.update(item);
 			}
 
@@ -589,15 +590,15 @@ namespace wk::hash
 		template<typename T>
 		static void update(wk::hash::HashStream<T>& stream, const sc::Adobe::GraphicItem& item)
 		{
-			stream.update(item.Transformation());
+			stream.update(item.Transformation2D());
 			if (item.IsSprite())
 			{
-				const sc::Adobe::SpriteItem& sprite = (const sc::Adobe::SpriteItem&)item;
+				const sc::Adobe::BitmapItem& sprite = (const sc::Adobe::BitmapItem&)item;
 				const cv::Mat& image = sprite.Image();
 			
 				stream.update((const uint8_t*)image.data, image.total() * image.elemSize());
 			
-				if (sprite.IsSliced())
+				if (sprite.Is9Sliced())
 				{
 					const sc::Adobe::SlicedItem& sliced = (const sc::Adobe::SlicedItem&)item;
 					stream.update(sliced.Guides());

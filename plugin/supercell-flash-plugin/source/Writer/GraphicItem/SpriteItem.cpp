@@ -4,21 +4,18 @@ namespace sc
 {
 	namespace Adobe
 	{
-		wk::Matrix2D SpriteItem::init_matrix(const Animate::DOM::Utils::MATRIX2D& matrix)
+		BitmapItem::BitmapItem(
+			Animate::Publisher::SymbolContext& context,
+			wk::Ref<cv::Mat> image,
+			const Animate::DOM::Utils::MATRIX2D& matrix
+		) : GraphicItem(context), m_image(image)
 		{
-			wk::Matrix2D result;
-			result.a = matrix.a;
-			result.b = matrix.b;
-			result.c = matrix.c;
-			result.d = matrix.d;
-			result.tx = matrix.tx;
-			result.ty = matrix.ty;
+			m_matrix = matrix;
+		};
 
-			return result;
+		BitmapItem::BitmapItem(Animate::Publisher::SymbolContext& context) : GraphicItem(context)
+		{
+
 		}
-
-		SpriteItem::SpriteItem(wk::Ref<cv::Mat> image, const Animate::DOM::Utils::MATRIX2D& matrix)
-			: m_image(image), m_matrix(SpriteItem::init_matrix(matrix))
-		{};
 	}
 }

@@ -32,12 +32,13 @@ namespace sc
 		{
 		public:
 			FilledItem(
+				Animate::Publisher::SymbolContext& context,
 				const std::vector<FilledItemContour>& contour,
 				const Animate::DOM::Utils::COLOR& color,
-				const Animate::DOM::Utils::MATRIX2D& matrix = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }
+				const Animate::DOM::Utils::MATRIX2D& matrix = {}
 			) :
+				GraphicItem(context),
 				contours(contour),
-				m_matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty),
 				m_color(
 					color.blue,
 					color.green,
@@ -45,6 +46,7 @@ namespace sc
 					color.alpha
 				)
 			{
+				m_matrix = matrix;
 			};
 
 			virtual ~FilledItem() = default;
@@ -61,14 +63,9 @@ namespace sc
 				return m_color;
 			}
 
-			virtual wk::Matrix2D Transformation() const
-			{
-				return m_matrix;
-			}
-
 			const std::vector<FilledItemContour> contours;
+
 		private:
-			const wk::Matrix2D m_matrix;
 			cv::Scalar m_color;
 		};
 	}

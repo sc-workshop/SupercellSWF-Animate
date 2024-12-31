@@ -8,18 +8,20 @@ namespace sc
 {
 	namespace Adobe
 	{
-		class SlicedItem : public SpriteItem
+		class SlicedItem : public BitmapItem
 		{
 		public:
+			SlicedItem(
+				Animate::Publisher::SymbolContext& context,
+				wk::Ref<cv::Mat> image,
+				const wk::Point& translation,
+				const Animate::Publisher::Slice9Element& element
+			);
 
 		public:
-			SlicedItem(wk::Ref<cv::Mat> image, const Animate::DOM::Utils::MATRIX2D& matrix, const Animate::DOM::Utils::RECT guides, const wk::Point& translation);
-			virtual ~SlicedItem() = default;
-
-		public:
-			virtual bool IsSliced() const
+			const wk::Point& Translation() const
 			{
-				return true;
+				return m_translation;
 			}
 
 			const wk::Rect& Guides() const
@@ -27,16 +29,16 @@ namespace sc
 				return m_guides;
 			}
 
-			const wk::Point& Translation() const
+			virtual bool Is9Sliced() const
 			{
-				return m_translation;
+				return true;
 			}
 
 			static wk::Rect RoundScalingGrid(const Animate::DOM::Utils::RECT&);
 
 		private:
-			wk::Rect m_guides;
 			wk::Point m_translation;
+			wk::Rect m_guides;
 		};
 	}
 }

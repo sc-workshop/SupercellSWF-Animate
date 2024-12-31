@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AnimatePublisher.h"
-#include "GraphicItem/GraphicGroup.h"
 
 #include "core/math/point.h"
 
@@ -13,15 +12,15 @@ namespace sc {
 		public:
 			SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) :
 				Animate::Publisher::SharedShapeWriter(symbol),
-				m_writer(writer), m_group(symbol) {};
+				m_writer(writer) {};
 			virtual ~SCShapeWriter() = default;
 
 			const float RasterizationResolution = 2.f;
 
 		public:
-			virtual void AddGraphic(const Animate::Publisher::SpriteElement& item, const Animate::DOM::Utils::MATRIX2D& matrix);
+			virtual void AddGraphic(const Animate::Publisher::BitmapElement& item);
 			virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape);
-			virtual void AddSlicedElements(const std::vector<Animate::Publisher::FilledElement>& elements, const Animate::DOM::Utils::RECT& guides);
+			virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice);
 
 			virtual bool Finalize(uint16_t id, bool required);
 
@@ -58,7 +57,7 @@ namespace sc {
 
 		private:
 			SCWriter& m_writer;
-			GraphicGroup m_group;
+			Animate::Publisher::StaticElementsGroup m_group;
 		};
 	}
 }

@@ -8,11 +8,17 @@
 #include <filesystem>
 #include <opencv2/opencv.hpp>
 
-#include "GraphicItem/GraphicGroup.h"
+#include "Writer/GraphicItem/GraphicItem.h"
+#include "Writer/GraphicItem/FilledItem.h"
+#include "Writer/GraphicItem/SlicedItem.h"
+#include "Writer/GraphicItem/SpriteItem.h"
 
 namespace sc {
 	namespace Adobe {
 		class SCWriter : public Animate::Publisher::SharedWriter {
+		public:
+			using GraphicGroup = Animate::Publisher::StaticElementsGroup;
+
 		public:
 			SCWriter();
 			virtual ~SCWriter();
@@ -34,7 +40,7 @@ namespace sc {
 			flash::SupercellSWF swf;
 
 		public:
-			wk::Ref<cv::Mat> GetBitmap(const Animate::Publisher::SpriteElement& item);
+			wk::Ref<cv::Mat> GetBitmap(const Animate::Publisher::BitmapElement& item);
 
 			void AddGraphicGroup(const GraphicGroup& group);
 
@@ -61,7 +67,7 @@ namespace sc {
 			void ProcessSpriteItem(
 				flash::Shape& shape,
 				wk::AtlasGenerator::Item& atlas_item,
-				SpriteItem& sprite_item
+				BitmapItem& sprite_item
 			);
 
 			void ProcessFilledItem(

@@ -61,13 +61,8 @@ namespace sc {
 					publishing_ui.lock();
 					context.logger->info("Starting publishing...");
 
-					// Removes Exception catch in debug mode
-
-//#if !(WK_DEBUG)
 					try {
-//#endif
 						DoPublish();
-//#if !(WK_DEBUG)
 					}
 					catch (const FCM::FCMPluginException& exception)
 					{
@@ -92,7 +87,6 @@ namespace sc {
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
-//#endif
 					publishing_ui.unlock();
 				}
 			);
@@ -126,9 +120,10 @@ namespace sc {
 			);
 
 			{
-				FCM::StringRep16 document_path_str = nullptr;
-				config.activeDocument->GetPath(&document_path_str);
-				fs::path document_path(std::u16string((const char16_t*)document_path_str));
+				fs::path document_path = context.falloc->GetString16(
+					config.activeDocument,
+					&Animate::DOM::IFLADocument::GetPath
+				);
 
 				publishStatus->SetStatusLabel(
 					context.locale.GetString(
@@ -136,8 +131,6 @@ namespace sc {
 						document_path.filename().u16string().c_str()
 					)
 				);
-
-				context.falloc->Free(document_path_str);
 
 				publisher.PublishDocument(config.activeDocument);
 			}

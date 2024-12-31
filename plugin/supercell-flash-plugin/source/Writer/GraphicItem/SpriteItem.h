@@ -3,6 +3,8 @@
 #include "GraphicItem.h"
 
 #include "AnimateDOM.h"
+#include "AnimatePublisher.h"
+#include "core/memory/ref.h"
 #include <opencv2/opencv.hpp>
 #include <filesystem>
 
@@ -10,32 +12,29 @@ namespace sc
 {
 	namespace Adobe
 	{
-		class SpriteItem : public GraphicItem
+		class BitmapItem : public GraphicItem
 		{
 		public:
-			SpriteItem(wk::Ref<cv::Mat> image, const Animate::DOM::Utils::MATRIX2D& matrix);
-			virtual ~SpriteItem() = default;
+			BitmapItem(
+				Animate::Publisher::SymbolContext& context,
+				wk::Ref<cv::Mat> image, 
+				const Animate::DOM::Utils::MATRIX2D& matrix
+			);
+
+			BitmapItem(Animate::Publisher::SymbolContext& context);
+
+			virtual ~BitmapItem() = default;
 
 		public:
-			virtual wk::Matrix2D Transformation() const
-			{
-				return m_matrix;
-			}
+			virtual const cv::Mat& Image() const { return *m_image; }
 
 			virtual bool IsSprite() const
 			{
 				return true;
 			}
 
-		public:
-			virtual const cv::Mat& Image() const { return *m_image; }
-
-		private:
-			static wk::Matrix2D init_matrix(const Animate::DOM::Utils::MATRIX2D& matrix);
-
 		private:
 			wk::Ref<cv::Mat> m_image;
-			wk::Matrix2D m_matrix;
 		};
 	}
 }

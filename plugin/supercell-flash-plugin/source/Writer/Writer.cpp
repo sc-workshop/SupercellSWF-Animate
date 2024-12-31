@@ -167,7 +167,7 @@ namespace sc {
 			using namespace wk;
 			using namespace wk::AtlasGenerator;
 
-			wk::Matrix2D matrix = item.Transformation();
+			wk::Matrix2D matrix = item.Transformation2D();
 
 			for (flash::ShapeDrawBitmapCommandVertex& vertex : command.vertices)
 			{
@@ -212,7 +212,7 @@ namespace sc {
 		void SCWriter::ProcessSpriteItem(
 			flash::Shape & shape,
 			wk::AtlasGenerator::Item& atlas_item,
-			SpriteItem& sprite_item
+			BitmapItem& sprite_item
 		)
 		{
 			ProcessVertices(shape, atlas_item.vertices, atlas_item, sprite_item);
@@ -290,15 +290,15 @@ namespace sc {
 			{
 				for (size_t i = 0; group.Size() > i; i++)
 				{
-					GraphicItem& item = group.GetItem(i);
+					GraphicItem& item = (GraphicItem&)group[i];
 
 					if (item.IsSprite())
 					{
-						SpriteItem& sprite_item = (SpriteItem&)item;
+						BitmapItem& sprite_item = (BitmapItem&)item;
 
 						items.emplace_back(
 							sprite_item.Image(),
-							item.IsSliced()
+							item.Is9Sliced()
 						);
 					}
 					else if (item.IsSolidColor())
@@ -377,19 +377,24 @@ namespace sc {
 						GraphicGroup& group = m_graphic_groups[group_index];
 						for (size_t group_item_index = 0; group.Size() > group_item_index; group_item_index++)
 						{
-							if (atlas_item_index == exception.index()) goto RESULT_GROUP;
+							if (atlas_item_index == exception.index())
+							{
+								symbol_name = m_graphic_groups[group_index][group_item_index].Symbol().name;
+								goto FINALIZE_THROW;
+							};
 
 							atlas_item_index++;
 						}
 					}
-				RESULT_GROUP:
-					symbol_name = m_graphic_groups[group_index].symbol.name;
+				
+					
 				}
 				else
 				{
 					symbol_name = context.locale.GetString("TID_SWF_ATLAS_UNKNOWN_SYMBOL");
 				}
 
+			FINALIZE_THROW:
 				throw SCPluginException(
 					Localization::Format(
 						u"[AtlasGenerator] %ls %ls", reason.c_str(), symbol_name.c_str()
@@ -442,11 +447,11 @@ namespace sc {
 				for (uint32_t group_item_index = 0; group.Size() > group_item_index; group_item_index++)
 				{
 					AtlasGenerator::Item& atlas_item = items[command_index];
-					GraphicItem& item = group.GetItem(group_item_index);
+					GraphicItem& item = (GraphicItem&)group[group_item_index];
 
 					if (item.IsSprite())
 					{
-						if (item.IsSliced())
+						if (item.Is9Sliced())
 						{
 							SlicedItem& sliced_item = *(SlicedItem*)&item;
 							ProcessSlicedItem(
@@ -455,7 +460,7 @@ namespace sc {
 						}
 						else
 						{
-							SpriteItem& sprite_item = *(SpriteItem*)&item;
+							BitmapItem& sprite_item = *(BitmapItem*)&item;
 							ProcessSpriteItem(
 								shape, atlas_item, sprite_item
 							);
@@ -552,7 +557,7 @@ namespace sc {
 			context.Window()->DestroyStatusBar(status);
 		}
 
-		wk::Ref<cv::Mat> SCWriter::GetBitmap(const SpriteElement& item)
+		wk::Ref<cv::Mat> SCWriter::GetBitmap(const BitmapElement& item)
 		{
 			const std::u16string& name = item.Name();
 

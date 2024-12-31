@@ -126,17 +126,10 @@ namespace sc {
 		{
 			FCM::PluginModule& context = FCM::PluginModule::Instance();
 
-			fs::path documentPath;
-			{
-				FCM::StringRep16 documentPathPtr;
-				activeDocument->GetPath(&documentPathPtr);
-				
-				if (documentPathPtr)
-				{
-					documentPath = fs::path((const char16_t*)documentPathPtr);
-					context.falloc->Free(documentPathPtr);
-				}
-			}
+			fs::path documentPath = context.falloc->GetString16(
+				activeDocument,
+				&Animate::DOM::IFLADocument::GetPath
+			);
 
 			if (outputFilepath.empty())
 			{

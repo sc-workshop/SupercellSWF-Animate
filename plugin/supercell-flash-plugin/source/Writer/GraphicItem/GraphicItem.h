@@ -1,52 +1,41 @@
 #pragma once
 
-#include "core/math/matrix2d.h"
-#include "core/hashing/hash_stream.h"
-#include "core/hashing/hash.h"
-#include "core/exception/exception.h"
+#include "AnimatePublisher.h"
 #include "opencv2/opencv.hpp"
+#include "core/exception/exception.h"
+#include "core/math/matrix2d.h"
 
-namespace sc
+namespace sc::Adobe
 {
-	namespace Adobe
+	class GraphicItem : public Animate::Publisher::StaticElement
 	{
-		class GraphicItem
+	public:
+		GraphicItem(Animate::Publisher::SymbolContext& context) : Animate::Publisher::StaticElement(context) {};
+
+	public:
+		virtual bool IsSolidColor() const
 		{
-		public:
-			virtual ~GraphicItem() = default;
+			return false;
+		}
 
-		public:
-			virtual wk::Matrix2D Transformation() const
-			{
-				// Returns none transform
-				return {};
-			}
+		virtual const cv::Mat& Image() const
+		{
+			throw wk::Exception();
+		}
 
-		public:
-			virtual bool IsSprite() const
-			{
-				return false;
-			}
+		virtual const cv::Scalar& Color() const
+		{
+			throw wk::Exception();
+		}
 
-			virtual bool IsSliced() const
-			{
-				return false;
-			}
+		wk::Matrix2D Transformation2D() const
+		{
+			auto m = Transformation();
 
-			virtual bool IsSolidColor() const
-			{
-				return false;
-			}
-
-			virtual const cv::Mat& Image() const
-			{
-				throw wk::Exception();
-			}
-
-			virtual const cv::Scalar& Color() const
-			{
-				throw wk::Exception();
-			}
-		};
-	}
+			return wk::Matrix2D(
+				m.a, m.b, m.c, m.d,
+				m.tx, m.ty
+			);
+		}
+	};
 }
