@@ -11,16 +11,16 @@ namespace sc {
 		bool PluginWindowApp::OnInit() {
 			SCPlugin& context = SCPlugin::Instance();
 			
-			FCM::StringRep16 documentPathPtr;
-			
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
-			config.activeDocument->GetPath(&documentPathPtr);
+			fs::path documentPath = context.falloc->GetString16(
+				config.activeDocument,
+				&Animate::DOM::IFLADocument::GetPath
+			);
 			
 			fs::path documentName = "Untitled";
-			if (documentPathPtr)
+			if (!documentPath.empty())
 			{
-				documentName = fs::path((const char16_t*)documentPathPtr).filename();
-				context.falloc->Free(documentPathPtr);
+				documentName = fs::path(documentPath).filename();
 			}
 			
 			context.logger->info("Document name: {}", documentName.string());
