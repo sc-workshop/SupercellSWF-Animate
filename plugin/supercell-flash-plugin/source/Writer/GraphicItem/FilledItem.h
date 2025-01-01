@@ -40,9 +40,9 @@ namespace sc
 				GraphicItem(context),
 				contours(contour),
 				m_color(
-					color.blue,
-					color.green,
 					color.red,
+					color.green,
+					color.blue,
 					color.alpha
 				)
 			{
