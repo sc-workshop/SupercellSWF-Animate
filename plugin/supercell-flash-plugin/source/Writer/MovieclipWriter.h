@@ -46,7 +46,7 @@ namespace sc {
 				std::optional<Animate::DOM::Utils::COLOR_MATRIX> color
 			);
 
-			virtual bool Finalize(uint16_t id, bool required);
+			virtual bool Finalize(uint16_t id, bool required, bool new_symbol);
 
 		protected:
 			virtual std::size_t GenerateHash() const;

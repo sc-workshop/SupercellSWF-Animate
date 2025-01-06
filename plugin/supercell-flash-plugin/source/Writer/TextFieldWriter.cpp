@@ -115,10 +115,7 @@ namespace sc::Adobe {
 	void SCTextFieldWriter::SetGlowFilter(const GlowFilter& filter)
 	{
 		m_object.is_outlined = true;
-		m_object.outline_color = (static_cast<uint32_t>(filter.color.red) << 24) |
-			(static_cast<uint32_t>(filter.color.green) << 16) |
-			(static_cast<uint32_t>(filter.color.blue) << 8) |
-			static_cast<uint32_t>(filter.color.alpha);
+		m_object.outline_color = *(uint32_t*)&filter.color;
 	}
 
 	std::size_t SCTextFieldWriter::GenerateHash() const
@@ -158,7 +155,7 @@ namespace sc::Adobe {
 		return code.digest();
 	}
 
-	bool SCTextFieldWriter::Finalize(uint16_t id, bool /*required*/)
+	bool SCTextFieldWriter::Finalize(uint16_t id, bool /*required*/, bool /*new_symbol*/)
 	{
 		m_object.id = id;
 		m_writer.swf.textfields.push_back(m_object);

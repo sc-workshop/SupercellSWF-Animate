@@ -166,77 +166,67 @@ namespace sc {
 					result.y = (shrink_point.y - local_offset.y) * std::pow(2, contour_shift);
 				}
 			};
-
-				// Contour
-				{
+			
+			// Contour
+			{
 					std::vector<cv::Point> points;
-					process_points(region.contour, points);
-
+				process_points(region.contour, points);
+				
 					cv::fillPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
 					//cv::drawContours(canvas_mask, points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
-				}
-
+			}
+			
+			{
+				for (const auto& path : region.holes)
 				{
-					for (const auto& path : region.holes)
-					{
 						std::vector<cv::Point> path_points;
 						process_points(path, path_points);
-
+					
 						//cv::drawContours(canvas_mask, path_points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
 						cv::fillPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
-					}
-
-#ifdef CV_DEBUG
-					cv::imshow("Contour Holes", canvas_mask);
-					cv::waitKey(0);
-#endif
 				}
+			}
 
-				cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
+			cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
 
-				// Filling
-				switch (region.type)
-				{
-				case Animate::Publisher::FilledElementRegion::ShapeType::SolidColor:
-				{
-					const cv::Scalar color(
-						region.solid.color.blue,
-						region.solid.color.green,
-						region.solid.color.red,
-						region.solid.color.alpha
-					);
+			// Filling
+			switch (region.type)
+			{
+			case Animate::Publisher::FilledElementRegion::ShapeType::SolidColor:
+			{
+				const cv::Scalar color(
+					region.solid.color.blue,
+					region.solid.color.green,
+					region.solid.color.red,
+					region.solid.color.alpha
+				);
 
-					filling_image.setTo(color);
-				}
+				filling_image.setTo(color);
+			}
+			break;
+			default:
 				break;
-				default:
-					break;
-				}
+			}
 
-				for (int h = 0; filling_size.height > h; h++)
+			for (int h = 0; filling_size.height > h; h++)
+			{
+				for (int w = 0; filling_size.width > w; w++)
 				{
-					for (int w = 0; filling_size.width > w; w++)
-					{
-						cv::Vec4b& origin = canvas.at<cv::Vec4b>(global_offset.y + h, global_offset.x + w);
-						cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
-						uchar& mask_alpha = canvas_mask.at<uchar>(h, w);
+					cv::Vec4b& origin = canvas.at<cv::Vec4b>(global_offset.y + h, global_offset.x + w);
+					cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
+					uchar& mask_alpha = canvas_mask.at<uchar>(h, w);
 
-						if (destination[3] == 0) continue;
+					if (destination[3] == 0) continue;
 
-						destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
+					destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
 
-						origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
-						origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
-						origin[2] = (origin[2] * (255 - destination[3]) + destination[2] * destination[3]) / 255;
+					origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
+					origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
+					origin[2] = (origin[2] * (255 - destination[3]) + destination[2] * destination[3]) / 255;
 
-						origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
-					}
+					origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
 				}
-
-#ifdef CV_DEBUG
-				cv::imshow("Canvas Fill", canvas);
-				cv::waitKey(0);
-#endif
+			}
 		}
 
 		void SCShapeWriter::AddRasterizedRegion(
@@ -559,7 +549,7 @@ namespace sc {
 			return code.digest();
 		}
 
-		bool SCShapeWriter::Finalize(uint16_t id, bool required) {
+		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool /*new_symbol*/) {
 			if (m_group.Size() == 0)
 			{
 				if (required)
