@@ -16,8 +16,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(AnimateSDK)
 
-set(BUILD_ATLAS_GENERATOR_WITH_IMAGE_CODECS ON)
-set(BUILD_ATLAS_GENERATOR_CLI OFF)
 # AtlasGenerator
 FetchContent_Declare(
     AtlasGenerator
@@ -62,3 +60,14 @@ FetchContent_Declare(
     GIT_TAG v1.15.0
 )
 FetchContent_MakeAvailable(spdlog)
+
+FetchContent_Declare(
+    blend2d
+    URL https://blend2d.com/download/blend2d-0.11.5-all.tar.gz
+    URL_HASH SHA256=a38d61e498981a3ea944b5a8a4d7e6895019fc610931a0e70328ccc2631fc8aa
+)
+FetchContent_MakeAvailable(blend2d)
+
+set(BLEND2D_DIR ${blend2d_SOURCE_DIR}/blend2d)
+set(BLEND2D_STATIC TRUE)
+add_subdirectory(${BLEND2D_DIR})

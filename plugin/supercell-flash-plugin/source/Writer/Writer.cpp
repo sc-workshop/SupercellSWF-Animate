@@ -8,6 +8,7 @@
 
 #include "atlas_generator/Generator.h"
 #include "atlas_generator/PackagingException.h"
+#include "core/stb/stb.h"
 
 using namespace Animate::Publisher;
 
@@ -405,15 +406,10 @@ namespace sc {
 			context.Window()->DestroyStatusBar(status);
 
 			for (uint16_t i = 0; texture_count > i; i++) {
-				cv::Mat& atlas = generator.get_atlas(i);
-
-				cv::cvtColor(atlas, atlas, cv::COLOR_BGRA2RGBA);
+				wk::RawImage& atlas = generator.get_atlas(i);
 
 				flash::SWFTexture& texture = swf.textures.emplace_back();
-				size_t textureDataSize = atlas.total() * atlas.elemSize();
-				SharedMemoryStream textureData(atlas.ptr(), textureDataSize);
-				texture.load_from_buffer(textureData, atlas.cols, atlas.rows, flash::SWFTexture::PixelFormat::RGBA8);
-
+				texture.load_from_image(atlas);
 				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
 				{
 					switch (config.textureQuality)
@@ -557,7 +553,7 @@ namespace sc {
 			context.Window()->DestroyStatusBar(status);
 		}
 
-		wk::Ref<cv::Mat> SCWriter::GetBitmap(const BitmapElement& item)
+		wk::RawImageRef SCWriter::GetBitmap(const BitmapElement& item)
 		{
 			const std::u16string& name = item.Name();
 
@@ -568,7 +564,10 @@ namespace sc {
 
 			item.ExportImage(sprite_temp_path);
 
-			wk::Ref<cv::Mat> image = wk::CreateRef<cv::Mat>(cv::imread(sprite_temp_path.string(), cv::IMREAD_UNCHANGED));
+			wk::RawImageRef image;
+			wk::InputFileStream file(sprite_temp_path);
+			wk::stb::load_image(file, image);
+
 			m_cached_images[name] = image;
 
 			return image;

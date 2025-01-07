@@ -1,9 +1,9 @@
 #pragma once
 
 #include "AnimatePublisher.h"
-#include "opencv2/opencv.hpp"
 #include "core/exception/exception.h"
 #include "core/math/matrix2d.h"
+#include "core/image/raw_image.h"
 
 namespace sc::Adobe
 {
@@ -18,12 +18,12 @@ namespace sc::Adobe
 			return false;
 		}
 
-		virtual const cv::Mat& Image() const
+		virtual const wk::RawImage& Image() const
 		{
 			throw wk::Exception();
 		}
 
-		virtual const cv::Scalar& Color() const
+		virtual const wk::ColorRGBA& Color() const
 		{
 			throw wk::Exception();
 		}

@@ -18,13 +18,14 @@ set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "Plugin")
 set_target_properties(${TARGET} PROPERTIES SUFFIX ".fcm")
 
 target_link_libraries(${TARGET} PUBLIC 
-    wk::atlasGenerator
-    wx::core wx::base
-    supercell::flash
-    spdlog::spdlog
-    Adobe::Animate
-    fmt::fmt
-    CDT
+    wk::atlasGenerator # Texture generate
+    wx::core wx::base  # Status bar
+    supercell::flash   # File writer
+    blend2d::blend2d   # Vector rasterizer
+    spdlog::spdlog     # Logging
+    Adobe::Animate     # Adobe Animate API
+    fmt::fmt           # String format
+    CDT                # Vector triangulation
 )
 
 target_include_directories(${TARGET}

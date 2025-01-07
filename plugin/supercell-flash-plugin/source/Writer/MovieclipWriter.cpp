@@ -215,7 +215,7 @@ namespace sc {
 			return code.digest();
 		}
 
-		bool SCMovieclipWriter::Finalize(uint16_t id, bool required, bool new_symbol) {
+		bool SCMovieclipWriter::Finalize(uint16_t id, bool required, bool /*new_symbol*/) {
 			m_object.id = id;
 
 			if (m_symbol.linkage_name.empty())

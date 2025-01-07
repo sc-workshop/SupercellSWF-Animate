@@ -6,7 +6,7 @@ namespace sc
 	{
 		SlicedItem::SlicedItem(
 			Animate::Publisher::SymbolContext& context,
-			wk::Ref<cv::Mat> image, 
+			wk::RawImageRef image, 
 			const Animate::DOM::Utils::MATRIX2D& matrix,
 			const wk::Point& translation,
 			const Animate::DOM::Utils::RECT& guides

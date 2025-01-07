@@ -3,7 +3,6 @@
 #include "AnimatePublisher.h"
 #include "GraphicItem.h"
 
-#include <opencv2/opencv.hpp>
 namespace sc
 {
 	namespace Adobe
@@ -58,7 +57,7 @@ namespace sc
 			}
 
 		public:
-			virtual const cv::Scalar& Color() const
+			virtual const wk::ColorRGBA& Color() const
 			{
 				return m_color;
 			}
@@ -66,7 +65,7 @@ namespace sc
 			const std::vector<FilledItemContour> contours;
 
 		private:
-			cv::Scalar m_color;
+			wk::ColorRGBA m_color;
 		};
 	}
 }

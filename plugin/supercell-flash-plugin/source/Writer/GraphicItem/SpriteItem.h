@@ -5,7 +5,7 @@
 #include "AnimateDOM.h"
 #include "AnimatePublisher.h"
 #include "core/memory/ref.h"
-#include <opencv2/opencv.hpp>
+#include "core/image/raw_image.h"
 #include <filesystem>
 
 namespace sc
@@ -17,7 +17,7 @@ namespace sc
 		public:
 			BitmapItem(
 				Animate::Publisher::SymbolContext& context,
-				wk::Ref<cv::Mat> image, 
+				wk::RawImageRef image,
 				const Animate::DOM::Utils::MATRIX2D& matrix
 			);
 
@@ -26,7 +26,7 @@ namespace sc
 			virtual ~BitmapItem() = default;
 
 		public:
-			virtual const cv::Mat& Image() const { return *m_image; }
+			virtual const wk::RawImage& Image() const { return *m_image; }
 
 			virtual bool IsSprite() const
 			{
@@ -34,7 +34,7 @@ namespace sc
 			}
 
 		protected:
-			wk::Ref<cv::Mat> m_image;
+			wk::RawImageRef m_image;
 		};
 	}
 }

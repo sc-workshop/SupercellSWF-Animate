@@ -6,7 +6,7 @@ namespace sc
 	{
 		BitmapItem::BitmapItem(
 			Animate::Publisher::SymbolContext& context,
-			wk::Ref<cv::Mat> image,
+			wk::RawImageRef image,
 			const Animate::DOM::Utils::MATRIX2D& matrix
 		) : GraphicItem(context), m_image(image)
 		{

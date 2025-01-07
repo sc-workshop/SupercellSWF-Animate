@@ -34,16 +34,16 @@ namespace sc {
 				const Animate::DOM::Utils::COLOR& color
 			);
 
-			void AddRasterizedRegion(
-				const Animate::Publisher::FilledElementRegion& region,
-				cv::Mat& canvas,
-				Animate::DOM::Utils::RECT bound,
-				wk::Point offset = { 0, 0 }
-			);
-
-			void AddRasterizedRegion(
-				const Animate::Publisher::FilledElementRegion& region
-			);
+			//void AddRasterizedRegion(
+			//	const Animate::Publisher::FilledElementRegion& region,
+			//	wk::RawImage& canvas,
+			//	Animate::DOM::Utils::RECT bound,
+			//	wk::Point offset = { 0, 0 }
+			//);
+			//
+			//void AddRasterizedRegion(
+			//	const Animate::Publisher::FilledElementRegion& region
+			//);
 
 		public:
 			void AddFilledShapeRegion(const Animate::Publisher::FilledElementRegion& region, const Animate::DOM::Utils::MATRIX2D& matrix);

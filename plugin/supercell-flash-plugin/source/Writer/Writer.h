@@ -6,7 +6,6 @@
 #include "core/memory/ref.h"
 
 #include <filesystem>
-#include <opencv2/opencv.hpp>
 
 #include "Writer/GraphicItem/GraphicItem.h"
 #include "Writer/GraphicItem/FilledItem.h"
@@ -40,7 +39,7 @@ namespace sc {
 			flash::SupercellSWF swf;
 
 		public:
-			wk::Ref<cv::Mat> GetBitmap(const Animate::Publisher::BitmapElement& item);
+			wk::RawImageRef GetBitmap(const Animate::Publisher::BitmapElement& item);
 
 			void AddGraphicGroup(const GraphicGroup& group);
 
@@ -88,7 +87,7 @@ namespace sc {
 			std::vector<GraphicGroup> m_graphic_groups;
 
 			// Name / Image
-			std::unordered_map<std::u16string, wk::Ref<cv::Mat>> m_cached_images;
+			std::unordered_map<std::u16string, wk::RawImageRef> m_cached_images;
 		};
 	}
 }
