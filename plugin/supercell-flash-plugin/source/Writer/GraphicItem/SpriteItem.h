@@ -18,7 +18,8 @@ namespace sc
 			BitmapItem(
 				Animate::Publisher::SymbolContext& context,
 				wk::RawImageRef image,
-				const Animate::DOM::Utils::MATRIX2D& matrix
+				const Animate::DOM::Utils::MATRIX2D& matrix,
+				bool rasterized = false
 			);
 
 			BitmapItem(Animate::Publisher::SymbolContext& context);
@@ -33,8 +34,11 @@ namespace sc
 				return true;
 			}
 
+			bool IsRasterizedVector() const { return m_is_rasterized; }
+
 		protected:
 			wk::RawImageRef m_image;
+			bool m_is_rasterized = false;
 		};
 	}
 }

@@ -7,8 +7,9 @@ namespace sc
 		BitmapItem::BitmapItem(
 			Animate::Publisher::SymbolContext& context,
 			wk::RawImageRef image,
-			const Animate::DOM::Utils::MATRIX2D& matrix
-		) : GraphicItem(context), m_image(image)
+			const Animate::DOM::Utils::MATRIX2D& matrix,
+			bool rasterized
+		) : GraphicItem(context), m_image(image), m_is_rasterized(rasterized)
 		{
 			m_matrix = matrix;
 		};

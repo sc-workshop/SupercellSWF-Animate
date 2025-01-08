@@ -243,6 +243,15 @@ namespace sc {
 			{
 				ProcessVertices(shape, region, atlas_item, sliced_item);
 			}
+
+			for (auto& command : shape.commands)
+			{
+				for (auto& vertex : command.vertices)
+				{
+					vertex.x = std::floor(vertex.x);
+					vertex.y = std::floor(vertex.y);
+				}
+			}
 		}
 
 		void SCWriter::ProcessFilledItem(
@@ -297,10 +306,16 @@ namespace sc {
 					{
 						BitmapItem& sprite_item = (BitmapItem&)item;
 
-						items.emplace_back(
+						auto& atlas_item = items.emplace_back(
 							sprite_item.Image(),
 							item.Is9Sliced()
 						);
+
+						if (sprite_item.IsRasterizedVector() || item.Is9Sliced())
+						{
+							// Rasterized sprites already has premultiplied alpha so no need to preprocess it
+							atlas_item.mark_as_preprocessed();
+						}
 					}
 					else if (item.IsSolidColor())
 					{

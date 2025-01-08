@@ -6,11 +6,22 @@
 
 #include "core/hashing/ncrypto/xxhash.h"
 #include "core/hashing/hash.h"
+#include "core/stb/stb.h"
 
 using namespace Animate::Publisher;
 
 namespace sc {
 	namespace Adobe {
+
+		static inline void bl_assert(BLResult result)
+		{
+			if (result != BL_SUCCESS)
+			{
+				BLResultCode code = (BLResultCode)result;
+				assert(code == BL_SUCCESS);
+			}
+		}
+
 		void SCShapeWriter::AddGraphic(const Animate::Publisher::BitmapElement& item) {
 			wk::RawImageRef image = m_writer.GetBitmap(item);
 
@@ -95,7 +106,7 @@ namespace sc {
 						{point3.x, point3.y},
 						{point3.x, point3.y},
 					}
-				);
+					);
 
 				contours.emplace_back(triangle_shape);
 			}
@@ -103,213 +114,112 @@ namespace sc {
 			m_group.AddElement<FilledItem>(m_symbol, contours, color);
 		}
 
-		//void SCShapeWriter::AddRasterizedRegion(
-		//	const Animate::Publisher::FilledElementRegion& region,
-		//	cv::Mat& canvas,
-		//	Animate::DOM::Utils::RECT bound,
-		//	wk::Point position
-		//)
-		//{
-		//	// Corner of current region
-		//	wk::Point local_offset(bound.bottomRight.x, bound.bottomRight.y);
-		//
-		//	// Distance between shape and region corners
-		//	wk::Point global_offset(abs(local_offset.x - position.x), abs(local_offset.y - position.y));
-		//
-		//	// Size of image to fill
-		//	cv::Size filling_size(abs(bound.bottomRight.x - bound.topLeft.x), abs(bound.bottomRight.y - bound.topLeft.y));
-		//
-		//	// Creating fill mask
-		//	cv::Mat canvas_mask(filling_size, CV_8UC1, cv::Scalar(0x00));
-		//
-		//	const int contour_shift = 8;
-		//
-		//	auto process_points = [
-		//		canvas, &local_offset, &contour_shift
-		//	](const Animate::Publisher::FilledElementPath& path, std::vector<cv::Point>& points)
-		//	{
-		//		std::vector<Animate::Publisher::Point2D> rasterized;
-		//		path.Rasterize(rasterized);
-		//
-		//		Animate::Publisher::Point2D center_min(std::numeric_limits<float>().min(), std::numeric_limits<float>().min());
-		//		Animate::Publisher::Point2D center_max(std::numeric_limits<float>().max(), std::numeric_limits<float>().max());
-		//
-		//		for (const auto& curve_point : rasterized)
-		//		{
-		//			center_min.x = std::min(curve_point.x, center_min.x);
-		//			center_min.y = std::min(curve_point.y, center_min.y);
-		//
-		//			center_max.x = std::max(curve_point.x, center_min.x);
-		//			center_max.y = std::max(curve_point.y, center_min.y);
-		//		}
-		//
-		//		Animate::Publisher::Point2D centroid((center_max.x + center_min.x) / 2, (center_max.y + center_min.y) / 2);
-		//
-		//		for (const auto& point : rasterized)
-		//		{
-		//			float dx = point.x - centroid.x;
-		//			float dy = point.y - centroid.y;
-		//
-		//			float length = std::sqrt(dx * dx + dy * dy);
-		//
-		//			// Normalize the vector (to have a length of 1)
-		//			float unitDx = dx / length;
-		//			float unitDy = dy / length;
-		//
-		//			const float distance = -1.0f;
-		//
-		//			Animate::Publisher::Point2D shrink_point(point.x + unitDx * distance, point.y + unitDy * distance);
-		//
-		//			cv::Point& result = points.emplace_back();
-		//			result.x = (shrink_point.x - local_offset.x) * std::pow(2, contour_shift);
-		//			result.y = (shrink_point.y - local_offset.y) * std::pow(2, contour_shift);
-		//		}
-		//	};
-		//	
-		//	// Contour
-		//	{
-		//			std::vector<cv::Point> points;
-		//		process_points(region.contour, points);
-		//		
-		//			cv::fillPoly(canvas_mask, points, cv::Scalar(0xFF), cv::LINE_AA, contour_shift);
-		//			//cv::drawContours(canvas_mask, points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
-		//	}
-		//	
-		//	{
-		//		for (const auto& path : region.holes)
-		//		{
-		//				std::vector<cv::Point> path_points;
-		//				process_points(path, path_points);
-		//			
-		//				//cv::drawContours(canvas_mask, path_points, -1, cv::Scalar(0xFF), cv::FILLED, cv::LINE_AA);
-		//				cv::fillPoly(canvas_mask, path_points, cv::Scalar(0x00), cv::LINE_AA, contour_shift);
-		//		}
-		//	}
-		//
-		//	cv::Mat filling_image(canvas.size(), CV_8UC4, cv::Scalar(0x00000000));
-		//
-		//	// Filling
-		//	switch (region.type)
-		//	{
-		//	case Animate::Publisher::FilledElementRegion::ShapeType::SolidColor:
-		//	{
-		//		const cv::Scalar color(
-		//			region.solid.color.blue,
-		//			region.solid.color.green,
-		//			region.solid.color.red,
-		//			region.solid.color.alpha
-		//		);
-		//
-		//		filling_image.setTo(color);
-		//	}
-		//	break;
-		//	default:
-		//		break;
-		//	}
-		//
-		//	for (int h = 0; filling_size.height > h; h++)
-		//	{
-		//		for (int w = 0; filling_size.width > w; w++)
-		//		{
-		//			cv::Vec4b& origin = canvas.at<cv::Vec4b>(global_offset.y + h, global_offset.x + w);
-		//			cv::Vec4b& destination = filling_image.at<cv::Vec4b>(h, w);
-		//			uchar& mask_alpha = canvas_mask.at<uchar>(h, w);
-		//
-		//			if (destination[3] == 0) continue;
-		//
-		//			destination[3] = (uchar)std::clamp(destination[3], 0ui8, mask_alpha);
-		//
-		//			origin[0] = (origin[0] * (255 - destination[3]) + destination[0] * destination[3]) / 255;
-		//			origin[1] = (origin[1] * (255 - destination[3]) + destination[1] * destination[3]) / 255;
-		//			origin[2] = (origin[2] * (255 - destination[3]) + destination[2] * destination[3]) / 255;
-		//
-		//			origin[3] = (uchar)std::clamp(destination[3] + origin[3], 0, 0xFF);
-		//		}
-		//	}
-		//}
-		//
-		//void SCShapeWriter::AddRasterizedRegion(
-		//	const FilledElementRegion& region
-		//)
-		//{
-		//	Animate::DOM::Utils::RECT region_bound = region.Bound();
-		//	SCShapeWriter::RoundDomRectangle(region_bound);
-		//
-		//	FilledElementRegion local_region = region;
-		//	local_region.Transform(
-		//		{
-		//			SCShapeWriter::RasterizationResolution,
-		//			0.0f,
-		//			0.0f,
-		//			SCShapeWriter::RasterizationResolution,
-		//			0.0f,
-		//			0.0f
-		//		}
-		//	);
-		//
-		//	Animate::DOM::Utils::RECT local_bound = local_region.Bound();
-		//	wk::PointF region_offset_x;
-		//	wk::PointF region_offset_y;
-		//
-		//	auto round_number = [](float& number, float& offset)
-		//	{
-		//		float base_number = std::trunc(number);
-		//		offset = std::abs(number - base_number);
-		//
-		//		if (offset >= 0.5f)
-		//		{
-		//			if (base_number >= 0.0f)
-		//			{
-		//				number = base_number + 1.0f;
-		//			}
-		//			else
-		//			{
-		//				number = base_number - 1.0f;
-		//			}
-		//
-		//			return;
-		//		}
-		//
-		//		number = base_number;
-		//	};
-		//
-		//	round_number(local_bound.topLeft.x, region_offset_y.x);
-		//	round_number(local_bound.topLeft.y, region_offset_y.y);
-		//	round_number(local_bound.bottomRight.x, region_offset_x.x);
-		//	round_number(local_bound.bottomRight.y, region_offset_x.y);
-		//
-		//	local_region.Transform(
-		//		{
-		//			1.0f,
-		//			0.0f,
-		//			0.0f,
-		//			1.0f,
-		//			-(std::min(region_offset_x.x, region_offset_y.x)),
-		//			-(std::min(region_offset_x.y, region_offset_y.y))
-		//		}
-		//	);
-		//
-		//	wk::Point image_position_offset(local_bound.bottomRight.x, local_bound.bottomRight.y);
-		//	cv::Size image_size(
-		//		ceil(local_bound.topLeft.x - local_bound.bottomRight.x),
-		//		ceil(local_bound.topLeft.y - local_bound.bottomRight.y)
-		//	);
-		//
-		//	cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
-		//	AddRasterizedRegion(local_region, canvas, local_bound, image_position_offset);
-		//
-		//	const Animate::DOM::Utils::MATRIX2D transform = {
-		//		1.0f / SCShapeWriter::RasterizationResolution,
-		//		0.0f,
-		//		0.0f,
-		//		1.0f / SCShapeWriter::RasterizationResolution,
-		//		(FCM::Float)region_bound.bottomRight.x,
-		//		(FCM::Float)region_bound.bottomRight.y
-		//	};
-		//
-		//	// Adding to group
-		//	m_group.AddElement<BitmapItem>(m_symbol, wk::CreateRef<cv::Mat>(canvas), transform);
-		//}
+		void SCShapeWriter::AddRasterizedRegion(
+			const FilledElementRegion& region,
+			float resolution
+		)
+		{
+			wk::RawImageRef sprite;
+			wk::Point offset;
+			DrawRegion(region, resolution, sprite, offset);
+
+			const Animate::DOM::Utils::MATRIX2D transform = {
+				1 / resolution,
+				0,
+				0,
+				1 / resolution,
+				(FCM::Float)offset.x,
+				(FCM::Float)offset.y
+			};
+
+			m_group.AddElement<BitmapItem>(m_symbol, sprite, transform, true);
+		}
+
+		void SCShapeWriter::CreatePath(
+			const Animate::Publisher::FilledElementPath& path,
+			wk::PointF offset,
+			BLPath& contour,
+			float resolution
+		)
+		{
+			uint8_t inited = false;
+			for (size_t i = 0; path.Count() > i; i++)
+			{
+				const FilledElementPathSegment& segment = path.GetSegment(i);
+
+				switch (segment.SegmentType())
+				{
+				case FilledElementPathSegment::Type::Line:
+				{
+					const auto& seg = (const FilledElementPathLineSegment&)segment;
+
+					if (!inited++)
+					{
+						contour.moveTo(
+							seg.begin.x + offset.x,
+							seg.begin.y + offset.y
+						);
+					}
+
+					contour.lineTo(
+						seg.end.x + offset.x,
+						seg.end.y + offset.y
+					);
+				}
+
+				break;
+				case FilledElementPathSegment::Type::Cubic:
+				{
+					const auto& seg = (const FilledElementPathCubicSegment&)segment;
+
+					if (!inited++)
+					{
+						contour.moveTo(
+							seg.begin.x + offset.x,
+							seg.begin.y + offset.y
+						);
+					}
+
+					contour.cubicTo(
+						seg.control_l.x + offset.x, seg.control_l.y + offset.y,
+						seg.control_r.x + offset.x, seg.control_r.y + offset.y,
+						seg.end.x + offset.x, seg.end.y + offset.y
+					);
+				}
+				break;
+				case FilledElementPathSegment::Type::Quad:
+				{
+					const auto& seg = (const FilledElementPathQuadSegment&)segment;
+
+					if (!inited++)
+					{
+						contour.moveTo(
+							seg.begin.x + offset.x,
+							seg.begin.y + offset.y
+						);
+					}
+
+					contour.quadTo(
+						seg.control.x + offset.x, seg.control.y + offset.y,
+						seg.end.x + offset.x, seg.end.y + offset.y
+					);
+				}
+				break;
+				default:
+					break;
+				}
+			}
+
+			
+			if (resolution != 1.0f)
+			{
+				BLMatrix2D matrix(
+					resolution, 0, 0, resolution,
+					0, 0
+				);
+				contour.transform(matrix);
+			}
+		}
 
 		bool SCShapeWriter::IsComplexShapeRegion(const FilledElementRegion& region)
 		{
@@ -378,13 +288,15 @@ namespace sc {
 
 			FilledElementRegion transformed_region = region;
 			transformed_region.Transform(matrix);
-
+			
 			if (should_rasterize)
 			{
-				// TODO
-				//AddRasterizedRegion(region);
+				AddRasterizedRegion(region);
+				return;
 			}
-			else if (is_contour)
+
+			ReleaseVectorGraphic();
+			if (is_contour)
 			{
 				std::vector<Point2D> points;
 				region.contour.Rasterize(points);
@@ -405,11 +317,20 @@ namespace sc {
 			// But xy coordinates must be remains the same
 
 			// So first we create a bigger guide
+
+			const float resolution = SCShapeWriter::RasterizationResolution;
 			auto guides = slice.Guides();
 			Animate::DOM::Utils::RECT element_guides =
 			{
-				{guides.topLeft.x * SCShapeWriter::RasterizationResolution, guides.topLeft.y * SCShapeWriter::RasterizationResolution},
-				{guides.bottomRight.x * SCShapeWriter::RasterizationResolution, guides.bottomRight.y * SCShapeWriter::RasterizationResolution}
+				{guides.topLeft.x * resolution, guides.topLeft.y * resolution},
+				{guides.bottomRight.x * resolution, guides.bottomRight.y * resolution}
+			};
+
+			Animate::DOM::Utils::RECT bound{
+				{std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min()},
+				{std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()}
 			};
 
 			// Then create copy of elements
@@ -428,108 +349,80 @@ namespace sc {
 
 				transformed_element.Transform(
 					{
-						SCShapeWriter::RasterizationResolution,
+						resolution,
 						0.0f,
 						0.0f,
-						SCShapeWriter::RasterizationResolution,
+						resolution,
 						0.0f,
 						0.0f
 					}
 				);
+
+				bound = bound + transformed_element.Bound();
+
+				//for (auto& region : transformed_element.fill)
+				//{
+				//	SCShapeWriter::RoundRegion(region);
+				//}
+				//
+				//for (auto& region : transformed_element.stroke)
+				//{
+				//	SCShapeWriter::RoundRegion(region);
+				//}
 			}
 
-			Animate::DOM::Utils::RECT elements_bound{
-				{std::numeric_limits<float>::min(),
-				std::numeric_limits<float>::min()},
-				{std::numeric_limits<float>::max(),
-				std::numeric_limits<float>::max()}
-			};
-
-			for (const FilledElement& element : transformed_elements)
-			{
-				const Animate::DOM::Utils::RECT bound = element.Bound();
-
-				elements_bound.topLeft.x = std::max(bound.topLeft.x, elements_bound.topLeft.x);
-				elements_bound.topLeft.y = std::max(bound.topLeft.y, elements_bound.topLeft.y);
-				elements_bound.bottomRight.x = std::min(bound.bottomRight.x, elements_bound.bottomRight.x);
-				elements_bound.bottomRight.y = std::min(bound.bottomRight.y, elements_bound.bottomRight.y);
-			}
-
-			SCShapeWriter::RoundDomRectangle(elements_bound);
-			wk::Point image_position_offset(
-				elements_bound.bottomRight.x,
-				elements_bound.bottomRight.y
-			);
-			
-			wk::RawImageRef canvas = wk::CreateRef<wk::RawImage>(
-				elements_bound.topLeft.x - image_position_offset.x,
-				elements_bound.topLeft.y - image_position_offset.y,
+			wk::Point offset(bound.bottomRight.x, bound.bottomRight.y);
+			SCShapeWriter::RoundDomRectangle(bound);
+			wk::RawImageRef sprite = wk::CreateRef<wk::RawImage>(
+				std::ceil(bound.topLeft.x - offset.x),
+				std::ceil(bound.topLeft.y - offset.y),
 				wk::Image::PixelDepth::RGBA8
 			);
 
-			//cv::Mat canvas(image_size, CV_8UC4, cv::Scalar(0x00000000));
-			//
-			//for (const FilledElement& element : transformed_elements)
-			//{
-			//	for (const FilledElementRegion region : element.fill)
-			//	{
-			//		if (!IsValidFilledShapeRegion(region)) continue;
-			//
-			//		Animate::DOM::Utils::RECT local_bound = region.Bound();
-			//		SCShapeWriter::RoundDomRectangle(local_bound);
-			//
-			//		AddRasterizedRegion(
-			//			region, canvas, local_bound, image_position_offset
-			//		);
-			//	}
-			//
-			//	for (const FilledElementRegion region : element.stroke)
-			//	{
-			//		if (!IsValidFilledShapeRegion(region)) continue;
-			//
-			//		Animate::DOM::Utils::RECT local_bound = region.Bound();
-			//		SCShapeWriter::RoundDomRectangle(local_bound);
-			//
-			//		AddRasterizedRegion(
-			//			region, canvas, local_bound, image_position_offset
-			//		);
-			//	}
-			//}
+			for (const FilledElement& element : transformed_elements)
+			{
+				for (const FilledElementRegion region : element.fill)
+				{
+					if (!IsValidFilledShapeRegion(region)) continue;
+
+					DrawRegionTo(sprite, region, offset);
+				}
+			}
 
 			// Scale back
 			const Animate::DOM::Utils::MATRIX2D transform = {
-				1 / SCShapeWriter::RasterizationResolution,
+				1.f / resolution,
 				0.0f,
 				0.0f,
-				1 / SCShapeWriter::RasterizationResolution,
+				1.f / resolution,
 				0,
 				0
 			};
 
-			m_group.AddElement<SlicedItem>(m_symbol, canvas, transform, image_position_offset, element_guides);
+			m_group.AddElement<SlicedItem>(m_symbol, sprite, transform, offset, element_guides);
 		}
 
 		void SCShapeWriter::RoundDomRectangle(Animate::DOM::Utils::RECT& rect)
 		{
 			auto round_number = [](float number)
-			{
-				float base_number = std::trunc(number);
-				float decimal = std::abs(number - base_number);
-
-				if (decimal >= 0.5f)
 				{
-					if (base_number >= 0.0f)
-					{
-						return base_number + 1.0f;
-					}
-					else
-					{
-						return base_number - 1.0f;
-					}
-				}
+					float base_number = std::trunc(number);
+					float decimal = std::abs(number - base_number);
 
-				return (float)base_number;
-			};
+					if (decimal >= 0.5f)
+					{
+						if (base_number >= 0.0f)
+						{
+							return base_number + 1.0f;
+						}
+						else
+						{
+							return base_number - 1.0f;
+						}
+					}
+
+					return (float)base_number;
+				};
 
 			rect.bottomRight.x = round_number(rect.bottomRight.x);
 			rect.bottomRight.y = round_number(rect.bottomRight.y);
@@ -551,6 +444,8 @@ namespace sc {
 		}
 
 		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool /*new_symbol*/) {
+			ReleaseVectorGraphic();
+
 			if (m_group.Size() == 0)
 			{
 				if (required)
@@ -573,6 +468,193 @@ namespace sc {
 			m_writer.AddGraphicGroup(m_group);
 
 			return true;
+		}
+
+		void SCShapeWriter::CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution)
+		{
+			canvas = wk::CreateUnique<RasterizingContext>();
+			canvas->image = wk::CreateRef<wk::RawImage>(
+				std::ceil(bound.topLeft.x - bound.bottomRight.x),
+				std::ceil(bound.topLeft.y - bound.bottomRight.y),
+				wk::Image::PixelDepth::RGBA8,
+				wk::Image::ColorSpace::Linear
+			);
+			BLResult result = canvas->canvas_image.createFromData(
+				canvas->image->width(), canvas->image->height(),
+				BLFormat::BL_FORMAT_PRGB32, canvas->image->data(), canvas->image->pixel_size() * canvas->image->width()
+			);
+			bl_assert(result);
+
+			canvas->ctx = BLContext(canvas->canvas_image);
+		}
+
+		void SCShapeWriter::ReleaseCanvas()
+		{
+			bl_assert(canvas->ctx.end());
+			canvas.reset();
+		}
+
+		void SCShapeWriter::ReleaseVectorGraphic()
+		{
+			//if (m_vector_graphics.empty()) return;
+
+
+		}
+
+		void SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, wk::PointF offset, float resolution)
+		{
+			// Contour drawing
+			{
+				BLPath contour;
+				SCShapeWriter::CreatePath(region.contour, offset, contour, resolution);
+
+				BLResult result = BL_SUCCESS;
+				if (region.type == FilledElementRegion::ShapeType::SolidColor)
+				{
+					result = canvas->ctx.fillPath(contour, BLRgba32(region.solid.color.blue, region.solid.color.green, region.solid.color.red, region.solid.color.alpha));
+				}
+				bl_assert(result);
+			}
+
+			// Hole drawing
+			{
+				canvas->ctx.setCompOp(BLCompOp::BL_COMP_OP_CLEAR);
+				for (const auto& hole : region.holes)
+				{
+					BLPath contour;
+					SCShapeWriter::CreatePath(hole, offset, contour, resolution);
+
+					BLResult result = canvas->ctx.fillPath(
+						contour, BLRgba32(0)
+					);
+					bl_assert(result);
+				}
+
+				canvas->ctx.setCompOp(BLCompOp::BL_COMP_OP_SRC_OVER);
+			}
+		}
+
+		void SCShapeWriter::DrawRegionTo(
+			const wk::RawImageRef target,
+			const Animate::Publisher::FilledElementRegion& region,
+			wk::Point offset,
+			float resolution
+		)
+		{
+			wk::RawImageRef sprite;
+			wk::Point region_offset;
+			DrawRegion(region, resolution, sprite, region_offset);
+
+			for (uint16_t h = 0; sprite->height() > h; h++)
+			{
+				for (uint16_t w = 0; sprite->width() > w; w++)
+				{
+					auto& source = sprite->at<wk::ColorRGBA>(w, h);
+					if (!source.a) continue;
+
+					uint16_t dstW = w + (region_offset.x - offset.x);
+					uint16_t dstH = h + (region_offset.y - offset.y);
+
+					if (dstW >= target->width() || dstH >= target->height())
+					{
+						continue;
+					}
+
+					auto& dest = target->at<wk::ColorRGBA>(dstW, dstH);
+
+					float alpha_fac = (255 - (float)source.a) / 255;
+					float alpha = (float)source.a + (float)dest.a * alpha_fac;
+
+					float red = (float)source.r + (float)dest.r * alpha_fac;
+					float green = (float)source.g + (float)dest.g * alpha_fac;
+					float blue = (float)source.b + (float)dest.b * alpha_fac;
+
+					dest.r = std::ceil(red);
+					dest.g = std::ceil(green);
+					dest.b = std::ceil(blue);
+					dest.a = std::ceil(alpha);
+				}
+			}
+		}
+
+		void SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, float resolution, wk::RawImageRef& result, wk::Point& result_offset)
+		{
+			Animate::DOM::Utils::RECT bound = region.Bound();
+			wk::PointF offset(-std::min(bound.topLeft.x, bound.bottomRight.x), -std::min(bound.topLeft.y, bound.bottomRight.y));
+			result_offset.x = bound.bottomRight.x;
+			result_offset.y = bound.bottomRight.y;
+
+			SCShapeWriter::RoundDomRectangle(bound);
+			CreateCanvas(bound, resolution);
+
+			DrawRegion(region, offset, resolution);
+
+			result = canvas->image;
+			ReleaseCanvas();
+		}
+
+		void SCShapeWriter::RoundRegion(Animate::Publisher::FilledElementRegion& path)
+		{
+			SCShapeWriter::RoundPath(path.contour);
+
+			for (auto& hole : path.holes)
+			{
+				SCShapeWriter::RoundPath(hole);
+			}
+		}
+
+		void SCShapeWriter::RoundPath(Animate::Publisher::FilledElementPath& path)
+		{
+			for (size_t i = 0; path.Count() > i; i++)
+			{
+				auto& segment = path.GetSegment(i);
+
+				switch (segment.SegmentType())
+				{
+				case FilledElementPathSegment::Type::Line:
+				{
+					auto& seg = (FilledElementPathLineSegment&)segment;
+					seg.begin.x = std::ceil(seg.begin.x);
+					seg.begin.y = std::ceil(seg.begin.y);
+					seg.end.x = std::ceil(seg.end.x);
+					seg.end.y = std::ceil(seg.end.y);
+				}
+				break;
+				case FilledElementPathSegment::Type::Cubic:
+				{
+					auto& seg = (FilledElementPathCubicSegment&)segment;
+					seg.begin.x = std::ceil(seg.begin.x);
+					seg.begin.y = std::ceil(seg.begin.y);
+
+					seg.control_l.x = std::ceil(seg.control_l.x);
+					seg.control_l.y = std::ceil(seg.control_l.y);
+					seg.control_r.x = std::ceil(seg.control_r.x);
+					seg.control_r.y = std::ceil(seg.control_r.y);
+					
+					seg.end.x = std::ceil(seg.end.x);
+					seg.end.y = std::ceil(seg.end.y);
+				}
+				break;
+
+				case FilledElementPathSegment::Type::Quad:
+				{
+					auto& seg = (FilledElementPathQuadSegment&)segment;
+					seg.begin.x = std::ceil(seg.begin.x);
+					seg.begin.y = std::ceil(seg.begin.y);
+
+					seg.control.x = std::ceil(seg.control.x);
+					seg.control.y = std::ceil(seg.control.y);
+
+					seg.end.x = std::ceil(seg.end.x);
+					seg.end.y = std::ceil(seg.end.y);
+				}
+				break;
+
+				default:
+					break;
+				}
+			}
+			
 		}
 	}
 }

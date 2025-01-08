@@ -97,11 +97,11 @@
 			{
 				"name": "FillType",
 				"supported": true,
-				"default": "SolidFill",
+				"default": "NoFill",
 				"values": [
 					{
 						"name": "NoFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "SolidFill",
