@@ -41,8 +41,9 @@ namespace sc {
 		void SCShapeWriter::AddTriangulatedRegion(
 			const Animate::Publisher::FilledElementPath& contour,
 			const std::vector<Animate::Publisher::FilledElementPath>& holes,
-			const Animate::DOM::Utils::COLOR& color)
-		{
+			const Animate::DOM::Utils::MATRIX2D& matrix,
+			const Animate::DOM::Utils::COLOR& color
+		){
 			CDT::Triangulation<float> cdt;
 
 			std::vector<CDT::V2d<float>> vertices;
@@ -111,11 +112,12 @@ namespace sc {
 				contours.emplace_back(triangle_shape);
 			}
 
-			m_group.AddElement<FilledItem>(m_symbol, contours, color);
+			m_group.AddElement<FilledItem>(m_symbol, contours, color, matrix);
 		}
 
 		void SCShapeWriter::AddRasterizedRegion(
 			const FilledElementRegion& region,
+			const Animate::DOM::Utils::MATRIX2D& matrix,
 			float resolution
 		)
 		{
@@ -124,12 +126,12 @@ namespace sc {
 			DrawRegion(region, resolution, sprite, offset);
 
 			const Animate::DOM::Utils::MATRIX2D transform = {
+				matrix.a / resolution,
+				matrix.b,
+				matrix.c,
 				1 / resolution,
-				0,
-				0,
-				1 / resolution,
-				(FCM::Float)offset.x,
-				(FCM::Float)offset.y
+				matrix.tx + offset.x,
+				matrix.ty + offset.y
 			};
 
 			m_group.AddElement<BitmapItem>(m_symbol, sprite, transform, true);
@@ -292,12 +294,11 @@ namespace sc {
 				region.contour.Count() > 4;
 
 			FilledElementRegion transformed_region = region;
-			transformed_region.Transform(matrix);
-			
+
 			if (should_rasterize)
 			{
 				RoundRegion(transformed_region);
-				AddRasterizedRegion(region);
+				AddRasterizedRegion(region, matrix);
 				return;
 			}
 			ReleaseVectorGraphic();
@@ -310,11 +311,11 @@ namespace sc {
 				region.contour.Rasterize(points);
 
 				std::vector<FilledItemContour> contour = { FilledItemContour(points) };
-				m_group.AddElement<FilledItem>(m_symbol, contour, fill.color);
+				m_group.AddElement<FilledItem>(m_symbol, contour, fill.color, matrix);
 			}
 			else if (should_triangulate)
 			{
-				AddTriangulatedRegion(region.contour, region.holes, fill.color);
+				AddTriangulatedRegion(region.contour, region.holes, matrix, fill.color);
 			}
 		}
 
@@ -566,8 +567,8 @@ namespace sc {
 					matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
-					matrix.tx += offset.x;
-					matrix.ty += offset.y;
+					//matrix.tx /= Animate::DOM::TWIPS_PER_PIXEL;
+					//matrix.ty /= Animate::DOM::TWIPS_PER_PIXEL;
 
 					BLMatrix2D pattern_matrix
 					{

@@ -41,6 +41,7 @@ namespace sc {
 			void AddTriangulatedRegion(
 				const Animate::Publisher::FilledElementPath& contour,
 				const std::vector<Animate::Publisher::FilledElementPath>& holes,
+				const Animate::DOM::Utils::MATRIX2D& matrix,
 				const Animate::DOM::Utils::COLOR& color
 			);
 
@@ -53,6 +54,7 @@ namespace sc {
 
 			void AddRasterizedRegion(
 				const Animate::Publisher::FilledElementRegion& region,
+				const Animate::DOM::Utils::MATRIX2D& matrix,
 				float resolution = 1.f
 			);
 
