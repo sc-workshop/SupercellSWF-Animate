@@ -26,9 +26,6 @@ namespace sc {
 
 		SCWriter::~SCWriter()
 		{
-			if (fs::exists(sprite_temp_path)) {
-				remove(sprite_temp_path);
-			}
 		}
 
 		SharedMovieclipWriter* SCWriter::AddMovieclip(SymbolContext& symbol) {
@@ -577,12 +574,12 @@ namespace sc {
 				return m_cached_images[name];
 			}
 
-			item.ExportImage(sprite_temp_path);
+			fs::path path = GetSpriteTempPath();
+			item.ExportImage(path);
 
 			wk::RawImageRef image;
-			wk::InputFileStream file(sprite_temp_path);
+			wk::InputFileStream file(path);
 			wk::stb::load_image(file, image);
-
 			m_cached_images[name] = image;
 
 			return image;
@@ -591,6 +588,14 @@ namespace sc {
 		void SCWriter::AddGraphicGroup(const GraphicGroup& group)
 		{
 			m_graphic_groups.push_back(group);
+		}
+
+		fs::path SCWriter::GetSpriteTempPath() const
+		{
+			auto id = std::this_thread::get_id();
+			size_t thread_number = std::hash<std::thread::id>{}(id);
+
+			return fs::temp_directory_path() / fs::path("sc-animate-").concat(std::to_string(thread_number)).concat(".png");
 		}
 	}
 }

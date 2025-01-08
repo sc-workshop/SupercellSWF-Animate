@@ -253,11 +253,16 @@ namespace sc {
 		{
 			if (region.type == FilledElementRegion::ShapeType::SolidColor)
 			{
+				const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
 				// Skip all regions with zero mask_alpha
-				if (region.solid.color.alpha <= 0)
+				if (fill.color.alpha <= 0)
 				{
 					return false;
 				}
+			}
+			else if (region.type == FilledElementRegion::ShapeType::Bitmap)
+			{
+				return true;
 			}
 			else
 			{
@@ -291,22 +296,25 @@ namespace sc {
 			
 			if (should_rasterize)
 			{
+				RoundRegion(transformed_region);
 				AddRasterizedRegion(region);
 				return;
 			}
-
 			ReleaseVectorGraphic();
+
+			// Any non-solid color fill will be rasterized, so at this moment we have guarantee that fill style is Solid Color
+			const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
 			if (is_contour)
 			{
 				std::vector<Point2D> points;
 				region.contour.Rasterize(points);
 
 				std::vector<FilledItemContour> contour = { FilledItemContour(points) };
-				m_group.AddElement<FilledItem>(m_symbol, contour, region.solid.color);
+				m_group.AddElement<FilledItem>(m_symbol, contour, fill.color);
 			}
 			else if (should_triangulate)
 			{
-				AddTriangulatedRegion(region.contour, region.holes, region.solid.color);
+				AddTriangulatedRegion(region.contour, region.holes, fill.color);
 			}
 		}
 
@@ -479,11 +487,7 @@ namespace sc {
 				wk::Image::PixelDepth::RGBA8,
 				wk::Image::ColorSpace::Linear
 			);
-			BLResult result = canvas->canvas_image.createFromData(
-				canvas->image->width(), canvas->image->height(),
-				BLFormat::BL_FORMAT_PRGB32, canvas->image->data(), canvas->image->pixel_size() * canvas->image->width()
-			);
-			bl_assert(result);
+			SCShapeWriter::CreateImage(canvas->image, canvas->canvas_image, false);
 
 			canvas->ctx = BLContext(canvas->canvas_image);
 		}
@@ -491,6 +495,12 @@ namespace sc {
 		void SCShapeWriter::ReleaseCanvas()
 		{
 			bl_assert(canvas->ctx.end());
+
+			//{
+			//	wk::OutputFileStream file("C:/Users/danii/Documents/test1.png");
+			//	wk::stb::write_image(*canvas->image, ".png", file);
+			//}
+
 			canvas.reset();
 		}
 
@@ -511,7 +521,67 @@ namespace sc {
 				BLResult result = BL_SUCCESS;
 				if (region.type == FilledElementRegion::ShapeType::SolidColor)
 				{
-					result = canvas->ctx.fillPath(contour, BLRgba32(region.solid.color.blue, region.solid.color.green, region.solid.color.red, region.solid.color.alpha));
+					const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
+
+					result = canvas->ctx.fillPath(
+						contour, 
+						BLRgba32(fill.color.blue, fill.color.green, fill.color.red, fill.color.alpha)
+					);
+				}
+				else if (region.type == FilledElementRegion::ShapeType::Bitmap)
+				{
+					const auto& fill = std::get<FilledElementRegion::BitmapFill>(region.style);
+
+					fs::path path = m_writer.GetSpriteTempPath();
+					fill.bitmap.ExportImage(path);
+
+					wk::RawImageRef image;
+					BLImage texture;
+					{
+						wk::InputFileStream file(path);
+						wk::stb::load_image(file, image);
+					}
+					SCShapeWriter::CreateImage(image, texture, true);
+					//{
+					//	wk::InputFileStream file(path);
+					//	wk::BufferStream file_data;
+					//	file_data.resize(file.length());
+					//	file.read(file_data.data(), file_data.length());
+					//
+					//	BLDataView data{};
+					//	data.data = (uint8_t*)file_data.data();
+					//	data.size = file_data.length();
+					//
+					//	BLResult result = texture.readFromData(data);
+					//	bl_assert(result);
+					//
+					//	auto test = BLPixelConverter()
+					//}
+					
+					BLPattern pattern(texture);
+					//pattern.setExtendMode(fill.is_clipped ? BLExtendMode::BL_EXTEND_MODE_PAD : BLExtendMode::BL_EXTEND_MODE_REPEAT);
+					
+					auto matrix = fill.bitmap.Transformation();
+					matrix.a /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.tx += offset.x;
+					matrix.ty += offset.y;
+
+					BLMatrix2D pattern_matrix
+					{
+						matrix.a,
+						matrix.b,
+						matrix.c,
+						matrix.d,
+						matrix.tx,
+						matrix.ty
+					};
+					result = pattern.setTransform(pattern_matrix);
+					bl_assert(result);
+					
+					result = canvas->ctx.fillPath(contour, pattern);
 				}
 				bl_assert(result);
 			}
@@ -655,6 +725,42 @@ namespace sc {
 				}
 			}
 			
+		}
+
+		void SCShapeWriter::CreateImage(wk::RawImageRef& image, BLImage& texture, bool premultiply)
+		{
+			if (image->depth() != wk::Image::PixelDepth::RGBA8)
+			{
+				wk::RawImageRef converted = wk::CreateRef<wk::RawImage>(
+					image->width(), image->height(), wk::Image::PixelDepth::RGBA8
+				);
+
+				image->copy(*converted);
+				image = converted;
+			}
+
+			if (premultiply)
+			{
+				for (uint16_t h = 0; image->height() > h; h++)
+				{
+					for (uint16_t w = 0; image->width() > w; w++)
+					{
+						wk::ColorRGBA& pixel = image->at<wk::ColorRGBA>(w, h);
+
+						float alpha = (float)pixel.a / 255.f;
+
+						pixel.r = (uint8_t)(pixel.r * alpha);
+						pixel.g = (uint8_t)(pixel.g * alpha);
+						pixel.b = (uint8_t)(pixel.b * alpha);
+					}
+				}
+			}
+
+			BLResult result = texture.createFromData(
+				image->width(), image->height(),
+				BLFormat::BL_FORMAT_PRGB32, image->data(), image->pixel_size() * image->width()
+			);
+			bl_assert(result);
 		}
 	}
 }

@@ -108,6 +108,8 @@ namespace sc {
 			static void RoundRegion(Animate::Publisher::FilledElementRegion& path);
 			static void RoundPath(Animate::Publisher::FilledElementPath& path);
 
+			static void CreateImage(wk::RawImageRef& image, BLImage& result, bool premultiply);
+
 		private:
 			void ReleaseVectorGraphic();
 

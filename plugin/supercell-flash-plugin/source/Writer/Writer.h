@@ -33,7 +33,7 @@ namespace sc {
 
 		public:
 			// Path to temp sprite file
-			const fs::path sprite_temp_path = fs::path(tmpnam(nullptr)).concat(".png");
+			//const fs::path sprite_temp_path = fs::path(tmpnam(nullptr)).concat(".png");
 
 			// kokoro
 			flash::SupercellSWF swf;
@@ -80,6 +80,12 @@ namespace sc {
 				wk::AtlasGenerator::Item& atlas_item,
 				SlicedItem& sprite_item
 			);
+
+			/// <summary>
+			/// Thread safe temporary path generator
+			/// </summary>
+			/// <returns></returns>
+			fs::path GetSpriteTempPath() const;
 
 		private:
 			// Storage for Atlas Generator guys.
