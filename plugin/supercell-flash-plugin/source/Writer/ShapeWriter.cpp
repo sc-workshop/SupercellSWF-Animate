@@ -126,12 +126,12 @@ namespace sc {
 			DrawRegion(region, resolution, sprite, offset);
 
 			const Animate::DOM::Utils::MATRIX2D transform = {
-				matrix.a / resolution,
+				matrix.a * (1.f / resolution),
 				matrix.b,
 				matrix.c,
-				matrix.d / resolution,
-				matrix.tx + (offset.x * matrix.a),
-				matrix.ty + (offset.y * matrix.d)
+				matrix.d * (1.f / resolution),
+				std::round(offset.x * matrix.a + offset.y * matrix.c + matrix.tx),
+				std::round(offset.y * matrix.d + offset.x * matrix.b + matrix.ty)
 			};
 
 			m_group.AddElement<BitmapItem>(m_symbol, sprite, transform, true);
@@ -297,7 +297,7 @@ namespace sc {
 
 			if (should_rasterize)
 			{
-				//RoundRegion(transformed_region);
+				RoundRegion(transformed_region);
 				AddRasterizedRegion(region, matrix);
 				return;
 			}
@@ -413,30 +413,10 @@ namespace sc {
 
 		void SCShapeWriter::RoundDomRectangle(Animate::DOM::Utils::RECT& rect)
 		{
-			auto round_number = [](float number)
-				{
-					float base_number = std::trunc(number);
-					float decimal = std::abs(number - base_number);
-
-					if (decimal >= 0.5f)
-					{
-						if (base_number >= 0.0f)
-						{
-							return base_number + 1.0f;
-						}
-						else
-						{
-							return base_number - 1.0f;
-						}
-					}
-
-					return (float)base_number;
-				};
-
-			rect.bottomRight.x = round_number(rect.bottomRight.x);
-			rect.bottomRight.y = round_number(rect.bottomRight.y);
-			rect.topLeft.x = round_number(rect.topLeft.x);
-			rect.topLeft.y = round_number(rect.topLeft.y);
+			rect.bottomRight.x = std::round(rect.bottomRight.x);
+			rect.bottomRight.y = std::round(rect.bottomRight.y);
+			rect.topLeft.x = std::round(rect.topLeft.x);
+			rect.topLeft.y = std::round(rect.topLeft.y);
 		}
 
 		std::size_t SCShapeWriter::GenerateHash() const
@@ -542,8 +522,6 @@ namespace sc {
 					matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
-					matrix.tx += offset.x;
-					matrix.ty += offset.y;
 
 					matrix.a *= resolution;
 					matrix.c *= resolution;
@@ -663,39 +641,39 @@ namespace sc {
 				case FilledElementPathSegment::Type::Line:
 				{
 					auto& seg = (FilledElementPathLineSegment&)segment;
-					seg.begin.x = std::ceil(seg.begin.x);
-					seg.begin.y = std::ceil(seg.begin.y);
-					seg.end.x = std::ceil(seg.end.x);
-					seg.end.y = std::ceil(seg.end.y);
+					seg.begin.x = std::round(seg.begin.x);
+					seg.begin.y = std::round(seg.begin.y);
+					seg.end.x = std::round(seg.end.x);
+					seg.end.y = std::round(seg.end.y);
 				}
 				break;
 				case FilledElementPathSegment::Type::Cubic:
 				{
 					auto& seg = (FilledElementPathCubicSegment&)segment;
-					seg.begin.x = std::ceil(seg.begin.x);
-					seg.begin.y = std::ceil(seg.begin.y);
+					seg.begin.x = std::round(seg.begin.x);
+					seg.begin.y = std::round(seg.begin.y);
 
-					seg.control_l.x = std::ceil(seg.control_l.x);
-					seg.control_l.y = std::ceil(seg.control_l.y);
-					seg.control_r.x = std::ceil(seg.control_r.x);
-					seg.control_r.y = std::ceil(seg.control_r.y);
+					seg.control_l.x = std::round(seg.control_l.x);
+					seg.control_l.y = std::round(seg.control_l.y);
+					seg.control_r.x = std::round(seg.control_r.x);
+					seg.control_r.y = std::round(seg.control_r.y);
 					
-					seg.end.x = std::ceil(seg.end.x);
-					seg.end.y = std::ceil(seg.end.y);
+					seg.end.x = std::round(seg.end.x);
+					seg.end.y = std::round(seg.end.y);
 				}
 				break;
 
 				case FilledElementPathSegment::Type::Quad:
 				{
 					auto& seg = (FilledElementPathQuadSegment&)segment;
-					seg.begin.x = std::ceil(seg.begin.x);
-					seg.begin.y = std::ceil(seg.begin.y);
+					seg.begin.x = std::round(seg.begin.x);
+					seg.begin.y = std::round(seg.begin.y);
 
-					seg.control.x = std::ceil(seg.control.x);
-					seg.control.y = std::ceil(seg.control.y);
+					seg.control.x = std::round(seg.control.x);
+					seg.control.y = std::round(seg.control.y);
 
-					seg.end.x = std::ceil(seg.end.x);
-					seg.end.y = std::ceil(seg.end.y);
+					seg.end.x = std::round(seg.end.x);
+					seg.end.y = std::round(seg.end.y);
 				}
 				break;
 
