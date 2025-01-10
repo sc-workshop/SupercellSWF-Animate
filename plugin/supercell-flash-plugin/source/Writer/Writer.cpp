@@ -274,9 +274,9 @@ namespace sc {
 					shape_vertex.v = atlas_point.uv.y;
 					shape_vertex.x = point.x;
 					shape_vertex.y = point.y;
-
-					ProcessCommandTransform(shape_command, atlas_item.transform, filled_item);
 				}
+
+				ProcessCommandTransform(shape_command, atlas_item.transform, filled_item);
 			}
 		}
 

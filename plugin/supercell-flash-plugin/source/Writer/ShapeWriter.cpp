@@ -129,9 +129,9 @@ namespace sc {
 				matrix.a / resolution,
 				matrix.b,
 				matrix.c,
-				1 / resolution,
-				matrix.tx + offset.x,
-				matrix.ty + offset.y
+				matrix.d / resolution,
+				matrix.tx + (offset.x * matrix.a),
+				matrix.ty + (offset.y * matrix.d)
 			};
 
 			m_group.AddElement<BitmapItem>(m_symbol, sprite, transform, true);
@@ -297,7 +297,7 @@ namespace sc {
 
 			if (should_rasterize)
 			{
-				RoundRegion(transformed_region);
+				//RoundRegion(transformed_region);
 				AddRasterizedRegion(region, matrix);
 				return;
 			}
@@ -496,20 +496,12 @@ namespace sc {
 		void SCShapeWriter::ReleaseCanvas()
 		{
 			bl_assert(canvas->ctx.end());
-
-			//{
-			//	wk::OutputFileStream file("C:/Users/danii/Documents/test1.png");
-			//	wk::stb::write_image(*canvas->image, ".png", file);
-			//}
-
 			canvas.reset();
 		}
 
 		void SCShapeWriter::ReleaseVectorGraphic()
 		{
 			//if (m_vector_graphics.empty()) return;
-
-
 		}
 
 		void SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, wk::PointF offset, float resolution)
@@ -543,32 +535,18 @@ namespace sc {
 						wk::stb::load_image(file, image);
 					}
 					SCShapeWriter::CreateImage(image, texture, true);
-					//{
-					//	wk::InputFileStream file(path);
-					//	wk::BufferStream file_data;
-					//	file_data.resize(file.length());
-					//	file.read(file_data.data(), file_data.length());
-					//
-					//	BLDataView data{};
-					//	data.data = (uint8_t*)file_data.data();
-					//	data.size = file_data.length();
-					//
-					//	BLResult result = texture.readFromData(data);
-					//	bl_assert(result);
-					//
-					//	auto test = BLPixelConverter()
-					//}
-					
 					BLPattern pattern(texture);
-					//pattern.setExtendMode(fill.is_clipped ? BLExtendMode::BL_EXTEND_MODE_PAD : BLExtendMode::BL_EXTEND_MODE_REPEAT);
-					
+
 					auto matrix = fill.bitmap.Transformation();
 					matrix.a /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
-					//matrix.tx /= Animate::DOM::TWIPS_PER_PIXEL;
-					//matrix.ty /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.tx += offset.x;
+					matrix.ty += offset.y;
+
+					matrix.a *= resolution;
+					matrix.c *= resolution;
 
 					BLMatrix2D pattern_matrix
 					{
