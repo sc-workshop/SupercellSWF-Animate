@@ -70,8 +70,8 @@ This project was created with the goal of exploring various interesting tools an
 - Stroke  / Fills / Brushes ✅  
 Full support. It can be unstable sometimes especially with big fills and curves so try to work more with sprites
 
-    - Fill styles ❌  
-    Now only solid color works and there are no plans for other styles.
+    - Fill styles ✅  
+    Currently supported are solid color fill and bitmap fill. Linear fill will be added later if needed.
 
 - Filters ❌  
 There will be no support for filters for Symbols
@@ -200,6 +200,9 @@ If you find any problem with export process or you just need any help, please re
 Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.2
+- Added Bitmap Fill support
+- Added Export name replacing and atlas textures repacking
 ## v 1.3.1
 - Improved progress window behavior
 - Added object caching
