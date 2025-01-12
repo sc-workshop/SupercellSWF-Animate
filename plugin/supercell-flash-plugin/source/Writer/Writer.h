@@ -37,6 +37,7 @@ namespace sc {
 
 			// kokoro
 			flash::SupercellSWF swf;
+			size_t texture_offset = 0;
 
 		public:
 			wk::RawImageRef GetBitmap(const Animate::Publisher::BitmapElement& item);
@@ -44,7 +45,7 @@ namespace sc {
 			void AddGraphicGroup(const GraphicGroup& group);
 
 		public:
-			void LoadExternal();
+			uint16_t LoadExternal(fs::path path);
 
 			void FinalizeAtlas();
 

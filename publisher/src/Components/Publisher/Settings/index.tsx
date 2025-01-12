@@ -62,6 +62,22 @@ export default function SettingsMenu() {
         Settings.getParam("exportToExternalPath")
     )
 
+    const repackAtlas = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_REPACK_ATLAS"),
+            keyName: "repack_atlas_select",
+            defaultValue: Settings.getParam("repackAtlas"),
+            style: {
+                marginLeft: "2%",
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center"
+            },
+            callback: value => (Settings.setParam("repackAtlas", value)),
+            tip_tid: "TID_SWF_REPACK_ATLAS_TIP"
+        }
+    ).render()
+
     return SubMenu(
         Locale.Get("TID_ADDITIONAL_SETTINGS_LABEL"),
         "additional_settings",
@@ -70,6 +86,7 @@ export default function SettingsMenu() {
         },
         exportToExternal,
         isExportToExternal ? externalFilePath : undefined,
+        isExportToExternal ? repackAtlas : undefined,
         is_sc1 ? backwardCompatibility : undefined,
         TextureSettings(),
         OtherSettings()

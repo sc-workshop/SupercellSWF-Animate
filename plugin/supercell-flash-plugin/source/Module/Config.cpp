@@ -62,6 +62,9 @@ namespace sc {
 			exportToExternalPath = fs::path(FCM::Locale::ToUtf16(data["exportToExternalPath"]));
 			context.logger->info("	exportToExternalPath: {}", exportToExternalPath.string());
 
+			repackAtlas = data["repackAtlas"];
+			context.logger->info("	repackAtlas: {}", repackAtlas);
+
 			hasExternalTexture = data["hasExternalTexture"];
 			context.logger->info("	hasExternalTexture: {}", hasExternalTexture);
 			hasExternalTextureFile = data["hasExternalTextureFile"];

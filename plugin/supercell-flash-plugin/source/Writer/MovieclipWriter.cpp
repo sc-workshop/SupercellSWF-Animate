@@ -227,9 +227,10 @@ namespace sc {
 			}
 			else
 			{
-				flash::ExportName& export_name = m_writer.swf.exports.emplace_back();
-				export_name.name = flash::SWFString(m_symbol.linkage_name);
-				export_name.id = id;
+				m_writer.swf.CreateExportName(
+					flash::SWFString(m_symbol.linkage_name),
+					id
+				);
 			}
 
 			//if (!new_symbol) return true;

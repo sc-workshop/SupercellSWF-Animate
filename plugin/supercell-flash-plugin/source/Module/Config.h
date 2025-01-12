@@ -45,6 +45,7 @@ namespace sc {
 			sc::flash::Signature compression = sc::flash::Signature::Zstandard;
 			bool exportToExternal = false;
 			fs::path exportToExternalPath = "";
+			bool repackAtlas = true;
 
 			sc::flash::SWFTexture::TextureEncoding textureEncoding = sc::flash::SWFTexture::TextureEncoding::KhronosTexture;
 			bool hasExternalTexture = false;

@@ -10,18 +10,15 @@
 #include "atlas_generator/PackagingException.h"
 #include "core/stb/stb.h"
 
+#include "Reassemble/Object.hpp"
+#include "Reassemble/Atlas.h"
+
 using namespace Animate::Publisher;
 
 namespace sc {
 	namespace Adobe {
 		SCWriter::SCWriter()
 		{
-			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
-
-			if (config.exportToExternal && !fs::exists(config.exportToExternalPath))
-			{
-				throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.wstring().c_str());
-			}
 		}
 
 		SCWriter::~SCWriter()
@@ -61,99 +58,53 @@ namespace sc {
 			return new SCTextFieldWriter(*this, symbol);
 		}
 
-		void SCWriter::LoadExternal() {
+		uint16_t SCWriter::LoadExternal(fs::path path) {
 			using namespace Animate::DOM;
+			swf.load(path);
 
-			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+			{
+				InputFileStream file(path);
+				if (flash::SupercellSWF::IsSC2(file))
+				{
+					for (auto& shape : swf.shapes)
+					{
+						for (auto& command : shape.commands)
+						{
+							command.sort_advanced_vertices();
+						}
+					}
+				}
+			}
 
-			const fs::path& filepath = config.exportToExternalPath;
-
-			flash::SupercellSWF base_swf;
-			base_swf.load(filepath);
-
+			texture_offset = swf.textures.size();
 			uint16_t idOffset = 0;
 			{
-				for (flash::MovieClip& object : base_swf.movieclips) {
+				for (flash::MovieClip& object : swf.movieclips) {
 					if (object.id > idOffset) {
 						idOffset = object.id;
 					}
 				}
 
-				for (flash::MovieClipModifier& object : base_swf.movieclip_modifiers) {
+				for (flash::MovieClipModifier& object : swf.movieclip_modifiers) {
 					if (object.id > idOffset) {
 						idOffset = object.id;
 					}
 				}
 
-				for (flash::TextField& object : base_swf.textfields) {
+				for (flash::TextField& object : swf.textfields) {
 					if (object.id > idOffset) {
 						idOffset = object.id;
 					}
 				}
 
-				for (flash::Shape& object : base_swf.shapes) {
+				for (flash::Shape& object : swf.shapes) {
 					if (object.id > idOffset) {
 						idOffset = object.id;
 					}
 				}
 			}
-			idOffset++;
 
-			// Display object processing
-			for (flash::MovieClip& object : swf.movieclips) {
-				object.id += idOffset;
-
-				for (flash::DisplayObjectInstance& bind : object.childrens) {
-					bind.id += idOffset;
-				}
-
-				object.bank_index += base_swf.matrixBanks.size();
-
-				base_swf.movieclips.push_back(object);
-			}
-
-			for (flash::MovieClipModifier& object : swf.movieclip_modifiers) {
-				object.id += idOffset;
-
-				base_swf.movieclip_modifiers.push_back(object);
-			}
-
-			for (flash::TextField& object : swf.textfields) {
-				object.id += idOffset;
-
-				base_swf.textfields.push_back(object);
-			}
-
-			for (flash::Shape& object : swf.shapes) {
-				object.id += idOffset;
-
-				for (flash::ShapeDrawBitmapCommand& bitmap : object.commands) {
-					bitmap.texture_index += base_swf.textures.size();
-				}
-
-				base_swf.shapes.push_back(object);
-			}
-
-			// Common resources processing
-			for (flash::MatrixBank& bank : swf.matrixBanks) {
-				base_swf.matrixBanks.push_back(bank);
-			}
-
-			// Additional texture preprocessing
-			for (flash::SWFTexture& texture : base_swf.textures)
-			{
-				texture.encoding(config.textureEncoding);
-			}
-
-			for (flash::SWFTexture& texture : swf.textures) {
-				base_swf.textures.push_back(texture);
-			}
-			for (flash::ExportName& object : swf.exports) {
-				object.id += idOffset;
-				base_swf.exports.push_back(object);
-			}
-
-			swf = base_swf;
+			return ++idOffset;
 		}
 
 		void SCWriter::ProcessCommandTransform(
@@ -166,6 +117,7 @@ namespace sc {
 			using namespace wk::AtlasGenerator;
 
 			wk::Matrix2D matrix = item.Transformation2D();
+			flash::SWFTexture& texture = swf.textures[command.texture_index];
 
 			for (flash::ShapeDrawBitmapCommandVertex& vertex : command.vertices)
 			{
@@ -173,8 +125,8 @@ namespace sc {
 				PointF xy(vertex.x, vertex.y);
 				transform.transform_point(uv);
 
-				vertex.u = uv.u / (float)swf.textures[command.texture_index].image()->width();
-				vertex.v = uv.v / (float)swf.textures[command.texture_index].image()->height();
+				vertex.u = uv.u / (float)texture.image()->width();
+				vertex.v = uv.v / (float)texture.image()->height();
 
 				vertex.x = (matrix.a * xy.x) + (matrix.c * xy.y) + matrix.tx;
 				vertex.y = (matrix.b * xy.x) + (matrix.d * xy.y) + matrix.ty;
@@ -192,7 +144,7 @@ namespace sc {
 			using namespace AtlasGenerator;
 
 			flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			shape_command.texture_index = atlas_item.texture_index;
+			shape_command.texture_index = atlas_item.texture_index + texture_offset;
 
 			for (const Vertex& vertex : vertices)
 			{
@@ -264,7 +216,7 @@ namespace sc {
 			for (const FilledItemContour& contour : filled_item.contours)
 			{
 				flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-				shape_command.texture_index = atlas_item.texture_index;
+				shape_command.texture_index = atlas_item.texture_index + texture_offset;
 
 				for (const Point2D& point : contour.Contour())
 				{
@@ -422,35 +374,14 @@ namespace sc {
 
 				flash::SWFTexture& texture = swf.textures.emplace_back();
 				texture.load_from_image(atlas);
-				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
-				{
-					switch (config.textureQuality)
-					{
-					case SCConfig::Quality::Highest:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA8);
-						break;
-					case SCConfig::Quality::High:
-					case SCConfig::Quality::Medium:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA4);
-						break;
-					case SCConfig::Quality::Low:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGB5_A1);
-						break;
-					default:
-						break;
-					}
-				}
-				else
-				{
-					texture.encoding(flash::SWFTexture::TextureEncoding::KhronosTexture);
-				}
 			}
 
 			uint16_t command_index = 0;
-			for (uint32_t shape_index = 0; swf.shapes.size() > shape_index; shape_index++)
+			uint16_t shape_index = (swf.shapes.size() - m_graphic_groups.size());
+			for (uint32_t group_index = 0; m_graphic_groups.size() > group_index; group_index++, shape_index++)
 			{
 				flash::Shape& shape = swf.shapes[shape_index];
-				GraphicGroup& group = m_graphic_groups[shape_index];
+				GraphicGroup& group = m_graphic_groups[group_index];
 
 				for (uint32_t group_item_index = 0; group.Size() > group_item_index; group_item_index++)
 				{
@@ -484,8 +415,42 @@ namespace sc {
 
 					command_index++;
 				}
+			}
 
-				if (config.type == SCConfig::SWFType::SC2)
+			if (config.exportToExternal && config.repackAtlas)
+			{
+				flash::repack_atlas(swf);
+			}
+
+			for (auto& texture : swf.textures)
+			{
+				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
+				{
+					switch (config.textureQuality)
+					{
+					case SCConfig::Quality::Highest:
+						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA8);
+						break;
+					case SCConfig::Quality::High:
+					case SCConfig::Quality::Medium:
+						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA4);
+						break;
+					case SCConfig::Quality::Low:
+						texture.pixel_format(flash::SWFTexture::PixelFormat::RGB5_A1);
+						break;
+					default:
+						break;
+					}
+				}
+				else
+				{
+					texture.encoding(flash::SWFTexture::TextureEncoding::KhronosTexture);
+				}
+			}
+
+			if (config.type == SCConfig::SWFType::SC2)
+			{
+				for (auto& shape : swf.shapes)
 				{
 					for (flash::ShapeDrawBitmapCommand& command : shape.commands)
 					{
@@ -514,15 +479,14 @@ namespace sc {
 				END
 			);
 
+			if (config.exportToExternal)
+			{
+				flash::remove_unused(swf);
+			}
+
 			status->SetProgress(ATLAS_FINALIZE);
 			status->SetStatusLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
 			FinalizeAtlas();
-
-			if (config.exportToExternal) {
-				status->SetProgress(EXTERNAL_LOADING);
-				status->SetStatusLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
-				LoadExternal();
-			}
 
 			swf.use_external_texture = config.hasExternalTexture;
 			swf.use_low_resolution = config.hasLowresTexture;

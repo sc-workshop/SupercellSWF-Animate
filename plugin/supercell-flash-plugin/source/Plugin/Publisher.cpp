@@ -4,6 +4,7 @@
 
 #include "Module/Module.h"
 #include "Writer/Writer.h"
+#include "Module/SCPluginException.h"
 
 using namespace Animate::Publisher;
 
@@ -118,6 +119,22 @@ namespace sc {
 			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT")
 			);
+
+			{
+				if (config.exportToExternal)
+				{
+					if (fs::exists(config.exportToExternalPath))
+					{
+						publishStatus->SetStatusLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
+						uint16_t offset = writer.LoadExternal(config.exportToExternalPath);
+						publisher.SetIdOffset(offset);
+					}
+					else
+					{
+						throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.wstring().c_str());
+					}
+				}
+			}
 
 			{
 				fs::path document_path = context.falloc->GetString16(

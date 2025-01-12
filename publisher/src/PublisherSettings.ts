@@ -58,6 +58,7 @@ type PublisherSettingsData = {
     // Export to another file settings
     exportToExternal: boolean,
     exportToExternalPath: string,
+    repackAtlas: boolean,
 
     // Texture category
     hasExternalTexture: boolean,
@@ -87,6 +88,7 @@ const PublisherDefaultSettings : PublisherSettingsData =
 
     exportToExternal: false,
     exportToExternalPath: "",
+    repackAtlas: true,
 
     // Textures
     hasExternalTexture: true,

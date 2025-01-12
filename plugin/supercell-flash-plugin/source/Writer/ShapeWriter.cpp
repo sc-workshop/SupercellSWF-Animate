@@ -463,8 +463,8 @@ namespace sc {
 		{
 			canvas = wk::CreateUnique<RasterizingContext>();
 			canvas->image = wk::CreateRef<wk::RawImage>(
-				std::ceil(bound.topLeft.x - bound.bottomRight.x),
-				std::ceil(bound.topLeft.y - bound.bottomRight.y),
+				std::ceil(bound.topLeft.x - bound.bottomRight.x) * resolution,
+				std::ceil(bound.topLeft.y - bound.bottomRight.y) * resolution,
 				wk::Image::PixelDepth::RGBA8,
 				wk::Image::ColorSpace::Linear
 			);
