@@ -94,9 +94,12 @@ namespace sc {
 					textureScaleFactor = 1;
 					break;
 				case 1:
-					textureScaleFactor = 2;
+					textureScaleFactor = 1.5;
 					break;
 				case 2:
+					textureScaleFactor = 2;
+					break;
+				case 3:
 					textureScaleFactor = 4;
 					break;
 				default:

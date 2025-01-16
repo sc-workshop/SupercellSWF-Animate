@@ -282,7 +282,7 @@ namespace sc {
 			AtlasGenerator::Config generator_config(
 				config.textureMaxWidth,
 				config.textureMaxHeight,
-				config.textureScaleFactor,
+				1.f / config.textureScaleFactor,
 				2
 			);
 
