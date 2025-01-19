@@ -200,6 +200,9 @@ If you find any problem with export process or you just need any help, please re
 Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.3
+- Added automatic installation of different plugin variants for different cpu feature sets (Currently supported AVX2, SSE4.2 and native)
+- Minor bugfixes and performance improvements
 ## v 1.3.2
 - Added Bitmap Fill support
 - Added Export name replacing and atlas textures repacking
