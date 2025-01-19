@@ -422,31 +422,38 @@ namespace sc {
 				flash::repack_atlas(swf);
 			}
 
-			for (auto& texture : swf.textures)
-			{
-				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
+			wk::parallel::enumerate(
+				swf.textures.begin(),
+				swf.textures.end(),
+				[&config](flash::SWFTexture& texture, size_t)
 				{
-					switch (config.textureQuality)
+					if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
 					{
-					case SCConfig::Quality::Highest:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA8);
-						break;
-					case SCConfig::Quality::High:
-					case SCConfig::Quality::Medium:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA4);
-						break;
-					case SCConfig::Quality::Low:
-						texture.pixel_format(flash::SWFTexture::PixelFormat::RGB5_A1);
-						break;
-					default:
-						break;
+						if (texture.image()->base_type() == Image::BasePixelType::RGBA)
+						{
+							switch (config.textureQuality)
+							{
+							case SCConfig::Quality::Highest:
+								texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA8);
+								break;
+							case SCConfig::Quality::High:
+							case SCConfig::Quality::Medium:
+								texture.pixel_format(flash::SWFTexture::PixelFormat::RGBA4);
+								break;
+							case SCConfig::Quality::Low:
+								texture.pixel_format(flash::SWFTexture::PixelFormat::RGB5_A1);
+								break;
+							default:
+								break;
+							}
+						}
+					}
+					else
+					{
+						texture.encoding(flash::SWFTexture::TextureEncoding::KhronosTexture);
 					}
 				}
-				else
-				{
-					texture.encoding(flash::SWFTexture::TextureEncoding::KhronosTexture);
-				}
-			}
+			);
 
 			if (config.type == SCConfig::SWFType::SC2)
 			{
