@@ -1,6 +1,6 @@
 import which from "which";
 import { join } from "path";
-import { copyDir, isMac, isWindows, makeLink, progress } from "../scripts/utils";
+import { copyDir, isMac, isWindows, log, makeLink, progress } from "../scripts/utils";
 import { execSync } from "child_process";
 import { mkdirSync, writeFileSync, existsSync } from "fs";
 import { version } from "./package.json"
@@ -13,6 +13,18 @@ const args = process.argv;
 const isDev = args[2] == "development";
 const outputPath = args[3];
 mkdirSync(outputPath, { recursive: true });
+
+const isFresh = args.indexOf("--fresh") != -1;
+
+let cpuFeature = "SSE2"
+for (let arg of args)
+{
+    if (arg.startsWith("--cpuf"))
+    {
+        cpuFeature = arg.split("=")[1];
+        break;
+    }
+}
 
 const libPath = join(outputPath, "lib");
 mkdirSync(libPath, { recursive: true });
@@ -37,7 +49,8 @@ const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 const CmakeFlagsList = [
     `-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
     "-DBUILD_WITH_STATIC_CRT=OFF",
-    `${isDev ? "" : "--fresh"}` // build from fresh for each release build just to make sure that everything will be ok
+    `${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
+    `-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`
 ]
 
 const CmakeFlags = CmakeFlagsList.join(" ");
@@ -63,6 +76,7 @@ function buildWindows() {
         return;
     }
 
+    log(`Running cmake with flags: ${CmakeFlags}`)
     exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
     exec(`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} --target ScAnimatePlugin`);
 

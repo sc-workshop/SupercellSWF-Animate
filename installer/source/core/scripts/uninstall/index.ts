@@ -1,17 +1,21 @@
 (
     function()
     {
-        const cep_path = window.SupercellSWF.user_cep();
+        const system = window.SupercellSWF.system();
+        const cep_uri = FLfile.platformPathToURI(system.install_path);
+        let uninstalled: string[] = [];
 
         for (const extension of window.SupercellSWF.user_manifest.extensions)
         {
+            if (uninstalled.indexOf(extension.name) != -1) continue;
+
             var path = "";
             switch (extension.type)
             {
                 case "extension":
                     // Let's just delete manifest folder
                     // Yes, it will leave garbage but we can't do more in such an environment
-                    path = cep_path + "extensions/" + extension.install + "/CSXS";
+                    path = cep_uri + "extensions/" + extension.install + "/CSXS";
                     break;
 
                 case "command":
@@ -29,17 +33,19 @@
                 if (!FLfile.exists(path))
                 {
                     warn_failure();
-                    continue;
-                }
-
-                let rem_success = FLfile.remove(path);
-                if (!rem_success)
+                } else 
                 {
-                    warn_failure();
+                    let rem_success = FLfile.remove(path);
+                    if (!rem_success)
+                    {
+                        warn_failure();
+                    }
                 }
             }
+
+            uninstalled.push(extension.name);
         }
 
-        FLfile.remove(window.SupercellSWF.user_manifest_path);
+        FLfile.remove(window.SupercellSWF.user_manifest_uri);
     }
 )()

@@ -5,7 +5,7 @@ import { isDev, processExecError, processPath, removeFiles } from "../utils";
 import { execSync } from "child_process"
 import { existsSync } from "fs";
 
-export function build_extension(name: string, extension: Extension)
+export function build_extension(name: string, extension: Extension, flags: String[])
 {
     const outputFolder = join(extensionDistFolder, name);
     if (existsSync(outputFolder))
@@ -14,7 +14,7 @@ export function build_extension(name: string, extension: Extension)
     }
 
     try {
-        execSync(`npm run build:${isDev ? "dev" : "prod"} -- "${outputFolder}"`, {stdio: [0, 1, 2], cwd: resolve(processPath, extension.root)});
+        execSync(`npm run build:${isDev ? "dev" : "prod"} -- "${outputFolder}" ${flags.join(" ")}`, {stdio: [0, 1, 2], cwd: resolve(processPath, extension.root)});
     } catch (err) {
         throw processExecError(err as any);
     }
