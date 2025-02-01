@@ -505,13 +505,12 @@ namespace sc {
 				{
 					const auto& fill = std::get<FilledElementRegion::BitmapFill>(region.style);
 
-					fs::path path = m_writer.GetSpriteTempPath();
-					fill.bitmap.ExportImage(path);
+					fill.bitmap.ExportImage(m_writer.sprite_temp_path);
 
 					wk::RawImageRef image;
 					BLImage texture;
 					{
-						wk::InputFileStream file(path);
+						wk::InputFileStream file(m_writer.sprite_temp_path);
 						wk::stb::load_image(file, image);
 					}
 					SCShapeWriter::CreateImage(image, texture, true);
