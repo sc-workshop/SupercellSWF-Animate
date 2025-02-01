@@ -51,7 +51,7 @@ namespace sc {
 
 			// Some functions for atlas finalize
 
-			void ProcessCommandTransform(
+			void ProcessDrawCommand(
 				flash::ShapeDrawBitmapCommand& command,
 				wk::AtlasGenerator::Item::Transformation& transform,
 				GraphicItem& item

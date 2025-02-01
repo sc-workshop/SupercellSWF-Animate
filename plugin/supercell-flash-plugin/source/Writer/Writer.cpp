@@ -111,7 +111,7 @@ namespace sc {
 			return ++idOffset;
 		}
 
-		void SCWriter::ProcessCommandTransform(
+		void SCWriter::ProcessDrawCommand(
 			flash::ShapeDrawBitmapCommand& command,
 			wk::AtlasGenerator::Item::Transformation& transform,
 			GraphicItem& item
@@ -122,6 +122,13 @@ namespace sc {
 
 			wk::Matrix2D matrix = item.Transformation2D();
 			flash::SWFTexture& texture = swf.textures[command.texture_index];
+			if (command.vertices.empty()) return;
+
+			// Ñopy the last vertex until size equals 4, this is important
+			while (4 > command.vertices.size())
+			{
+				command.vertices.emplace_back(command.vertices[command.vertices.size() - 1]);
+			}
 
 			for (flash::ShapeDrawBitmapCommandVertex& vertex : command.vertices)
 			{
@@ -160,7 +167,7 @@ namespace sc {
 				shape_vertex.v = vertex.uv.v;
 			}
 
-			ProcessCommandTransform(shape_command, atlas_item.transform, item);
+			ProcessDrawCommand(shape_command, atlas_item.transform, item);
 		}
 
 		void SCWriter::ProcessSpriteItem(
@@ -232,7 +239,7 @@ namespace sc {
 					shape_vertex.y = point.y;
 				}
 
-				ProcessCommandTransform(shape_command, atlas_item.transform, filled_item);
+				ProcessDrawCommand(shape_command, atlas_item.transform, filled_item);
 			}
 		}
 
