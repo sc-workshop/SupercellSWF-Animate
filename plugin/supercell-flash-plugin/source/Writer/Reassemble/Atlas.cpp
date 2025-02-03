@@ -39,7 +39,7 @@ namespace sc::flash
 
 		for (uint16_t w = 0; width > w; w++) {
 			for (uint16_t h = 0; height > h; h++) {
-				if (Geometry::point_inside_polygon(polygon, { w, h }))
+				if (Geometry::point_inside_polygon(polygon, { w, h }) || width == 1 || height == 1)
 				{
 					uint8_t* source = texture->at(w + offset.x, h + offset.y);
 					uint8_t* destination = result->at(w, h);
@@ -54,7 +54,7 @@ namespace sc::flash
 	{
 		for (uint32_t i = 0; shape.commands.size() > i; i++)
 		{
-			bool valid_any = false;
+			uint8_t neighbors_count = 0;
 			for (uint32_t t = 0; shape.commands.size() > t; t++)
 			{
 				if (i == t) continue;
@@ -82,14 +82,12 @@ namespace sc::flash
 					if (valid) break;
 				}
 
-				if (valid)
-				{
-					valid_any = true;
-					break;
-				}
+				if (valid) neighbors_count++;
 			}
 
-			if (!valid_any)
+			// command should has at least 2 neighbor command to be valid
+			// TODO: make it possible to split such neighbors to groups
+			if (2 > neighbors_count)
 			{
 				return false;
 			}
@@ -342,11 +340,22 @@ namespace sc::flash
 						vertices_set.insert(std::make_tuple(vertex.u, vertex.v));
 					}
 
+					std::vector<std::tuple<float, float>> vertices;
+					vertices.assign(vertices_set.begin(), vertices_set.end());
 					if (vertices_set.size() == 2)
 					{
-						dumb_vertices = true;
+						auto& p1 = vertices[0];
+						auto& p2 = vertices[1];
+						auto& [x1, y1] = p1;
+						auto& [x2, y2] = p2;
+						if (x1 != x2 && y1 != y2)
+						{
+							dumb_vertices = true;
+						}
 					}
 				}
+
+				bool is_colorfill = zero_width && zero_height;
 
 				auto process_colorfill = [&]()
 					{
@@ -397,6 +406,7 @@ namespace sc::flash
 						RawImageRef sprite;
 						get_sprite(texture, bitmap_bound, points, sprite);
 
+						std::set<std::tuple<float, float>> points_set;
 						auto item = CreateRef<AtlasGenerator::Item>(*sprite);
 						items[n] = item;
 
@@ -405,17 +415,27 @@ namespace sc::flash
 						{
 							auto& item_vertex = item->vertices.emplace_back();
 
-							item_vertex.uv.x = point.x - bitmap_bound.left;
-							item_vertex.uv.y = point.y - bitmap_bound.bottom;
+							item_vertex.uv.x = (point.x - bitmap_bound.left);
+							item_vertex.uv.y = (point.y - bitmap_bound.bottom);
+
+							if (zero_width || zero_height)
+							{
+								if (points_set.count({ point.x, point.y }))
+								{
+									item_vertex.uv.x += zero_width ? 1 : 0;
+									item_vertex.uv.y += zero_height ? 1 : 0;
+								}
+								else
+								{
+									points_set.insert({ point.x, point.y });
+								}
+							}
 						}
 
-						if (!zero_width && !zero_height)
+						bool success = item->mark_as_custom();
+						if (!success)
 						{
-							bool success = item->mark_as_custom();
-							if (!success)
-							{
-								throw Exception("Looks like this sc contains non-convex polygons and this is really bad! Atlas repackaging is impossible....");
-							}
+							throw Exception("Looks like this sc contains non-convex polygons and this is really bad! Atlas repackaging is impossible....");
 						}
 					};
 
