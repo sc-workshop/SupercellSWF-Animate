@@ -65,14 +65,7 @@ namespace sc {
 					try {
 						DoPublish();
 					}
-					catch (const FCM::FCMPluginException& exception)
-					{
-						context.Window()->ThrowException(""); // TODO
-
-						context.Window()->readyToExit = true;
-						result = FCM_EXPORT_FAILED;
-					}
-					catch (const wk::Exception& exception) {
+					catch (const std::exception& exception) {
 						context.Window()->ThrowException(exception.what());
 						context.Trace(exception.what());
 						context.Window()->readyToExit = true;
@@ -100,7 +93,7 @@ namespace sc {
 			auto end = std::chrono::high_resolution_clock::now();
 
 			long long int executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-			context.logger->info("Execution time: {}", executionTime);
+			context.logger->info("Execution time: {}s", executionTime);
 			context.logger->info("------------------------------------------------------------------------");
 
 			context.Trace(

@@ -92,7 +92,11 @@ namespace sc::Adobe {
 		const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
 		m_object.font_name = flash::SWFString(FCM::Locale::ToUtf8(textRun.fontName));
-		m_object.font_color = *(uint32_t*)&textRun.fontColor;
+		m_object.font_color.r = textRun.fontColor.blue;
+		m_object.font_color.g = textRun.fontColor.green;
+		m_object.font_color.b = textRun.fontColor.red;
+		m_object.font_color.a = textRun.fontColor.alpha;
+
 		m_object.font_size = (uint8_t)textRun.fontSize;
 
 		if (textRun.fontStyle != FrameElement::REGULAR_STYLE_STR) {
