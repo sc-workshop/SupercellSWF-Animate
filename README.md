@@ -125,7 +125,7 @@ To enable text outline you need to add "Glow" filter to text field
 # Requirements
 For extension to work correctly, you need:
 
-- Adobe Animate 2020 or higher
+- Adobe Animate 2022 or higher
 - Windows 10 x64 or Windows 11
 
 MacOS support will be available one day, but it is not a priority at all right now.
