@@ -15,7 +15,7 @@
 
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Zaawansowane",
     "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Eksportuj dokument do pliku zewnętrznego",
-	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP": "Zapisuje wszystkie symbole z bieżącego projektu do innego pliku .sc. \nNie zastępuje zawartości pliku zewnętrznego.",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP": "Zapisuje wszystkie symbole z bieżącego projektu do innego pliku .sc. \n",
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Plik zewnętrzny",
 	"TID_SWF_REPACK_ATLAS": "Repack atlas texture",
 	"TID_SWF_REPACK_ATLAS_TIP": "Optimizes the atlas by completely repacking it and removing duplicate sprites. Can take quite a long time for large files.",
