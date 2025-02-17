@@ -7,8 +7,9 @@
 
 <br/>
 
-# Disclaimer
-This repository does not provide any instructions on how to modify any Supercell game or their assets. All information and all Assets were taken from public sources. You assume all risks from the use of this tool.
+> [!IMPORTANT]
+> This repository does not provide any instructions on how to modify any Supercell game or their assets. All information and all Assets were taken from public sources. You assume all risks from the use of this tool.
+
 
 # Table Of Content
 
@@ -83,7 +84,7 @@ There will be no support for filters for Symbols
 .sc file does not support sounds
 
 - Parenting / Camera / Advanced Layers ❌  
-There are <strong>currently</strong> no plans for support.
+Planned someday but in a very limited environment due to CPSDK limitations.
 
 - Text ✅  
 Partial support
@@ -94,7 +95,7 @@ Full support except for "Button" type
     - Blending modes ✅  
     Full support. But note that some modes may not work or crash.
 
-    - Transform ✅ 
+    - Transform ✅   
     2D Transforms are fully supported. 3D transformations have a potentially small range of uses and a small chance of being supported.
 
 - Layers ✅  
@@ -128,7 +129,9 @@ For extension to work correctly, you need:
 - Adobe Animate 2022 or higher
 - Windows 10 x64 or Windows 11
 
-MacOS support will be available one day, but it is not a priority at all right now.
+
+> [!NOTE]
+> MacOS support will be available one day, but it is not a priority at all right now.
   
 # Installing
 First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
@@ -140,9 +143,9 @@ If you want to remove plugin, run ```install.jsfl``` again, and this time you wi
   
 # Plugin Update
 If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
-  
-### IMPORTANT
-If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
+
+> [!IMPORTANT]
+> If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
   
 # Building
 Before starting you need to have:
@@ -150,54 +153,36 @@ Before starting you need to have:
 - [Typescript and ts-node](https://www.npmjs.com/package/ts-node)
 - MSVC Build tools (Visual Studio)
 
-Instruction will be divided into 3 parts, instructions for building Plugin, Publish settings and installer:
-
-- Installer  
-    Install node modules inside ```installer``` folder with command:  
+To prepare all the necessary dependencies, run the following command in the project folder:  
+`
+    npm run cook
+`  
+  
+Next, after preparing all modules, you need to open console in root of repository.  
+- Release  
+    To build a installer with all packages, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
     `
-    npm install
+    npm run package
     `  
-
-- Publish Settings  
-    Open console in ```publisher``` folder and enter following command to install all dependencies needed for build:  
-    `
-    npm install --save-dev
-    `  
-    After installation, just if you want you can try to start test local server with command:  
-    `
-    npm run start
-    `  
-    Try opening `localhost:8080` in your browser. If page works and you see publisher interface, then everything is OK!
-
-- Plugin  
-    Install node modules inside ```plugin``` folder with command:
-    `
-    npm install
-    `  
-    And make sure you have installed Visual Studio with C++ build tools and also Cmake which should be in system variables or PATH. That's all!  
-
-Next, after preparing all modules, you need to open console in root of repository.
+    After the command completes, installer files will be available in `dist/package` folder.  
+    You can run it or zip and share.
 - Debug  
     If you want to use a debug build then make sure you have CEP debug mode enabled. You can read more about CEP [Here](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md)  
     After that you need to use this command:  
     `
     npm run build:dev
     `  
-    After execution, extension should load into Adobe Animate.
-- Release  
-    To build a installer with all packages, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
-    `
-    npm run package
-    `
-    After the command completes, installer files will be available in `dist/package` folder.  
-    You can run it or zip and share.
+    After execution, extension should load into Adobe Animate.  
+    From now on you can connect any native or typescript debugger to Animate process and do your own stuff.
   
 # Examples
 You can find a list of all available examples in ["examples"](/examples/README.md) folder.  
   
 # Issues
 If you find any problem with export process or you just need any help, please report it in [Issues](https://github.com/sc-workshop/SupercellSWF-Animate/issues) or [join our Discord Server](https://discord.gg/uPnDsns6G6)  
-Also, native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
+
+> [!TIP]
+> Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
 ## v 1.3.3
