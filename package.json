@@ -8,7 +8,7 @@
     "build:dev": "ts-node scripts/build.ts development",
     "build:prod": "ts-node scripts/build.ts production",
     "package": "ts-node scripts/package.ts production",
-    "cook": "ts-node scripts/cook.ts"
+    "cook": "ts-node --project ./tsconfig.json scripts/cook.ts"
   },
   "author": "DaniilSV",
   "license": "MIT",

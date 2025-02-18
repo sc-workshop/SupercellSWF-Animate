@@ -124,7 +124,7 @@ namespace sc {
 			flash::SWFTexture& texture = swf.textures[command.texture_index];
 			if (command.vertices.empty()) return;
 
-			// Ñopy the last vertex until size equals 4, this is important
+			// ï¿½opy the last vertex until size equals 4, this is important
 			while (4 > command.vertices.size())
 			{
 				command.vertices.emplace_back(command.vertices[command.vertices.size() - 1]);

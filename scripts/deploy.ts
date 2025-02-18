@@ -1,7 +1,6 @@
 import { copyDir, extensionsFolder, error, isDev, isWindows, processExecError, progress, removeFiles, makeLink } from "./utils";
 import { execSync } from "child_process"
 import { bundleId, config, extensionDistFolder } from "./manifest";
-import winreg from 'registry-js'
 
 import { join } from "path";
 
@@ -21,14 +20,13 @@ export function deploy() {
     if (isDev) {
         try {
             const csxsVersion = config.cep_version.split(".")[0];
-
-            progress(`PlayerDebug for CEP ${csxsVersion} patching`);
-
+            
             if (isWindows) {
-                const subkey = `Software\\Adobe\\CSXS.${csxsVersion}`;
-                winreg.createKeySafe(winreg.HKEY.HKEY_CURRENT_USER, subkey);
-                winreg.setValueSafe(winreg.HKEY.HKEY_CURRENT_USER, subkey, "PlayerDebugMode", winreg.RegistryValueType.REG_SZ, "1");
+                // const subkey = `Software\\Adobe\\CSXS.${csxsVersion}`;
+                // winreg.createKeySafe(winreg.HKEY.HKEY_CURRENT_USER, subkey);
+                // winreg.setValueSafe(winreg.HKEY.HKEY_CURRENT_USER, subkey, "PlayerDebugMode", winreg.RegistryValueType.REG_SZ, "1");
             } else {
+                progress(`PlayerDebug for CEP ${csxsVersion} patching`);
                 execSync(`defaults write com.adobe.CSXS.${csxsVersion} PlayerDebugMode 1`, { stdio: [0, 1, 2] })
             }
         } catch (err) {
