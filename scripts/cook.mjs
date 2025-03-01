@@ -6,7 +6,7 @@ const installer_cwd = join(cwd(), "installer");
 const publisher_cwd = join(cwd(), "publisher");
 const plugin_cwd = join(cwd(), "plugin");
 
-const install_paths = [installer_cwd, publisher_cwd, plugin_cwd];
+const install_paths = [cwd(), installer_cwd, publisher_cwd, plugin_cwd];
 const globals = ["ts-node", "@types/node"]
 
 for (const path of install_paths)
