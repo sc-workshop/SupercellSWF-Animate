@@ -128,6 +128,7 @@ For extension to work correctly, you need:
 
 - Adobe Animate 2022 or higher
 - Windows 10 x64 or Windows 11
+- [Visual C++ Redistributable Runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
 
 > [!NOTE]
@@ -149,7 +150,7 @@ If you have an already installed plugin and want to update, run installation fil
   
 # Building
 Before starting you need to have:
-- [npm and node.js](https://nodejs.org/)
+- [npm, node.js and ts-node](https://nodejs.org/)
 - [Typescript and ts-node](https://www.npmjs.com/package/ts-node)
 - MSVC Build tools (Visual Studio)
 
@@ -158,7 +159,7 @@ To prepare all the necessary dependencies, run the following command in the proj
     npm run cook
 `  
   
-Next, after preparing all modules, you need to open console in root of repository.  
+Next, after preparing all modules, you need to open console (as admin in case of Debug) in root of repository.  
 - Release  
     To build a installer with all packages, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
     `
