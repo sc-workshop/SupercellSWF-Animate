@@ -32,7 +32,7 @@ export default function SubMenu(
         "input",
         {
             type: "image",
-            src: require(`../../images/arrow.png`),
+            src: require(`../../assets/images/arrow.png`),
             style: {
                 transform: active ? "rotate(180deg)" : "",
                 transition: 'transform 100ms ease-in-out',

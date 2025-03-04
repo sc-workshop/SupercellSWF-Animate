@@ -7,7 +7,7 @@ import Locale from './Localization';
 import { PublisherContextProvider } from './Context';
 
 export const loadFont = async (callback: () => void) => {
-  const font = new FontFace("PublisherFont", `url(${require("./fonts/" + Locale.code)})`, {
+  const font = new FontFace("PublisherFont", `url(${require("./assets/fonts/" + Locale.code)})`, {
     style: "normal",
   });
   await font.load();

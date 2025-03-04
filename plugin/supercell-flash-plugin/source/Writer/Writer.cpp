@@ -513,6 +513,7 @@ namespace sc {
 			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.save_custom_property = config.writeCustomProperties;
+			swf.use_half_precision_matrices = config.lowPrecisionMatrices;
 
 			// Raw textures can be stored only inside texture files
 			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)

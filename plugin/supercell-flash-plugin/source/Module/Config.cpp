@@ -126,6 +126,9 @@ namespace sc {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
 				context.logger->info("	lowResolutionSuffix: {}", lowResolutionSuffix);
 			}
+
+			lowPrecisionMatrices = data["lowPrecisionMatrices"];
+			context.logger->info("	lowPrecisionMatrices: {}", lowPrecisionMatrices);
 		}
 
 		void SCConfig::Normalize()

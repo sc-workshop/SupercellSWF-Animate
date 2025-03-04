@@ -30,7 +30,7 @@ class LocaleInterface {
 
     Load()
     {
-        this.locale = require(`./locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`)
+        this.locale = require(`./assets/locales/${Object.keys(Locales)[Object.values(Locales).indexOf(this.code)]}.json`)
     }
 
     Get(TID: string): string {

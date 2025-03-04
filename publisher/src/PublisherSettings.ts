@@ -73,6 +73,9 @@ type PublisherSettingsData = {
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
     textureMaxHeight: number,
+
+    // SC2
+    lowPrecisionMatrices: boolean
 }
 
 const PublisherDefaultSettings : PublisherSettingsData = 
@@ -103,6 +106,9 @@ const PublisherDefaultSettings : PublisherSettingsData =
     textureScaleFactor: TextureScaleFactor["x1.0"],
     textureMaxWidth: 4096,
     textureMaxHeight: 4096,
+
+    // SC2
+    lowPrecisionMatrices: false
 }
 
 export class PublisherSettings {
