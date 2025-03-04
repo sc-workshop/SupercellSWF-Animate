@@ -65,6 +65,25 @@ namespace sc {
 					try {
 						DoPublish();
 					}
+					catch (const FCM::FCMPluginException& exception)
+					{
+						std::string reason;
+						{
+							std::stringstream message;
+							auto& symbol = exception.Symbol();
+							if (!symbol.name.empty())
+							{
+								message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
+							}
+							message << exception.what();
+							reason = message.str();
+						}
+
+						context.Window()->ThrowException(reason);
+						context.Trace(reason.c_str());
+						context.Window()->readyToExit = true;
+						result = FCM_EXPORT_FAILED;
+					}
 					catch (const std::exception& exception) {
 						context.Window()->ThrowException(exception.what());
 						context.Trace(exception.what());
