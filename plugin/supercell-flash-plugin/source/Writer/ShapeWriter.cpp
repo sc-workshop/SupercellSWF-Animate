@@ -432,7 +432,9 @@ namespace sc {
 			return code.digest();
 		}
 
-		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool /*new_symbol*/) {
+		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool new_symbol) {
+			if (!new_symbol) return true;
+
 			ReleaseVectorGraphic();
 
 			if (m_group.Size() == 0)

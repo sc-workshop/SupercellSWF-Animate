@@ -536,13 +536,16 @@ namespace sc {
 				)
 			);
 
-			if (config.type == SCConfig::SWFType::SC1)
+			switch (config.type)
 			{
+			case SCConfig::SWFType::SC1:
 				swf.save(filepath, config.compression);
-			}
-			else
-			{
+				break;
+			case SCConfig::SWFType::SC2:
 				swf.save_sc2(filepath);
+				break;
+			default:
+				break;
 			}
 
 			context.Window()->DestroyStatusBar(status);
