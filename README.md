@@ -83,8 +83,9 @@ There will be no support for filters for Symbols
 - Sounds ❌  
 .sc file does not support sounds
 
-- Parenting / Camera / Advanced Layers ❌  
-Planned someday but in a very limited environment due to CPSDK limitations.
+- Parenting / Camera / Advanced Layers ✅  
+Partial support. 
+At the moment, implemented layer parenting (rigging)
 
 - Text ✅  
 Partial support
@@ -127,10 +128,13 @@ To enable text outline you need to add "Glow" filter to text field
 For extension to work correctly, you need:
 
 - Adobe Animate 2022 or higher
+
+## Windows
 - Windows 10 x64 or Windows 11
 - [Visual C++ Redistributable Runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
-
+## MacOS
+Not supported now
 > [!NOTE]
 > MacOS support will be available one day, but it is not a priority at all right now.
   
@@ -186,6 +190,9 @@ If you find any problem with export process or you just need any help, please re
 > Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.4
+- Added support for layer parenting
+- Minor improvements and fixes
 ## v 1.3.3
 - Added automatic installation of different plugin variants for different cpu feature sets (Currently supported AVX2, SSE4.2 and native)
 - Minor bugfixes and performance improvements

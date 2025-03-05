@@ -366,7 +366,7 @@
 					},
 					{
 						"name": "Button",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
@@ -741,7 +741,7 @@
 	},
 	{
 		"name": "LayerDepth",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "ActionsWizard",
@@ -761,7 +761,7 @@
 	},
 	{
 		"name": "Camera",
-		"supported": false
+		"supported": true
 	},
 	{
 		"name": "Parenting",
