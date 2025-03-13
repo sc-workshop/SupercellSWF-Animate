@@ -76,6 +76,7 @@ type PublisherSettingsData = {
 
     // SC2
     lowPrecisionMatrices: boolean
+    useShortFrames: boolean
 }
 
 const PublisherDefaultSettings : PublisherSettingsData = 
@@ -108,7 +109,8 @@ const PublisherDefaultSettings : PublisherSettingsData =
     textureMaxHeight: 4096,
 
     // SC2
-    lowPrecisionMatrices: false
+    lowPrecisionMatrices: false,
+    useShortFrames: true
 }
 
 export class PublisherSettings {

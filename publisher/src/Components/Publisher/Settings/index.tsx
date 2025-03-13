@@ -69,12 +69,22 @@ export default function SettingsMenu() {
 
     const lowPrecisionMatrices = new BoolField(
         {
-            name: Locale.Get("TID_SWF_LOW_PRECISION_MATRICES"),
+            name: Locale.Get("TID_SWF2_LOW_PRECISION_MATRICES"),
             keyName: "low_precision_matrices_select",
             defaultValue: Settings.getParam("lowPrecisionMatrices"),
             style: default_style,
             callback: value => (Settings.setParam("lowPrecisionMatrices", value)),
             tip_tid: "TID_SWF_LOW_PRECISION_MATRICES_TIP"
+        }
+    ).render()
+
+    const shortFrames = new BoolField(
+        {
+            name: Locale.Get("TID_SWF2_SHORT_FRAMES"),
+            keyName: "low_precision_matrices_select",
+            defaultValue: Settings.getParam("useShortFrames"),
+            style: default_style,
+            callback: value => (Settings.setParam("useShortFrames", value))
         }
     ).render()
 
@@ -87,7 +97,7 @@ export default function SettingsMenu() {
         : [];
 
     const sc2Settings: ReactNode[] = 
-        !is_sc1 ? [lowPrecisionMatrices] 
+        !is_sc1 ? [lowPrecisionMatrices, shortFrames] 
         : [];
 
     const components = [

@@ -355,8 +355,6 @@ namespace sc::flash
 					}
 				}
 
-				bool is_colorfill = zero_width && zero_height;
-
 				auto process_colorfill = [&]()
 					{
 						ColorRGBA color(0, 0, 0, 0xFF);

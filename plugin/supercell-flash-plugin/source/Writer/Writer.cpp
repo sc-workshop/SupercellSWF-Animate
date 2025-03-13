@@ -486,9 +486,8 @@ namespace sc {
 			{
 				INIT = 0,
 				ATLAS_FINALIZE = 1,
-				EXTERNAL_LOADING = 2,
-				SWF_SAVING = 3,
-				END = 4
+				SWF_SAVING = 2,
+				END = 3
 			};
 
 			StatusComponent* status = context.Window()->CreateStatusBarComponent(
@@ -513,7 +512,13 @@ namespace sc {
 			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.save_custom_property = config.writeCustomProperties;
-			swf.use_half_precision_matrices = config.lowPrecisionMatrices;
+
+			// SC2 settings
+			{
+				flash::Sc2CompileSettings& sc2 = swf.sc2_compile_settings;
+				sc2.use_half_precision_matrices = config.lowPrecisionMatrices;
+				sc2.use_short_frames = config.useShortFrames;
+			}
 
 			// Raw textures can be stored only inside texture files
 			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
@@ -529,7 +534,7 @@ namespace sc {
 			fs::path filepath = fs::path(config.outputFilepath).replace_extension("sc");
 			fs::path basename = filepath.filename();
 
-			status->SetProgress(EXTERNAL_LOADING);
+			status->SetProgress(SWF_SAVING);
 			status->SetStatusLabel(
 				context.locale.GetString(
 					"TID_FILE_SAVE", basename.u16string().c_str()

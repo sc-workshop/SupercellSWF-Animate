@@ -19,8 +19,9 @@
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Plik zewnętrzny",
 	"TID_SWF_REPACK_ATLAS": "Repack atlas texture",
 	"TID_SWF_REPACK_ATLAS_TIP": "Optimizes the atlas by completely repacking it and removing duplicate sprites. Can take quite a long time for large files.",
-	"TID_SWF_LOW_PRECISION_MATRICES": "Half precision matrices",
-	"TID_SWF_LOW_PRECISION_MATRICES_TIP": "Writes transformation matrices in a smaller decimal type, which reduces file size and memory load but reduces available range for transformation.",
+	"TID_SWF2_LOW_PRECISION_MATRICES": "Half precision matrices",
+	"TID_SWF2_LOW_PRECISION_MATRICES_TIP": "Writes transformation matrices in a smaller decimal type, which reduces file size and memory load but reduces available range for transformation.",
+	"TID_SWF2_SHORT_FRAMES": "Use frame optimization",
 
 	"TID_TEXTURES_LABEL": "Tekstury",
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Napisz plik zewnętrzny",

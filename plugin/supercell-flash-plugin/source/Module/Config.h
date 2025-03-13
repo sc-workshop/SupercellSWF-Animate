@@ -63,6 +63,7 @@ namespace sc {
 			bool writeCustomProperties = true;
 			bool hasPrecisionMatrices = false;
 			bool lowPrecisionMatrices = false;
+			bool useShortFrames = true;
 		public:
 			virtual void FromDict(const FCM::PIFCMDictionary dict) override;
 			void Load(const FCM::PIFCMDictionary dict);

@@ -129,6 +129,9 @@ namespace sc {
 
 			lowPrecisionMatrices = data["lowPrecisionMatrices"];
 			context.logger->info("	lowPrecisionMatrices: {}", lowPrecisionMatrices);
+
+			useShortFrames = data["useShortFrames"];
+			context.logger->info("	useShortFrames: {}", useShortFrames);
 		}
 
 		void SCConfig::Normalize()
