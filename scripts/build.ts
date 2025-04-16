@@ -36,6 +36,8 @@ for (const extensionName of Object.keys(config.extensions)) {
         case "extension":
             build_extension(extensionName, extension, flags);
             break;
+        default:
+            break;
     }
 }
 

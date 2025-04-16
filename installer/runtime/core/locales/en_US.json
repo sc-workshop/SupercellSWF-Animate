@@ -9,5 +9,6 @@
     "TID_UNINSTALL": "Uninstall",
     "TID_UNINSTALL_PROCESS": "Uninstalling...",
 
-    "TID_COMMAND_ImportCommand_NAME": "Import .sc"
+    "TID_COMMAND_ImportCommand_NAME": "Import .sc",
+    "TID_COMMAND_ExportNameTransfer_Name": "SupercellSWF/Set linkage names as symbol names"
 }

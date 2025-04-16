@@ -44,7 +44,7 @@ export default function SettingsMenu() {
             callback: toggleBackwardCompatibility,
             tip_tid: "TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP"
         }
-    ).render()
+    )
 
     const externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
@@ -65,7 +65,7 @@ export default function SettingsMenu() {
             callback: value => (Settings.setParam("repackAtlas", value)),
             tip_tid: "TID_SWF_REPACK_ATLAS_TIP"
         }
-    ).render()
+    )
 
     const lowPrecisionMatrices = new BoolField(
         {
@@ -76,7 +76,7 @@ export default function SettingsMenu() {
             callback: value => (Settings.setParam("lowPrecisionMatrices", value)),
             tip_tid: "TID_SWF_LOW_PRECISION_MATRICES_TIP"
         }
-    ).render()
+    )
 
     const shortFrames = new BoolField(
         {
@@ -86,18 +86,18 @@ export default function SettingsMenu() {
             style: default_style,
             callback: value => (Settings.setParam("useShortFrames", value))
         }
-    ).render()
+    )
 
     const externalFileSettings: ReactNode[] = 
-        isExportToExternal ? [externalFilePath, repackAtlas] 
+        isExportToExternal ? [externalFilePath, repackAtlas.render()] 
         : [];
         
     const sc1Settings: ReactNode[] =
-        is_sc1 ? [backwardCompatibility] 
+        is_sc1 ? [backwardCompatibility.render()] 
         : [];
 
     const sc2Settings: ReactNode[] = 
-        !is_sc1 ? [lowPrecisionMatrices, shortFrames] 
+        !is_sc1 ? [lowPrecisionMatrices.render(), shortFrames.render()] 
         : [];
 
     const components = [

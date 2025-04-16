@@ -42,8 +42,14 @@ export const config: ConfigInterface = {
                 size: { width: 1, height: 1 }
             }
         },
+        ExportNameTransfer:
+        {
+            type: "command",
+            path: "jsfl/export_name_transfer.jsfl"
+        }
         // ImportCommand: {
         //     type: "command",
+        //     name: "SupercellSWF/Import .sc",
         //     path: "importer/import_sc.jsfl"
         // }
     }

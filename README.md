@@ -62,6 +62,7 @@ For the most part these tips will help you make a more "correct" and more optimi
     Animate is a fairly flexible program and you will notice very little difference between different types of symbols, but speed of export and rendering performance in general depends on how correctly you use these types.  
     When organizing project structure, note that Shapes or so-called Graphic symbols are intended to contain sprites or vector graphics. They can have only one frame.
     At the same time, MovieClip symbols are used to create animation using shapes. They can have an unlimited (within technical limits) number of frames and they can have a linkage name.
+- 
 
 # Support
 This project was created with the goal of exploring various interesting tools and to support a small but quite creative community of modders. I put a lot of heart and time into this creation, so if you want to support me, you can buy me a coffee right here :3  

@@ -3,6 +3,25 @@ import { readdirSync, existsSync } from "fs";
 import { join, resolve } from "path";
 import { progress, removeDirs as removeFiles } from "./utils";
 import { distFolder } from "./manifest";
+import { Extension } from './manifest/interfaces';
+
+export function cleanup_extension(extension: Extension)
+{
+    const content = readdirSync(extension.root);
+
+    if (content.includes(".dist")) {
+        const distFile = join(extension.root, ".dist");
+        const distFiles = distFile.split(/\r?\n/);
+
+        for (const file of distFiles) {
+            if (file.startsWith("#")) {
+                continue;
+            }
+
+            removeFiles(resolve(extension.root, file));
+        }
+    }
+}
 
 export function cleanup(extensions: string[] = []) {
     progress('Cleaning dist files...');
@@ -17,23 +36,14 @@ export function cleanup(extensions: string[] = []) {
             }
         }
         const extension = config.extensions[extensionName];
-        if (extension.type !== "extension") continue; 
-
-        const content = readdirSync(extension.root);
-
-        if (content.includes(".dist")) {
-            const distFile = join(extension.root, ".dist");
-            const distFiles = distFile.split(/\r?\n/);
-
-            for (const file of distFiles) {
-                if (file.startsWith("#")) {
-                    continue;
-                }
-
-                removeFiles(resolve(extension.root, file));
-            }
+        switch(extension.type)
+        {
+            case "extension":
+                cleanup_extension(extension);
+                break;
+            default:
+                break;
         }
-
-
+        // TODO
     }
 }

@@ -2,7 +2,7 @@ import pc from "picocolors";
 
 import { join } from "path";
 import { userInfo, homedir } from "os";
-import { symlinkSync, copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
+import { symlinkSync, copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync, writeFileSync } from "fs";
 import { Colors, Formatter } from "picocolors/types";
 
 export const processPath = process.cwd();
@@ -122,4 +122,10 @@ export function makeLink(src: string, dst: string) {
 
 export function getPreferencesFolder() {
 
+}
+
+export function createDistMark(path: string)
+{
+    const dest = join(path, ".dist");
+    writeFileSync(dest, "");
 }

@@ -9,5 +9,6 @@
     "TID_UNINSTALL": "Удалить",
     "TID_UNINSTALL_PROCESS": "Удаление...",
 
-    "TID_COMMAND_ImportCommand_NAME": "Импортировать .sc"
+    "TID_COMMAND_ImportCommand_NAME": "Импортировать .sc",
+    "TID_COMMAND_ExportNameTransfer_Name": "SupercellSWF/Установить имена привязки как имя символа"
 }
