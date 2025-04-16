@@ -54,6 +54,7 @@ type PublisherSettingsData = {
     compressionMethod: CompressionMethods,
     hasPrecisionMatrices: boolean,
     writeCustomProperties: boolean,
+    writeFieldsText: boolean,
 
     // Export to another file settings
     exportToExternal: boolean,
@@ -89,6 +90,7 @@ const PublisherDefaultSettings : PublisherSettingsData =
     compressionMethod: CompressionMethods.ZSTD,
     hasPrecisionMatrices: false,
     writeCustomProperties: true,
+    writeFieldsText: true,
 
     exportToExternal: false,
     exportToExternalPath: "",

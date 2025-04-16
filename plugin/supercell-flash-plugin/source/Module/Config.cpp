@@ -132,6 +132,9 @@ namespace sc {
 
 			useShortFrames = data["useShortFrames"];
 			context.logger->info("	useShortFrames: {}", useShortFrames);
+
+			writeFieldsText = data["writeFieldsText"];
+			context.logger->info("	writeFieldsText: {}", writeFieldsText);
 		}
 
 		void SCConfig::Normalize()

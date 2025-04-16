@@ -9,16 +9,18 @@ import { ReactNode } from "react";
 export default function OtherSettings() {
     const { fileType, useBackwardCompatibility } = GetPublishContext();
 
+    const default_style = {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "10px"
+    };
+
     const compressionType = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_COMPRESSION"),
         keyName: "file_compression_select",
         enumeration: useBackwardCompatibility ? BaseCompressionMethods : CompressionMethods,
         defaultValue: Settings.getParam("compressionMethod"),
-        style: {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px"
-        },
+        style: default_style,
         callback: value => (Settings.setParam("compressionMethod", parseInt(value))),
     })
 
@@ -27,11 +29,7 @@ export default function OtherSettings() {
             name: Locale.Get("TID_SWF_SETTINGS_PRECISION_MATRIX"),
             keyName: "precision_matrix",
             defaultValue: Settings.getParam("hasPrecisionMatrices"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: default_style,
             callback: value => (Settings.setParam("hasPrecisionMatrices", value)),
         }
     );
@@ -41,14 +39,20 @@ export default function OtherSettings() {
             name: Locale.Get("TID_SWF_WRITE_CUSTOM_PROPERTIES"),
             keyName: "custom_properties",
             defaultValue: Settings.getParam("writeCustomProperties"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: default_style,
             callback: value => (Settings.setParam("writeCustomProperties", value)),
         }
     );
+
+    const writeFieldsText = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_WRITE_FIELDS_TEXT"),
+            keyName: "fields_text",
+            defaultValue: Settings.getParam("writeFieldsText"),
+            style: default_style,
+            callback: value => (Settings.setParam("writeFieldsText", value)),
+        }
+    ).render();
 
     if (useBackwardCompatibility)
     {
@@ -71,12 +75,17 @@ export default function OtherSettings() {
         ]
     }
 
+    let options: ReactNode[] = [
+        writeFieldsText,
+        ...sc1_dependent_options
+    ]
+
     return SubMenu(
         Locale.Get("TID_OTHER_LABEL"),
         "other_settings",
         {
             marginBottom: "20%"
         },
-        ...sc1_dependent_options
+        ...options
     )
 }

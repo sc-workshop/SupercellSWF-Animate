@@ -57,5 +57,6 @@
 	"TID_OTHER_LABEL": "Другое",
 	"TID_SWF_SETTINGS_COMPRESSION": "Тип сжатия",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Сохранить кастомные свойства",
-	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Точные матрицы"
+	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Точные матрицы",
+	"TID_SWF_WRITE_FIELDS_TEXT": "Экспортировать текст из текстовых полей"
 }

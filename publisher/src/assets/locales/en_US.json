@@ -57,6 +57,7 @@
 	"TID_OTHER_LABEL": "Others",
 	"TID_SWF_SETTINGS_COMPRESSION": "Compression method",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Write custom properties",
-	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precise matrices"
+	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precise matrices",
+	"TID_SWF_WRITE_FIELDS_TEXT": "Export text of TextFields"
 	
 }

@@ -17,13 +17,20 @@ namespace sc::Adobe {
 	{
 		using namespace Animate::DOM;
 
+		auto& config = SCPlugin::Publisher::ActiveConfig();
+
 		m_object.left = (int16_t)floor(textfield.bound.topLeft.x);
 		m_object.top = (int16_t)floor(textfield.bound.topLeft.y);
 		
 		m_object.right = (int16_t)floor(textfield.bound.bottomRight.x);
 		m_object.bottom = (int16_t)floor(textfield.bound.bottomRight.y);
-		m_object.text = flash::SWFString(FCM::Locale::ToUtf8(textfield.text));
 
+
+		if (config.writeFieldsText)
+		{
+			m_object.text = flash::SWFString(FCM::Locale::ToUtf8(textfield.text));
+		}
+		
 		m_object.is_multiline =
 			textfield.lineMode == FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
 
