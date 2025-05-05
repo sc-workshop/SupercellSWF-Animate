@@ -29,9 +29,9 @@ function build_extension_package(output_package: string, additional_args: string
         unlinkSync(certPath)
     }
 
-    execSync(`${zxpCmd} -selfSignedCert ${cert.countryCode} ${cert.province} ${cert.organization} ${bundleId} ${cert.password} "${certPath}"`, { cwd: cwdDir, stdio: [0, 1, 2] })
+    execSync(`${zxpCmd} -selfSignedCert "${cert.countryCode}" "${cert.province}" "${cert.organization}" "${bundleId}" "${cert.password}" "${certPath}"`, { cwd: cwdDir, stdio: [0, 1, 2] })
 
-    execSync(`${zxpCmd} -sign "${extensionDistFolder}" "${output_package}" "${certPath}" ${cert.password} -tsa http://timestamp.digicert.com/`, { cwd: cwdDir, stdio: [0, 1, 2] })
+    execSync(`${zxpCmd} -sign "${extensionDistFolder}" "${output_package}" "${certPath}" "${cert.password}"`, { cwd: cwdDir, stdio: [0, 1, 2] })
 
     log(`Package saved to ${output_package}`)
 
