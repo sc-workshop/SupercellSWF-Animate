@@ -191,6 +191,9 @@ If you find any problem with export process or you just need any help, please re
 > Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.5
+- Added text export selection option
+- Minor improvements and fixes
 ## v 1.3.4
 - Added support for layer parenting
 - Minor improvements and fixes
