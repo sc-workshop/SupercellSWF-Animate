@@ -1,5 +1,4 @@
-import { CSEvent, getInterface, isCEP } from "./CEP"
-import { UpdateContext } from "./Context";
+import { CSEvent, getInterface, isCEP } from "CEP"
 
 export enum CompressionMethods {
     LZMA,

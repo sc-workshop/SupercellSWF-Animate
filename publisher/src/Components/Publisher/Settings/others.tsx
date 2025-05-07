@@ -1,9 +1,9 @@
-import Locale from "../../../Localization";
-import BoolField from "../../Shared/BoolField";
-import EnumField from "../../Shared/EnumField";
-import SubMenu from "../../Shared/SubMenu";
-import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "../../../PublisherSettings";
-import { GetPublishContext } from "../../../Context";
+import Locale from "Localization";
+import BoolField from "Components/Shared/BoolField";
+import EnumField from "Components/Shared/EnumField";
+import SubMenu from "Components/Shared/SubMenu";
+import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "PublisherSettings";
+import { GetPublishContext } from "Context";
 import { ReactNode } from "react";
 
 export default function OtherSettings() {

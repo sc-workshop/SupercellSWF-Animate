@@ -1,27 +1,29 @@
 import { createElement } from "react";
-import { Settings, SWFType } from "../../PublisherSettings";
-import Locale from "../../Localization";
+import { Settings, SWFType } from "PublisherSettings";
+import Locale from "Localization";
 
 import FileField from "../Shared/FileField";
 import EnumField from "../Shared/EnumField";
-import { GetPublishContext } from "../../Context";
+import { GetPublishContext } from "Context";
 
 export default function BasicSettings() {
     const { setFileType } = GetPublishContext();
 
-    const output = FileField(
-        Locale.Get("TID_OUTPUT"),
-        "publisher_output_path",
-        "write",
-        "sc",
+    const output = new FileField(
         {
-            marginBottom: "10px",
-            display: "flex",
-            alignItems: " center"
-        },
-        value => (Settings.setParam("output", value)),
-        Settings.getParam("output")
-    )
+            name: Locale.Get("TID_OUTPUT"),
+            keyName: "publisher_output_path",
+            mode: "write",
+            ext: "sc",
+            style: {
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: " center"
+            },
+            callback: value => (Settings.setParam("output", value)),
+            defaultValue: Settings.getParam("output"),
+        }
+    ).render()
 
     const filetype = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_FILETYPE"),

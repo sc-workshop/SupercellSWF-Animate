@@ -1,6 +1,6 @@
 
-import { getInterface, isCEP } from "../CEP";
-import { Settings } from "../PublisherSettings";
+import { getInterface, isCEP } from "CEP";
+import { Settings } from "PublisherSettings";
 
 export function publish() {
     console.log(Settings.data)

@@ -1,13 +1,13 @@
-import Locale from "../../../../Localization";
-import { Settings, SWFType, TextureDimensions, TextureEncoding, TextureScaleFactor } from "../../../../PublisherSettings";
+import Locale from "Localization";
+import { Settings, SWFType, TextureDimensions, TextureEncoding, TextureScaleFactor } from "PublisherSettings";
 
-import BoolField from "../../../Shared/BoolField";
-import SubMenu from "../../../Shared/SubMenu";
-import EnumField from "../../../Shared/EnumField";
+import BoolField from "Components/Shared/BoolField";
+import SubMenu from "Components/Shared/SubMenu";
+import EnumField from "Components/Shared/EnumField";
 
 import { ReactNode, useState } from "react"
-import StringField from "../../../Shared/StringField";
-import { GetPublishContext } from "../../../../Context";
+import StringField from "Components/Shared/StringField";
+import { GetPublishContext } from "Context";
 
 const LocalizedTextureQuality = [
     Locale.Get("TID_HIGHEST"),

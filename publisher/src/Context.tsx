@@ -1,5 +1,5 @@
 import React, { useCallback, useState, ReactNode } from "react"
-import { Settings, SWFType } from './PublisherSettings';
+import { Settings, SWFType } from 'PublisherSettings';
 
 interface ContextProps {
     backwardCompatibility: boolean

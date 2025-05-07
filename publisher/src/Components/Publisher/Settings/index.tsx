@@ -1,14 +1,15 @@
 
-import Locale from "../../../Localization";
-import { Settings, SWFType } from "../../../PublisherSettings";
+import Locale from "Localization";
+import { Settings, SWFType } from "PublisherSettings";
 
-import SubMenu from "../../Shared/SubMenu";
+import SubMenu from "Components/Shared/SubMenu";
+import BoolField from "Components/Shared/BoolField";
+import FileField from "Components/Shared/FileField";
 import TextureSettings from "./textures";
-import BoolField from "../../Shared/BoolField";
-import FileField from "../../Shared/FileField";
-import { ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import OtherSettings from "./others";
-import { GetPublishContext } from "../../../Context";
+import { GetPublishContext } from "Context";
+import { renderComponents } from "Publisher";
 
 export default function SettingsMenu() {
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
@@ -32,7 +33,7 @@ export default function SettingsMenu() {
             callback: [isExportToExternal, setExportToExternal],
             tip_tid: "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP"
         }
-    ).render()
+    )
     Settings.data["exportToExternal"] = isExportToExternal;
 
     const backwardCompatibility = new BoolField(
@@ -46,14 +47,16 @@ export default function SettingsMenu() {
         }
     )
 
-    const externalFilePath = FileField(
-        Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
-        "export_to_external_path",
-        "read",
-        "sc",
-        default_style,
-        function (value) { Settings.setParam("exportToExternalPath", value) },
-        Settings.getParam("exportToExternalPath")
+    const externalFilePath = new FileField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
+            keyName: "export_to_external_path",
+            mode: "read",
+            ext: "sc",
+            style: default_style,
+            callback: function (value) { Settings.setParam("exportToExternalPath", value) },
+            defaultValue: Settings.getParam("exportToExternalPath")
+        }
     );
 
     const repackAtlas = new BoolField(
@@ -81,27 +84,33 @@ export default function SettingsMenu() {
     const shortFrames = new BoolField(
         {
             name: Locale.Get("TID_SWF2_SHORT_FRAMES"),
-            keyName: "low_precision_matrices_select",
+            keyName: "short_frames_select",
             defaultValue: Settings.getParam("useShortFrames"),
             style: default_style,
             callback: value => (Settings.setParam("useShortFrames", value))
         }
     )
 
-    const externalFileSettings: ReactNode[] = 
-        isExportToExternal ? [externalFilePath, repackAtlas.render()] 
-        : [];
-        
-    const sc1Settings: ReactNode[] =
-        is_sc1 ? [backwardCompatibility.render()] 
-        : [];
+    const common = renderComponents(
+        [exportToExternal]
+    )
 
-    const sc2Settings: ReactNode[] = 
-        !is_sc1 ? [lowPrecisionMatrices.render(), shortFrames.render()] 
-        : [];
+    const externalFileSettings = renderComponents(
+        [externalFilePath, repackAtlas] , isExportToExternal
+    );
+        
+    const sc1Settings = renderComponents(
+        [backwardCompatibility],
+        is_sc1
+    );
+
+    const sc2Settings = renderComponents(
+        [lowPrecisionMatrices, shortFrames], 
+        !is_sc1
+    );
 
     const components = [
-        exportToExternal, 
+        ...common, 
         ...externalFileSettings, 
         ...sc1Settings,
         ...sc2Settings

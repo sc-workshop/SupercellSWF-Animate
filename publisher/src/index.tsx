@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom/client';
-import Publisher from './Publisher';
+import Publisher from 'Publisher';
 import React, { useState, createElement, useEffect } from 'react';
-import { getInterface, CSEvent, isCEP } from './CEP';
-import { Settings, SWFType } from './PublisherSettings';
-import Locale from './Localization';
-import { PublisherContextProvider } from './Context';
+import { getInterface, CSEvent, isCEP } from 'CEP';
+import { Settings } from 'PublisherSettings';
+import Locale from 'Localization';
+import { PublisherContextProvider } from 'Context';
 
 export const loadFont = async (callback: () => void) => {
   const font = new FontFace("PublisherFont", `url(${require("./assets/fonts/" + Locale.code)})`, {

@@ -1,4 +1,4 @@
-import { getInterface, isCEP } from "./CEP"
+import { getInterface, isCEP } from "CEP"
 
 export enum Locales {
     en_US = "LilitaOne.ttf",

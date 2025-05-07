@@ -14,8 +14,8 @@ import {
 } from "@floating-ui/react";
 
 import { useSpring, animated } from "react-spring";
-import wrapText = require("wrap-text")
-import Locale from "../../Localization"
+import wrapText from "wrap-text"
+import Locale from "Localization"
 
 export default function FloatTip(tip_tid: string) {
     const animation_style = useSpring({

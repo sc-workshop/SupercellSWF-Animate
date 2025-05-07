@@ -1,13 +1,13 @@
 import { createElement } from 'react';
-import { publish } from './Components';
-import { Header } from './Components/Publisher/Header';
-import SettingsMenu from './Components/Publisher/Settings';
-import BasicSettings from './Components/Publisher/BasicSettings';
-import Button from './Components/Shared/Button';
-import Locale, { Locales } from './Localization';
-import EnumField from './Components/Shared/EnumField';
+import { publish } from 'Components';
+import { Header } from 'Components/Publisher/Header';
+import SettingsMenu from 'Components/Publisher/Settings';
+import BasicSettings from 'Components/Publisher/BasicSettings';
+import Button from 'Components/Shared/Button';
+import Locale, { Locales } from 'Localization';
+import EnumField from 'Components/Shared/EnumField';
 import { loadFont } from '.';
-import { UpdateContext } from './Context';
+import { UpdateContext } from 'Context';
 
 function Publisher() {
   UpdateContext();
@@ -88,6 +88,21 @@ function Publisher() {
         buttonContainer
       ]
     });
+}
+
+export function renderComponents(components: React.Component[], condition: boolean = true): React.ReactNode[]
+{
+  let result = components.map((component) => {
+    if (component) {
+      return component.render();
+    }
+  });
+
+  if (condition) {
+    return result;
+  } else {
+    return [];
+  }
 }
 
 export default Publisher;

@@ -1,6 +1,7 @@
 import webpack from "webpack";
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 
 const SRC_PATH = path.join(__dirname, "src")
 
@@ -31,6 +32,9 @@ const config: webpack.Configuration = {
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
+        plugins: [
+            new TsconfigPathsPlugin({})
+        ]
     },
     devtool: "source-map",
     module: {
