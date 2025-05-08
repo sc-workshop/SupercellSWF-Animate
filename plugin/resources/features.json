@@ -683,13 +683,30 @@
 			{
 				"name": "EaseTypes",
 				"supported": true,
+				"default": "EaseTypeNone",
 				"values": [
 					{
-						"name": "EaseTypeCustom",
+						"name": "EaseTypeNone",
 						"supported": true
 					},
 					{
 						"name": "EaseTypeClassic",
+						"supported": true
+					},
+					{
+						"name": "EaseTypeEaseIn",
+						"supported": true
+					},
+					{
+						"name": "EaseTypeEaseOut",
+						"supported": true
+					},
+					{
+						"name": "EaseTypeEaseInOut",
+						"supported": true
+					},
+					{
+						"name": "EaseTypeCustom",
 						"supported": true
 					}
 				]
