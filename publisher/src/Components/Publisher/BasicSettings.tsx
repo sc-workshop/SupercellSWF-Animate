@@ -9,21 +9,19 @@ import { GetPublishContext } from "Context";
 export default function BasicSettings() {
     const { setFileType } = GetPublishContext();
 
-    const output = new FileField(
+    const output = FileField(
+        Locale.Get("TID_OUTPUT"),
+        "publisher_output_path",
+        "write",
+        "sc",
         {
-            name: Locale.Get("TID_OUTPUT"),
-            keyName: "publisher_output_path",
-            mode: "write",
-            ext: "sc",
-            style: {
-                marginBottom: "10px",
-                display: "flex",
-                alignItems: " center"
-            },
-            callback: value => (Settings.setParam("output", value)),
-            defaultValue: Settings.getParam("output"),
-        }
-    ).render()
+            marginBottom: "10px",
+            display: "flex",
+            alignItems: " center"
+        },
+        value => (Settings.setParam("output", value)),
+        Settings.getParam("output")
+    )
 
     const filetype = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_FILETYPE"),

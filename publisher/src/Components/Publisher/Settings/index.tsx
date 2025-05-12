@@ -47,16 +47,14 @@ export default function SettingsMenu() {
         }
     )
 
-    const externalFilePath = new FileField(
-        {
-            name: Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
-            keyName: "export_to_external_path",
-            mode: "read",
-            ext: "sc",
-            style: default_style,
-            callback: function (value) { Settings.setParam("exportToExternalPath", value) },
-            defaultValue: Settings.getParam("exportToExternalPath")
-        }
+    const externalFilePath = FileField(
+        Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
+        "export_to_external_path",
+        "read",
+        "sc",
+        default_style,
+        function (value) { Settings.setParam("exportToExternalPath", value) },
+        Settings.getParam("exportToExternalPath")
     );
 
     const repackAtlas = new BoolField(

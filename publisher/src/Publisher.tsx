@@ -8,6 +8,7 @@ import Locale, { Locales } from 'Localization';
 import EnumField from 'Components/Shared/EnumField';
 import { loadFont } from '.';
 import { UpdateContext } from 'Context';
+import React from 'react';
 
 function Publisher() {
   UpdateContext();
@@ -90,12 +91,14 @@ function Publisher() {
     });
 }
 
-export function renderComponents(components: React.Component[], condition: boolean = true): React.ReactNode[]
+export function renderComponents(components: any[], condition: boolean = true): React.ReactNode[]
 {
   let result = components.map((component) => {
-    if (component) {
+    if (component && component instanceof React.Component) {
       return component.render();
     }
+    
+    return component;
   });
 
   if (condition) {
