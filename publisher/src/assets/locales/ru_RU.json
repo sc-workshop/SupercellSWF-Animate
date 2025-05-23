@@ -45,11 +45,14 @@
 	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE": "Сжать внешние файлы текстур",
 	"TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP": "Дополнительно сжимает внешние файлы текстур для более меньшого итогового веса",
 
-	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Сохранить текстуры Мульти Разрешения",
-	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Сохраняет текстуру с заданным суффиксом",
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES": "Использовать текстуры Мульти Разрешения",
+	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Сохраняет текстуры с заданным суффиксом",
 
-	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES": "Сохранить текстуры Низкого Разрешения",
-	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP": "Сохраняет текстуры с более низким качеством для слабых устройств",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES": "Использовать текстуры Низкого Разрешения",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP": "Позволяет использовать текстуры низкого разрешения на слабых устройствах. Генерирует текстуры при выполнении если они не были сгенерированы.",
+
+	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES": "Сгенерировать текстуры Низкого Разрешения",
+	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES_TIP": "Генерирует текстуры низкого разрешения во время экспорта. Уменьшает время загрузки, но увеличивает общий размер ассета",
 	
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Суффикс текстур Мульти Разрешения",
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Суффикс текстур Низкого Разрешения",

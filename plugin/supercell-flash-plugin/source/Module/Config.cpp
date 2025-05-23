@@ -73,6 +73,8 @@ namespace sc {
 			context.logger->info("	compressExternalTextureFile: {}", compressExternalTextureFile);
 			hasLowresTexture = data["hasLowresTexture"];
 			context.logger->info("	hasLowresTexture: {}", hasLowresTexture);
+			generateLowresTexture = data["generateLowresTexture"];
+			context.logger->info("	generateLowresTexture: {}", generateLowresTexture);
 			hasMultiresTexture = data["hasMultiresTexture"];
 			context.logger->info("	hasMultiresTexture: {}", hasMultiresTexture);
 			textureMaxWidth = data["textureMaxWidth"];

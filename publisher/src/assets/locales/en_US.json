@@ -49,7 +49,10 @@
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP": "Saves texture with multires suffix",
 	
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES": "Has Low Resolution texture",
-	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP": "Saves texture with lower quality for weak devices",
+	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP": "Allows to generate low-resolution textures at runtime for weak devices",
+
+	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES": "Generate Low Resolution texture",
+	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES_TIP": "Generates texture low-resolution while exporting. Reduces loading time but increases overall size of asset",
 
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Multi Resolution texture suffix",
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Low Resolution suffix",

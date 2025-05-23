@@ -52,6 +52,7 @@ namespace sc {
 			bool hasExternalTextureFile = true;
 			bool compressExternalTextureFile = true;
 			bool hasLowresTexture = false;
+			bool generateLowresTexture = false;
 			bool hasMultiresTexture = false;
 			std::string multiResolutionSuffix;
 			std::string lowResolutionSuffix;

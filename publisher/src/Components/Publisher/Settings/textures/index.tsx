@@ -5,9 +5,11 @@ import BoolField from "Components/Shared/BoolField";
 import SubMenu from "Components/Shared/SubMenu";
 import EnumField from "Components/Shared/EnumField";
 
-import { ReactNode, useState } from "react"
+import { Component, ReactNode, useState } from "react"
 import StringField from "Components/Shared/StringField";
 import { GetPublishContext } from "Context";
+import { renderComponents } from "Publisher";
+import { render } from "react-dom";
 
 const LocalizedTextureQuality = [
     Locale.Get("TID_HIGHEST"),
@@ -19,6 +21,7 @@ const LocalizedTextureQuality = [
 export default function TextureSettings() {
     const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
     const [useMultiresStatus, setUseMultiresStatus] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
+    const [useLowresTexture, setUseLowresTexture] = useState<boolean>(Settings.getParam("hasLowresTexture"));
     const { useBackwardCompatibility, fileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
 
     if (useBackwardCompatibility) {
@@ -28,31 +31,30 @@ export default function TextureSettings() {
         Settings.setParam("textureEncoding", textureEncodingMethod)
     }
 
+    const defaultStyle = 
+    {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "10px"
+    };
+
     const exportToExternal = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_HAS_TEXTURE"),
             keyName: "external_texture_select",
             defaultValue: Settings.getParam("hasExternalTexture"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: defaultStyle,
             callback: value => (Settings.setParam("hasExternalTexture", value)),
             tip_tid: "TID_SWF_SETTINGS_HAS_TEXTURE_TIP"
         }
-    ).render();
+    );
 
     const textureEncoding = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_ENCODING"),
         keyName: "texture_encoding_method",
         enumeration: TextureEncoding,
         defaultValue: Settings.getParam("textureEncoding"),
-        style: {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px"
-        },
+        style: defaultStyle,
         callback: value => {
             const intValue = parseInt(value);
             setTextureEncodingMethod(intValue);
@@ -60,37 +62,29 @@ export default function TextureSettings() {
         },
         tip_tid: "TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP"
     }
-    ).render();
+    );
 
     const textureExportExernalFile = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE"),
             keyName: "external_texture_file_select",
             defaultValue: Settings.getParam("hasExternalTextureFile"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: defaultStyle,
             callback: toggleExternalTextureFiles,
             tip_tid: "TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE_TIP"
         }
-    ).render();
+    );
 
     const textureCompressExternalFIle = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE"),
             keyName: "external_compressed_texture_file_select",
             defaultValue: Settings.getParam("compressExternalTextureFile"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: defaultStyle,
             callback: value => (Settings.setParam("compressExternalTextureFile", value)),
             tip_tid: "TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP"
         }
-    ).render();
+    );
 
 
     const textureQuality = new EnumField({
@@ -98,24 +92,16 @@ export default function TextureSettings() {
         keyName: "texture_quality_method",
         enumeration: LocalizedTextureQuality,
         defaultValue: Settings.getParam("textureQuality"),
-        style: {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px"
-        },
+        style: defaultStyle,
         callback: value => (Settings.setParam("textureQuality", parseInt(value))),
-    }).render();
+    });
 
     const useMultiresTextures = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES"),
             keyName: "use_multires_textures_select",
             defaultValue: Settings.getParam("hasMultiresTexture"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
-            },
+            style: defaultStyle,
             callback: value => {
 
                 setUseMultiresStatus(value);
@@ -123,16 +109,12 @@ export default function TextureSettings() {
             },
             tip_tid: "TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP"
         }
-    ).render();
+    );
 
     const multiresSuffix = StringField(
         Locale.Get("TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX"),
         "multires_suffix",
-        {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px"
-        },
+        defaultStyle,
         value => (Settings.setParam("multiResolutinSuffix", value)),
         Settings.getParam("multiResolutinSuffix"),
     );
@@ -142,15 +124,25 @@ export default function TextureSettings() {
             name: Locale.Get("TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES"),
             keyName: "use_lowres_textures_select",
             defaultValue: Settings.getParam("hasLowresTexture"),
-            style: {
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "10px"
+            style: defaultStyle,
+            callback: value => {
+                setUseLowresTexture(value);
+                Settings.setParam("hasLowresTexture", value)
             },
-            callback: value => (Settings.setParam("hasLowresTexture", value)),
             tip_tid: "TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP"
         }
-    ).render();
+    );
+
+    const generateLowresTextures = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES"),
+            keyName: "generate_lowres_textures_select",
+            defaultValue: Settings.getParam("generateLowresTexture"),
+            style: defaultStyle,
+            callback: value => (Settings.setParam("generateLowresTexture", value)),
+            tip_tid: "TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES_TIP"
+        }
+    );
 
     const lowresSuffix = StringField(
         Locale.Get("TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX"),
@@ -176,7 +168,7 @@ export default function TextureSettings() {
         },
         callback: value => (Settings.setParam("textureScaleFactor", parseInt(value))),
         tip_tid: "TID_SWF_SETTINGS_SCALE_FACTOR_TIP"
-    }).render();
+    });
 
     const textureWidth = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH"),
@@ -189,7 +181,7 @@ export default function TextureSettings() {
             marginBottom: "10px"
         },
         callback: value => (Settings.setParam("textureMaxWidth", TextureDimensions[value as never])),
-    }).render();
+    });
 
     const textureHeight = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT"),
@@ -202,39 +194,42 @@ export default function TextureSettings() {
             marginBottom: "10px"
         },
         callback: value => (Settings.setParam("textureMaxHeight", TextureDimensions[value as never])),
-    }).render();
+    });
 
-    let texture_props: ReactNode[] = []
+    let generalProps = renderComponents([
+        useLowresTextures,
+        scaleFactor,
+        textureWidth,
+        textureHeight
+    ])
+
+    let encodingDependentProps: any[] = []
 
     if (useBackwardCompatibility) {
-        texture_props = [textureQuality];
+        encodingDependentProps = renderComponents([textureQuality]);
     } else {
         switch (textureEncodingMethod) {
             case TextureEncoding.Raw:
-                texture_props = [textureQuality];
+                encodingDependentProps = renderComponents([textureQuality]);
                 break;
             case TextureEncoding.KTX:
-                texture_props = [
+                encodingDependentProps = renderComponents([
                     textureExportExernalFile, 
-                    useExternalTextureFiles ? textureCompressExternalFIle : undefined
-                ]
+                    renderComponents([textureCompressExternalFIle], useExternalTextureFiles)
+                ]);
                 break;
         }
     }
 
-    let sc1_dependent_options: ReactNode[] = []; 
-
-    if (fileType == SWFType.SC1)
-    {
-        sc1_dependent_options = [
-            exportToExternal,
+    let versionDependentProps = renderComponents([
+         exportToExternal,
             !useBackwardCompatibility ? textureEncoding : undefined,
-            ...texture_props, 
+            ...encodingDependentProps, 
             useMultiresTextures,
             useMultiresStatus ? multiresSuffix : undefined,
             useMultiresStatus ? lowresSuffix : undefined,
-        ];
-    }
+            ...renderComponents([generateLowresTextures], useLowresTexture),
+    ], fileType == SWFType.SC1); 
 
     return SubMenu(
         Locale.Get("TID_TEXTURES_LABEL"),
@@ -242,10 +237,8 @@ export default function TextureSettings() {
         {
             marginBottom: "6px"
         },
-        sc1_dependent_options,
-        useLowresTextures,
-        scaleFactor,
-        textureWidth,
-        textureHeight
+        ...versionDependentProps,
+        ...generalProps,
+        ...encodingDependentProps
     )
 }

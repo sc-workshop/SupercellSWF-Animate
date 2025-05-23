@@ -544,7 +544,7 @@ namespace sc {
 			switch (config.type)
 			{
 			case SCConfig::SWFType::SC1:
-				swf.save(filepath, config.compression);
+				swf.save(filepath, config.compression, config.generateLowresTexture);
 				break;
 			case SCConfig::SWFType::SC2:
 				swf.save_sc2(filepath);
