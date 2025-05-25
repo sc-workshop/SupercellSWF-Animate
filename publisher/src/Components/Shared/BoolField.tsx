@@ -1,7 +1,7 @@
 import { CSSProperties, Dispatch, SetStateAction, createElement } from "react";
 import TextField from "./TextField";
 import FloatTip from "./FloatTip";
-import React from "react";
+import DisplayObject from "./DisplayObject";
 
 type callback = (value: boolean) => void;
 type state = [boolean, Dispatch<SetStateAction<boolean>>];
@@ -20,7 +20,7 @@ type State = {
     checked: boolean
 }
 
-export default class BoolField extends React.Component<Props, State> {
+export default class BoolField extends DisplayObject<Props, State> {
     public static readonly defaultProps = {
         tip_tid: undefined,
     };

@@ -2,6 +2,7 @@ import { CSSProperties, Dispatch, createElement, SetStateAction, ReactNode } fro
 import TextField from "./TextField";
 import FloatTip from "./FloatTip";
 import React from "react";
+import DisplayObject from "./DisplayObject";
 
 type Enum = {
     [id: number]: unknown;
@@ -29,7 +30,7 @@ type State = {
     options: ReactNode[]
 }
 
-export default class EnumField extends React.Component<Props, State> {
+export default class EnumField extends DisplayObject<Props, State> {
     public static readonly defaultProps = {
         tip_tid: undefined,
     };

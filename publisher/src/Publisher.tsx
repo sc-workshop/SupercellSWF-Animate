@@ -7,8 +7,9 @@ import Button from 'Components/Shared/Button';
 import Locale, { Locales } from 'Localization';
 import EnumField from 'Components/Shared/EnumField';
 import { loadFont } from '.';
-import { UpdateContext } from 'Context';
+import { GetPublishContext, UpdateContext } from 'Context';
 import React from 'react';
+import DisplayObject from 'Components/Shared/DisplayObject';
 
 function Publisher() {
   UpdateContext();
@@ -95,7 +96,16 @@ export function renderComponents(components: any[], condition: boolean = true): 
 {
   let result = components.map((component) => {
     if (component && component instanceof React.Component) {
-      return component.render();
+      let result = component.render();
+      if (component instanceof DisplayObject && component.IsAutoProperty)
+      {
+        const { useAutoProperties } = GetPublishContext();
+        if (useAutoProperties) {
+          return null;
+        }
+      }
+
+      return result;
     }
     
     return component;

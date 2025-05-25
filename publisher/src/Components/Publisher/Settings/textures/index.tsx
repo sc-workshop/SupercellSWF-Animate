@@ -21,7 +21,7 @@ export default function TextureSettings() {
     const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
     const [useMultiresTexture, setUseMultiresTexture] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
     const [useLowresTexture, setUseLowresTexture] = useState<boolean>(Settings.getParam("hasLowresTexture"));
-    const { useBackwardCompatibility, fileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
+    const { useBackwardCompatibility, fileType, useAutoProperties, toggleExternalTextureFiles } = GetPublishContext();
 
     if (useBackwardCompatibility) {
         Settings.setParam("textureEncoding", TextureEncoding.Raw);
@@ -49,6 +49,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_HAS_TEXTURE_TIP"
         }
     );
+    exportToExternal.IsAutoProperty = true;
 
     const textureEncoding = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_ENCODING"),
@@ -62,8 +63,8 @@ export default function TextureSettings() {
             Settings.setParam("textureEncoding", intValue);
         },
         tip_tid: "TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP"
-    }
-    );
+    });
+    textureEncoding.IsAutoProperty = true;
 
     const textureExportExernalFile = new BoolField(
         {
@@ -75,6 +76,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_HAS_EXTERNAL_TEXTURE_FILE_TIP"
         }
     );
+    textureExportExernalFile.IsAutoProperty = true;
 
     const textureCompressExternalFIle = new BoolField(
         {
@@ -86,6 +88,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP"
         }
     );
+    textureCompressExternalFIle.IsAutoProperty = true;
 
     const textureQuality = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
@@ -110,6 +113,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP"
         }
     );
+    useMultiresTextures.IsAutoProperty = true;
 
     const multiresSuffix = StringField(
         Locale.Get("TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX"),
@@ -132,6 +136,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_TIP"
         }
     );
+    useLowresTextures.IsAutoProperty = true;
 
     const generateLowresTextures = new BoolField(
         {
@@ -143,6 +148,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES_TIP"
         }
     );
+    generateLowresTextures.IsAutoProperty = true;
 
     const lowresSuffix = StringField(
         Locale.Get("TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX"),
@@ -214,7 +220,7 @@ export default function TextureSettings() {
     );
 
     var khronosTextureProps = renderComponents(
-        [textureCompressExternalFIle],
+        [textureCompressExternalFIle, textureExportExernalFile],
         encoding == TextureEncoding.KTX
     )
 
@@ -226,7 +232,7 @@ export default function TextureSettings() {
             useMultiresTextures,
             ...multiresProps,
             ...lowresProps,
-    ], fileType == SWFType.SC1); 
+    ], fileType == SWFType.SC1 || useAutoProperties); 
 
     return SubMenu(
         Locale.Get("TID_TEXTURES_LABEL"),

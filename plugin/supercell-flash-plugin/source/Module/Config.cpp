@@ -4,10 +4,11 @@
 
 namespace sc {
 	namespace Adobe {
-		void SCConfig::FromDict(const FCM::PIFCMDictionary dict) {
-			
+		bool SCConfig::FromDict(const FCM::PIFCMDictionary dict) {
 			Load(dict);
 			Normalize();
+
+			return true;
 		}
 
 		void SCConfig::Load(const FCM::PIFCMDictionary dict)
@@ -26,15 +27,11 @@ namespace sc {
 				return;
 			}
 
-			context.logger->info("Successfully loaded publish settings");
-
-			context.logger->info("Publish Settings:");
-
 			json data = json::parse(serializedConfig);
 
-			outputFilepath = fs::path(FCM::Locale::ToUtf16(data["output"]));
-			context.logger->info("	outputFilepath: {}", outputFilepath.string());
+			context.logger->info("Successfully loaded publish settings");
 
+			outputFilepath = fs::path(FCM::Locale::ToUtf16(data["output"]));
 			if (data.count("type"))
 			{
 				type = data["type"];
@@ -45,51 +42,31 @@ namespace sc {
 				type = SWFType::SC1;
 			}
 
-			context.logger->info("	type: {}", (uint8_t)type);
-
 			backwardCompatibility = data["backwardCompatibility"];
-			context.logger->info("	backwardCompatibility: {}", backwardCompatibility);
 
 			hasPrecisionMatrices = data["hasPrecisionMatrices"];
-			context.logger->info("	hasPrecisionMatrices: {}", hasPrecisionMatrices);
-
 			writeCustomProperties = data["writeCustomProperties"];
-			context.logger->info("	writeCustomProperties: {}", writeCustomProperties);
 
 			exportToExternal = data["exportToExternal"];
-			context.logger->info("	exportToExternal: {}", exportToExternal);
-
 			exportToExternalPath = fs::path(FCM::Locale::ToUtf16(data["exportToExternalPath"]));
-			context.logger->info("	exportToExternalPath: {}", exportToExternalPath.string());
-
 			repackAtlas = data["repackAtlas"];
-			context.logger->info("	repackAtlas: {}", repackAtlas);
+			autoProperties = data["autoProperties"];
 
 			hasExternalTexture = data["hasExternalTexture"];
-			context.logger->info("	hasExternalTexture: {}", hasExternalTexture);
 			hasExternalTextureFile = data["hasExternalTextureFile"];
-			context.logger->info("	hasExternalTextureFile: {}", hasExternalTextureFile);
 			compressExternalTextureFile = data["compressExternalTextureFile"];
-			context.logger->info("	compressExternalTextureFile: {}", compressExternalTextureFile);
 			hasLowresTexture = data["hasLowresTexture"];
-			context.logger->info("	hasLowresTexture: {}", hasLowresTexture);
 			generateLowresTexture = data["generateLowresTexture"];
-			context.logger->info("	generateLowresTexture: {}", generateLowresTexture);
 			hasMultiresTexture = data["hasMultiresTexture"];
-			context.logger->info("	hasMultiresTexture: {}", hasMultiresTexture);
 			textureMaxWidth = data["textureMaxWidth"];
-			context.logger->info("	textureMaxWidth: {}", textureMaxWidth);
 			textureMaxHeight = data["textureMaxHeight"];
-			context.logger->info("	textureMaxHeight: {}", textureMaxHeight);
 
 			if (data["compressionMethod"].is_number_unsigned()) {
 				compression = (sc::flash::Signature)(data["compressionMethod"]);
-				context.logger->info("	compression: {}", (uint8_t)compression);
 			}
 
 			if (data["textureScaleFactor"].is_number_unsigned()) {
 				uint8_t scaleFactor = data["textureScaleFactor"];
-				context.logger->info("	scaleFactor: {}", scaleFactor);
 				switch (scaleFactor)
 				{
 				case 0:
@@ -111,32 +88,28 @@ namespace sc {
 
 			if (data["textureEncoding"].is_number_unsigned()) {
 				textureEncoding = (sc::flash::SWFTexture::TextureEncoding)data["textureEncoding"];
-				context.logger->info("	textureEncoding: {}", (uint8_t)textureEncoding);
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
 				textureQuality = (Quality)data["textureQuality"];
-				context.logger->info("	textureQuality: {}", (uint8_t)textureQuality);
 			}
 
 			if (data["multiResolutinSuffix"].is_string()) {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
-				context.logger->info("	multiResolutinSuffix: {}", multiResolutionSuffix);
 			}
 
 			if (data["lowResolutionSuffix"].is_string()) {
 				lowResolutionSuffix = data["lowResolutionSuffix"];
-				context.logger->info("	lowResolutionSuffix: {}", lowResolutionSuffix);
 			}
 
 			lowPrecisionMatrices = data["lowPrecisionMatrices"];
-			context.logger->info("	lowPrecisionMatrices: {}", lowPrecisionMatrices);
-
 			useShortFrames = data["useShortFrames"];
-			context.logger->info("	useShortFrames: {}", useShortFrames);
-
 			writeFieldsText = data["writeFieldsText"];
-			context.logger->info("	writeFieldsText: {}", writeFieldsText);
+
+			if (!autoProperties) // If use autoProperties, do logging later, after all properties are set
+			{
+				DoConfigLogging();
+			}
 		}
 
 		void SCConfig::Normalize()
@@ -187,6 +160,45 @@ namespace sc {
 					exportToExternalPath = (documentPath.parent_path() / exportToExternalPath).make_preferred();
 				}
 			}
+		}
+
+		void SCConfig::DoConfigLogging()
+		{
+			SCPlugin& context = SCPlugin::Instance();
+
+			context.logger->info("Publish Settings:");
+			
+			context.logger->info("	outputFilepath: {}", outputFilepath.string());
+			context.logger->info("	type: {}", (uint8_t)type);
+			context.logger->info("	backwardCompatibility: {}", backwardCompatibility);
+			context.logger->info("	hasPrecisionMatrices: {}", hasPrecisionMatrices);
+			context.logger->info("	writeCustomProperties: {}", writeCustomProperties);
+			context.logger->info("	exportToExternal: {}", exportToExternal);
+			context.logger->info("	exportToExternalPath: {}", exportToExternalPath.string());
+
+			context.logger->info("	repackAtlas: {}", repackAtlas);
+			context.logger->info("	autoProperties: {}", autoProperties);
+
+			context.logger->info("	hasExternalTexture: {}", hasExternalTexture);
+			context.logger->info("	hasExternalTextureFile: {}", hasExternalTextureFile);
+			context.logger->info("	compressExternalTextureFile: {}", compressExternalTextureFile);
+			context.logger->info("	hasLowresTexture: {}", hasLowresTexture);
+			context.logger->info("	generateLowresTexture: {}", generateLowresTexture);
+			context.logger->info("	hasMultiresTexture: {}", hasMultiresTexture);
+			context.logger->info("	textureMaxWidth: {}", textureMaxWidth);
+			context.logger->info("	textureMaxHeight: {}", textureMaxHeight);
+
+			context.logger->info("	compression: {}", (uint8_t)compression);
+
+			context.logger->info("	scaleFactor: {}", textureScaleFactor);
+			context.logger->info("	textureEncoding: {}", (uint8_t)textureEncoding);
+			context.logger->info("	textureQuality: {}", (uint8_t)textureQuality);
+			context.logger->info("	multiResolutinSuffix: {}", multiResolutionSuffix);
+			context.logger->info("	lowResolutionSuffix: {}", lowResolutionSuffix);
+
+			context.logger->info("	lowPrecisionMatrices: {}", lowPrecisionMatrices);
+			context.logger->info("	useShortFrames: {}", useShortFrames);
+			context.logger->info("	writeFieldsText: {}", writeFieldsText);
 		}
 	}
 }

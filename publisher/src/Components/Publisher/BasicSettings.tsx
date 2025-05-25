@@ -9,7 +9,7 @@ import { renderComponents } from "Publisher";
 import BoolField from "../Shared/BoolField";
 
 export default function BasicSettings() {
-    const { setFileType } = GetPublishContext();
+    const { setFileType, toggleAutoProperties } = GetPublishContext();
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
 
     let defaultStyle = {
@@ -35,7 +35,8 @@ export default function BasicSettings() {
         defaultValue: Settings.getParam("type"),
         style: defaultStyle,
         callback: value => (setFileType(parseInt(value))),
-    })
+    });
+    filetype.IsAutoProperty = true
 
     const exportToExternal = new BoolField(
         {
@@ -70,9 +71,9 @@ export default function BasicSettings() {
         {
             name: Locale.Get("TID_SWF_SETTINGS_AUTO"),
             keyName: "auto_settings_select",
-            defaultValue: Settings.getParam("exportToExternal"),
+            defaultValue: Settings.getParam("autoProperties"),
             style: externalFileOptionsStyle,
-            callback: () => {},
+            callback: () => { toggleAutoProperties() },
             tip_tid: "TID_SWF_SETTINGS_AUTO_TIP"
         }
     )

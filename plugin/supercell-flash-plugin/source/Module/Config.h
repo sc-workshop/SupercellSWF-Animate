@@ -46,6 +46,7 @@ namespace sc {
 			bool exportToExternal = false;
 			fs::path exportToExternalPath = "";
 			bool repackAtlas = true;
+			bool autoProperties = true;
 
 			sc::flash::SWFTexture::TextureEncoding textureEncoding = sc::flash::SWFTexture::TextureEncoding::KhronosTexture;
 			bool hasExternalTexture = false;
@@ -67,9 +68,11 @@ namespace sc {
 			bool useShortFrames = true;
 			bool writeFieldsText = true;
 		public:
-			virtual void FromDict(const FCM::PIFCMDictionary dict) override;
+			virtual bool FromDict(const FCM::PIFCMDictionary dict) override;
 			void Load(const FCM::PIFCMDictionary dict);
 			void Normalize();
+
+			void DoConfigLogging();
 		};
 	}
 }

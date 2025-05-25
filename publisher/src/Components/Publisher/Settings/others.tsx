@@ -7,7 +7,7 @@ import { GetPublishContext } from "Context";
 import { renderComponents } from "Publisher";
 
 export default function OtherSettings() {
-    const { fileType, useBackwardCompatibility } = GetPublishContext();
+    const { fileType, useBackwardCompatibility, useAutoProperties } = GetPublishContext();
 
     const default_style = {
         display: "flex",
@@ -22,7 +22,8 @@ export default function OtherSettings() {
         defaultValue: Settings.getParam("compressionMethod"),
         style: default_style,
         callback: value => (Settings.setParam("compressionMethod", parseInt(value))),
-    })
+    });
+    compressionType.IsAutoProperty = true;
 
     const precisionMatrix = new BoolField(
         {
@@ -43,6 +44,7 @@ export default function OtherSettings() {
             callback: value => (Settings.setParam("writeCustomProperties", value)),
         }
     );
+    writeCustomProperties.IsAutoProperty = true;
 
     const writeFieldsText = new BoolField(
         {
@@ -73,7 +75,7 @@ export default function OtherSettings() {
     let sc1Props = renderComponents(
         [compressionType,
         ...backwardCompatibilityProps],
-        fileType == SWFType.SC1
+        fileType == SWFType.SC1 || useAutoProperties
     )
 
     let props = renderComponents(

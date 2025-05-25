@@ -19,6 +19,8 @@
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP": "Saves all symbols from current project to another .sc file. \nIf external file already has linkage names from the project, they will be replaced with the version from the current project.",
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "External file",
 	"TID_SWF_REPACK_ATLAS": "Repack atlas texture",
+	"TID_SWF_SETTINGS_AUTO": "Auto-set settings",
+	"TID_SWF_SETTINGS_AUTO_TIP": "Reads External file and automatically sets most of export settings based on it, so resulting file has the same parameters as External file.",
 	"TID_SWF_REPACK_ATLAS_TIP": "Optimizes the atlas by completely repacking it and removing duplicate sprites. Can take quite a long time for large files.",
 	"TID_SWF2_LOW_PRECISION_MATRICES": "Half precision matrices",
 	"TID_SWF2_LOW_PRECISION_MATRICES_TIP": "Writes transformation matrices in a smaller decimal type, which reduces file size and memory load but reduces available range for transformation.",

@@ -78,7 +78,7 @@ function App() {
           position: "relative"
         }
       },
-      <PublisherContextProvider backwardCompatibility={false} externalTextureFiles={false}>
+      <PublisherContextProvider backwardCompatibility={false} externalTextureFiles={false} useAutoProperties={false}>
         <Publisher></Publisher>
       </PublisherContextProvider>
     );

@@ -5,6 +5,7 @@ interface ContextProps {
     backwardCompatibility: boolean
     fileType: SWFType
     externalTextureFiles: boolean
+    useAutoProperties: boolean
 }
 
 interface ContextInterface {
@@ -16,6 +17,9 @@ interface ContextInterface {
 
     useExternalTextureFiles: boolean
     toggleExternalTextureFiles: () => void
+
+    useAutoProperties: boolean
+    toggleAutoProperties: () => void
 }
 
 //@ts-ignore
@@ -25,6 +29,7 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
     const [backwardCompatibility, setBackwardCompatibility] = useState(props.backwardCompatibility);
     const [fileType, setFileType] = useState(props.fileType);
     const [useExternalTextureFiles, setUseExternalTextureFiles] = useState(props.externalTextureFiles);
+    const [useAutoProperties, setAutoProperties] = useState(props.useAutoProperties);
 
     const backwardCompatibilitySetter = () =>
     {
@@ -46,6 +51,13 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
             Settings.setParam("hasExternalTextureFile", useExternalTextureFiles == false)
         }
 
+    const autoPropertiesSetter = () =>
+        {
+            setAutoProperties(useAutoProperties == false)
+    
+            Settings.setParam("autoProperties", useAutoProperties == false)
+        }
+
     return {
         useBackwardCompatibility: backwardCompatibility,
         toggleBackwardCompatibility: backwardCompatibilitySetter,
@@ -54,13 +66,16 @@ export const CreatePublishAppContext = function (props: ContextProps): ContextIn
         setFileType: fileTypeSetter,
 
         useExternalTextureFiles: useExternalTextureFiles,
-        toggleExternalTextureFiles: externalTextureFileSetter
+        toggleExternalTextureFiles: externalTextureFileSetter,
+
+        useAutoProperties: useAutoProperties,
+        toggleAutoProperties: autoPropertiesSetter
     };
 }
 
 export function UpdateContext()
 {
-    const {useBackwardCompatibility, toggleBackwardCompatibility, setFileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
+    const {useBackwardCompatibility, toggleBackwardCompatibility, setFileType, useExternalTextureFiles, toggleExternalTextureFiles, useAutoProperties, toggleAutoProperties } = GetPublishContext();
 
     setFileType(Settings.getParam("type"))
     if (Settings.getParam("backwardCompatibility") != useBackwardCompatibility)
@@ -71,6 +86,11 @@ export function UpdateContext()
     if (Settings.getParam("hasExternalTextureFile") != useExternalTextureFiles)
     {
         toggleExternalTextureFiles()
+    }
+
+    if (Settings.getParam("autoProperties") != useAutoProperties)
+    {
+        toggleAutoProperties()
     }
 }
 

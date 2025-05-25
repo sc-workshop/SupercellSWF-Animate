@@ -64,18 +64,134 @@ namespace sc {
 
 		uint16_t SCWriter::LoadExternal(fs::path path) {
 			using namespace Animate::DOM;
-			swf.load(path);
+			SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
+			bool isSc2 = false;
+			if (config.autoProperties)
 			{
 				InputFileStream file(path);
-				if (flash::SupercellSWF::IsSC2(file))
+				isSc2 = flash::SupercellSWF::IsSC2(file);
+
+				if (isSc2)
 				{
-					for (auto& shape : swf.shapes)
+					config.type = SCConfig::SWFType::SC2;
+					swf.load_sc2(file);
+
+					config.useShortFrames = swf.sc2_compile_settings.use_short_frames;
+					config.lowPrecisionMatrices = swf.sc2_compile_settings.use_half_precision_matrices;
+				}
+				else
+				{
+					// Yeah i need to paste here whole decompressor function because of this feature
 					{
-						for (auto& command : shape.commands)
+						file.seek(0);
+
+						// Reading file magic
+						std::uint16_t magic = file.read_unsigned_short(Endian::Big);
+						if (magic != flash::SC_MAGIC)
 						{
-							command.sort_advanced_vertices();
+							throw Exception("Bad compressed file magic!");
 						}
+
+
+						// Checking compression version
+						std::uint32_t version = file.read_unsigned_int(Endian::Big);
+						if (version == 4)
+						{
+							version = file.read_unsigned_int(Endian::Big);
+						}
+
+						std::uint32_t hash_length = file.read_unsigned_int(Endian::Big);
+						file.seek(hash_length, wk::Stream::SeekMode::Add); // Skip hash
+
+						// Version 3 is zstandard
+						if (version == 3)
+						{
+							config.compression = flash::Signature::Zstandard;
+							ZstdDecompressor context;
+							context.decompress(file, swf.stream);
+						}
+						else if (version == 1) // Version 1 is lzma or lzham
+						{
+							std::uint8_t header[lzma::PROPS_SIZE];
+							file.read(header, lzma::PROPS_SIZE);
+							std::uint32_t unpacked_length = file.read_unsigned_int();
+
+							// Check SCLZ magic
+							if (*(std::uint32_t*)header == flash::SC_LZHAM_MAGIC)
+							{
+								config.compression = flash::Signature::Lzham;
+
+								LzhamDecompressor::Props props;
+								props.dict_size_log2 = header[4];
+								props.unpacked_length = unpacked_length;
+
+								LzhamDecompressor context(props);
+								context.decompress(file, swf.stream);
+							}
+							else
+							{
+								config.compression = flash::Signature::Lzma;
+
+								LzmaDecompressor context(header, unpacked_length);
+								context.decompress(file, swf.stream);
+							}
+						}
+						else
+						{
+							throw Exception("Unknown SC1 version");
+						}
+					}
+					
+					bool hasExternalTexture = swf.load_sc1(false);
+					if (hasExternalTexture) swf.load_external_texture();
+
+					fs::path basename = path.stem();
+					fs::path dirname = path.parent_path();
+
+					config.hasExternalTexture = swf.use_external_texture;
+					config.hasExternalTextureFile = swf.use_external_textures;
+					config.compressExternalTextureFile = swf.compress_external_textures;
+					config.hasLowresTexture = swf.use_low_resolution;
+					config.hasMultiresTexture = swf.use_multi_resolution;
+					config.lowResolutionSuffix = swf.low_resolution_suffix.string();
+					config.multiResolutionSuffix = swf.multi_resolution_suffix.string();
+					config.generateLowresTexture = fs::exists(dirname / fs::path(basename).concat(swf.low_resolution_suffix.string()).concat("_tex.sc"));
+				}
+
+				if (!swf.textures.empty())
+				{
+					const auto& texture = swf.textures.front();
+					config.textureEncoding = texture.encoding();
+				}
+
+				for (auto& movieclip : swf.movieclips)
+				{
+					if (!movieclip.custom_properties.empty())
+					{
+						config.writeCustomProperties = true;
+						break;
+					}
+				}
+			}
+			else
+			{
+				{
+					InputFileStream file(path);
+					isSc2 = flash::SupercellSWF::IsSC2(file);
+				}
+
+				swf.load(path);
+			}
+			
+
+			if (isSc2)
+			{
+				for (auto& shape : swf.shapes)
+				{
+					for (auto& command : shape.commands)
+					{
+						command.sort_advanced_vertices();
 					}
 				}
 			}

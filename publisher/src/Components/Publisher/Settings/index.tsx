@@ -10,7 +10,7 @@ import { GetPublishContext } from "Context";
 import { renderComponents } from "Publisher";
 
 export default function SettingsMenu() {
-    const { toggleBackwardCompatibility, fileType } = GetPublishContext();
+    const { toggleBackwardCompatibility, fileType, useAutoProperties } = GetPublishContext();
 
     let is_sc1 = fileType == SWFType.SC1;
 
@@ -41,7 +41,8 @@ export default function SettingsMenu() {
             callback: value => (Settings.setParam("lowPrecisionMatrices", value)),
             tip_tid: "TID_SWF_LOW_PRECISION_MATRICES_TIP"
         }
-    )
+    );
+    lowPrecisionMatrices.IsAutoProperty = true;
 
     const shortFrames = new BoolField(
         {
@@ -52,15 +53,16 @@ export default function SettingsMenu() {
             callback: value => (Settings.setParam("useShortFrames", value))
         }
     )
+    shortFrames.IsAutoProperty = true;
 
     const sc1Settings = renderComponents(
         [backwardCompatibility],
-        is_sc1
+        is_sc1 || useAutoProperties
     );
 
     const sc2Settings = renderComponents(
         [lowPrecisionMatrices, shortFrames], 
-        !is_sc1
+        !is_sc1 || useAutoProperties
     );
 
     const components = [
