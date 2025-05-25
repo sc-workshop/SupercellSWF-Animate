@@ -548,6 +548,10 @@ namespace sc {
 			{
 				flash::repack_atlas(swf);
 			}
+			else
+			{
+				flash::remove_unused_textures(swf);
+			}
 
 			wk::parallel::enumerate(
 				swf.textures.begin(),

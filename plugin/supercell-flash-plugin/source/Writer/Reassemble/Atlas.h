@@ -18,4 +18,5 @@ namespace sc::flash
 	ShapeDrawBitmapCommand create_proxy_9slice_command(const Shape& shape);
 
 	void repack_atlas(SupercellSWF& swf);
+	void remove_unused_textures(SupercellSWF& swf);
 }

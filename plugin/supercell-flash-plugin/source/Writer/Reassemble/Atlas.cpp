@@ -564,4 +564,37 @@ namespace sc::flash
 			}
 		}
 	}
+
+	void remove_unused_textures(SupercellSWF& swf)
+	{
+		std::map<uint16_t, SWFTexture> used_textures;
+
+		for (const auto& shape : swf.shapes)
+		{
+			for (const auto& command : shape.commands)
+			{
+				used_textures[command.texture_index] = swf.textures[command.texture_index];
+			}
+		}
+
+		uint16_t index = 0;
+		SupercellSWF::TextureArray new_textures;
+		new_textures.reserve(used_textures.size());
+
+		std::unordered_map<uint16_t, uint16_t> texture_indices_mapping;
+		for (std::map<uint16_t, SWFTexture>::iterator it = used_textures.begin(); it != used_textures.end(); ++it)
+		{
+			new_textures.push_back(it->second);
+			texture_indices_mapping[it->first] = index++;
+		}
+
+		swf.textures = new_textures;
+		for (auto& shape : swf.shapes)
+		{
+			for (auto& command : shape.commands)
+			{
+				command.texture_index = texture_indices_mapping[command.texture_index];
+			}
+		}
+	}
 }
