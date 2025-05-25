@@ -24,8 +24,11 @@ namespace sc {
 			}
 			
 			context.logger->info("Document name: {}", documentName.string());
+
+			auto title = wxString(DOCTYPE_NAME);
+			if (WK_DEBUG) title += " DEBUG";
 			
-			window = new PluginWindow(wxString(DOCTYPE_NAME));
+			window = new PluginWindow(title);
 			
 			{
 				wxIcon icon;

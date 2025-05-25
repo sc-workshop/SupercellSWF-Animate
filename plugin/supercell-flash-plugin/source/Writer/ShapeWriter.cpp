@@ -523,6 +523,8 @@ namespace sc {
 					matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
 					matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
+					matrix.tx += offset.x;
+					matrix.ty += offset.y;
 
 					matrix.a *= resolution;
 					matrix.c *= resolution;
