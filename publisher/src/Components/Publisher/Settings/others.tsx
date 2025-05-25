@@ -4,7 +4,7 @@ import EnumField from "Components/Shared/EnumField";
 import SubMenu from "Components/Shared/SubMenu";
 import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "PublisherSettings";
 import { GetPublishContext } from "Context";
-import { ReactNode } from "react";
+import { renderComponents } from "Publisher";
 
 export default function OtherSettings() {
     const { fileType, useBackwardCompatibility } = GetPublishContext();
@@ -52,7 +52,7 @@ export default function OtherSettings() {
             style: default_style,
             callback: value => (Settings.setParam("writeFieldsText", value)),
         }
-    ).render();
+    );
 
     if (useBackwardCompatibility)
     {
@@ -65,20 +65,20 @@ export default function OtherSettings() {
         Settings.setParam("compressionMethod", CompressionMethods.LZMA);
     }
 
-    let sc1_dependent_options: ReactNode[] = [];
-    if (fileType == SWFType.SC1)
-    {
-        sc1_dependent_options = [
-            compressionType.render(),
-            !useBackwardCompatibility ? writeCustomProperties.render() : undefined,
-            !useBackwardCompatibility ? precisionMatrix.render() : undefined
-        ]
-    }
+    let backwardCompatibilityProps = renderComponents(
+        [writeCustomProperties, precisionMatrix],
+        !useBackwardCompatibility
+    )
+    
+    let sc1Props = renderComponents(
+        [compressionType,
+        ...backwardCompatibilityProps],
+        fileType == SWFType.SC1
+    )
 
-    let options: ReactNode[] = [
-        writeFieldsText,
-        ...sc1_dependent_options
-    ]
+    let props = renderComponents(
+        [writeFieldsText, ...sc1Props]
+    )
 
     return SubMenu(
         Locale.Get("TID_OTHER_LABEL"),
@@ -86,6 +86,6 @@ export default function OtherSettings() {
         {
             marginBottom: "20%"
         },
-        ...options
+        ...props
     )
 }

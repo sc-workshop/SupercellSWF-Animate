@@ -1,4 +1,4 @@
-import React, { useCallback, useState, ReactNode } from "react"
+import React, { useCallback, useState } from "react"
 import { Settings, SWFType } from 'PublisherSettings';
 
 interface ContextProps {
@@ -77,6 +77,7 @@ export function UpdateContext()
 //@ts-ignore
 export const PublisherContextProvider = ({ children, ...props }) => {
     const context = CreatePublishAppContext(props as ContextProps);
+    
     return <Context.Provider value={context}>{children}</Context.Provider>;
 };
 

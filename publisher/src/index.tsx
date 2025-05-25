@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom/client';
 import Publisher from 'Publisher';
-import React, { useState, createElement, useEffect } from 'react';
+import { useState, createElement, useEffect } from 'react';
 import { getInterface, CSEvent, isCEP } from 'CEP';
 import { Settings } from 'PublisherSettings';
 import Locale from 'Localization';
-import { PublisherContextProvider } from 'Context';
+import { PublisherContextProvider, UpdateContext } from 'Context';
 
 export const loadFont = async (callback: () => void) => {
   const font = new FontFace("PublisherFont", `url(${require("./assets/fonts/" + Locale.code)})`, {
@@ -23,7 +23,6 @@ function App() {
 
   useEffect(() => {
     // Font
-
     loadFont(
       () => {
         setIsFontLoaded(true)
@@ -63,6 +62,7 @@ function App() {
       await publisherData;
     };
     getData();
+
   }, []);
 
   if (publisherStateData !== undefined && isFontLoaded) {
@@ -78,7 +78,7 @@ function App() {
           position: "relative"
         }
       },
-      <PublisherContextProvider>
+      <PublisherContextProvider backwardCompatibility={false} externalTextureFiles={false}>
         <Publisher></Publisher>
       </PublisherContextProvider>
     );
@@ -92,7 +92,5 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <App></App>
-  </React.StrictMode>
+  <App></App>
 )

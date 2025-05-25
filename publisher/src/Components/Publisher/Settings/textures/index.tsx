@@ -5,11 +5,10 @@ import BoolField from "Components/Shared/BoolField";
 import SubMenu from "Components/Shared/SubMenu";
 import EnumField from "Components/Shared/EnumField";
 
-import { Component, ReactNode, useState } from "react"
+import { useState } from "react"
 import StringField from "Components/Shared/StringField";
 import { GetPublishContext } from "Context";
 import { renderComponents } from "Publisher";
-import { render } from "react-dom";
 
 const LocalizedTextureQuality = [
     Locale.Get("TID_HIGHEST"),
@@ -20,7 +19,7 @@ const LocalizedTextureQuality = [
 
 export default function TextureSettings() {
     const [textureEncodingMethod, setTextureEncodingMethod] = useState<TextureEncoding>(Settings.getParam("textureEncoding"));
-    const [useMultiresStatus, setUseMultiresStatus] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
+    const [useMultiresTexture, setUseMultiresTexture] = useState<boolean>(Settings.getParam("hasMultiresTexture"));
     const [useLowresTexture, setUseLowresTexture] = useState<boolean>(Settings.getParam("hasLowresTexture"));
     const { useBackwardCompatibility, fileType, useExternalTextureFiles, toggleExternalTextureFiles } = GetPublishContext();
 
@@ -30,6 +29,8 @@ export default function TextureSettings() {
     {
         Settings.setParam("textureEncoding", textureEncodingMethod)
     }
+
+    let encoding = Settings.getParam("textureEncoding");
 
     const defaultStyle = 
     {
@@ -86,7 +87,6 @@ export default function TextureSettings() {
         }
     );
 
-
     const textureQuality = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
         keyName: "texture_quality_method",
@@ -104,7 +104,7 @@ export default function TextureSettings() {
             style: defaultStyle,
             callback: value => {
 
-                setUseMultiresStatus(value);
+                setUseMultiresTexture(value);
                 Settings.setParam("hasMultiresTexture", value);
             },
             tip_tid: "TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_TIP"
@@ -203,32 +203,29 @@ export default function TextureSettings() {
         textureHeight
     ])
 
-    let encodingDependentProps: any[] = []
+    let multiresProps = renderComponents([multiresSuffix, lowresSuffix], useMultiresTexture);
+    let lowresProps = renderComponents([generateLowresTextures], useLowresTexture);
+    var props = renderComponents([textureEncoding], !useBackwardCompatibility);
+    var backwardCompatibilityProps = renderComponents([textureQuality], useBackwardCompatibility);
 
-    if (useBackwardCompatibility) {
-        encodingDependentProps = renderComponents([textureQuality]);
-    } else {
-        switch (textureEncodingMethod) {
-            case TextureEncoding.Raw:
-                encodingDependentProps = renderComponents([textureQuality]);
-                break;
-            case TextureEncoding.KTX:
-                encodingDependentProps = renderComponents([
-                    textureExportExernalFile, 
-                    renderComponents([textureCompressExternalFIle], useExternalTextureFiles)
-                ]);
-                break;
-        }
-    }
+    var rawTextureProps = renderComponents(
+        backwardCompatibilityProps, 
+        encoding == TextureEncoding.Raw
+    );
+
+    var khronosTextureProps = renderComponents(
+        [textureCompressExternalFIle],
+        encoding == TextureEncoding.KTX
+    )
 
     let versionDependentProps = renderComponents([
-         exportToExternal,
-            !useBackwardCompatibility ? textureEncoding : undefined,
-            ...encodingDependentProps, 
+            ...props,
+            ...rawTextureProps,
+            ...khronosTextureProps,
+            exportToExternal,
             useMultiresTextures,
-            useMultiresStatus ? multiresSuffix : undefined,
-            useMultiresStatus ? lowresSuffix : undefined,
-            ...renderComponents([generateLowresTextures], useLowresTexture),
+            ...multiresProps,
+            ...lowresProps,
     ], fileType == SWFType.SC1); 
 
     return SubMenu(
@@ -239,6 +236,5 @@ export default function TextureSettings() {
         },
         ...versionDependentProps,
         ...generalProps,
-        ...encodingDependentProps
     )
 }

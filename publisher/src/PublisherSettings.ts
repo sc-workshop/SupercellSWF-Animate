@@ -46,6 +46,7 @@ type PublisherSettingsData = {
     //Basic settings
     output: string,
     type: SWFType,
+    autoSettings: boolean,
 
     backwardCompatibility: boolean,
 
@@ -95,6 +96,7 @@ const PublisherDefaultSettings : PublisherSettingsData =
     exportToExternal: false,
     exportToExternalPath: "",
     repackAtlas: true,
+    autoSettings: true,
 
     // Textures
     hasExternalTexture: true,

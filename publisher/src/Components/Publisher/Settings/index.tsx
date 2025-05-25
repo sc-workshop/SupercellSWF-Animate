@@ -4,15 +4,12 @@ import { Settings, SWFType } from "PublisherSettings";
 
 import SubMenu from "Components/Shared/SubMenu";
 import BoolField from "Components/Shared/BoolField";
-import FileField from "Components/Shared/FileField";
 import TextureSettings from "./textures";
-import React, { ReactNode, useState } from "react";
 import OtherSettings from "./others";
 import { GetPublishContext } from "Context";
 import { renderComponents } from "Publisher";
 
 export default function SettingsMenu() {
-    const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
     const { toggleBackwardCompatibility, fileType } = GetPublishContext();
 
     let is_sc1 = fileType == SWFType.SC1;
@@ -24,18 +21,6 @@ export default function SettingsMenu() {
         alignItems: "center"
     };
 
-    const exportToExternal = new BoolField(
-        {
-            name: Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL"),
-            keyName: "export_to_external_select",
-            defaultValue: Settings.getParam("exportToExternal"),
-            style: default_style,
-            callback: [isExportToExternal, setExportToExternal],
-            tip_tid: "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP"
-        }
-    )
-    Settings.data["exportToExternal"] = isExportToExternal;
-
     const backwardCompatibility = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY"),
@@ -44,27 +29,6 @@ export default function SettingsMenu() {
             style: default_style,
             callback: toggleBackwardCompatibility,
             tip_tid: "TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP"
-        }
-    )
-
-    const externalFilePath = FileField(
-        Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
-        "export_to_external_path",
-        "read",
-        "sc",
-        default_style,
-        function (value) { Settings.setParam("exportToExternalPath", value) },
-        Settings.getParam("exportToExternalPath")
-    );
-
-    const repackAtlas = new BoolField(
-        {
-            name: Locale.Get("TID_SWF_REPACK_ATLAS"),
-            keyName: "repack_atlas_select",
-            defaultValue: Settings.getParam("repackAtlas"),
-            style: default_style,
-            callback: value => (Settings.setParam("repackAtlas", value)),
-            tip_tid: "TID_SWF_REPACK_ATLAS_TIP"
         }
     )
 
@@ -89,14 +53,6 @@ export default function SettingsMenu() {
         }
     )
 
-    const common = renderComponents(
-        [exportToExternal]
-    )
-
-    const externalFileSettings = renderComponents(
-        [externalFilePath, repackAtlas] , isExportToExternal
-    );
-        
     const sc1Settings = renderComponents(
         [backwardCompatibility],
         is_sc1
@@ -108,8 +64,6 @@ export default function SettingsMenu() {
     );
 
     const components = [
-        ...common, 
-        ...externalFileSettings, 
         ...sc1Settings,
         ...sc2Settings
     ]
