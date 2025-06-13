@@ -602,6 +602,13 @@ namespace sc {
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 			SCPlugin& context = SCPlugin::Instance();
 
+			if (swf.exports.empty())
+			{
+				context.console->Trace(
+					(FCM::CStringRep16)context.locale.GetString("TID_SWF_NO_EXPORTS").c_str()
+				);
+			}
+
 			enum FinalizeStep : uint8_t
 			{
 				INIT = 0,

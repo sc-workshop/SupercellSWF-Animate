@@ -1,6 +1,6 @@
 {
 	"TID_WINDOW_TITLE": "Publishing: %ls",
-	
+
 	"TID_STATUS_INIT": "Initializing",
 	"TID_STATUS_SAVE": "Saving...",
 	"TID_UNKNOWN_EXCEPTION": "Unknown exception",
@@ -8,22 +8,23 @@
 	"TID_FCM_SERVICE_INIT_FAILED": "Failed to initialize FCM service",
 	"TID_BITMAP_SERVICE_EXPORT_FAILED": "Failed to export sprite image",
 	"TID_UNKNOWN_LIBRARY_ITEM_TYPE": "Unknown symbol type: \"%ls\"",
-	
+
 	"TID_BAR_LABEL_LIBRARY_ITEMS": "Library items :",
-	
+
 	"TID_BAR_LABEL_TEXURE_PACK": "Sprites :",
 	"TID_STATUS_SPRITE_PACK": "Sprite packaging",
 	"TID_STATUS_TEXTURE_SAVE": "Texture saving",
 	"TID_EXTERNAL_FILE_LOAD": "External file loading",
 	"TID_FILE_SAVE": "Saving: %ls",
-	
+
 	"TID_9SLICE_FRAME_RESTRICTION": "9Slice Symbol has more than one frame: \"%ls\"\nThis feature will be disabled in this symbol\n",
-	
+	"TID_SWF_NO_EXPORTS": "Exported empty SWF file. Make sure you have at least one linkage symbol in the library\n",
+
 	// Exceptions
 	"TID_FAILED_TO_EXPORT_SYMBOL": "Failed to export symbol \"%ls\" for some unknown internal reason",
 	"TID_UNKNOWN_FILL_STYLE_TYPE": "Unknown or unsuported type of Filled Shape in \"%ls\"",
 	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Make sure symbol does not have Graphic or Gradient fills",
-	
+
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "External file at path \"%ls\" does not exist",
 	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again",
