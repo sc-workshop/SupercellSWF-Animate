@@ -1,13 +1,13 @@
 
-import Locale from "Localization";
-import { Settings, SWFType } from "PublisherSettings";
+import Locale from "Publisher/Localization";
+import { Settings, SWFType } from "Publisher/PublisherSettings";
 
 import SubMenu from "Components/Shared/SubMenu";
 import BoolField from "Components/Shared/BoolField";
 import TextureSettings from "./textures";
 import OtherSettings from "./others";
-import { GetPublishContext } from "Context";
-import { renderComponents } from "Publisher";
+import { GetPublishContext } from "Publisher/Context";
+import { renderComponents } from "Publisher/Publisher";
 
 export default function SettingsMenu() {
     const { toggleBackwardCompatibility, fileType, useAutoProperties } = GetPublishContext();
@@ -39,7 +39,7 @@ export default function SettingsMenu() {
             defaultValue: Settings.getParam("lowPrecisionMatrices"),
             style: default_style,
             callback: value => (Settings.setParam("lowPrecisionMatrices", value)),
-            tip_tid: "TID_SWF_LOW_PRECISION_MATRICES_TIP"
+            tip_tid: "TID_SWF2_LOW_PRECISION_MATRICES_TIP"
         }
     );
     lowPrecisionMatrices.IsAutoProperty = true;

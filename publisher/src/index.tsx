@@ -1,13 +1,13 @@
 import ReactDOM from 'react-dom/client';
-import Publisher from 'Publisher';
+import Publisher from 'Publisher/Publisher';
 import { useState, createElement, useEffect } from 'react';
 import { getInterface, CSEvent, isCEP } from 'CEP';
-import { Settings } from 'PublisherSettings';
-import Locale from 'Localization';
-import { PublisherContextProvider, UpdateContext } from 'Context';
+import { Settings } from 'Publisher/PublisherSettings';
+import Locale from 'Publisher/Localization';
+import { PublisherContextProvider, UpdateContext } from 'Publisher/Context';
 
 export const loadFont = async (callback: () => void) => {
-  const font = new FontFace("PublisherFont", `url(${require("./assets/fonts/" + Locale.code)})`, {
+  const font = new FontFace("PublisherFont", `url(${require("./Assets/fonts/" + Locale.code)})`, {
     style: "normal",
   });
   await font.load();

@@ -55,7 +55,7 @@ export default function FileField(
         {
             key: `filefield_${keyName}_button`,
             type: "image",
-            src: require(`../../assets/images/folderOpen.png`),
+            src: require(`../../Assets/images/folderOpen.png`),
             style: {
                 width: "20px",
                 height: "20px",

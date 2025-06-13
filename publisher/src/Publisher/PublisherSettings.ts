@@ -115,7 +115,7 @@ const PublisherDefaultSettings : PublisherSettingsData =
 
     // SC2
     lowPrecisionMatrices: false,
-    useShortFrames: true
+    useShortFrames: false
 }
 
 export class PublisherSettings {

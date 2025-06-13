@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import TextField from "Components/Shared/TextField";
-import Locale from "Localization";
+import Locale from "Publisher/Localization";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Version = require("../../../package.json").version;

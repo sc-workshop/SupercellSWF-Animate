@@ -1,11 +1,11 @@
 import { createElement, useState } from "react";
-import { Settings, SWFType } from "PublisherSettings";
-import Locale from "Localization";
+import { Settings, SWFType } from "Publisher/PublisherSettings";
+import Locale from "Publisher/Localization";
 
 import FileField from "../Shared/FileField";
 import EnumField from "../Shared/EnumField";
-import { GetPublishContext } from "Context";
-import { renderComponents } from "Publisher";
+import { GetPublishContext } from "Publisher/Context";
+import { renderComponents } from "Publisher/Publisher";
 import BoolField from "../Shared/BoolField";
 
 export default function BasicSettings() {

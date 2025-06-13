@@ -1,10 +1,10 @@
-import Locale from "Localization";
+import Locale from "Publisher/Localization";
 import BoolField from "Components/Shared/BoolField";
 import EnumField from "Components/Shared/EnumField";
 import SubMenu from "Components/Shared/SubMenu";
-import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "PublisherSettings";
-import { GetPublishContext } from "Context";
-import { renderComponents } from "Publisher";
+import { BaseCompressionMethods, CompressionMethods, Settings, SWFType } from "Publisher/PublisherSettings";
+import { GetPublishContext } from "Publisher/Context";
+import { renderComponents } from "Publisher/Publisher";
 
 export default function OtherSettings() {
     const { fileType, useBackwardCompatibility, useAutoProperties } = GetPublishContext();

@@ -4,10 +4,10 @@ import { Header } from 'Components/Publisher/Header';
 import SettingsMenu from 'Components/Publisher/Settings';
 import BasicSettings from 'Components/Publisher/BasicSettings';
 import Button from 'Components/Shared/Button';
-import Locale, { Locales } from 'Localization';
+import Locale, { Locales } from 'Publisher/Localization';
 import EnumField from 'Components/Shared/EnumField';
-import { loadFont } from '.';
-import { GetPublishContext, UpdateContext } from 'Context';
+import { loadFont } from '..';
+import { GetPublishContext, UpdateContext } from 'Publisher/Context';
 import React from 'react';
 import DisplayObject from 'Components/Shared/DisplayObject';
 
