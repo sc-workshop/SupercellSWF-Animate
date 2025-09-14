@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
     SupercellFlash
     GIT_REPOSITORY https://github.com/sc-workshop/SupercellFlash.git
-    GIT_TAG main
+    GIT_TAG v25.9.8
 )
 FetchContent_MakeAvailable(SupercellFlash)
 

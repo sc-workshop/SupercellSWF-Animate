@@ -50,7 +50,8 @@ const CmakeFlagsList = [
     `-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
     "-DBUILD_WITH_STATIC_CRT=OFF",
     `${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
-    `-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`
+    `-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`,
+    '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
 ]
 
 const CmakeFlags = CmakeFlagsList.join(" ");

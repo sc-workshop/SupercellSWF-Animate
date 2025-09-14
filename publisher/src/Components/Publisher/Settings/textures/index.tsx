@@ -78,7 +78,7 @@ export default function TextureSettings() {
     );
     textureExportExernalFile.IsAutoProperty = true;
 
-    const textureCompressExternalFIle = new BoolField(
+    const textureCompressExternalFile = new BoolField(
         {
             name: Locale.Get("TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE"),
             keyName: "external_compressed_texture_file_select",
@@ -88,7 +88,7 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP"
         }
     );
-    textureCompressExternalFIle.IsAutoProperty = true;
+    textureCompressExternalFile.IsAutoProperty = true;
 
     const textureQuality = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
@@ -202,13 +202,6 @@ export default function TextureSettings() {
         callback: value => (Settings.setParam("textureMaxHeight", TextureDimensions[value as never])),
     });
 
-    let generalProps = renderComponents([
-        useLowresTextures,
-        scaleFactor,
-        textureWidth,
-        textureHeight
-    ])
-
     let multiresProps = renderComponents([multiresSuffix, lowresSuffix], useMultiresTexture);
     let lowresProps = renderComponents([generateLowresTextures], useLowresTexture);
     var props = renderComponents([textureEncoding], !useBackwardCompatibility);
@@ -220,9 +213,16 @@ export default function TextureSettings() {
     );
 
     var khronosTextureProps = renderComponents(
-        [textureCompressExternalFIle, textureExportExernalFile],
+        [textureCompressExternalFile, textureExportExernalFile],
         encoding == TextureEncoding.KTX
     )
+
+    let generalProps = renderComponents([
+        useLowresTextures,
+        scaleFactor,
+        textureWidth,
+        textureHeight
+    ])
 
     let versionDependentProps = renderComponents([
             ...props,
