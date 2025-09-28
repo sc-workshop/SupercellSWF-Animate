@@ -58,6 +58,9 @@
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Sufiks tekstury o Wielu Rozdzielczościach",
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Sufiks Niskiej Rozdzielczości",
 
+	"TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE": "Generate streaming textures",
+	"TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE_TIP": "Generates low resolution textures for texture streaming",
+
 	"TID_OTHER_LABEL": "Inne",
 	"TID_SWF_SETTINGS_COMPRESSION": "Metoda kompresji",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Napisz niestandardowe właściwości",

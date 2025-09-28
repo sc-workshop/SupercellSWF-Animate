@@ -13,6 +13,8 @@ namespace sc {
 
 		void SCConfig::Load(const FCM::PIFCMDictionary dict)
 		{
+			using sc::flash::SWFTexture;
+
 			SCPlugin& context = SCPlugin::Instance();
 
 			std::string serializedConfig;
@@ -55,9 +57,7 @@ namespace sc {
 			hasExternalTexture = data["hasExternalTexture"];
 			hasExternalTextureFile = data["hasExternalTextureFile"];
 			compressExternalTextureFile = data["compressExternalTextureFile"];
-			hasLowresTexture = data["hasLowresTexture"];
-			generateLowresTexture = data["generateLowresTexture"];
-			hasMultiresTexture = data["hasMultiresTexture"];
+			
 			textureMaxWidth = data["textureMaxWidth"];
 			textureMaxHeight = data["textureMaxHeight"];
 
@@ -87,13 +87,20 @@ namespace sc {
 			}
 
 			if (data["textureEncoding"].is_number_unsigned()) {
-				textureEncoding = (sc::flash::SWFTexture::TextureEncoding)data["textureEncoding"];
+				textureEncoding = (SWFTexture::TextureEncoding)data["textureEncoding"];
 			}
 
 			if (data["textureQuality"].is_number_unsigned()) {
 				textureQuality = (Quality)data["textureQuality"];
 			}
 
+			// Disable lowres/highres generating for SCTX
+			if (textureEncoding != SWFTexture::TextureEncoding::SupercellTexture) {
+				hasLowresTexture = data["hasLowresTexture"];
+				generateLowresTexture = data["generateLowresTexture"];
+				hasMultiresTexture = data["hasMultiresTexture"];
+			}
+			
 			if (data["multiResolutinSuffix"].is_string()) {
 				multiResolutionSuffix = data["multiResolutinSuffix"];
 			}
@@ -105,6 +112,7 @@ namespace sc {
 			lowPrecisionMatrices = data["lowPrecisionMatrices"];
 			useShortFrames = data["useShortFrames"];
 			writeFieldsText = data["writeFieldsText"];
+			generateStreamingTexture = data["generateStreamingTexture"];
 
 			if (!autoProperties) // If use autoProperties, do logging later, after all properties are set
 			{
@@ -187,6 +195,7 @@ namespace sc {
 			context.logger->info("	hasMultiresTexture: {}", hasMultiresTexture);
 			context.logger->info("	textureMaxWidth: {}", textureMaxWidth);
 			context.logger->info("	textureMaxHeight: {}", textureMaxHeight);
+			context.logger->info("	generateStreamingTexture: {}", generateStreamingTexture);
 
 			context.logger->info("	compression: {}", (uint8_t)compression);
 

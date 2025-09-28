@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
     SupercellFlash
     GIT_REPOSITORY https://github.com/sc-workshop/SupercellFlash.git
-    GIT_TAG v25.9.8
+    GIT_TAG main
 )
 FetchContent_MakeAvailable(SupercellFlash)
 
@@ -61,6 +61,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(spdlog)
 
+# Blend2D
 FetchContent_Declare(
     blend2d
     URL https://blend2d.com/download/blend2d-0.11.5-all.tar.gz

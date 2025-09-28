@@ -72,7 +72,7 @@ namespace sc {
 			/// Create canvas context by given bound
 			/// </summary>
 			/// <param name="bound"></param>
-			void CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution);
+			bool CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution);
 
 			/// <summary>
 			/// Destroy canvas context and flush drawing
@@ -103,7 +103,7 @@ namespace sc {
 			/// <param name="resolution">Draw resolution</param>
 			/// <param name="result">Result image</param>
 			/// <param name="offset">Result region offset</param>
-			void DrawRegion(const Animate::Publisher::FilledElementRegion& region, float resolution, wk::RawImageRef& result, wk::Point& offset);
+			bool DrawRegion(const Animate::Publisher::FilledElementRegion& region, float resolution, wk::RawImageRef& result, wk::Point& offset);
 
 			static void CreatePath(const Animate::Publisher::FilledElementPath& path, wk::PointF offset, BLPath& contour, float resolution = 1.f);
 

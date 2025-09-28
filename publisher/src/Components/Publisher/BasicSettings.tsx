@@ -9,14 +9,14 @@ import { renderComponents } from "Publisher/Publisher";
 import BoolField from "../Shared/BoolField";
 
 export default function BasicSettings() {
-    const { setFileType, toggleAutoProperties } = GetPublishContext();
+    const { setFileType, useAutoProperties, useBackwardCompatibility, toggleBackwardCompatibility, toggleAutoProperties } = GetPublishContext();
     const [isExportToExternal, setExportToExternal] = useState(Settings.getParam("exportToExternal"));
 
     let defaultStyle = {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px"
-        };
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "10px"
+    };
 
     const output = FileField(
         Locale.Get("TID_OUTPUT"),
@@ -34,7 +34,13 @@ export default function BasicSettings() {
         enumeration: SWFType,
         defaultValue: Settings.getParam("type"),
         style: defaultStyle,
-        callback: value => (setFileType(parseInt(value))),
+        callback: value => {
+            let type: SWFType = parseInt(value) as SWFType;
+            setFileType(type);
+
+            if (type == SWFType.SC2 && useBackwardCompatibility)
+                toggleBackwardCompatibility()
+        },
     });
     filetype.IsAutoProperty = true
 
@@ -44,18 +50,22 @@ export default function BasicSettings() {
             keyName: "export_to_external_select",
             defaultValue: Settings.getParam("exportToExternal"),
             style: defaultStyle,
-            callback: [isExportToExternal, setExportToExternal],
+            callback: (value) => {
+                setExportToExternal(value);
+                if (!value && useAutoProperties)
+                    toggleAutoProperties()
+            },
             tip_tid: "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP"
         }
     )
     Settings.data["exportToExternal"] = isExportToExternal;
 
     const externalFileOptionsStyle = {
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px",
-            marginLeft: "2%"
-        };
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "10px",
+        marginLeft: "2%"
+    };
 
     const externalFilePath = FileField(
         Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),

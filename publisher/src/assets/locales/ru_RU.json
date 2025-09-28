@@ -59,6 +59,9 @@
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Суффикс текстур Мульти Разрешения",
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Суффикс текстур Низкого Разрешения",
 
+	"TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE": "Сгенерировать текстуры для стриминга",
+	"TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE_TIP": "Генерирует дополнительные текстуры более низкого разрешения для стриминга текстур",
+
 	"TID_OTHER_LABEL": "Другое",
 	"TID_SWF_SETTINGS_COMPRESSION": "Тип сжатия",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Сохранить кастомные свойства",

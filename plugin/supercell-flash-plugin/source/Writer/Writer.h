@@ -14,18 +14,20 @@
 
 namespace sc {
 	namespace Adobe {
-		class SCWriter : public Animate::Publisher::SharedWriter {
+		using namespace Animate::Publisher;
+
+		class SCWriter : public SharedWriter {
 		public:
-			using GraphicGroup = Animate::Publisher::StaticElementsGroup;
+			using GraphicGroup = StaticElementsGroup;
 
 		public:
 			SCWriter();
 			virtual ~SCWriter();
 
 		public:
-			virtual Animate::Publisher::SharedMovieclipWriter* AddMovieclip(Animate::Publisher::SymbolContext& symbol);
-			virtual Animate::Publisher::SharedShapeWriter* AddShape(Animate::Publisher::SymbolContext& symbol);
-			virtual Animate::Publisher::SharedTextFieldWriter* AddTextField(Animate::Publisher::SymbolContext& symbol);
+			virtual wk::Ref<SharedMovieclipWriter> AddMovieclip(Animate::Publisher::SymbolContext& symbol);
+			virtual wk::Ref<SharedShapeWriter> AddShape(Animate::Publisher::SymbolContext& symbol);
+			virtual wk::Ref<SharedTextFieldWriter> AddTextField(Animate::Publisher::SymbolContext& symbol);
 
 			virtual void AddModifier(uint16_t id, Animate::Publisher::MaskedLayerState type);
 

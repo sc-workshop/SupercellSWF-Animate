@@ -123,7 +123,8 @@ namespace sc {
 		{
 			wk::RawImageRef sprite;
 			wk::Point offset;
-			DrawRegion(region, resolution, sprite, offset);
+			if (!DrawRegion(region, resolution, sprite, offset))
+				return;
 
 			const Animate::DOM::Utils::MATRIX2D transform = {
 				matrix.a * (1.f / resolution),
@@ -461,18 +462,24 @@ namespace sc {
 			return true;
 		}
 
-		void SCShapeWriter::CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution)
+		bool SCShapeWriter::CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution)
 		{
 			canvas = wk::CreateUnique<RasterizingContext>();
+			uint16_t width = std::ceil(bound.topLeft.x - bound.bottomRight.x) * resolution;
+			uint16_t height = std::ceil(bound.topLeft.y - bound.bottomRight.y) * resolution;
+			if (width == 0 || height == 0)
+				return false;
+
 			canvas->image = wk::CreateRef<wk::RawImage>(
-				std::ceil(bound.topLeft.x - bound.bottomRight.x) * resolution,
-				std::ceil(bound.topLeft.y - bound.bottomRight.y) * resolution,
+				width,
+				height,
 				wk::Image::PixelDepth::RGBA8,
 				wk::Image::ColorSpace::Linear
 			);
 			SCShapeWriter::CreateImage(canvas->image, canvas->canvas_image, false);
 
 			canvas->ctx = BLContext(canvas->canvas_image);
+			return true;
 		}
 
 		void SCShapeWriter::ReleaseCanvas()
@@ -607,7 +614,7 @@ namespace sc {
 			}
 		}
 
-		void SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, float resolution, wk::RawImageRef& result, wk::Point& result_offset)
+		bool SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, float resolution, wk::RawImageRef& result, wk::Point& result_offset)
 		{
 			Animate::DOM::Utils::RECT bound = region.Bound();
 			wk::PointF offset(-std::min(bound.topLeft.x, bound.bottomRight.x), -std::min(bound.topLeft.y, bound.bottomRight.y));
@@ -615,12 +622,14 @@ namespace sc {
 			result_offset.y = bound.bottomRight.y;
 
 			SCShapeWriter::RoundDomRectangle(bound);
-			CreateCanvas(bound, resolution);
+			if (!CreateCanvas(bound, resolution))
+				return false;
 
 			DrawRegion(region, offset, resolution);
 
 			result = canvas->image;
 			ReleaseCanvas();
+			return true;
 		}
 
 		void SCShapeWriter::RoundRegion(Animate::Publisher::FilledElementRegion& path)

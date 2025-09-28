@@ -67,6 +67,7 @@ namespace sc {
 			bool lowPrecisionMatrices = false;
 			bool useShortFrames = true;
 			bool writeFieldsText = true;
+			bool generateStreamingTexture = true;
 		public:
 			virtual bool FromDict(const FCM::PIFCMDictionary dict) override;
 			void Load(const FCM::PIFCMDictionary dict);

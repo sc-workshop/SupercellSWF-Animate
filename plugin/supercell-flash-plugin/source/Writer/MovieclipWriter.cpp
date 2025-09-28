@@ -15,9 +15,6 @@ namespace sc {
 			Animate::Publisher::SharedMovieclipWriter(symbol),
 			m_writer(writer)
 		{
-			
-
-			
 		};
 
 		SCMovieclipWriter::~SCMovieclipWriter()

@@ -29,12 +29,12 @@ namespace sc {
 			}
 		}
 
-		SharedMovieclipWriter* SCWriter::AddMovieclip(SymbolContext& symbol) {
-			return new SCMovieclipWriter(*this, symbol);
+		wk::Ref<SharedMovieclipWriter> SCWriter::AddMovieclip(SymbolContext& symbol) {
+			return wk::CreateRef<SCMovieclipWriter>(*this, symbol);
 		}
 
-		SharedShapeWriter* SCWriter::AddShape(SymbolContext& symbol) {
-			return new SCShapeWriter(*this, symbol);
+		wk::Ref<SharedShapeWriter> SCWriter::AddShape(SymbolContext& symbol) {
+			return wk::CreateRef<SCShapeWriter>(*this, symbol);
 		}
 
 		void SCWriter::AddModifier(uint16_t id, MaskedLayerState type) {
@@ -57,14 +57,15 @@ namespace sc {
 			}
 		}
 
-		SharedTextFieldWriter* SCWriter::AddTextField(Animate::Publisher::SymbolContext& symbol)
+		wk::Ref<SharedTextFieldWriter> SCWriter::AddTextField(Animate::Publisher::SymbolContext& symbol)
 		{
-			return new SCTextFieldWriter(*this, symbol);
+			return wk::CreateRef<SCTextFieldWriter>(*this, symbol);
 		}
 
 		uint16_t SCWriter::LoadExternal(fs::path path) {
 			using namespace Animate::DOM;
 			SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+			swf.current_file = path;
 
 			bool isSc2 = false;
 			if (config.autoProperties)
@@ -145,24 +146,30 @@ namespace sc {
 					
 					bool hasExternalTexture = swf.load_sc1(false);
 					if (hasExternalTexture) swf.load_external_texture();
-
-					fs::path basename = path.stem();
-					fs::path dirname = path.parent_path();
-
-					config.hasExternalTexture = swf.use_external_texture;
-					config.hasExternalTextureFile = swf.use_external_textures;
-					config.compressExternalTextureFile = swf.compress_external_textures;
-					config.hasLowresTexture = swf.use_low_resolution;
-					config.hasMultiresTexture = swf.use_multi_resolution;
-					config.lowResolutionSuffix = swf.low_resolution_suffix.string();
-					config.multiResolutionSuffix = swf.multi_resolution_suffix.string();
-					config.generateLowresTexture = fs::exists(dirname / fs::path(basename).concat(swf.low_resolution_suffix.string()).concat("_tex.sc"));
 				}
+
+				fs::path basename = path.stem();
+				fs::path dirname = path.parent_path();
+
+				config.hasExternalTexture = swf.use_external_texture;
+				config.hasExternalTextureFile = swf.use_external_textures;
+				config.hasLowresTexture = swf.use_low_resolution;
+				config.hasMultiresTexture = swf.use_multi_resolution;
+				config.lowResolutionSuffix = swf.low_resolution_suffix.string();
+				config.multiResolutionSuffix = swf.multi_resolution_suffix.string();
+				config.generateLowresTexture = fs::exists(dirname / fs::path(basename).concat(swf.low_resolution_suffix.string()).concat("_tex.sc"));
 
 				if (!swf.textures.empty())
 				{
 					const auto& texture = swf.textures.front();
 					config.textureEncoding = texture.encoding();
+					if (texture.encoding() == flash::SWFTexture::TextureEncoding::SupercellTexture) {
+						
+						const auto image = std::static_pointer_cast<texture::SupercellTexture>(texture.image());
+						config.generateStreamingTexture =
+							image->streaming_variants.has_value() &&
+							!image->streaming_variants.value().empty();
+					}
 				}
 
 				for (auto& movieclip : swf.movieclips)
@@ -363,7 +370,7 @@ namespace sc {
 		{
 			using namespace wk;
 
-			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+			SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 			SCPlugin& context = SCPlugin::Instance();
 
 			StatusComponent* status = context.Window()->CreateStatusBarComponent(
@@ -478,8 +485,6 @@ namespace sc {
 							atlas_item_index++;
 						}
 					}
-				
-					
 				}
 				else
 				{
@@ -495,6 +500,19 @@ namespace sc {
 			}
 
 			context.Window()->DestroyStatusBar(status);
+
+			// limit encoding type only to those supported by SC1
+			if (config.type == SCConfig::SWFType::SC1 &&
+				(config.textureEncoding != flash::SWFTexture::TextureEncoding::KhronosTexture && config.textureEncoding != flash::SWFTexture::TextureEncoding::Raw)) {
+				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::SupercellTexture) {
+					config.textureEncoding = flash::SWFTexture::TextureEncoding::KhronosTexture; // Fallback to zktx
+					config.compressExternalTextureFile = true;
+					config.hasExternalTextureFile = true;
+				}
+				else {
+					config.textureEncoding = flash::SWFTexture::TextureEncoding::Raw;
+				}
+			}
 
 			for (uint16_t i = 0; texture_count > i; i++) {
 				wk::RawImage& atlas = generator.get_atlas(i);
@@ -558,7 +576,17 @@ namespace sc {
 				swf.textures.end(),
 				[&config](flash::SWFTexture& texture, size_t)
 				{
-					if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
+					using flash::SWFTexture;
+					wk::Ref<wk::RawImage> atlas;
+
+					bool generateStreaming = config.textureEncoding == SWFTexture::TextureEncoding::SupercellTexture &&
+						config.generateStreamingTexture;
+
+					if (generateStreaming)
+						atlas = texture.raw_image();
+
+					texture.encoding(config.textureEncoding);
+					if (config.textureEncoding == SWFTexture::TextureEncoding::Raw)
 					{
 						if (texture.image()->base_type() == Image::BasePixelType::RGBA)
 						{
@@ -579,9 +607,23 @@ namespace sc {
 							}
 						}
 					}
-					else
-					{
-						texture.encoding(flash::SWFTexture::TextureEncoding::KhronosTexture);
+
+					if (generateStreaming) {
+						wk::Ref<texture::SupercellTexture> image = std::static_pointer_cast<texture::SupercellTexture>(texture.image());
+
+						// No idea how does this work
+						// But we simply repeat configuration of most of sctx files
+						image->streaming_ids = { 3 };
+						image->streaming_variants = std::vector<texture::SupercellTexture>();
+						wk::RawImage streamingTexture(
+							(uint16_t)floor<uint16_t>(atlas->width() / 8),
+							(uint16_t)floor<uint16_t>(atlas->height() / 8),
+							atlas->depth(),
+							atlas->colorspace()
+						);
+
+						atlas->copy(streamingTexture);
+						image->streaming_variants->emplace_back(streamingTexture, image->pixel_type());
 					}
 				}
 			);
@@ -633,12 +675,14 @@ namespace sc {
 			FinalizeAtlas();
 
 			swf.use_external_texture = config.hasExternalTexture;
+			swf.use_external_textures = config.hasExternalTextureFile;
 			swf.use_low_resolution = config.hasLowresTexture;
 			swf.use_multi_resolution = config.hasMultiresTexture;
 			swf.multi_resolution_suffix = flash::SWFString(config.multiResolutionSuffix);
 			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.save_custom_property = config.writeCustomProperties;
+			swf.use_texture_streaming = config.generateStreamingTexture;
 
 			// SC2 settings
 			{
@@ -647,8 +691,8 @@ namespace sc {
 				sc2.use_short_frames = config.useShortFrames;
 			}
 
-			// Raw textures can be stored only inside texture files
-			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw)
+			// Raw textures can be stored only inside texture files in SC1
+			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw && config.type == SCConfig::SWFType::SC1)
 			{
 				swf.use_external_textures = false;
 			}

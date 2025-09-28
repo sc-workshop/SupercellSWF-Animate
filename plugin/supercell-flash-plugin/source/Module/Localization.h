@@ -9,6 +9,8 @@
 #include "nlohmann/json.hpp"
 using namespace nlohmann;
 
+#include "Animate/core/common/FCMPluginInterface.h"
+
 #define SC_wxStringU16(str) wxString((const wchar_t*)str.c_str())
 
 namespace sc {

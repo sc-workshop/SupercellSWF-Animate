@@ -27,7 +27,8 @@ export const TextureDimensions = [
 
 export enum TextureEncoding {
     Raw,
-    KTX
+    KTX,
+    SCTX
 }
 
 export enum Quality {
@@ -75,6 +76,7 @@ type PublisherSettingsData = {
     textureScaleFactor: TextureScaleFactor
     textureMaxWidth: number,
     textureMaxHeight: number,
+    generateStreamingTexture: boolean,
 
     // SC2
     lowPrecisionMatrices: boolean
@@ -100,18 +102,19 @@ const PublisherDefaultSettings : PublisherSettingsData =
 
     // Textures
     hasExternalTexture: true,
-    hasExternalTextureFile: true,
+    hasExternalTextureFile: false,
     compressExternalTextureFile: true,
     hasLowresTexture: false,
     hasMultiresTexture: false,
     generateLowresTexture: false,
     multiResolutinSuffix: "_highres",
     lowResolutionSuffix: "_lowres",
-    textureEncoding: TextureEncoding.KTX,
+    textureEncoding: TextureEncoding.Raw,
     textureQuality: Quality.highest,
     textureScaleFactor: TextureScaleFactor["x1.0"],
     textureMaxWidth: 4096,
     textureMaxHeight: 4096,
+    generateStreamingTexture: false,
 
     // SC2
     lowPrecisionMatrices: false,

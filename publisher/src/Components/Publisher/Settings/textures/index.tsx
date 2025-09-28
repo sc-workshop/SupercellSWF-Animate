@@ -25,14 +25,14 @@ export default function TextureSettings() {
 
     if (useBackwardCompatibility) {
         Settings.setParam("textureEncoding", TextureEncoding.Raw);
-    } else 
-    {
+    } else {
         Settings.setParam("textureEncoding", textureEncodingMethod)
     }
 
     let encoding = Settings.getParam("textureEncoding");
+    console.log(encoding)
 
-    const defaultStyle = 
+    const defaultStyle =
     {
         display: "flex",
         alignItems: "center",
@@ -88,7 +88,6 @@ export default function TextureSettings() {
             tip_tid: "TID_SWF_SETTINGS_COMPRESS_EXTERNAL_TEXTURE_FILE_TIP"
         }
     );
-    textureCompressExternalFile.IsAutoProperty = true;
 
     const textureQuality = new EnumField({
         name: Locale.Get("TID_SWF_SETTINGS_TEXTURE_QUALITY"),
@@ -150,6 +149,18 @@ export default function TextureSettings() {
     );
     generateLowresTextures.IsAutoProperty = true;
 
+    const generateStreamingTexture = new BoolField(
+        {
+            name: Locale.Get("TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE"),
+            keyName: "generate_streaming_texture_select",
+            defaultValue: Settings.getParam("generateStreamingTexture"),
+            style: defaultStyle,
+            callback: value => (Settings.setParam("generateStreamingTexture", value)),
+            tip_tid: "TID_SWF_SETTINGS_GENERATE_STREAMING_TEXTURE_TIP"
+        }
+    );
+    generateStreamingTexture.IsAutoProperty = true;
+
     const lowresSuffix = StringField(
         Locale.Get("TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX"),
         "lowres_suffix",
@@ -204,35 +215,51 @@ export default function TextureSettings() {
 
     let multiresProps = renderComponents([multiresSuffix, lowresSuffix], useMultiresTexture);
     let lowresProps = renderComponents([generateLowresTextures], useLowresTexture);
-    var props = renderComponents([textureEncoding], !useBackwardCompatibility);
-    var backwardCompatibilityProps = renderComponents([textureQuality], useBackwardCompatibility);
+    let props = renderComponents([textureEncoding], !useBackwardCompatibility);
+    let backwardCompatibilityProps = renderComponents([textureQuality], useBackwardCompatibility);
 
-    var rawTextureProps = renderComponents(
-        backwardCompatibilityProps, 
+    let resolutionProps = renderComponents([
+        useLowresTextures,
+        useMultiresTextures,
+        ...multiresProps,
+        ...lowresProps,
+    ],
+        encoding != TextureEncoding.SCTX // SCTX has streaming textures and mip maps so there is no point in using lowres textures
+    )
+
+    let rawTextureProps = renderComponents(
+        backwardCompatibilityProps,
         encoding == TextureEncoding.Raw
     );
 
-    var khronosTextureProps = renderComponents(
+    let generalCompressedTextureProps = renderComponents(
         [textureCompressExternalFile, textureExportExernalFile],
-        encoding == TextureEncoding.KTX
+        (encoding == TextureEncoding.KTX || encoding == TextureEncoding.SCTX) || useAutoProperties
+    )
+
+    let supercellTextureProps = renderComponents(
+        [generateStreamingTexture],
+        encoding == TextureEncoding.SCTX
     )
 
     let generalProps = renderComponents([
-        useLowresTextures,
+        ...generalCompressedTextureProps,
         scaleFactor,
         textureWidth,
         textureHeight
     ])
 
-    let versionDependentProps = renderComponents([
-            ...props,
-            ...rawTextureProps,
-            ...khronosTextureProps,
-            exportToExternal,
-            useMultiresTextures,
-            ...multiresProps,
-            ...lowresProps,
-    ], fileType == SWFType.SC1 || useAutoProperties); 
+    let advancedVersionDependentProps = renderComponents([
+        exportToExternal
+    ], fileType == SWFType.SC1);
+
+    let advancedProps = renderComponents([
+        ...props,
+        ...rawTextureProps,
+        ...supercellTextureProps,
+        ...advancedVersionDependentProps,
+        ...resolutionProps
+    ], !useAutoProperties);
 
     return SubMenu(
         Locale.Get("TID_TEXTURES_LABEL"),
@@ -240,7 +267,7 @@ export default function TextureSettings() {
         {
             marginBottom: "6px"
         },
-        ...versionDependentProps,
+        ...advancedProps,
         ...generalProps,
     )
 }
