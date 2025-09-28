@@ -191,6 +191,10 @@ If you find any problem with export process or you just need any help, please re
 > Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.8
+- Added SCTX support
+- Improved texture settings
+- Fixed exporting of Graphic elements instance names
 ## v 1.3.7
 - Fixed some cases when bitmap fill export exported with bugs
 - Minor code and visual changes for Publisher interface
