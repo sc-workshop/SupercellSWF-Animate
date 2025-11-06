@@ -1,7 +1,7 @@
 import path from "node:path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-// biome-ignore lint/style/useImportType: <explanation>
+// biome-ignore lint/style/useImportType: webpack config
 import webpack from "webpack";
 
 const SRC_PATH = path.join(__dirname, "src");

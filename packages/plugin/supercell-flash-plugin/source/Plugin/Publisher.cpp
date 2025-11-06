@@ -47,11 +47,7 @@ namespace sc {
 					publishing_ui.unlock();
 
 					wxTheApp->OnRun();
-					wxTheApp->OnExit();
 					wxEntryCleanup();
-
-					context.logger->info("Destroying UI...");
-					context.DestroyWindow();
 				}
 			);
 
@@ -80,22 +76,16 @@ namespace sc {
 						}
 
 						context.Window()->ThrowException(reason);
-						context.Trace(reason.c_str());
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (const std::exception& exception) {
 						context.Window()->ThrowException(exception.what());
-						context.Trace(exception.what());
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
 					}
 					catch (...) {
-						context.Trace(
-							context.locale.GetString("TID_UNKNOWN_EXCEPTION")
-						);
-
-						context.logger->error("Publishing finished with unknown exception");
+						context.logger->error("Publishing finished with unknown exception!");
 
 						context.Window()->readyToExit = true;
 						result = FCM_EXPORT_FAILED;
@@ -125,12 +115,12 @@ namespace sc {
 			SCPlugin& context = SCPlugin::Instance();
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
-			SCWriter writer;
-			ResourcePublisher publisher(writer);
-
 			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT")
 			);
+
+			SCWriter writer;
+			ResourcePublisher publisher(writer);
 
 			{
 				if (config.exportToExternal)
@@ -170,9 +160,7 @@ namespace sc {
 			);
 
 			publisher.Finalize();
-
-			context.Window()->readyToExit = true;
-			context.Window()->Close();
+			context.DestroyWindow();
 		}
 	}
 }

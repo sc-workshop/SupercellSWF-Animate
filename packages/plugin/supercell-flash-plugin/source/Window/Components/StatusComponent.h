@@ -2,13 +2,14 @@
 
 #include <wx/wx.h>
 #include <wx/stattext.h>
-#include <wx/gauge.h>
+#include "Window/Ui/ProgressBar.h"
 
 namespace sc {
 	namespace Adobe {
 		class StatusComponent : public wxPanel
 		{
-			wxGauge* m_progressBar = nullptr;
+		private:
+			ui::ProgressBar* m_progressBar = nullptr;
 			wxStaticText* m_label = nullptr;
 			wxStaticText* m_status = nullptr;
 

@@ -1,4 +1,5 @@
 // biome-ignore lint/suspicious/noShadowRestrictedNames: Polyfill implementation
+// biome-ignore lint/correctness/noUnusedVariables: Polyfill
 const JSON = {
 	parse: (data: string) => {
 		if (!data) {

@@ -11,7 +11,7 @@ namespace sc {
 			EVT_CLOSE(PluginWindow::OnClose)
 			SC_EVT_CREATE_PROGRESS(wxID_ANY, PluginWindow::OnProgressCreate)
 			SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
-			wxEND_EVENT_TABLE();
+		wxEND_EVENT_TABLE();
 
 		PluginWindow::PluginWindow(const wxString& title)
 			: wxFrame(
@@ -41,10 +41,9 @@ namespace sc {
 			Bind(WX_EVT_ERROR_RAISE, [&](wxCommandEvent& event) {
 				ErrorDialog* dialog = new ErrorDialog(m_parent, event.GetString());
 				dialog->ShowModal();
-				dialog->Destroy();
-
 				readyToExit = true;
-				this->Close(true);
+				Close(true);
+				wxTheApp->ExitMainLoop();
 			});
 		}
 
@@ -117,9 +116,11 @@ namespace sc {
 
 		void PluginWindow::OnProgressCreate(PluginCreateProgressEvent& event)
 		{
+			Freeze();
 			StatusComponent* progressBar = new StatusComponent(panel, event.title, event.status, event.range);
 			contentSizer->Add(progressBar);
 			ScaleByContent();
+			Thaw();
 
 			event.result = progressBar;
 
