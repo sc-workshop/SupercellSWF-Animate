@@ -1,7 +1,7 @@
 {
   "name": "SupercellSWF-Animate-Installer",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Installer for SupercellSWF Animate Plugin",
   "main": "runtime/install.jsfl",
   "scripts": {

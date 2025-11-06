@@ -1,7 +1,7 @@
 {
 	"name": "SupercellSWF",
 	"private": true,
-	"version": "1.3.8",
+	"version": "1.3.9",
 	"description": "Custom platform plugin for Adobe Animate",
 	"main": "build.ts",
 	"scripts": {
