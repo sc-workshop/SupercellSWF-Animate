@@ -1,4 +1,4 @@
-import { copyDir, makeLink, progress } from "../scripts/utils";
+import { copyDir, makeLink, progress } from "../../scripts/utils";
 import { join } from "path";
 import { existsSync } from "fs";
 

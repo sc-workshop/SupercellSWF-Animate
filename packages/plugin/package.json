@@ -5,8 +5,8 @@
   "description": "Native plugin for Adobe Animate",
   "main": "build.ts",
   "scripts": {
-    "build:dev": "ts-node build.ts development",
-    "build:prod": "ts-node build.ts production"
+    "build:dev": "pnpx ts-node build.ts development",
+    "build:prod": "pnpx ts-node build.ts production"
   },
   "author": "DaniilSV",
   "license": "MIT",

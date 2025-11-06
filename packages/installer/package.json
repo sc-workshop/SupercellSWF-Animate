@@ -6,7 +6,7 @@
   "main": "runtime/install.jsfl",
   "scripts": {
     "postinstall": "patch-package",
-    "build": "ts-node --project ../tsconfig.json  build.ts"
+    "build": "pnpx ts-node --project ../tsconfig.json  build.ts"
   },
   "author": "DaniilSV",
   "license": "MIT",

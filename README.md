@@ -155,13 +155,13 @@ If you have an already installed plugin and want to update, run installation fil
   
 # Building
 Before starting you need to have:
-- [npm, node.js and ts-node](https://nodejs.org/)
-- [Typescript and ts-node](https://www.npmjs.com/package/ts-node)
+- [node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/installation)
 - MSVC Build tools (Visual Studio)
 
 To prepare all the necessary dependencies, run the following command in the project folder:  
 `
-    npm run cook
+    pnpm install
 `  
   
 Next, after preparing all modules, you need to open console (as admin in case of Debug) in root of repository.  

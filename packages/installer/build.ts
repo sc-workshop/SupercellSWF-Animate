@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { copyDir } from "../scripts/utils";
+import { copyDir } from "../../scripts/utils";
 import { lstatSync, readdirSync, renameSync } from "fs";
 import { format, join, parse } from "path";
 

@@ -1,131 +1,136 @@
-import pc from "picocolors";
-
-import { join } from "path";
-import { userInfo, homedir } from "os";
-import { symlinkSync, copyFileSync, mkdirSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync, writeFileSync } from "fs";
-import { Colors, Formatter } from "picocolors/types";
+import {
+	copyFileSync,
+	existsSync,
+	lstatSync,
+	mkdirSync,
+	readdirSync,
+	rmSync,
+	symlinkSync,
+	unlinkSync,
+	writeFileSync,
+} from "node:fs";
+import { homedir, userInfo } from "node:os";
+import { join } from "node:path";
+import colors from "picocolors";
+import type { Colors, Formatter } from "picocolors/types";
 
 export const processPath = process.cwd();
 
-export const isDev = getEnv() === 'development';
+export const isDev = getEnv() === "development";
 
 export const isWindows = process.platform === "win32";
 export const isMac = process.platform === "darwin";
 
-type ColorName = keyof Pick<Colors, { [K in keyof Colors]: Colors[K] extends Formatter ? K : never }[keyof Colors]>;
+type ColorName = keyof Pick<
+	Colors,
+	{ [K in keyof Colors]: Colors[K] extends Formatter ? K : never }[keyof Colors]
+>;
 
-type Environment = "production" | "development"
+type Environment = "production" | "development";
 
 export function log(val: any) {
-    console.log(val)
+	console.log(val);
 }
 
 export function error(val: string) {
-    progress(val, 'red')
+	progress(val, "red");
 }
 
-export function progress(val: string, color?: ColorName) {
-    var c = color ? color : 'yellow'
+export function progress(value: string, color?: ColorName) {
+	const destination = color ? color : "yellow";
 
-    console.log(pc[c](val))
+	console.log(colors[destination](value));
 }
 
 export function removeFiles(files: string[], basepath: string = "") {
-    for (const file of files) {
-        var curPath = join(basepath, file)
-        if (!existsSync(curPath)) continue;
+	for (const file of files) {
+		const curPath = join(basepath, file);
+		if (!existsSync(curPath)) continue;
 
-        if (lstatSync(curPath).isDirectory()) { // recurse
-            if (lstatSync(curPath).isSymbolicLink()) {
-                unlinkSync(curPath);
-            } else {
-                removeDirs(curPath)
-            }
-        } else { // delete file
-            unlinkSync(curPath)
-        }
-    }
+		if (lstatSync(curPath).isDirectory()) {
+			// recurse
+			if (lstatSync(curPath).isSymbolicLink()) {
+				unlinkSync(curPath);
+			} else {
+				removeDirs(curPath);
+			}
+		} else {
+			// delete file
+			unlinkSync(curPath);
+		}
+	}
 }
 
 export function removeDirs(path: string) {
-    if (existsSync(path)) {
-        const folder = readdirSync(path);
-        removeFiles(folder, path);
-        rmdirSync(path);
-    }
+	rmSync(path, { recursive: true, force: true });
 }
 
 export function copyDir(src: string, dst: string) {
-    if (!existsSync(src) || !lstatSync(src).isDirectory()) {
-        return;
-    }
+	if (!existsSync(src) || !lstatSync(src).isDirectory()) {
+		return;
+	}
 
-    if (!existsSync(dst) || !lstatSync(dst).isDirectory()) {
-        mkdirSync(dst, { recursive: true });
-    }
+	if (!existsSync(dst) || !lstatSync(dst).isDirectory()) {
+		mkdirSync(dst, { recursive: true });
+	}
 
-    for (const name of readdirSync(src)) {
-        const path = join(src, name);
-        const outPath = join(dst, name);
+	for (const name of readdirSync(src)) {
+		const path = join(src, name);
+		const outPath = join(dst, name);
 
-        if (lstatSync(path).isDirectory()) {
-            mkdirSync(outPath, { recursive: true });
-            copyDir(path, outPath);
-        } else {
-            copyFileSync(path, outPath);
-        }
-
-    }
+		if (lstatSync(path).isDirectory()) {
+			mkdirSync(outPath, { recursive: true });
+			copyDir(path, outPath);
+		} else {
+			copyFileSync(path, outPath);
+		}
+	}
 }
 
 export function processExecError(err: any): Error {
-    let errorMessage = "Failed to exec process";
-    if (err.status) {
-        errorMessage = "Process exit with code " + err.status;
-    }
+	let errorMessage = "Failed to exec process";
+	if (err.status) {
+		errorMessage = "Process exit with code " + err.status;
+	}
 
-    return new Error(errorMessage)
+	return new Error(errorMessage);
 }
 
 export function getEnv(): Environment {
-    let env: Environment = 'development'
+	let env: Environment = "development";
 
-    const args = process.argv
+	const args = process.argv;
 
-    if (args.length >= 3) {
-        if (args[2] == "production") {
-            env = "production";
-        }
-    }
+	if (args.length >= 3) {
+		if (args[2] == "production") {
+			env = "production";
+		}
+	}
 
-    return env
+	return env;
 }
 
 export function extensionsFolder() {
-    if (isWindows) {
-        const extensionsPath = userInfo().homedir + '\\AppData\\Roaming\\Adobe\\CEP\\extensions'
-        if (existsSync(extensionsPath))
-            mkdirSync(extensionsPath, { recursive: true })
+	if (isWindows) {
+		const extensionsPath = `${userInfo().homedir}\\AppData\\Roaming\\Adobe\\CEP\\extensions`;
+		if (existsSync(extensionsPath))
+			mkdirSync(extensionsPath, { recursive: true });
 
-        return extensionsPath;
-    } else {
-        return join(homedir(), 'Library/Application Support/Adobe/CEP/extensions')
-    }
-
+		return extensionsPath;
+	} else {
+		return join(homedir(), "Library/Application Support/Adobe/CEP/extensions");
+	}
 }
 
 export function makeLink(src: string, dst: string) {
-    progress(`Creating link from \"${src}\" to \"${dst}\"`, "blue")
+	progress(`Creating link from "${src}" to "${dst}"`, "blue");
 
-    symlinkSync(src, dst, "dir")
+	symlinkSync(src, dst, "dir");
 }
 
-export function getPreferencesFolder() {
+export function getPreferencesFolder() {}
 
-}
-
-export function createDistMark(path: string)
-{
-    const dest = join(path, ".dist");
-    writeFileSync(dest, "");
+export function createDistMark(path: string) {
+	const dest = join(path, ".dist");
+	writeFileSync(dest, "");
 }
