@@ -1,4 +1,4 @@
-import { ConfigInterface } from "./scripts/manifest/interfaces";
+import type { ConfigInterface } from "./scripts/manifest/interfaces";
 
 export const config: ConfigInterface = {
 	organization: "scWorkshop",

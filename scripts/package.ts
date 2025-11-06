@@ -16,7 +16,7 @@ import {
 	extensionDistFolder,
 	packageFolder,
 } from "./manifest";
-import { copyDir, isWindows, log, removeDirs } from "./utils";
+import { isWindows, log, removeDirs } from "./utils";
 
 function build_extension_package(
 	output_package: string,
@@ -34,7 +34,7 @@ function build_extension_package(
 
 	if (rebuild_package) {
 		log(`Building production build for package...`);
-		execSync(`npm run build:prod ${additional_args}`, { stdio: [0, 1, 2] });
+		execSync(`pnpm run build:prod ${additional_args}`, { stdio: [0, 1, 2] });
 	}
 
 	const zxpCmd = isWindows ? `ZXPSignCmd` : `./ZXPSignCmd`;
@@ -68,7 +68,7 @@ if (existsSync(packageFolder)) {
 // Copying installer runtime
 execSync(`pnpm build ${packageFolder}`, {
 	stdio: [0, 1, 2],
-	cwd: join(cwd(), "installer"),
+	cwd: join(cwd(), "packages", "installer"),
 });
 
 const packageDistFolder = join(packageFolder, "packages");

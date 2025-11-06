@@ -1,5 +1,7 @@
+import { execSync } from "node:child_process";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import which from "which";
-import { join } from "path";
 import {
 	copyDir,
 	isMac,
@@ -8,8 +10,6 @@ import {
 	makeLink,
 	progress,
 } from "../../scripts/utils";
-import { execSync } from "child_process";
-import { mkdirSync, writeFileSync, existsSync } from "fs";
 import { version } from "./package.json";
 
 if (!isWindows && !isMac) {
@@ -24,7 +24,7 @@ mkdirSync(outputPath, { recursive: true });
 const isFresh = args.indexOf("--fresh") != -1;
 
 let cpuFeature = "SSE2";
-for (let arg of args) {
+for (const arg of args) {
 	if (arg.startsWith("--cpuf")) {
 		cpuFeature = arg.split("=")[1];
 		break;
@@ -60,6 +60,7 @@ const CmakeFlagsList = [
 	`${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
 	`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`,
 	"-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`,
 ];
 
 const CmakeFlags = CmakeFlagsList.join(" ");

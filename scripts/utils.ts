@@ -90,7 +90,7 @@ export function copyDir(src: string, dst: string) {
 export function processExecError(err: any): Error {
 	let errorMessage = "Failed to exec process";
 	if (err.status) {
-		errorMessage = "Process exit with code " + err.status;
+		errorMessage = `Process exit with code ${err.status}`;
 	}
 
 	return new Error(errorMessage);

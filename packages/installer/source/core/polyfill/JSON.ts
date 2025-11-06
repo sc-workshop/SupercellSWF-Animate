@@ -1,13 +1,14 @@
-
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Polyfill implementation
 const JSON = {
-    parse: function (data: string) {
-        if (!data) {
-            return {};
-        }
+	parse: (data: string) => {
+		if (!data) {
+			return {};
+		}
 
-        // @ts-ignore
-        eval("var json=" + data + ";");
-        // @ts-ignore
-        return json;
-    }
-}
+		// @ts-expect-error
+		// biome-ignore lint/security/noGlobalEval: this is the only way to parse JSON in older engines
+		eval(`var json=${data};`);
+		// @ts-expect-error
+		return json;
+	},
+};

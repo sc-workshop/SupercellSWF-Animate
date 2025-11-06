@@ -1,172 +1,167 @@
-import { CSEvent, getInterface, isCEP } from "CEP"
-
-export enum CompressionMethods {
-    LZMA,
-    LZHAM,
-    ZSTD
-}
+import { CSEvent, getInterface, isCEP } from "CEP";
 
 export enum BaseCompressionMethods {
-    LZMA = CompressionMethods.LZMA,
-    LZHAM = CompressionMethods.LZHAM
+	LZMA = 0,
+	LZHAM,
+}
+
+export enum CompressionMethods {
+	LZMA = 0,
+	LZHAM,
+	ZSTD,
 }
 
 export enum TextureScaleFactor {
-    "x1.0",
-    "x0.75",
-    "x0.5",
-    "x0.25"
+	"x1.0",
+	"x0.75",
+	"x0.5",
+	"x0.25",
 }
 
-export const TextureDimensions = [
-    512,
-    1024,
-    2048,
-    4096
-]
+export const TextureDimensions = [512, 1024, 2048, 4096];
 
 export enum TextureEncoding {
-    Raw,
-    KTX,
-    SCTX
+	Raw,
+	KTX,
+	SCTX,
 }
 
 export enum Quality {
-    highest,
-    high,
-    medium,
-    low
+	highest,
+	high,
+	medium,
+	low,
 }
 
 export enum SWFType {
-    SC1,
-    SC2
+	SC1,
+	SC2,
 }
 
 type PublisherSettingsData = {
-    //Basic settings
-    output: string,
-    type: SWFType,
-    autoProperties: boolean,
+	//Basic settings
+	output: string;
+	type: SWFType;
+	autoProperties: boolean;
 
-    backwardCompatibility: boolean,
+	backwardCompatibility: boolean;
 
-    // Additional settings
-    compressionMethod: CompressionMethods,
-    hasPrecisionMatrices: boolean,
-    writeCustomProperties: boolean,
-    writeFieldsText: boolean,
+	// Additional settings
+	compressionMethod: CompressionMethods;
+	hasPrecisionMatrices: boolean;
+	writeCustomProperties: boolean;
+	writeFieldsText: boolean;
 
-    // Export to another file settings
-    exportToExternal: boolean,
-    exportToExternalPath: string,
-    repackAtlas: boolean,
+	// Export to another file settings
+	exportToExternal: boolean;
+	exportToExternalPath: string;
+	repackAtlas: boolean;
 
-    // Texture category
-    hasExternalTexture: boolean,
-    hasExternalTextureFile: boolean,
-    compressExternalTextureFile: boolean,
-    hasLowresTexture: boolean,
-    generateLowresTexture: boolean,
-    hasMultiresTexture: boolean,
-    multiResolutinSuffix: string,
-    lowResolutionSuffix: string,
-    textureEncoding: TextureEncoding,
-    textureQuality: Quality,
-    textureScaleFactor: TextureScaleFactor
-    textureMaxWidth: number,
-    textureMaxHeight: number,
-    generateStreamingTexture: boolean,
+	// Texture category
+	hasExternalTexture: boolean;
+	hasExternalTextureFile: boolean;
+	compressExternalTextureFile: boolean;
+	hasLowresTexture: boolean;
+	generateLowresTexture: boolean;
+	hasMultiresTexture: boolean;
+	multiResolutinSuffix: string;
+	lowResolutionSuffix: string;
+	textureEncoding: TextureEncoding;
+	textureQuality: Quality;
+	textureScaleFactor: TextureScaleFactor;
+	textureMaxWidth: number;
+	textureMaxHeight: number;
+	generateStreamingTexture: boolean;
 
-    // SC2
-    lowPrecisionMatrices: boolean
-    useShortFrames: boolean
-}
+	// SC2
+	lowPrecisionMatrices: boolean;
+	useShortFrames: boolean;
+};
 
-const PublisherDefaultSettings : PublisherSettingsData = 
-{
-    output: "",
-    type: SWFType.SC2,
+const PublisherDefaultSettings: PublisherSettingsData = {
+	output: "",
+	type: SWFType.SC2,
 
-    backwardCompatibility: false,
+	backwardCompatibility: false,
 
-    compressionMethod: CompressionMethods.ZSTD,
-    hasPrecisionMatrices: false,
-    writeCustomProperties: true,
-    writeFieldsText: true,
+	compressionMethod: CompressionMethods.ZSTD,
+	hasPrecisionMatrices: false,
+	writeCustomProperties: true,
+	writeFieldsText: true,
 
-    exportToExternal: false,
-    exportToExternalPath: "",
-    repackAtlas: true,
-    autoProperties: false,
+	exportToExternal: false,
+	exportToExternalPath: "",
+	repackAtlas: true,
+	autoProperties: false,
 
-    // Textures
-    hasExternalTexture: true,
-    hasExternalTextureFile: false,
-    compressExternalTextureFile: true,
-    hasLowresTexture: false,
-    hasMultiresTexture: false,
-    generateLowresTexture: false,
-    multiResolutinSuffix: "_highres",
-    lowResolutionSuffix: "_lowres",
-    textureEncoding: TextureEncoding.Raw,
-    textureQuality: Quality.highest,
-    textureScaleFactor: TextureScaleFactor["x1.0"],
-    textureMaxWidth: 4096,
-    textureMaxHeight: 4096,
-    generateStreamingTexture: false,
+	// Textures
+	hasExternalTexture: true,
+	hasExternalTextureFile: false,
+	compressExternalTextureFile: true,
+	hasLowresTexture: false,
+	hasMultiresTexture: false,
+	generateLowresTexture: false,
+	multiResolutinSuffix: "_highres",
+	lowResolutionSuffix: "_lowres",
+	textureEncoding: TextureEncoding.Raw,
+	textureQuality: Quality.highest,
+	textureScaleFactor: TextureScaleFactor["x1.0"],
+	textureMaxWidth: 4096,
+	textureMaxHeight: 4096,
+	generateStreamingTexture: false,
 
-    // SC2
-    lowPrecisionMatrices: false,
-    useShortFrames: false
-}
+	// SC2
+	lowPrecisionMatrices: false,
+	useShortFrames: false,
+};
 
 export class PublisherSettings {
-    data = PublisherDefaultSettings;
+	data = PublisherDefaultSettings;
 
-    getParam<K extends keyof PublisherSettingsData>(name: K) {
-        if (this.data[name] !== undefined)
-        {
-            return this.data[name];
-        }
-        
-        return PublisherDefaultSettings[name];
-    }
+	getParam<K extends keyof PublisherSettingsData>(name: K) {
+		if (this.data[name] !== undefined) {
+			return this.data[name];
+		}
 
-    setParam<K extends keyof PublisherSettingsData>(name: K, value: PublisherSettingsData[K]) {
-        this.data[name] = value as never;
-    }
+		return PublisherDefaultSettings[name];
+	}
 
-    save() {
-        if (!isCEP()) {
-            return;
-        }
-        const CSInterface = getInterface();
+	setParam<K extends keyof PublisherSettingsData>(
+		name: K,
+		value: PublisherSettingsData[K],
+	) {
+		this.data[name] = value as never;
+	}
 
-        const event = new CSEvent(
-            "com.adobe.events.flash.extension.savestate",
-            "APPLICATION",
-            CSInterface.getApplicationID(),
-            "org.scWorkshop.SupercellSWF.PublishSettings"
-        );
+	save() {
+		if (!isCEP()) {
+			return;
+		}
+		const CSInterface = getInterface();
 
-        event.data = JSON.stringify({
-            SupercellSWF: JSON.stringify(this.data)
-        });
-        CSInterface.dispatchEvent(event);
-    }
+		const event = new CSEvent(
+			"com.adobe.events.flash.extension.savestate",
+			"APPLICATION",
+			CSInterface.getApplicationID(),
+			"org.scWorkshop.SupercellSWF.PublishSettings",
+		);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    restore(data: any) {
-        try {
-            if (data.SupercellSWF) {
-                Object.assign(this.data, JSON.parse(data.SupercellSWF));
-            }
+		event.data = JSON.stringify({
+			SupercellSWF: JSON.stringify(this.data),
+		});
+		CSInterface.dispatchEvent(event);
+	}
 
-        } catch (error) {
-            // alert("Failed to load publisher settings");
-        }
-    }
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	restore(data: any) {
+		try {
+			if (data.SupercellSWF) {
+				Object.assign(this.data, JSON.parse(data.SupercellSWF));
+			}
+		} catch (_error) {
+			// alert("Failed to load publisher settings");
+		}
+	}
 }
 
 export const Settings = new PublisherSettings();

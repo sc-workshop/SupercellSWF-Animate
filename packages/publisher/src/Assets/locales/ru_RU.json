@@ -1,13 +1,13 @@
 {
-    "TID_VERSION": "Версия",
+	"TID_VERSION": "Версия",
 	"TID_PUBLISH": "Опубликовать документ",
 
 	"TID_HIGHEST": "Самое высокое",
 	"TID_HIGH": "Высокое",
 	"TID_MEDIUM": "Среднее",
 	"TID_LOW": "Низкое",
-	
-    "TID_OUTPUT": "Вывод",
+
+	"TID_OUTPUT": "Вывод",
 	"TID_SWF_SETTINGS_FILETYPE": "Тип файла",
 	"TID_PUBLISH_METHOD": "Тип вывода",
 
@@ -37,7 +37,7 @@
 
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Фактор разрешения текстур",
 	"TID_SWF_SETTINGS_SCALE_FACTOR_TIP": "Умножает разрешение текстур в файле на указанное число",
-	
+
 	"TID_SWF_SETTINGS_MAX_TEXTURE_WIDTH": "Максимальная высота текстур",
 	"TID_SWF_SETTINGS_MAX_TEXTURE_HEIGHT": "Максимальная ширина текстур",
 
@@ -55,7 +55,7 @@
 
 	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES": "Сгенерировать текстуры Низкого Разрешения",
 	"TID_SWF_SETTINGS_GENERATE_LOWRES_TEXTURES_TIP": "Генерирует текстуры низкого разрешения во время экспорта. Уменьшает время загрузки, но увеличивает общий размер ассета",
-	
+
 	"TID_SWF_SETTINGS_HAS_MULTIRES_TEXTURES_SUFFIX": "Суффикс текстур Мульти Разрешения",
 	"TID_SWF_SETTINGS_HAS_LOWRES_TEXTURES_SUFFIX": "Суффикс текстур Низкого Разрешения",
 

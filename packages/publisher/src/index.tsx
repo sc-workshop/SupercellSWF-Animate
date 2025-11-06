@@ -1,15 +1,15 @@
-import ReactDOM from "react-dom/client";
-import Publisher from "Publisher/Publisher";
-import { useState, createElement, useEffect } from "react";
-import { getInterface, CSEvent, isCEP } from "CEP";
-import { Settings } from "Publisher/PublisherSettings";
-import Locale from "Publisher/Localization";
+import { CSEvent, getInterface, isCEP } from "CEP";
 import { PublisherContextProvider } from "Publisher/Context";
+import Locale from "Publisher/Localization";
+import Publisher from "Publisher/Publisher";
+import { Settings } from "Publisher/PublisherSettings";
+import { createElement, useEffect, useState } from "react";
+import ReactDOM from "react-dom/client";
 
 export const loadFont = async (callback: () => void) => {
 	const font = new FontFace(
 		"PublisherFont",
-		`url(${require("./Assets/fonts/" + Locale.code)})`,
+		`url(${require(`./Assets/fonts/${Locale.code}`)})`,
 		{
 			style: "normal",
 		},
@@ -44,7 +44,7 @@ function App() {
 			const publisherData = new Promise((resolve) => {
 				CSInterface.addEventListener(
 					"com.adobe.events.flash.extension.setstate",
-					function (event: CSEvent) {
+					(event: CSEvent) => {
 						if (event.data === undefined) {
 							setPublisherStateData("{}");
 						} else {

@@ -1,17 +1,16 @@
 {
-    "compilerOptions": {
-        "module": "ES2015",
-        "noLib": true,
-        "types": [
-            "types-for-adobe/Animate/22.0",
-        ]
-    }, 
-    "exclude": [
-        "node_modules",
-        "build.ts"
-    ],
-    "include": [
-        "source/**/*",
-        "source/scope.d.ts"
-    ]
+	"compilerOptions": {
+		"module": "ES2015",
+		"noLib": true,
+		"types": [
+			"types-for-adobe/Animate/22.0"
+		]
+	},
+	"exclude": [
+		"node_modules",
+		"build.ts"
+	],
+	"include": [
+		"source/**/*"
+	]
 }

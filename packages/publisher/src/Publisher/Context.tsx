@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { Settings, SWFType } from "Publisher/PublisherSettings";
+import { Settings, type SWFType } from "Publisher/PublisherSettings";
+import React, { useState } from "react";
 
 interface ContextProps {
 	backwardCompatibility: boolean;
@@ -22,12 +22,12 @@ interface ContextInterface {
 	toggleAutoProperties: () => void;
 }
 
-//@ts-ignore
+//@ts-expect-error
 const Context = React.createContext<ContextInterface>(null);
 
-export const CreatePublishAppContext = function (
+export const CreatePublishAppContext = (
 	props: ContextProps,
-): ContextInterface {
+): ContextInterface => {
 	const [backwardCompatibility, setBackwardCompatibility] = useState(
 		props.backwardCompatibility,
 	);
@@ -105,7 +105,7 @@ export function UpdateContext() {
 	}
 }
 
-//@ts-ignore
+//@ts-expect-error
 export const PublisherContextProvider = ({ children, ...props }) => {
 	const context = CreatePublishAppContext(props as ContextProps);
 

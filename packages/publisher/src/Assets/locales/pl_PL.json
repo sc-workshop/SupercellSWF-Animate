@@ -1,5 +1,5 @@
 {
-    "TID_VERSION": "Wersja",
+	"TID_VERSION": "Wersja",
 	"TID_PUBLISH": "Opublikuj dokument",
 
 	"TID_HIGHEST": "Najwyższa",
@@ -7,14 +7,14 @@
 	"TID_MEDIUM": "Średnia",
 	"TID_LOW": "Niska",
 
-    "TID_OUTPUT": "Wyjście",
+	"TID_OUTPUT": "Wyjście",
 	"TID_PUBLISH_METHOD": "Typ wyjścia",
 
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY": "Kompatybilność wsteczna",
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP": "Wyłącza niektóre funkcje, ale umożliwia działanie pliku końcowego w starszych wersjach gier",
 
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Zaawansowane",
-    "TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Eksportuj dokument do pliku zewnętrznego",
+	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL": "Eksportuj dokument do pliku zewnętrznego",
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_TIP": "Zapisuje wszystkie symbole z bieżącego projektu do innego pliku .sc. \n",
 	"TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH": "Plik zewnętrzny",
 	"TID_SWF_REPACK_ATLAS": "Repack atlas texture",

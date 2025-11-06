@@ -188,121 +188,121 @@
 		"supported": false
 	},
 	{
-        "name": "DynamicText",
-        "supported": true,
-        "properties": [
-            {
-                "name": "RenderAsHTML",
-                "supported": true
-            },
-            {
-                "name": "TextFormat",
-                "supported": true,
-                "default": "LeftAlign",
-                "values": [
-                    {
-                        "name": "LeftAlign",
-                        "supported": true
-                    },
-                    {
-                        "name": "Justify",
-                        "supported": true
-                    },
-                    {
-                        "name": "RightAlign",
-                        "supported": true
-                    },
-                    {
-                        "name": "CentreAlign",
-                        "supported": true
-                    }
-                ]
-            },
-            {
-                "name": "FontEmbed",
-                "supported": true
-            },
-            {
-                "name": "WebFont",
-                "supported": true
-            },
-            {
-                "name": "LetterSpacing",
-                "supported": true,
-                "default": "0.0"
-            },
-            {
-                "name": "AutoKern",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "AntiAlias",
-                "supported": true,
-                "default": "CanvasFonts"
-            },
-            {
-                "name": "Selectable",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "RenderAsHtml",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "Border",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "SuperScript",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "SubScript",
-                "supported": true,
-                "default": "false"
-            },
-            {
-                "name": "Margins",
-                "supported": true
-            },
-            {
-                "name": "LineType",
-                "supported": true,
-                "default": "MultiLine",
-                "values": [
-                    {
-                        "name": "SingleLine",
-                        "supported": true
-                    },
-                    {
-                        "name": "MultiLine",
-                        "supported": true
-                    },
-                    {
-                        "name": "MultiLineNoWrap",
-                        "supported": true
-                    },
-                    {
-                        "name": "Password",
-                        "supported": false
-                    }
-                ]
-            },
-            {
-                "name": "Scrollable",
-                "supported": true
-            },
-            {
-                "name": "Filter",
-                "supported": true
-            }
-        ]
-    },
+		"name": "DynamicText",
+		"supported": true,
+		"properties": [
+			{
+				"name": "RenderAsHTML",
+				"supported": true
+			},
+			{
+				"name": "TextFormat",
+				"supported": true,
+				"default": "LeftAlign",
+				"values": [
+					{
+						"name": "LeftAlign",
+						"supported": true
+					},
+					{
+						"name": "Justify",
+						"supported": true
+					},
+					{
+						"name": "RightAlign",
+						"supported": true
+					},
+					{
+						"name": "CentreAlign",
+						"supported": true
+					}
+				]
+			},
+			{
+				"name": "FontEmbed",
+				"supported": true
+			},
+			{
+				"name": "WebFont",
+				"supported": true
+			},
+			{
+				"name": "LetterSpacing",
+				"supported": true,
+				"default": "0.0"
+			},
+			{
+				"name": "AutoKern",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "AntiAlias",
+				"supported": true,
+				"default": "CanvasFonts"
+			},
+			{
+				"name": "Selectable",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "RenderAsHtml",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "Border",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "SuperScript",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "SubScript",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "Margins",
+				"supported": true
+			},
+			{
+				"name": "LineType",
+				"supported": true,
+				"default": "MultiLine",
+				"values": [
+					{
+						"name": "SingleLine",
+						"supported": true
+					},
+					{
+						"name": "MultiLine",
+						"supported": true
+					},
+					{
+						"name": "MultiLineNoWrap",
+						"supported": true
+					},
+					{
+						"name": "Password",
+						"supported": false
+					}
+				]
+			},
+			{
+				"name": "Scrollable",
+				"supported": true
+			},
+			{
+				"name": "Filter",
+				"supported": true
+			}
+		]
+	},
 	{
 		"name": "Scene",
 		"supported": true
@@ -502,7 +502,6 @@
 				"name": "visibility",
 				"supported": true,
 				"default": "true"
-				
 			}
 		]
 	},

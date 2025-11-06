@@ -1,15 +1,14 @@
-import { createElement } from "react";
 import { publish } from "Components";
+import BasicSettings from "Components/Publisher/BasicSettings";
 import { Header } from "Components/Publisher/Header";
 import SettingsMenu from "Components/Publisher/Settings";
-import BasicSettings from "Components/Publisher/BasicSettings";
 import Button from "Components/Shared/Button";
-import Locale, { Locales } from "Publisher/Localization";
-import EnumField from "Components/Shared/EnumField";
-import { loadFont } from "..";
-import { GetPublishContext, UpdateContext } from "Publisher/Context";
-import React from "react";
 import DisplayObject from "Components/Shared/DisplayObject";
+import EnumField from "Components/Shared/EnumField";
+import { GetPublishContext, UpdateContext } from "Publisher/Context";
+import Locale, { Locales } from "Publisher/Localization";
+import React, { createElement } from "react";
+import { loadFont } from "..";
 
 function Publisher() {
 	UpdateContext();
@@ -44,7 +43,7 @@ function Publisher() {
 			alignItems: "center",
 		},
 		callback: (value) => {
-			const intValue = parseInt(value);
+			const intValue = parseInt(value, 10);
 			const localeName = available_languages[intValue];
 			const localeCode = Object.entries(Locales).find(
 				([key, _]) => key === localeName,
@@ -76,35 +75,40 @@ function Publisher() {
 		process.env.NODE_ENV == "production" ? undefined : language.render(),
 	);
 
-	return createElement("div", {
-		id: "publisher",
-		style: {
-			width: "100%",
-			height: "100%",
-			userSelect: "none",
-			MozUserSelect: "none",
-			KhtmlUserSelect: "none",
-			WebkitUserSelect: "none",
+	const childrens = [
+		Header(),
+
+		delim,
+		BasicSettings(),
+		SettingsMenu(),
+
+		buttonContainer,
+	];
+
+	return createElement(
+		"div",
+		{
+			id: "publisher",
+			style: {
+				width: "100%",
+				height: "100%",
+				userSelect: "none",
+				MozUserSelect: "none",
+				KhtmlUserSelect: "none",
+				WebkitUserSelect: "none",
+			},
 		},
-		children: [
-			Header(),
-
-			delim,
-			BasicSettings(),
-			SettingsMenu(),
-
-			buttonContainer,
-		],
-	});
+		...childrens,
+	);
 }
 
 export function renderComponents(
 	components: any[],
 	condition: boolean = true,
 ): React.ReactNode[] {
-	let result = components.map((component) => {
+	const result = components.map((component) => {
 		if (component && component instanceof React.Component) {
-			let result = component.render();
+			const result = component.render();
 			if (component instanceof DisplayObject && component.IsAutoProperty) {
 				const { useAutoProperties } = GetPublishContext();
 				if (useAutoProperties) {
