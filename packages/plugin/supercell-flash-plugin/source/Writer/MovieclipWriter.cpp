@@ -33,12 +33,9 @@ namespace sc {
 			m_object.frame_rate = (uint8_t)fps;
 			m_object.frames.resize(frameCount);
 
-			if (!m_status && frameCount > 1)
+			if (!m_status && frameCount > 100)
 			{
-				m_status = context.Window()->CreateStatusBarComponent(
-					context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"),
-					m_symbol.name
-				);
+				m_status = context.Window()->CreateStatusBarComponent(m_symbol.name);
 				m_status->SetRange(frameCount);
 			}
 
@@ -224,6 +221,7 @@ namespace sc {
 			}
 			else
 			{
+				m_writer.IncrementSymbolsProcessed();
 				m_writer.swf.CreateExportName(
 					flash::SWFString(m_symbol.linkage_name),
 					id

@@ -1,6 +1,5 @@
 #include "Writer.h"
 
-#include "Module/Module.h"
 #include "MovieclipWriter.h"
 #include "ShapeWriter.h"
 #include "TextFieldWriter.h"
@@ -27,6 +26,16 @@ namespace sc {
 			{
 				fs::remove(sprite_temp_path);
 			}
+		}
+
+		void SCWriter::SetExportedSymbols(const std::vector<SymbolContext>& symbols)
+		{
+			SCPlugin& context = SCPlugin::Instance();
+
+			m_status = context.Window()->CreateStatusBarComponent(
+				context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS")
+			);
+			m_status->SetRange((int)symbols.size());
 		}
 
 		wk::Ref<SharedMovieclipWriter> SCWriter::AddMovieclip(SymbolContext& symbol) {
@@ -247,7 +256,7 @@ namespace sc {
 			flash::SWFTexture& texture = swf.textures[command.texture_index];
 			if (command.vertices.empty()) return;
 
-			// �opy the last vertex until size equals 4, this is important
+			// Copy the last vertex until size equals 4, this is important
 			while (4 > command.vertices.size())
 			{
 				command.vertices.emplace_back(command.vertices[command.vertices.size() - 1]);
@@ -469,9 +478,7 @@ namespace sc {
 
 				if (exception.index() != SIZE_MAX)
 				{
-					size_t atlas_item_index = 0;
-					size_t group_index = 0;
-					for (; m_graphic_groups.size() >= group_index; group_index++)
+					for (size_t group_index = 0, atlas_item_index = 0; m_graphic_groups.size() >= group_index; group_index++)
 					{
 						GraphicGroup& group = m_graphic_groups[group_index];
 						for (size_t group_item_index = 0; group.Size() > group_item_index; group_item_index++)
@@ -500,19 +507,6 @@ namespace sc {
 			}
 
 			context.Window()->DestroyStatusBar(status);
-
-			// limit encoding type only to those supported by SC1
-			if (config.type == SCConfig::SWFType::SC1 &&
-				(config.textureEncoding != flash::SWFTexture::TextureEncoding::KhronosTexture && config.textureEncoding != flash::SWFTexture::TextureEncoding::Raw)) {
-				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::SupercellTexture) {
-					config.textureEncoding = flash::SWFTexture::TextureEncoding::KhronosTexture; // Fallback to zktx
-					config.compressExternalTextureFile = true;
-					config.hasExternalTextureFile = true;
-				}
-				else {
-					config.textureEncoding = flash::SWFTexture::TextureEncoding::Raw;
-				}
-			}
 
 			for (uint16_t i = 0; texture_count > i; i++) {
 				wk::RawImage& atlas = generator.get_atlas(i);
@@ -640,29 +634,57 @@ namespace sc {
 			}
 		}
 
+		void SCWriter::SetupTextureSettings()
+		{
+			SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+
+			// limit encoding type only to those supported by SC1
+			if (config.type == SCConfig::SWFType::SC1 && !config.hasExternalTextureFile) {
+
+				if (config.textureEncoding == flash::SWFTexture::TextureEncoding::SupercellTexture) {
+					config.textureEncoding = flash::SWFTexture::TextureEncoding::KhronosTexture; // Fallback to zktx
+					config.compressExternalTextureFile = true;
+					config.hasExternalTextureFile = true;
+				}
+			}
+
+			// Raw textures can be stored only inside texture files in SC1 and inside SC2
+			if (config.hasExternalTextureFile && config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw) {
+				swf.use_external_textures = false;
+			}
+			else {
+				swf.use_external_textures = config.hasExternalTextureFile;
+				swf.compress_external_textures = config.compressExternalTextureFile;
+			}
+
+			swf.use_multi_resolution = config.hasMultiresTexture;
+			swf.multi_resolution_suffix = flash::SWFString(config.multiResolutionSuffix);
+			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
+			swf.use_external_texture = config.hasExternalTexture;
+			swf.use_external_textures = config.hasExternalTextureFile;
+			swf.use_low_resolution = config.hasLowresTexture;
+			swf.use_texture_streaming = config.generateStreamingTexture;
+
+		}
+
 		void SCWriter::Finalize() {
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 			SCPlugin& context = SCPlugin::Instance();
 
 			if (swf.exports.empty())
-			{
-				context.console->Trace(
-					(FCM::CStringRep16)context.locale.GetString("TID_SWF_NO_EXPORTS").c_str()
-				);
-			}
+				throw SCPluginException("TID_SWF_NO_EXPORTS", config.exportToExternalPath.wstring().c_str());
 
 			enum FinalizeStep : uint8_t
 			{
 				INIT = 0,
-				ATLAS_FINALIZE = 1,
-				SWF_SAVING = 2,
-				END = 3
+				ATLAS_FINALIZE = 50,
+				SWF_SAVING = 80,
+				END = 100
 			};
 
 			StatusComponent* status = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT"),
-				u"",
-				END
+				u""
 			);
 
 			if (config.exportToExternal)
@@ -672,34 +694,17 @@ namespace sc {
 
 			status->SetProgress(ATLAS_FINALIZE);
 			status->SetStatusLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
+			SetupTextureSettings();
 			FinalizeAtlas();
 
-			swf.use_external_texture = config.hasExternalTexture;
-			swf.use_external_textures = config.hasExternalTextureFile;
-			swf.use_low_resolution = config.hasLowresTexture;
-			swf.use_multi_resolution = config.hasMultiresTexture;
-			swf.multi_resolution_suffix = flash::SWFString(config.multiResolutionSuffix);
-			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
 			swf.use_precision_matrix = config.hasPrecisionMatrices;
 			swf.save_custom_property = config.writeCustomProperties;
-			swf.use_texture_streaming = config.generateStreamingTexture;
-
+			
 			// SC2 settings
 			{
 				flash::Sc2CompileSettings& sc2 = swf.sc2_compile_settings;
 				sc2.use_half_precision_matrices = config.lowPrecisionMatrices;
 				sc2.use_short_frames = config.useShortFrames;
-			}
-
-			// Raw textures can be stored only inside texture files in SC1
-			if (config.textureEncoding == flash::SWFTexture::TextureEncoding::Raw && config.type == SCConfig::SWFType::SC1)
-			{
-				swf.use_external_textures = false;
-			}
-			else
-			{
-				swf.use_external_textures = config.hasExternalTextureFile;
-				swf.compress_external_textures = config.compressExternalTextureFile;
 			}
 
 			fs::path filepath = fs::path(config.outputFilepath).replace_extension("sc");
@@ -725,6 +730,14 @@ namespace sc {
 			}
 
 			context.Window()->DestroyStatusBar(status);
+		}
+
+		void SCWriter::IncrementSymbolsProcessed()
+		{
+			if (!m_status)
+				return;
+
+			m_status->SetProgress((int)++m_symbols_processed);
 		}
 
 		wk::RawImageRef SCWriter::GetBitmap(const BitmapElement& item)

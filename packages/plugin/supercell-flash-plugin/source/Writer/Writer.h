@@ -4,6 +4,7 @@
 #include "flash/flash.h"
 #include "atlas_generator/Item/Item.h"
 #include "core/memory/ref.h"
+#include "Module/Module.h"
 
 #include <filesystem>
 
@@ -25,6 +26,7 @@ namespace sc {
 			virtual ~SCWriter();
 
 		public:
+			virtual void SetExportedSymbols(const std::vector<SymbolContext>& symbols) override;
 			virtual wk::Ref<SharedMovieclipWriter> AddMovieclip(Animate::Publisher::SymbolContext& symbol);
 			virtual wk::Ref<SharedShapeWriter> AddShape(Animate::Publisher::SymbolContext& symbol);
 			virtual wk::Ref<SharedTextFieldWriter> AddTextField(Animate::Publisher::SymbolContext& symbol);
@@ -42,17 +44,18 @@ namespace sc {
 			size_t texture_offset = 0;
 
 		public:
+			void IncrementSymbolsProcessed();
 			wk::RawImageRef GetBitmap(const Animate::Publisher::BitmapElement& item);
-
 			void AddGraphicGroup(const GraphicGroup& group);
 
 		public:
 			uint16_t LoadExternal(fs::path path);
 
 			void FinalizeAtlas();
+			void SetupTextureSettings();
 
 			// Some functions for atlas finalize
-
+			// TODO: move to separate class
 			void ProcessDrawCommand(
 				flash::ShapeDrawBitmapCommand& command,
 				wk::AtlasGenerator::Item::Transformation& transform,
@@ -91,6 +94,10 @@ namespace sc {
 
 			// Name / Image
 			std::unordered_map<std::u16string, wk::RawImageRef> m_cached_images;
+
+			// Total symbols status bar
+			size_t m_symbols_processed = 0;
+			StatusComponent* m_status = 0;
 		};
 	}
 }

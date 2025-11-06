@@ -78,6 +78,8 @@ namespace sc::Adobe {
 	{
 		if (m_app)
 		{
+			m_app->OnExit();
+			m_app->ExitMainLoop();
 			m_app = nullptr;
 		}
 	}

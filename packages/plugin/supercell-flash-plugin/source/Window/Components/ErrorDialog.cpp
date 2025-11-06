@@ -1,4 +1,5 @@
-#include "Window/Components/ErrorDialog.h"
+#include "Module/Module.h"
+#include "Window/Components/ErrorDialog.h" 
 
 namespace sc {
 	namespace Adobe {
@@ -13,7 +14,7 @@ namespace sc {
 
 			sizer->Add(text, 0, wxALL | wxALIGN_CENTER, 10);
 
-			wxButton* okButton = new wxButton(this, wxID_OK, "OK");
+			wxButton* okButton = new wxButton(this, wxID_OK | wxICON_ERROR, "OK");
 			sizer->Add(okButton, 0, wxALL | wxALIGN_CENTER, 10);
 
 			SetSizerAndFit(sizer);
