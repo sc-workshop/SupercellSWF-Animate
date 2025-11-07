@@ -48,7 +48,7 @@ export default class BoolField extends DisplayObject<Props, State> {
 		});
 
 		if (this.props.tip_tid !== undefined) {
-			const [tip_reference, props, tip_element] = FloatTip(this.props.tip_tid);
+			const [tip_reference, , tip_element] = FloatTip(this.props.tip_tid);
 			label = createElement(
 				"div",
 				{
@@ -56,7 +56,6 @@ export default class BoolField extends DisplayObject<Props, State> {
 				},
 				label,
 				tip_element as never,
-				//...(props as unknown as never[]),
 			);
 		}
 		const checkbox = createElement("input", {

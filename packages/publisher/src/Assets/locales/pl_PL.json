@@ -25,7 +25,7 @@
 	"TID_SWF_SETTINGS_HAS_TEXTURE": "Napisz plik zewnętrzny",
 	"TID_SWF_SETTINGS_HAS_TEXTURE_TIP": "Zapisuje wszystkie tekstury do pliku _tex.sc",
 	"TID_SWF_SETTINGS_TEXTURE_ENCODING": "Metoda kodowania",
-	"TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP": "Surowa - Przechowuje tekstury w nieskompresowanym strumieniu danych.\nKTX - Kompresuje dane tekstury w Teksture Khronos. Proces kompresji może być dość długi.",
+	"TID_SWF_SETTINGS_TEXTURE_ENCODING_TIP": "Raw - Stores textures in an uncompressed data stream.\nKTX - Compresses texture data into a Khronos Texture. \nSCTX - Supercell proprietary replacement for Khronos. \nThe compression process can be quite long.",
 	"TID_SWF_SETTINGS_TEXTURE_QUALITY": "Jakość tekstury",
 	"TID_SWF_SETTINGS_SCALE_FACTOR": "Współczynnik skali tekstury",
 	"TID_SWF_SETTINGS_SCALE_FACTOR_TIP": "Mnoży rozdzielczość tekstury w pliku przez określoną liczbę",

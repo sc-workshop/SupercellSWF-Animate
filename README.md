@@ -38,11 +38,11 @@
 </p>
 
 - Create something!  
-In [examples](#examples) you can find good and different use cases for extension in different games!  
+In [examples](#examples) you can find different use cases for extension in different games!  
 Also, before creating something, do not forget to read information about ["limitations"](#Limitations) that will help you not to create any problems.
 
 - To set export options you need to click "File -> Publish Settings.."  
-You can set all options here for the first time only once and then just press "Publish" button. You can also find a description of all options in ["Publisher options"](#publisher-options)
+You can set all options here for the first time only once and then just press "Publish" button. You can also find a description of some options, just hold mouse on label for a moment.
 
 <p align="center">
 <img src="./assets/publish_settings_select.png"  width="35%" height="30%">
@@ -61,8 +61,7 @@ For the most part these tips will help you make a more "correct" and more optimi
 - Avoid using sprites, and especially vector graphics in MovieClips.  
     Animate is a fairly flexible program and you will notice very little difference between different types of symbols, but speed of export and rendering performance in general depends on how correctly you use these types.  
     When organizing project structure, note that Shapes or so-called Graphic symbols are intended to contain sprites or vector graphics. They can have only one frame.
-    At the same time, MovieClip symbols are used to create animation using shapes. They can have an unlimited (within technical limits) number of frames and they can have a linkage name.
-- 
+    At the same time, MovieClip symbols are used to create animation using shapes. They can have an unlimited (within technical limits) number of frames and they can have a linkage name.  
 
 # Support
 This project was created with the goal of exploring various interesting tools and to support a small but quite creative community of modders. I put a lot of heart and time into this creation, so if you want to support me, you can buy me a coffee right here :3  
@@ -150,6 +149,9 @@ If you want to remove plugin, run ```install.jsfl``` again, and this time you wi
 # Plugin Update
 If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
 
+> [!TIP]
+> You might need to reboot your device after uninstall old version, to successful install plugin update
+
 > [!IMPORTANT]
 > If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
   
@@ -191,6 +193,9 @@ If you find any problem with export process or you just need any help, please re
 > Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.3.9
+- Improved texture handling
+- Improved Publisher Settings and Publisher Progress windows
 ## v 1.3.8
 - Added SCTX support
 - Improved texture settings
