@@ -80,6 +80,41 @@ export const CreatePublishAppContext = (
 	};
 };
 
+export function ReadSettings() {
+	return {
+		fileType: Settings.getParam("type"),
+		useBackwardCompatibility: Settings.getParam("backwardCompatibility"),
+		useExternalTextureFiles: Settings.getParam("hasExternalTextureFile"),
+		useAutoProperties: Settings.getParam("autoProperties"),
+	};
+}
+
+export function ApplySettings(
+	context: ContextInterface,
+	settings: ReturnType<typeof ReadSettings>,
+) {
+	const {
+		useBackwardCompatibility,
+		toggleBackwardCompatibility,
+		setFileType,
+		useExternalTextureFiles,
+		toggleExternalTextureFiles,
+		useAutoProperties,
+		toggleAutoProperties,
+	} = context;
+
+	setFileType(settings.fileType);
+	if (settings.useBackwardCompatibility !== useBackwardCompatibility) {
+		toggleBackwardCompatibility();
+	}
+	if (settings.useExternalTextureFiles !== useExternalTextureFiles) {
+		toggleExternalTextureFiles();
+	}
+	if (settings.useAutoProperties !== useAutoProperties) {
+		toggleAutoProperties();
+	}
+}
+
 export function UpdateContext() {
 	const {
 		useBackwardCompatibility,

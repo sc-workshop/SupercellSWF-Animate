@@ -1,3 +1,4 @@
+import { getInterface, isCEP } from "CEP";
 import { publish } from "Components";
 import BasicSettings from "Components/Publisher/BasicSettings";
 import { Header } from "Components/Publisher/Header";
@@ -5,13 +6,23 @@ import SettingsMenu from "Components/Publisher/Settings";
 import Button from "Components/Shared/Button";
 import DisplayObject from "Components/Shared/DisplayObject";
 import EnumField from "Components/Shared/EnumField";
-import { GetPublishContext, UpdateContext } from "Publisher/Context";
+import {
+	ApplySettings,
+	GetPublishContext,
+	ReadSettings,
+} from "Publisher/Context";
 import Locale, { Locales } from "Publisher/Localization";
-import React, { createElement } from "react";
+import { Settings } from "Publisher/PublisherSettings";
+import React, { createElement, useEffect, useMemo } from "react";
 import { loadFont } from "..";
 
 function Publisher() {
-	UpdateContext();
+	const context = GetPublishContext();
+	const settings = useMemo(() => ReadSettings(), []);
+
+	useEffect(() => {
+		ApplySettings(context, settings);
+	}, [context, settings]);
 
 	const delim = (
 		<hr
@@ -38,10 +49,7 @@ function Publisher() {
 		keyName: "language_debug_sect",
 		enumeration: available_languages,
 		defaultValue: available_languages[0],
-		style: {
-			display: "flex",
-			alignItems: "center",
-		},
+		style: { margin: "0 auto" },
 		callback: (value) => {
 			const intValue = parseInt(value, 10);
 			const localeName = available_languages[intValue];
@@ -55,6 +63,18 @@ function Publisher() {
 			}
 		},
 	});
+
+	const saveSettingsButton = Button(
+		Locale.Get("TID_SAVE_SETTINGS"),
+		"save_settings_button",
+		{},
+		() => {
+			if (!isCEP()) return;
+
+			Settings.save();
+			getInterface().closeExtension();
+		},
+	);
 
 	const buttonContainer = createElement(
 		"div",
@@ -72,6 +92,7 @@ function Publisher() {
 			},
 		},
 		publishButton,
+		saveSettingsButton,
 		process.env.NODE_ENV == "production" ? undefined : language.render(),
 	);
 

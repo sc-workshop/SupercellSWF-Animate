@@ -44,8 +44,6 @@ export default function TextureSettings() {
 	}
 
 	const encoding = Settings.getParam("textureEncoding");
-	console.log(encoding);
-
 	const defaultStyle = {
 		display: "flex",
 		alignItems: "center",

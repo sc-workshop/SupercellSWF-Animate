@@ -56,7 +56,7 @@ export default class BoolField extends DisplayObject<Props, State> {
 				},
 				label,
 				tip_element as never,
-				...(props as unknown as never[]),
+				//...(props as unknown as never[]),
 			);
 		}
 		const checkbox = createElement("input", {

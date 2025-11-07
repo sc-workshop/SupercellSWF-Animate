@@ -106,7 +106,7 @@ export default class EnumField extends DisplayObject<Props, State> {
 				},
 				label,
 				tip_element as never,
-				...(props as unknown as never[]),
+				//...(props as unknown as never[]),
 			);
 		}
 		const selector = createElement(

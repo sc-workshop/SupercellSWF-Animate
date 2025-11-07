@@ -47,7 +47,23 @@ const config: webpack.Configuration = {
 			{
 				test: /\.(js|jsx|tsx|ts)$/,
 				exclude: /node_modules/,
-				use: ["babel-loader"],
+				use: {
+					loader: "babel-loader",
+					options: {
+						presets: [
+							[
+								"@babel/preset-env",
+								{
+									shippedProposals: true,
+									modules: "commonjs",
+									targets: { node: "8.6.0" },
+								},
+							],
+							["@babel/preset-react", { runtime: "automatic" }],
+							"@babel/preset-typescript",
+						],
+					},
+				},
 			},
 			{
 				test: /\.(css|scss)$/,
