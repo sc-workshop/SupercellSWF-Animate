@@ -13,12 +13,12 @@ import {
 } from "Publisher/Context";
 import Locale, { Locales } from "Publisher/Localization";
 import { Settings } from "Publisher/PublisherSettings";
-import React, { createElement, useEffect, useMemo } from "react";
+import React, { createElement, useEffect } from "react";
 import { loadFont } from "..";
 
 function Publisher() {
 	const context = GetPublishContext();
-	const settings = useMemo(() => ReadSettings(), []);
+	const settings = ReadSettings();
 
 	useEffect(() => {
 		ApplySettings(context, settings);
