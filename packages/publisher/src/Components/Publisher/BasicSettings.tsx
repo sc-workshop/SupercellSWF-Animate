@@ -1,7 +1,9 @@
+import ElementsArray from "Components/Shared/Array";
+import renderComponents from "Components/Shared/ComponentRenderer";
 import { GetPublishContext } from "Publisher/Context";
 import Locale from "Publisher/Localization";
-import { renderComponents } from "Publisher/Publisher";
 import { Settings, SWFType } from "Publisher/PublisherSettings";
+import type React from "react";
 import { createElement, useState } from "react";
 import BoolField from "../Shared/BoolField";
 import EnumField from "../Shared/EnumField";
@@ -19,21 +21,27 @@ export default function BasicSettings() {
 		Settings.getParam("exportToExternal"),
 	);
 
+	const [useDocuments, setUseDocuments] = useState(
+		Settings.getParam("multipleDocuments"),
+	);
+
+	const [documentPaths] = useState<Map<number, string>>(new Map());
+
 	const defaultStyle = {
 		display: "flex",
 		alignItems: "center",
-		marginBottom: "10px",
+		//marginBottom: "10px",
 	};
 
-	const output = FileField(
-		Locale.Get("TID_OUTPUT"),
-		"publisher_output_path",
-		"write",
-		"sc",
-		defaultStyle,
-		(value) => Settings.setParam("output", value),
-		Settings.getParam("output"),
-	);
+	const output = FileField({
+		name: Locale.Get("TID_OUTPUT"),
+		keyName: "publisher_output_path",
+		mode: "write",
+		ext: "sc",
+		style: defaultStyle,
+		callback: (value) => Settings.setParam("output", value),
+		defaultValue: Settings.getParam("output"),
+	});
 
 	const filetype = new EnumField({
 		name: Locale.Get("TID_SWF_SETTINGS_FILETYPE"),
@@ -67,21 +75,21 @@ export default function BasicSettings() {
 	const externalFileOptionsStyle = {
 		display: "flex",
 		alignItems: "center",
-		marginBottom: "10px",
+		//marginBottom: "10px",
 		marginLeft: "2%",
 	};
 
-	const externalFilePath = FileField(
-		Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
-		"export_to_external_path",
-		"read",
-		"sc",
-		externalFileOptionsStyle,
-		(value) => {
+	const externalFilePath = FileField({
+		name: Locale.Get("TID_SWF_SETTINGS_EXPORT_TO_EXTERNAL_PATH"),
+		keyName: "export_to_external_path",
+		mode: "read",
+		ext: "sc",
+		style: externalFileOptionsStyle,
+		callback: (value) => {
 			Settings.setParam("exportToExternalPath", value);
 		},
-		Settings.getParam("exportToExternalPath"),
-	);
+		defaultValue: Settings.getParam("exportToExternalPath"),
+	});
 
 	const autoSettings = new BoolField({
 		name: Locale.Get("TID_SWF_SETTINGS_AUTO"),
@@ -103,16 +111,76 @@ export default function BasicSettings() {
 		tip_tid: "TID_SWF_REPACK_ATLAS_TIP",
 	});
 
+	const multipleDocuments = new BoolField({
+		name: Locale.Get("TID_SWF_MULTIPLE_DOCUMENTS"),
+		keyName: "multiple_documents_select",
+		defaultValue: Settings.getParam("multipleDocuments"),
+		style: defaultStyle,
+		callback: setUseDocuments,
+		tip_tid: "TID_SWF_MULTIPLE_DOCUMENTS_TIP",
+	});
+	Settings.data.multipleDocuments = useDocuments;
+
+	const flushDocuments = () => {
+		const files = Array.from(documentPaths.values());
+		Settings.setParam("documentsPaths", files);
+	};
+
+	const changeDocument = (id: number, path: string) => {
+		documentPaths.set(id, path);
+		flushDocuments();
+	};
+
+	const createDocument = (id: number, path: string = "") => {
+		const result = (
+			<FileField
+				keyName={`document_path_${Date.now()}`}
+				mode="read"
+				ext="fla"
+				defaultValue={path}
+				style={defaultStyle}
+				callback={(value) => changeDocument(id, value)}
+			></FileField>
+		);
+
+		documentPaths.set(id, path);
+		return result;
+	};
+
+	const deleteDocument = (id: number) => {
+		documentPaths.delete(id);
+		flushDocuments();
+	};
+
+	const documentArray = ElementsArray<React.JSX.Element, string>({
+		name: Locale.Get("TID_SWF_DOCUMENTS_ARRAY"),
+		keyName: "multiple_documents",
+		style: {
+			minWidth: "50%",
+			//marginBottom: "10px",
+		},
+		initValues: Settings.getParam("documentsPaths"),
+		onCreate: createDocument,
+		onRemove: deleteDocument,
+	});
+
 	const externalFileSettings = renderComponents(
 		[externalFilePath, autoSettings, repackAtlas],
 		isExportToExternal,
+	);
+
+	const multipleDocumentsSettings = renderComponents(
+		[documentArray],
+		useDocuments,
 	);
 
 	const props = renderComponents([
 		output,
 		filetype,
 		exportToExternal,
-		...externalFileSettings,
+		externalFileSettings,
+		multipleDocuments,
+		multipleDocumentsSettings,
 	]);
 
 	return createElement(
@@ -123,6 +191,6 @@ export default function BasicSettings() {
 				width: "100%",
 			},
 		},
-		...props,
+		props,
 	);
 }

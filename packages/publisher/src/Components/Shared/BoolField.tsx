@@ -5,8 +5,6 @@ import {
 	type SetStateAction,
 } from "react";
 import DisplayObject from "./DisplayObject";
-import FloatTip from "./FloatTip";
-import TextField from "./TextField";
 
 type callback = (value: boolean) => void;
 type state = [boolean, Dispatch<SetStateAction<boolean>>];
@@ -42,32 +40,19 @@ export default class BoolField extends DisplayObject<Props, State> {
 	}
 
 	render() {
-		let label = TextField(`${this.props.name} :`, {
-			color: "#727776",
-			marginRight: "5px",
-		});
+		const label = this.createLabel();
 
-		if (this.props.tip_tid !== undefined) {
-			const [tip_reference, , tip_element] = FloatTip(this.props.tip_tid);
-			label = createElement(
-				"div",
-				{
-					ref: tip_reference,
-				},
-				label,
-				tip_element as never,
-			);
-		}
 		const checkbox = createElement("input", {
 			key: `boolfield_${this.props.keyName}_input`,
 			type: "checkbox",
 			onChange: () => {
-				this.state.checked = this.state.checked == false;
+				const value = this.state.checked == false;
+				this.state.checked = value;
 
 				if (typeof this.props.callback == "function") {
-					this.props.callback(this.state.checked);
+					this.props.callback(value);
 				} else {
-					this.props.callback[1](this.state.checked);
+					this.props.callback[1](value);
 				}
 			},
 			style: {

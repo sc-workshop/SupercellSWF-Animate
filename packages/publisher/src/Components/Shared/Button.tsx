@@ -1,48 +1,81 @@
-import { type CSSProperties, createElement, useState } from "react";
-import TextField from "./TextField";
+import { type CSSProperties, useRef } from "react";
 
-export default function Button(
-	text: string,
-	keyName: string,
-	style: CSSProperties,
-	callback: () => void,
-) {
-	const [isFocus, setIsFocus] = useState(false);
+type IconButtonProps = {
+	src: string;
+	alt: string;
+	onClick(): void;
+	rotate?: boolean;
+	active?: boolean;
+	size?: number;
+	padding?: number;
+	borderRadius?: number;
+	style?: CSSProperties;
+};
 
-	const label = TextField(text, {
-		color: "#ffffff",
-		marginRight: "5px",
-		userSelect: "none",
-	});
+export default function IconButton({
+	src,
+	alt,
+	onClick,
+	rotate = false,
+	active = false,
+	size = 28,
+	padding = 4,
+	borderRadius = 4,
+	style = {},
+}: IconButtonProps) {
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
-	const button = createElement(
-		"button",
-		{
-			type: "button",
-			key: `button_${keyName}`,
-			onMouseDown: (event) => {
-				event.persist();
-				callback();
-			},
-			style: {
-				width: "fit-content",
-				height: "35px",
-				border: "3px solid white",
-				background: "rgba(0,0,0,0.0)",
-				borderRadius: "20px",
-				outline: isFocus ? "2px solid #337ed4" : "none",
-				diplsay: "flex",
-				alignItem: "center",
-			},
-			onFocus: () => {
-				setIsFocus(true);
-			},
-			onBlur: () => {
-				setIsFocus(false);
-			},
-		},
-		label,
+	const handleMouseDown = () => {
+		if (buttonRef.current) buttonRef.current.style.transform += " scale(0.9)";
+	};
+	const handleMouseUp = () => {
+		if (buttonRef.current)
+			buttonRef.current.style.transform = rotate
+				? active
+					? "rotate(180deg)"
+					: "rotate(0)"
+				: "";
+	};
+
+	return (
+		<button
+			ref={buttonRef}
+			onClick={onClick}
+			type="button"
+			style={{
+				width: `${size}px`,
+				height: `${size}px`,
+				cursor: "pointer",
+				background: "none",
+				border: "none",
+				borderRadius: `${borderRadius}px`,
+				padding: `${padding}px`,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				transition: "background 120ms, transform 150ms ease",
+				transform: rotate ? (active ? "rotate(180deg)" : "rotate(0)") : "",
+				...style,
+			}}
+			onMouseEnter={(e) => {
+				e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+			}}
+			onMouseLeave={(e) => {
+				e.currentTarget.style.background = "none";
+				handleMouseUp();
+			}}
+			onMouseDown={handleMouseDown}
+			onMouseUp={handleMouseUp}
+		>
+			<img
+				src={src}
+				alt={alt}
+				style={{
+					width: "100%",
+					height: "100%",
+					opacity: 0.8,
+				}}
+			/>
+		</button>
 	);
-
-	return createElement("div", { style: style }, button);
 }

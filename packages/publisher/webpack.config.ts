@@ -41,6 +41,9 @@ const config: webpack.Configuration = {
 	performance: {
 		hints: false,
 	},
+	optimization: {
+		minimize: false,
+	},
 	module: {
 		strictExportPresence: true,
 		rules: [
@@ -56,7 +59,7 @@ const config: webpack.Configuration = {
 								{
 									shippedProposals: true,
 									modules: "commonjs",
-									targets: { node: "8.6.0" },
+									//targets: { node: "8.6.0" },
 								},
 							],
 							["@babel/preset-react", { runtime: "automatic" }],

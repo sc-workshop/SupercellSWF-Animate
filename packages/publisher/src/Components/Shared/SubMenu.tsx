@@ -1,3 +1,4 @@
+import IconButton from "Components/Shared/Button";
 import {
 	type CSSProperties,
 	createElement,
@@ -14,17 +15,44 @@ export default function SubMenu(
 ) {
 	const [active, setActive] = useState(false);
 
-	const delim = (
-		<hr
-			key={`menu_${keyName}_delim`}
+	const toggleButton = (
+		<IconButton
+			src={require(`../../Assets/images/arrow.png`)}
+			alt="Toggle"
+			onClick={() => setActive(!active)}
+			rotate
+			active={active}
+			size={24}
 			style={{
-				width: "50%",
-				marginRight: "50%",
-				marginTop: "5px",
-				border: "2px solid #484848",
+				verticalAlign: "middle",
+				cursor: "pointer",
+				marginRight: "5px",
 			}}
 		/>
 	);
+
+	const label = TextField(name, {
+		color: "white",
+		marginRight: "10px",
+		fontSize: "18px",
+	});
+
+	const header = (
+		<div style={{ display: "flex" }}>
+			{toggleButton}
+			{label}
+		</div>
+	);
+
+	const delim = createElement("hr", {
+		key: `menu_${keyName}_delim`,
+		style: {
+			width: "50%",
+			marginRight: "50%",
+			marginTop: "5px",
+			border: "2px solid #484848",
+		},
+	});
 
 	const storage = createElement(
 		"div",
@@ -32,31 +60,27 @@ export default function SubMenu(
 			key: `menu_${keyName}_storage`,
 			style: {
 				paddingLeft: "5%",
+				maxHeight: active ? "2000px" : "0px",
+				overflow: "hidden",
+				transition: "max-height 200ms ease",
 			},
 		},
-		...items,
+		...items.map((value, index) =>
+			createElement(
+				"div",
+				{
+					key: `submenu_element_${index}_${keyName}`,
+					style: {
+						opacity: active ? 1 : 0,
+						transform: active ? "translateY(0)" : "translateY(-5px)",
+						transition: `opacity 200ms ease, transform 200ms ease ${index * 30}ms`,
+						marginBottom: "5px",
+					},
+				},
+				value,
+			),
+		),
 	);
-
-	const button = createElement("input", {
-		type: "image",
-		src: require(`../../Assets/images/arrow.png`),
-		style: {
-			transform: active ? "rotate(180deg)" : "",
-			transition: "transform 100ms ease-in-out",
-			width: "15px",
-			height: "10px",
-			verticalAlign: "middle",
-		},
-		onClick: () => {
-			setActive(active !== true);
-		},
-	});
-
-	const label = TextField(name, {
-		color: "white",
-		paddingLeft: "10px",
-		fontSize: "18px",
-	});
 
 	return createElement(
 		"div",
@@ -64,9 +88,8 @@ export default function SubMenu(
 			key: `menu_${keyName}`,
 			style: style,
 		},
-		button,
-		label,
+		header,
 		delim,
-		active ? storage : undefined,
+		storage,
 	);
 }

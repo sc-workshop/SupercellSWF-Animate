@@ -10,9 +10,7 @@ export const loadFont = async (callback: () => void) => {
 	const font = new FontFace(
 		"PublisherFont",
 		`url(${require(`./Assets/fonts/${Locale.code}`)})`,
-		{
-			style: "normal",
-		},
+		{ style: "normal" },
 	);
 	await font.load();
 	if (font.status === "loaded") {
@@ -26,9 +24,9 @@ function App() {
 		string | undefined
 	>(undefined);
 	const [isFontLoaded, setIsFontLoaded] = useState(false);
+	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
-		// Font
 		loadFont(() => {
 			setIsFontLoaded(true);
 		});
@@ -41,7 +39,7 @@ function App() {
 
 		const CSInterface = getInterface();
 		const getData = async () => {
-			const publisherData = new Promise((resolve) => {
+			const publisherData = new Promise<void>((resolve) => {
 				CSInterface.addEventListener(
 					"com.adobe.events.flash.extension.setstate",
 					(event: CSEvent) => {
@@ -50,8 +48,7 @@ function App() {
 						} else {
 							setPublisherStateData(event.data);
 						}
-
-						resolve(undefined);
+						resolve();
 					},
 				);
 			});
@@ -70,6 +67,13 @@ function App() {
 		getData();
 	}, []);
 
+	useEffect(() => {
+		if (publisherStateData !== undefined && isFontLoaded) {
+			const timeout = setTimeout(() => setVisible(true), 50);
+			return () => clearTimeout(timeout);
+		}
+	}, [publisherStateData, isFontLoaded]);
+
 	if (publisherStateData !== undefined && isFontLoaded) {
 		Settings.restore(publisherStateData);
 
@@ -79,8 +83,10 @@ function App() {
 				key: "publisher_body",
 				style: {
 					fontFamily: "PublisherFont",
-					backgroundColor: `#333333`,
+					backgroundColor: "#333333",
 					position: "relative",
+					opacity: visible ? 1 : 0,
+					transition: "opacity 1s ease",
 				},
 			},
 			<PublisherContextProvider
@@ -88,7 +94,7 @@ function App() {
 				externalTextureFiles={false}
 				useAutoProperties={false}
 			>
-				<Publisher></Publisher>
+				<Publisher />
 			</PublisherContextProvider>,
 		);
 	} else {
@@ -99,5 +105,4 @@ function App() {
 const root = ReactDOM.createRoot(
 	document.getElementById("root") as HTMLElement,
 );
-
-root.render(<App></App>);
+root.render(<App />);

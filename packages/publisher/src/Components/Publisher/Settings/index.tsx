@@ -2,7 +2,7 @@ import BoolField from "Components/Shared/BoolField";
 import SubMenu from "Components/Shared/SubMenu";
 import { GetPublishContext } from "Publisher/Context";
 import Locale from "Publisher/Localization";
-import { renderComponents } from "Publisher/Publisher";
+import renderComponents from "Components/Shared/ComponentRenderer";
 import { Settings, SWFType } from "Publisher/PublisherSettings";
 import OtherSettings from "./others";
 import TextureSettings from "./textures";
@@ -15,7 +15,7 @@ export default function SettingsMenu() {
 
 	const default_style = {
 		marginLeft: "2%",
-		marginBottom: "10px",
+		//marginBottom: "10px",
 		display: "flex",
 		alignItems: "center",
 	};
@@ -58,7 +58,7 @@ export default function SettingsMenu() {
 		!is_sc1 || useAutoProperties,
 	);
 
-	const components = [...sc1Settings, ...sc2Settings];
+	const components = [sc1Settings, sc2Settings];
 
 	return SubMenu(
 		Locale.Get("TID_ADDITIONAL_SETTINGS_LABEL"),

@@ -76,6 +76,10 @@ type PublisherSettingsData = {
 	// SC2
 	lowPrecisionMatrices: boolean;
 	useShortFrames: boolean;
+
+	// Multiple documents
+	multipleDocuments: boolean;
+	documentsPaths: string[];
 };
 
 const PublisherDefaultSettings: PublisherSettingsData = {
@@ -113,6 +117,10 @@ const PublisherDefaultSettings: PublisherSettingsData = {
 	// SC2
 	lowPrecisionMatrices: false,
 	useShortFrames: false,
+
+	// Multiple documents
+	multipleDocuments: true,
+	documentsPaths: ["123", "1234"],
 };
 
 export class PublisherSettings {

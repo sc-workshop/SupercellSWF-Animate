@@ -3,9 +3,8 @@ import { publish } from "Components";
 import BasicSettings from "Components/Publisher/BasicSettings";
 import { Header } from "Components/Publisher/Header";
 import SettingsMenu from "Components/Publisher/Settings";
-import Button from "Components/Shared/Button";
-import DisplayObject from "Components/Shared/DisplayObject";
 import EnumField from "Components/Shared/EnumField";
+import Button from "Components/Shared/TextButton";
 import {
 	ApplySettings,
 	GetPublishContext,
@@ -13,12 +12,13 @@ import {
 } from "Publisher/Context";
 import Locale, { Locales } from "Publisher/Localization";
 import { Settings } from "Publisher/PublisherSettings";
-import React, { createElement, useEffect } from "react";
+import { createElement, useEffect, useState } from "react";
 import { loadFont } from "..";
 
 function Publisher() {
 	const context = GetPublishContext();
 	const settings = ReadSettings();
+	const [hovered, setHovered] = useState(false);
 
 	useEffect(() => {
 		ApplySettings(context, settings);
@@ -34,22 +34,21 @@ function Publisher() {
 		/>
 	);
 
-	const publishButton = Button(
-		Locale.Get("TID_PUBLISH"),
-		"publish_start",
-		{
-			margin: "10px",
-		},
-		publish,
-	);
+	const buttonStyle = (isHovered: boolean): React.CSSProperties => ({
+		transition: "all 0.25s ease",
+		opacity: isHovered ? 1 : 0.65,
+		filter: isHovered ? "brightness(1)" : "brightness(0.85)",
+		transform: isHovered ? "scale(1.05)" : "scale(1.0)",
+	});
 
 	const available_languages = ["en_US", "ru_RU", "pl_PL"];
+
 	const language = new EnumField({
 		name: "Language",
 		keyName: "language_debug_sect",
 		enumeration: available_languages,
 		defaultValue: available_languages[0],
-		style: { margin: "0 auto" },
+		style: { margin: "0 auto", ...buttonStyle(hovered) },
 		callback: (value) => {
 			const intValue = parseInt(value, 10);
 			const localeName = available_languages[intValue];
@@ -64,45 +63,74 @@ function Publisher() {
 		},
 	});
 
-	const saveSettingsButton = Button(
-		Locale.Get("TID_SAVE_SETTINGS"),
-		"save_settings_button",
-		{},
-		() => {
-			if (!isCEP()) return;
+	const publishButton = Button({
+		text: Locale.Get("TID_PUBLISH"),
+		keyName: "publish_start",
+		style: { margin: "10px", ...buttonStyle(hovered) },
+		callback: publish,
+	});
 
+	const saveSettingsButton = Button({
+		text: Locale.Get("TID_SAVE_SETTINGS"),
+		keyName: "save_settings_button",
+		style: { margin: "10px", ...buttonStyle(hovered) },
+		callback: () => {
+			if (!isCEP()) return;
 			Settings.save();
 			getInterface().closeExtension();
 		},
-	);
+	});
+
+	const inspectSettings = Button({
+		text: "Inspect settings",
+		keyName: "inspect_settings_button",
+		style: { margin: "10px", ...buttonStyle(hovered) },
+		callback: () => {
+			console.log(Settings.data);
+		},
+	});
+
+	const debug = process.env.NODE_ENV !== "production";
+	const debugComponents = debug ? [language.render(), inspectSettings] : [];
 
 	const buttonContainer = createElement(
 		"div",
 		{
 			key: "button_container",
+			onMouseEnter: () => setHovered(true),
+			onMouseLeave: () => setHovered(false),
 			style: {
-				background: "rgba(25,25,25,255)",
+				background: "#262626",
 				width: "100%",
-				height: "10%",
+				height: hovered ? "85px" : "60px",
 				display: "flex",
+				position: "fixed",
 				bottom: "0",
 				left: "0",
-				position: "fixed",
 				alignItems: "center",
+				justifyContent: "center",
+				gap: "15px",
+				boxShadow: hovered
+					? "0px -3px 6px #00000033"
+					: "0px -2px 5px #0000001f",
+				backdropFilter: "blur(8px)",
+				opacity: hovered ? 1 : 0.75,
+				transform: hovered ? "translateY(0px)" : "translateY(8px)",
+				transition: "all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s",
+				borderTop: "1px solid #333",
+				zIndex: 100,
 			},
 		},
 		publishButton,
 		saveSettingsButton,
-		process.env.NODE_ENV == "production" ? undefined : language.render(),
+		...debugComponents,
 	);
 
 	const childrens = [
 		Header(),
-
 		delim,
 		BasicSettings(),
 		SettingsMenu(),
-
 		buttonContainer,
 	];
 
@@ -117,37 +145,11 @@ function Publisher() {
 				MozUserSelect: "none",
 				KhtmlUserSelect: "none",
 				WebkitUserSelect: "none",
+				overflow: "hidden",
 			},
 		},
 		...childrens,
 	);
-}
-
-export function renderComponents(
-	components: any[],
-	condition: boolean = true,
-): React.ReactNode[] {
-	const result = components.map((component) => {
-		if (component && component instanceof React.Component) {
-			const result = component.render();
-			if (component instanceof DisplayObject && component.IsAutoProperty) {
-				const { useAutoProperties } = GetPublishContext();
-				if (useAutoProperties) {
-					return null;
-				}
-			}
-
-			return result;
-		}
-
-		return component;
-	});
-
-	if (condition) {
-		return result;
-	} else {
-		return [];
-	}
 }
 
 export default Publisher;

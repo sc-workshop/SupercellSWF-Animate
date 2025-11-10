@@ -1,18 +1,24 @@
-import { getInterface, isCEP } from "CEP";
-import { type CSSProperties, createElement, useState } from "react";
-import TextField from "./TextField";
+import { getInterface, isCEP } from "CEP"; // адаптируй под свой проект
+import type { BaseProps } from "Components/Shared";
+import TextField from "Components/Shared/TextField";
+import { createElement, useState } from "react";
 
-type FileFieldMode = "read" | "write";
+type FileFieldProps = BaseProps & {
+	mode: "read" | "write";
+	ext: string;
+	callback?: (value: string) => void;
+	defaultValue?: string;
+};
 
-export default function FileField(
-	name: string,
-	keyName: string,
-	mode: FileFieldMode,
-	ext: string,
-	style: CSSProperties,
-	callback: (value: string) => void,
-	defaultValue: string = "",
-) {
+export default function FileField({
+	name,
+	keyName,
+	mode,
+	ext,
+	style,
+	callback,
+	defaultValue = "",
+}: FileFieldProps) {
 	const [input, setInput] = useState(defaultValue);
 	const [isFocus, setIsFocus] = useState(false);
 
@@ -38,7 +44,7 @@ export default function FileField(
 		onChange: (event) => {
 			const { value } = event.target;
 			setInput(value);
-			callback(value);
+			if (callback) callback(value);
 		},
 		onFocus: () => {
 			setIsFocus(true);
@@ -56,16 +62,20 @@ export default function FileField(
 			width: "20px",
 			height: "20px",
 			marginLeft: "5px",
+			marginRight: "10px",
 		},
 		onClick: async () => {
 			if (!isCEP()) {
+				alert("File browsing is only available in CEP environment.");
 				return;
 			}
-			const CSInterface = getInterface();
 
+			const CSInterface = getInterface();
+			const targetMode = mode == "read" ? "open" : "save";
 			const pathURI = await CSInterface.evalScript(
-				`fl.browseForFileURL('${mode == "read" ? "open" : "save"}','Publish to ${ext}', 'SWF','${ext}');`,
+				`fl.browseForFileURL('${targetMode}','Publish to ${ext}', 'SWF','${ext}');`,
 			);
+
 			if (typeof pathURI === "string" && pathURI !== "null") {
 				const path = pathURI
 					.replace("file:///", "")
@@ -75,7 +85,8 @@ export default function FileField(
 					.replace(/%20/g, " ");
 
 				setInput(path);
-				callback(path);
+
+				if (callback) callback(path);
 			}
 		},
 	});
@@ -86,7 +97,7 @@ export default function FileField(
 			key: `filefield_${keyName}`,
 			style: style,
 		},
-		label,
+		name !== undefined ? label : undefined,
 		path,
 		button,
 	);

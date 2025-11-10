@@ -1,10 +1,10 @@
 import BoolField from "Components/Shared/BoolField";
+import renderComponents from "Components/Shared/ComponentRenderer";
 import EnumField from "Components/Shared/EnumField";
 import StringField from "Components/Shared/StringField";
 import SubMenu from "Components/Shared/SubMenu";
 import { GetPublishContext } from "Publisher/Context";
 import Locale from "Publisher/Localization";
-import { renderComponents } from "Publisher/Publisher";
 import {
 	Settings,
 	SWFType,
@@ -47,7 +47,7 @@ export default function TextureSettings() {
 	const defaultStyle = {
 		display: "flex",
 		alignItems: "center",
-		marginBottom: "10px",
+		//marginBottom: "10px",
 	};
 
 	const exportToExternal = new BoolField({
@@ -165,7 +165,7 @@ export default function TextureSettings() {
 		{
 			display: "flex",
 			alignItems: "center",
-			marginBottom: "10px",
+			//marginBottom: "10px",
 		},
 		(value) => Settings.setParam("lowResolutionSuffix", value),
 		Settings.getParam("lowResolutionSuffix"),
@@ -179,7 +179,7 @@ export default function TextureSettings() {
 		style: {
 			display: "flex",
 			alignItems: "center",
-			marginBottom: "10px",
+			//marginBottom: "10px",
 		},
 		callback: (value) =>
 			Settings.setParam("textureScaleFactor", parseInt(value, 10)),
@@ -196,7 +196,7 @@ export default function TextureSettings() {
 		style: {
 			display: "flex",
 			alignItems: "center",
-			marginBottom: "10px",
+			//marginBottom: "10px",
 		},
 		callback: (value) =>
 			Settings.setParam("textureMaxWidth", TextureDimensions[value as never]),
@@ -212,7 +212,7 @@ export default function TextureSettings() {
 		style: {
 			display: "flex",
 			alignItems: "center",
-			marginBottom: "10px",
+			//marginBottom: "10px",
 		},
 		callback: (value) =>
 			Settings.setParam("textureMaxHeight", TextureDimensions[value as never]),
@@ -227,18 +227,14 @@ export default function TextureSettings() {
 		useLowresTexture,
 	);
 	const props = renderComponents([textureEncoding], !useBackwardCompatibility);
-	const backwardCompatibilityProps = renderComponents(
-		[textureQuality],
-		useBackwardCompatibility,
-	);
 
 	const resolutionProps = renderComponents(
-		[useLowresTextures, useMultiresTextures, ...multiresProps, ...lowresProps],
+		[useLowresTextures, useMultiresTextures, multiresProps, lowresProps],
 		encoding != TextureEncoding.SCTX, // SCTX has streaming textures and mip maps so there is no point in using lowres textures
 	);
 
 	const rawTextureProps = renderComponents(
-		backwardCompatibilityProps,
+		[textureQuality],
 		encoding == TextureEncoding.Raw,
 	);
 
@@ -255,7 +251,7 @@ export default function TextureSettings() {
 	);
 
 	const generalProps = renderComponents([
-		...generalCompressedTextureProps,
+		generalCompressedTextureProps,
 		scaleFactor,
 		textureWidth,
 		textureHeight,
@@ -268,11 +264,11 @@ export default function TextureSettings() {
 
 	const advancedProps = renderComponents(
 		[
-			...props,
-			...rawTextureProps,
-			...supercellTextureProps,
-			...advancedVersionDependentProps,
-			...resolutionProps,
+			props,
+			rawTextureProps,
+			supercellTextureProps,
+			advancedVersionDependentProps,
+			resolutionProps,
 		],
 		!useAutoProperties,
 	);
@@ -283,7 +279,7 @@ export default function TextureSettings() {
 		{
 			marginBottom: "6px",
 		},
-		...advancedProps,
-		...generalProps,
+		advancedProps,
+		generalProps,
 	);
 }

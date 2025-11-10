@@ -3,7 +3,7 @@ import EnumField from "Components/Shared/EnumField";
 import SubMenu from "Components/Shared/SubMenu";
 import { GetPublishContext } from "Publisher/Context";
 import Locale from "Publisher/Localization";
-import { renderComponents } from "Publisher/Publisher";
+import renderComponents from "Components/Shared/ComponentRenderer";
 import {
 	BaseCompressionMethods,
 	CompressionMethods,
@@ -18,7 +18,7 @@ export default function OtherSettings() {
 	const default_style = {
 		display: "flex",
 		alignItems: "center",
-		marginBottom: "10px",
+		//marginBottom: "10px",
 	};
 
 	const compressionType = new EnumField({
@@ -75,11 +75,11 @@ export default function OtherSettings() {
 	);
 
 	const sc1Props = renderComponents(
-		[compressionType, ...backwardCompatibilityProps],
+		[compressionType, backwardCompatibilityProps],
 		fileType == SWFType.SC1 || useAutoProperties,
 	);
 
-	const props = renderComponents([writeFieldsText, ...sc1Props]);
+	const props = renderComponents([writeFieldsText, sc1Props]);
 
 	return SubMenu(
 		Locale.Get("TID_OTHER_LABEL"),
@@ -87,6 +87,6 @@ export default function OtherSettings() {
 		{
 			marginBottom: "20%",
 		},
-		...props,
+		props,
 	);
 }

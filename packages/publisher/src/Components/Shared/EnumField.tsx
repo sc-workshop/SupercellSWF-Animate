@@ -7,8 +7,6 @@ import {
 	type SetStateAction,
 } from "react";
 import DisplayObject from "./DisplayObject";
-import FloatTip from "./FloatTip";
-import TextField from "./TextField";
 
 type Enum = {
 	[id: number]: unknown;
@@ -93,21 +91,8 @@ export default class EnumField extends DisplayObject<Props, State> {
 	}
 
 	render() {
-		let label = TextField(`${this.props.name} :`, {
-			color: "#727776",
-		});
+		const label = this.createLabel();
 
-		if (this.props.tip_tid !== undefined) {
-			const [tip_reference, , tip_element] = FloatTip(this.props.tip_tid);
-			label = createElement(
-				"div",
-				{
-					ref: tip_reference,
-				},
-				label,
-				tip_element as never,
-			);
-		}
 		const selector = createElement(
 			"select",
 			{
