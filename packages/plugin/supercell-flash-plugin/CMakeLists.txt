@@ -26,6 +26,7 @@ target_link_libraries(${TARGET} PUBLIC
     Adobe::Animate     # Adobe Animate API
     fmt::fmt           # String format
     CDT                # Vector triangulation
+    zip                # Fla reader
 )
 
 target_include_directories(${TARGET}

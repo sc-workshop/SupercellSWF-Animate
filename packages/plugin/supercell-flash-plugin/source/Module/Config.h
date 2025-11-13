@@ -28,15 +28,6 @@ namespace sc {
 			};
 
 		public:
-			SCConfig(
-				Animate::DOM::PIFLADocument document, 
-				const FCM::PIFCMDictionary settings, 
-				const FCM::PIFCMDictionary publishSettings
-			) : Animate::Publisher::GenericPublisherConfig(document, settings, publishSettings)
-			{
-			}
-
-		public:
 			fs::path outputFilepath = "";
 			SWFType type = SWFType::SC2;
 
@@ -68,6 +59,9 @@ namespace sc {
 			bool useShortFrames = true;
 			bool writeFieldsText = true;
 			bool generateStreamingTexture = true;
+
+			bool useMultiDocument = false;
+			std::vector<std::string> documentsPaths;
 		public:
 			virtual bool FromDict(const FCM::PIFCMDictionary dict) override;
 			void Load(const FCM::PIFCMDictionary dict);

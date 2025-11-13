@@ -9,49 +9,47 @@
 #include "Events/CreateProgress.h"
 #include "Events/DestroyProgress.h"
 
-namespace sc {
-	namespace Adobe {
-		class PluginWindow : public wxFrame
-		{
-		public:
-			StatusComponent* CreateStatusBarComponent(
-				const std::u16string& title = u"",
-				const std::u16string& defaultLabel = u"",
-				int range = 100
-			);
+namespace sc::Adobe {
+	class PluginWindow : public wxFrame
+	{
+	public:
+		StatusComponent* CreateStatusBarComponent(
+			const std::u16string& title = u"",
+			const std::u16string& defaultLabel = u"",
+			int range = 100
+		);
 
-			void DestroyStatusBar(StatusComponent* bar);
+		void DestroyStatusBar(StatusComponent* bar);
 
-		public:
-			PluginWindow(const wxString& title);
+	public:
+		PluginWindow(const wxString& title);
 
-		private:
-			PluginWindow(PluginWindow&) = delete;
+	private:
+		PluginWindow(PluginWindow&) = delete;
 
-		public:
-			void ThrowException(const wxString& what);
+	public:
+		void ThrowException(const wxString& what);
 
-		public:
-			bool aboutToExit = false;
-			bool readyToExit = false;
+	public:
+		bool aboutToExit = false;
+		bool readyToExit = false;
 
-		private:
-			void OnClose(wxCloseEvent& event);
-			void OnProgressCreate(PluginCreateProgressEvent& event);
-			void OnProgressDestroy(PluginDestroyProgressEvent& event);
+	private:
+		void OnClose(wxCloseEvent& event);
+		void OnProgressCreate(PluginCreateProgressEvent& event);
+		void OnProgressDestroy(PluginDestroyProgressEvent& event);
 
-			void ScaleByContent();
+		void ScaleByContent();
 
-			wxBoxSizer* panelSizer;
-			wxBoxSizer* contentSizer;
-			wxPanel* panel;
+		wxBoxSizer* panelSizer;
+		wxBoxSizer* contentSizer;
+		wxPanel* panel;
 
-			std::condition_variable m_window_cv;
-			std::mutex m_window_mut;
+		std::condition_variable m_window_cv;
+		std::mutex m_window_mut;
 
-			uint32_t m_elements_counter = 0;
+		uint32_t m_elements_counter = 0;
 
-			wxDECLARE_EVENT_TABLE();
-		};
-	}
+		wxDECLARE_EVENT_TABLE();
+	};
 }

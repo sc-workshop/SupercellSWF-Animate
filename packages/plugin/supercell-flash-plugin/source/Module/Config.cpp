@@ -113,6 +113,11 @@ namespace sc {
 			useShortFrames = data["useShortFrames"];
 			writeFieldsText = data["writeFieldsText"];
 			generateStreamingTexture = data["generateStreamingTexture"];
+			useMultiDocument = data["multipleDocuments"];
+
+			if (data["documentsPaths"].is_array()) {
+				documentsPaths = data["documentsPaths"];
+			}
 
 			if (!autoProperties) // If use autoProperties, do logging later, after all properties are set
 			{

@@ -7,9 +7,113 @@
 #include "Module/SCPluginException.h"
 
 using namespace Animate::Publisher;
+using namespace sc::Adobe;
+
+template<>
+SCConfig& ::Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>::ActiveConfig()
+{
+	static SCConfig config;
+	return config;
+}
 
 namespace sc {
 	namespace Adobe {
+		void SCPublisher::PublishDocument(Animate::DOM::PIFLADocument document)
+		{
+			SCPlugin& context = SCPlugin::Instance();
+			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+
+			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
+				context.locale.GetString("TID_STATUS_INIT")
+			);
+
+			SCWriter writer;
+			ResourcePublisher publisher(writer);
+
+			{
+				if (config.exportToExternal)
+				{
+					if (fs::exists(config.exportToExternalPath))
+					{
+						publishStatus->SetStatusLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
+						uint16_t offset = writer.LoadExternal(config.exportToExternalPath);
+						publisher.SetIdOffset(offset);
+					}
+					else
+					{
+						throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.wstring().c_str());
+					}
+				}
+			}
+
+			{
+				fs::path document_path = context.falloc->GetString16(
+					document,
+					&Animate::DOM::IFLADocument::GetPath
+				);
+
+				publishStatus->SetStatusLabel(
+					context.locale.GetString(
+						"TID_WINDOW_TITLE",
+						document_path.filename().u16string().c_str()
+					)
+				);
+
+				publisher.PublishDocument(document);
+			}
+
+
+			publishStatus->SetStatus(
+				context.locale.GetString("TID_STATUS_SAVE")
+			);
+
+			publisher.Finalize();
+		}
+
+		bool SCPublisher::VerifyDocument(const std::string& path)
+		{
+			if (!fs::exists(path))
+				return false;
+
+			return true;
+		}
+
+		void SCPublisher::LoadDocument(const fs::path& path, Animate::DOM::PIFLADocument& document)
+		{
+			using Animate::DOM::Service::Document::IFLADocService;
+			using namespace Animate::DOM;
+
+			SCPlugin& context = SCPlugin::Instance();
+			const auto& service = context.GetService<IFLADocService>(FLA_DOC_SERVICE);
+
+			FCM::Result status = service->OpenDocument(
+				(FCM::CStringRep16)FCM::Locale::ToUtf16(path.string()).c_str(),
+				document
+			);
+
+			if (!FCM_SUCCESS_CODE(status) || !document) {
+				throw SCPluginException("TID_LOAD_EXTERNAL_DOCUMENT_FAILED", path.c_str());
+			}
+
+			FCM::FCMGUID docId;
+			status = document->GetTypeId(docId);
+
+			if (!FCM_SUCCESS_CODE(status) || docId != CLSID_DocType) {
+				service->CloseDocument(document);
+				throw SCPluginException("TID_EXTERNAL_DOCUMENT_WRONG_TYPE", path.c_str());
+			}
+		}
+
+		void SCPublisher::CloseDocument(Animate::DOM::PIFLADocument& document)
+		{
+			using Animate::DOM::Service::Document::IFLADocService;
+			using namespace Animate::DOM;
+
+			SCPlugin& context = SCPlugin::Instance();
+			const auto& service = context.GetService<IFLADocService>(FLA_DOC_SERVICE);
+			service->CloseDocument(document);
+		}
+
 		void SCPublisher::Publish(const SCConfig& /*config*/)
 		{
 			SCPlugin& context = SCPlugin::Instance();
@@ -52,51 +156,45 @@ namespace sc {
 			);
 
 			FCM::Result result = FCM_SUCCESS;
-			std::thread publishing([&context, &result, &publishing_ui, this]()
+			// Block thread until publishing ui is ready
+			publishing_ui.lock();
+			context.logger->info("Starting publishing...");
+
+			try {
+				DoPublish();
+			}
+			catch (const FCM::FCMPluginException& exception)
+			{
+				std::string reason;
 				{
-					// Block thread until publishing ui is ready
-					publishing_ui.lock();
-					context.logger->info("Starting publishing...");
-
-					try {
-						DoPublish();
-					}
-					catch (const FCM::FCMPluginException& exception)
+					std::stringstream message;
+					auto& symbol = exception.Symbol();
+					if (!symbol.name.empty())
 					{
-						std::string reason;
-						{
-							std::stringstream message;
-							auto& symbol = exception.Symbol();
-							if (!symbol.name.empty())
-							{
-								message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
-							}
-							message << exception.what();
-							reason = message.str();
-						}
-
-						context.Window()->ThrowException(reason);
-						context.Window()->readyToExit = true;
-						result = FCM_EXPORT_FAILED;
+						message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
 					}
-					catch (const std::exception& exception) {
-						context.Window()->ThrowException(exception.what());
-						context.Window()->readyToExit = true;
-						result = FCM_EXPORT_FAILED;
-					}
-					catch (...) {
-						context.logger->error("Publishing finished with unknown exception!");
-
-						context.Window()->readyToExit = true;
-						result = FCM_EXPORT_FAILED;
-					}
-					publishing_ui.unlock();
+					message << exception.what();
+					reason = message.str();
 				}
-			);
 
-			publishing.join();
+				context.Window()->ThrowException(reason);
+				context.Window()->readyToExit = true;
+				result = FCM_EXPORT_FAILED;
+			}
+			catch (const std::exception& exception) {
+				context.Window()->ThrowException(exception.what());
+				context.Window()->readyToExit = true;
+				result = FCM_EXPORT_FAILED;
+			}
+			catch (...) {
+				context.logger->error("Publishing finished with unknown exception!");
+
+				context.Window()->readyToExit = true;
+				result = FCM_EXPORT_FAILED;
+			}
+
+			publishing_ui.unlock();
 			progressWindow.join();
-
 			context.logger->info("Publisher finished with status: {}", (uint32_t)result);
 
 			auto end = std::chrono::high_resolution_clock::now();
@@ -115,51 +213,38 @@ namespace sc {
 			SCPlugin& context = SCPlugin::Instance();
 			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
-			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
-				context.locale.GetString("TID_STATUS_INIT")
-			);
+			if (config.useMultiDocument) {
+				StatusComponent* documentProgress = context.Window()->CreateStatusBarComponent(
+					context.locale.GetString("TID_LABEL_DOCUMENT_LOADING")
+				);
 
-			SCWriter writer;
-			ResourcePublisher publisher(writer);
+				for (const auto& path : config.documentsPaths) {
+					if (!VerifyDocument(path))
+						throw SCPluginException("TID_INVALID_EXTERNAL_DOCUMENT", path.c_str());
+				}
 
-			{
-				if (config.exportToExternal)
-				{
-					if (fs::exists(config.exportToExternalPath))
-					{
-						publishStatus->SetStatusLabel(context.locale.GetString("TID_EXTERNAL_FILE_LOAD"));
-						uint16_t offset = writer.LoadExternal(config.exportToExternalPath);
-						publisher.SetIdOffset(offset);
-					}
-					else
-					{
-						throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.wstring().c_str());
-					}
+				std::vector<Animate::DOM::PIFLADocument> documents;
+				for (auto& path : config.documentsPaths) {
+					LoadDocument(path, documents.emplace_back());
+
+					documentProgress->SetStatus(fs::path(path).filename().u16string().c_str());
+				}
+
+				context.Window()->DestroyStatusBar(documentProgress);
+
+				// Publishing children documents in multithread
+				auto task = context.threads.submit_sequence(0, documents.size(), [this, &documents](size_t idx) {
+					const auto& document = documents[idx];
+					PublishDocument(document);
+				});
+				task.wait();
+
+				for (auto& document : documents) {
+					CloseDocument(document);
 				}
 			}
 
-			{
-				fs::path document_path = context.falloc->GetString16(
-					config.activeDocument,
-					&Animate::DOM::IFLADocument::GetPath
-				);
-
-				publishStatus->SetStatusLabel(
-					context.locale.GetString(
-						"TID_WINDOW_TITLE", 
-						document_path.filename().u16string().c_str()
-					)
-				);
-
-				publisher.PublishDocument(config.activeDocument);
-			}
-			
-
-			publishStatus->SetStatus(
-				context.locale.GetString("TID_STATUS_SAVE")
-			);
-
-			publisher.Finalize();
+			PublishDocument(config.activeDocument);
 			context.DestroyWindow();
 		}
 	}

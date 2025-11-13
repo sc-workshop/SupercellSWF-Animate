@@ -119,8 +119,8 @@ const PublisherDefaultSettings: PublisherSettingsData = {
 	useShortFrames: false,
 
 	// Multiple documents
-	multipleDocuments: true,
-	documentsPaths: ["123", "1234"],
+	multipleDocuments: false,
+	documentsPaths: [],
 };
 
 export class PublisherSettings {

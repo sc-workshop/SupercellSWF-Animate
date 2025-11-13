@@ -16,6 +16,7 @@
 #include "spdlog/sinks/ostream_sink.h"
 
 #include "core/memory/ref.h"
+#include "core/parallel/bs_thread_pool.hpp"
 
 namespace sc {
 	namespace Adobe
@@ -56,6 +57,9 @@ namespace sc {
 
 			// Log File for logger
 			std::ofstream logger_file;
+
+			// Thread pool for multiple documents export
+			BS::thread_pool<0> threads;
 
 		private:
 			// Progress Window
