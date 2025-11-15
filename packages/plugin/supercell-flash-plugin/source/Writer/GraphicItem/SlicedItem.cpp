@@ -17,11 +17,11 @@ namespace sc
 			m_guides = SlicedItem::RoundScalingGrid(guides);
 		}
 
-		wk::Rect SlicedItem::RoundScalingGrid(const Animate::DOM::Utils::RECT& guides)
+		wk::RectF SlicedItem::RoundScalingGrid(const Animate::DOM::Utils::RECT& guides)
 		{
-			return wk::Rect(
-				(int)std::ceil(std::min(guides.topLeft.x, guides.bottomRight.x)), (int)std::floor(std::max(guides.topLeft.y, guides.bottomRight.y)),
-				(int)std::ceil(std::max(guides.topLeft.x, guides.bottomRight.x)), (int)std::floor(std::min(guides.topLeft.y, guides.bottomRight.y))
+			return wk::RectF(
+				std::min(guides.topLeft.x, guides.bottomRight.x), std::max(guides.topLeft.y, guides.bottomRight.y),
+				std::max(guides.topLeft.x, guides.bottomRight.x), std::min(guides.topLeft.y, guides.bottomRight.y)
 			);
 		}
 	}

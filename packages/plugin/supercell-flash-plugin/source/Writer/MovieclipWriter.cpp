@@ -42,13 +42,12 @@ namespace sc {
 			if (m_symbol.slicing.IsEnabled())
 			{
 				auto& guides = m_symbol.slicing.Guides();
-				wk::Rect scaling_grid = SlicedItem::RoundScalingGrid(guides);
 
 				m_object.scaling_grid = wk::RectF();
-				m_object.scaling_grid->left = scaling_grid.bottom;
-				m_object.scaling_grid->top = scaling_grid.left;
-				m_object.scaling_grid->right = scaling_grid.top;
-				m_object.scaling_grid->bottom = scaling_grid.right;
+				m_object.scaling_grid->left = guides.topLeft.y;
+				m_object.scaling_grid->top = guides.topLeft.x;
+				m_object.scaling_grid->right = guides.bottomRight.y;
+				m_object.scaling_grid->bottom = guides.bottomRight.x;
 			}
 		}
 

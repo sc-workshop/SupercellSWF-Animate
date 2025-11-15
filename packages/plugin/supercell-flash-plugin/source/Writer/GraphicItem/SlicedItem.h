@@ -25,7 +25,7 @@ namespace sc
 				return m_translation;
 			}
 
-			const wk::Rect& Guides() const
+			const wk::RectF& Guides() const
 			{
 				return m_guides;
 			}
@@ -35,11 +35,11 @@ namespace sc
 				return true;
 			}
 
-			static wk::Rect RoundScalingGrid(const Animate::DOM::Utils::RECT&);
+			static wk::RectF RoundScalingGrid(const Animate::DOM::Utils::RECT&);
 
 		private:
 			wk::Point m_translation;
-			wk::Rect m_guides;
+			wk::RectF m_guides;
 		};
 	}
 }

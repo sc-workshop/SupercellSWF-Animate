@@ -276,32 +276,6 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::ProcessVertices(
-			flash::Shape& shape,
-			const wk::AtlasGenerator::Container<wk::AtlasGenerator::Vertex>& vertices,
-			wk::AtlasGenerator::Item& atlas_item,
-			GraphicItem& item
-		)
-		{
-			using namespace wk;
-			using namespace AtlasGenerator;
-
-			flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			shape_command.texture_index = atlas_item.texture_index + texture_offset;
-
-			for (const Vertex& vertex : vertices)
-			{
-				auto& shape_vertex = shape_command.vertices.emplace_back();
-
-				shape_vertex.x = vertex.xy.x;
-				shape_vertex.y = vertex.xy.y;
-				shape_vertex.u = vertex.uv.u;
-				shape_vertex.v = vertex.uv.v;
-			}
-
-			ProcessDrawCommand(shape_command, atlas_item.transform, item);
-		}
-
 		void SCWriter::ProcessSpriteItem(
 			flash::Shape & shape,
 			wk::AtlasGenerator::Item& atlas_item,
@@ -325,24 +299,15 @@ namespace sc {
 				sliced_item.Translation()
 			);
 
-			Container<Container<Vertex>> regions;
+			Container<Container<VertexF>> regions;
 			atlas_item.get_9slice(
 				sliced_item.Guides(),
 				regions, transform
 			);
 
-			for (const Container<Vertex>& region : regions)
+			for (const Container<VertexF>& region : regions)
 			{
 				ProcessVertices(shape, region, atlas_item, sliced_item);
-			}
-
-			for (auto& command : shape.commands)
-			{
-				for (auto& vertex : command.vertices)
-				{
-					vertex.x = std::floor(vertex.x);
-					vertex.y = std::floor(vertex.y);
-				}
 			}
 		}
 
