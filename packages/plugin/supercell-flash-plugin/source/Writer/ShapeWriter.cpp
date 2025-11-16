@@ -369,16 +369,6 @@ namespace sc {
 				);
 
 				bound = bound + transformed_element.Bound();
-
-				//for (auto& region : transformed_element.fill)
-				//{
-				//	SCShapeWriter::RoundRegion(region);
-				//}
-				//
-				//for (auto& region : transformed_element.stroke)
-				//{
-				//	SCShapeWriter::RoundRegion(region);
-				//}
 			}
 
 			wk::Point offset(bound.bottomRight.x, bound.bottomRight.y);
