@@ -18,10 +18,10 @@ SCConfig& ::Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>::ActiveC
 
 namespace sc {
 	namespace Adobe {
-		void SCPublisher::PublishDocument(Animate::DOM::PIFLADocument document)
+		void SCPublisher::PublishDocuments()
 		{
 			SCPlugin& context = SCPlugin::Instance();
-			const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+			SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
 			StatusComponent* publishStatus = context.Window()->CreateStatusBarComponent(
 				context.locale.GetString("TID_STATUS_INIT")
@@ -46,7 +46,7 @@ namespace sc {
 				}
 			}
 
-			{
+			auto publish = [&](Animate::DOM::PIFLADocument document) {
 				fs::path document_path = context.falloc->GetString16(
 					document,
 					&Animate::DOM::IFLADocument::GetPath
@@ -59,15 +59,37 @@ namespace sc {
 					)
 				);
 
+				config.activeDocument = document;
 				publisher.PublishDocument(document);
-			}
+			};
 
+			publish(config.activeDocument);
+			for (auto& document : m_loaded_documents) {
+				publish(document);
+
+				// Close external document after publishing (may kinda slow but leave as it is for now)
+				CloseDocument(document);
+
+				// And mark as used
+				document = nullptr;
+			}
 
 			publishStatus->SetStatus(
 				context.locale.GetString("TID_STATUS_SAVE")
 			);
 
 			publisher.Finalize();
+		}
+
+		SCPublisher::~SCPublisher()
+		{
+			// Close remaining documents in case of errors or smth, to avoid document blocking
+			for (auto document : m_loaded_documents) {
+				if (!document)
+					continue;
+
+				CloseDocument(document);
+			}
 		}
 
 		bool SCPublisher::VerifyDocument(const std::string& path)
@@ -223,28 +245,16 @@ namespace sc {
 						throw SCPluginException("TID_INVALID_EXTERNAL_DOCUMENT", path.c_str());
 				}
 
-				std::vector<Animate::DOM::PIFLADocument> documents;
 				for (auto& path : config.documentsPaths) {
-					LoadDocument(path, documents.emplace_back());
+					LoadDocument(path, m_loaded_documents.emplace_back());
 
 					documentProgress->SetStatus(fs::path(path).filename().u16string().c_str());
 				}
 
 				context.Window()->DestroyStatusBar(documentProgress);
-
-				// Publishing children documents in multithread
-				auto task = context.threads.submit_sequence(0, documents.size(), [this, &documents](size_t idx) {
-					const auto& document = documents[idx];
-					PublishDocument(document);
-				});
-				task.wait();
-
-				for (auto& document : documents) {
-					CloseDocument(document);
-				}
 			}
 
-			PublishDocument(config.activeDocument);
+			PublishDocuments();
 			context.DestroyWindow();
 		}
 	}

@@ -45,13 +45,6 @@ namespace sc {
 				const Animate::DOM::Utils::COLOR& color
 			);
 
-			//void AddRasterizedRegion(
-			//	const Animate::Publisher::FilledElementRegion& region,
-			//	wk::RawImage& canvas,
-			//	Animate::DOM::Utils::RECT bound,
-			//	wk::Point offset = { 0, 0 }
-			//);
-
 			void AddRasterizedRegion(
 				const Animate::Publisher::FilledElementRegion& region,
 				const Animate::DOM::Utils::MATRIX2D& matrix,
@@ -111,9 +104,6 @@ namespace sc {
 			static void RoundPath(Animate::Publisher::FilledElementPath& path);
 
 			static void CreateImage(wk::RawImageRef& image, BLImage& result, bool premultiply);
-
-		private:
-			void ReleaseVectorGraphic();
 
 		private:
 			SCWriter& m_writer;

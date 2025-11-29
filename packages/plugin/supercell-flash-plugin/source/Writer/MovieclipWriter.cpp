@@ -113,7 +113,7 @@ namespace sc {
 		}
 
 		void SCMovieclipWriter::AddFrameElement(
-			uint16_t id,
+			ResourceReference resource,
 			FCM::BlendMode blending,
 			const std::u16string& name,
 
@@ -125,7 +125,7 @@ namespace sc {
 			// Index of bind element
 			uint16_t instanceIndex = GetInstanceIndex(
 				frame.elements_count,
-				id, blending, FCM::Locale::ToUtf8(name)
+				resource.GetId(), blending, FCM::Locale::ToUtf8(name)
 			);
 
 			// New frame element

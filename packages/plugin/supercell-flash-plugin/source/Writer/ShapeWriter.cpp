@@ -302,7 +302,6 @@ namespace sc {
 				AddRasterizedRegion(region, matrix);
 				return;
 			}
-			ReleaseVectorGraphic();
 
 			// Any non-solid color fill will be rasterized, so at this moment we have guarantee that fill style is Solid Color
 			const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
@@ -426,8 +425,6 @@ namespace sc {
 		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool new_symbol) {
 			if (!new_symbol) return true;
 
-			ReleaseVectorGraphic();
-
 			if (m_group.Size() == 0)
 			{
 				if (required)
@@ -476,11 +473,6 @@ namespace sc {
 		{
 			bl_assert(canvas->ctx.end());
 			canvas.reset();
-		}
-
-		void SCShapeWriter::ReleaseVectorGraphic()
-		{
-			//if (m_vector_graphics.empty()) return;
 		}
 
 		void SCShapeWriter::DrawRegion(const Animate::Publisher::FilledElementRegion& region, wk::PointF offset, float resolution)
