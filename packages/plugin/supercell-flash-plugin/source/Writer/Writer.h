@@ -21,7 +21,7 @@ namespace sc::Adobe {
 		virtual ~SCWriter();
 
 	public:
-		virtual void SetExportedSymbols(const std::vector<SymbolContext>& symbols) override;
+		virtual void SetDocument(const std::vector<SymbolContext>& symbols) override;
 		virtual wk::Ref<SharedMovieclipWriter> AddMovieclip(SymbolContext& symbol);
 		virtual wk::Ref<SharedShapeWriter> AddShape(SymbolContext& symbol);
 		virtual wk::Ref<SharedTextFieldWriter> AddTextField(SymbolContext& symbol);

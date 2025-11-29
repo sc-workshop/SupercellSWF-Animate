@@ -28,7 +28,7 @@ namespace sc {
 			}
 		}
 
-		void SCWriter::SetExportedSymbols(const std::vector<SymbolContext>& symbols)
+		void SCWriter::SetDocument(const std::vector<SymbolContext>& symbols)
 		{
 			SCPlugin& context = SCPlugin::Instance();
 
@@ -153,20 +153,22 @@ namespace sc {
 						}
 					}
 					
-					bool hasExternalTexture = swf.load_sc1(false);
-					if (hasExternalTexture) swf.load_external_texture();
+					config.hasExternalTexture = swf.load_sc1(false);
+					if (config.hasExternalTexture) swf.load_external_texture();
+					swf.stream.clear();
 				}
 
 				fs::path basename = path.stem();
 				fs::path dirname = path.parent_path();
 
-				config.hasExternalTexture = swf.use_external_texture;
 				config.hasExternalTextureFile = swf.use_external_textures;
 				config.hasLowresTexture = swf.use_low_resolution;
 				config.hasMultiresTexture = swf.use_multi_resolution;
 				config.lowResolutionSuffix = swf.low_resolution_suffix.string();
 				config.multiResolutionSuffix = swf.multi_resolution_suffix.string();
-				config.generateLowresTexture = fs::exists(dirname / fs::path(basename).concat(swf.low_resolution_suffix.string()).concat("_tex.sc"));
+
+				auto lowresPath = dirname / fs::path(basename).concat(swf.low_resolution_suffix.string()).concat("_tex.sc");
+				config.generateLowresTexture = fs::exists(lowresPath);
 
 				if (!swf.textures.empty())
 				{
@@ -200,7 +202,6 @@ namespace sc {
 				swf.load(path);
 			}
 			
-
 			if (isSc2)
 			{
 				for (auto& shape : swf.shapes)
@@ -353,10 +354,9 @@ namespace sc {
 		{
 			const std::u16string& name = item.Name();
 
-			if (m_cached_images.count(name))
-			{
-				return m_cached_images[name];
-			}
+			auto it = m_cached_images.find(name);
+			if (it != m_cached_images.end())
+				return it->second;
 
 			item.ExportImage(sprite_temp_path);
 
