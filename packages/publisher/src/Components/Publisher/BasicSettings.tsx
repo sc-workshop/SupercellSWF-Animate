@@ -30,7 +30,6 @@ export default function BasicSettings() {
 	const defaultStyle = {
 		display: "flex",
 		alignItems: "center",
-		//marginBottom: "10px",
 	};
 
 	const output = FileField({
@@ -75,7 +74,6 @@ export default function BasicSettings() {
 	const externalFileOptionsStyle = {
 		display: "flex",
 		alignItems: "center",
-		//marginBottom: "10px",
 		marginLeft: "2%",
 	};
 
@@ -157,7 +155,6 @@ export default function BasicSettings() {
 		keyName: "multiple_documents",
 		style: {
 			minWidth: "50%",
-			//marginBottom: "10px",
 		},
 		initValues: Settings.getParam("documentsPaths"),
 		onCreate: createDocument,
@@ -189,6 +186,7 @@ export default function BasicSettings() {
 			key: "publisher_basic_settings",
 			style: {
 				width: "100%",
+				marginBottom: "8px",
 			},
 		},
 		props,

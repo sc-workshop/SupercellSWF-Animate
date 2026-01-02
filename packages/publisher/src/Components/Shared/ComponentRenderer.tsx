@@ -36,13 +36,13 @@ function AnimatedItem({
 	if (!rendered) return null;
 
 	const style: CSSProperties = disableAnimation
-		? { opacity: 1, transform: "translateY(0)", marginBottom: 8 }
+		? { opacity: 1, transform: "translateY(0)", gap: "8px" }
 		: {
+				gap: "8px",
 				opacity: isVisible ? 1 : 0,
 				transform: isVisible ? "translateY(0)" : "translateY(-20px)",
-				marginBottom: isVisible ? 8 : 0,
 				overflow: "hidden",
-				transition: `opacity ${transitionDuration}ms ease, transform ${transitionDuration}ms ease, margin-bottom ${transitionDuration}ms ease`,
+				transition: `opacity ${transitionDuration}ms ease, transform ${transitionDuration}ms ease`,
 			};
 
 	return <div style={style}>{content}</div>;
@@ -71,7 +71,7 @@ export default function renderComponents(
 	const containerStyle: CSSProperties = {
 		display: "flex",
 		flexDirection: "column",
-		gap: 0,
+		gap: "8px",
 	};
 
 	const result = (

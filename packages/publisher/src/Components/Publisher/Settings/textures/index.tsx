@@ -47,7 +47,6 @@ export default function TextureSettings() {
 	const defaultStyle = {
 		display: "flex",
 		alignItems: "center",
-		//marginBottom: "10px",
 	};
 
 	const exportToExternal = new BoolField({

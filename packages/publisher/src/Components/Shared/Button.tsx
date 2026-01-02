@@ -55,6 +55,8 @@ export default function IconButton({
 				justifyContent: "center",
 				transition: "background 120ms, transform 150ms ease",
 				transform: rotate ? (active ? "rotate(180deg)" : "rotate(0)") : "",
+				outline: "none",
+				boxShadow: "none",
 				...style,
 			}}
 			onMouseEnter={(e) => {

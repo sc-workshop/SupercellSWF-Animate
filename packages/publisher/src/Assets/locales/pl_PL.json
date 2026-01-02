@@ -8,6 +8,8 @@
 	"TID_LOW": "Niska",
 	"TID_OUTPUT": "Wyjście",
 	"TID_PUBLISH_METHOD": "Typ wyjścia",
+	"TID_SWF_MULTIPLE_DOCUMENTS": "Multiple documents",
+	"TID_SWF_MULTIPLE_DOCUMENTS_TIP": "Exports all linkage symbols from selected documents in one file",
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY": "Kompatybilność wsteczna",
 	"TID_SWF_SETTINGS_BACKWARD_COMPATIBILITY_TIP": "Wyłącza niektóre funkcje, ale umożliwia działanie pliku końcowego w starszych wersjach gier",
 	"TID_ADDITIONAL_SETTINGS_LABEL": "Zaawansowane",

@@ -64,6 +64,7 @@ export default class BoolField extends DisplayObject<Props, State> {
 				borderRadius: "30px",
 				outline: this.state.focus ? "2px solid #337ed4" : "none",
 				border: "2px solid #363636",
+				boxShadow: "none",
 			},
 			defaultValue: this.props.defaultValue,
 			defaultChecked: this.props.defaultValue,
