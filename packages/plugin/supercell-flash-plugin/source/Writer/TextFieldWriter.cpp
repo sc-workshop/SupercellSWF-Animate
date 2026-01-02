@@ -166,11 +166,11 @@ namespace sc::Adobe {
 		return code.digest();
 	}
 
-	bool SCTextFieldWriter::Finalize(uint16_t id, bool /*required*/, bool new_symbol)
+	bool SCTextFieldWriter::Finalize(ResourceReference reference, bool /*required*/, bool new_symbol)
 	{
 		if (new_symbol)
 		{
-			m_object.id = id;
+			m_object.id = reference.GetId();
 			m_writer.swf.textfields.push_back(m_object);
 		}
 		

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "flash/flash.h"
-
 #include "AnimatePublisher.h"
 
 #include "Window/Components/StatusComponent.h"
@@ -45,7 +44,7 @@ namespace sc::Adobe {
 			std::optional<Animate::DOM::Utils::COLOR_MATRIX> color
 		);
 
-		virtual bool Finalize(uint16_t id, bool required, bool new_symbol);
+		virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol);
 
 	protected:
 		virtual std::size_t GenerateHash() const;

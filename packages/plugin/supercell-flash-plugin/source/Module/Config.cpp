@@ -116,7 +116,10 @@ namespace sc {
 			useMultiDocument = data["multipleDocuments"];
 
 			if (data["documentsPaths"].is_array()) {
-				documentsPaths = data["documentsPaths"];
+				const auto& paths = data["documentsPaths"];
+				for (const std::string& path : paths) {
+					documentsPaths.push_back(path);
+				}
 			}
 
 			if (!autoProperties) // If use autoProperties, do logging later, after all properties are set
@@ -129,7 +132,7 @@ namespace sc {
 		{
 			FCM::PluginModule& context = FCM::PluginModule::Instance();
 
-			fs::path documentPath = context.falloc->GetString16(
+			documentPath = context.falloc->GetString16(
 				activeDocument,
 				&Animate::DOM::IFLADocument::GetPath
 			);
@@ -166,13 +169,23 @@ namespace sc {
 				}
 			}
 
-			if (exportToExternal && !exportToExternalPath.empty())
-			{
-				if (!documentPath.empty())
-				{
-					exportToExternalPath = (documentPath.parent_path() / exportToExternalPath).make_preferred();
-				}
+			if (exportToExternal)
+				NormalizePath(exportToExternalPath);
+
+			for (auto& docPath : documentsPaths) {
+				NormalizePath(docPath);
 			}
+		}
+
+		void SCConfig::NormalizePath(fs::path& path)
+		{
+			if (path.empty())
+				return;
+
+			if (path.is_relative() && !documentPath.empty()) {
+				path = (documentPath.parent_path() / path).make_preferred();
+			}
+
 		}
 
 		void SCConfig::DoConfigLogging()
@@ -181,6 +194,7 @@ namespace sc {
 
 			context.logger->info("Publish Settings:");
 			
+			context.logger->info("	documentPath: {}", documentPath.string());
 			context.logger->info("	outputFilepath: {}", outputFilepath.string());
 			context.logger->info("	type: {}", (uint8_t)type);
 			context.logger->info("	backwardCompatibility: {}", backwardCompatibility);

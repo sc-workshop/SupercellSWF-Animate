@@ -28,6 +28,7 @@ namespace sc {
 			};
 
 		public:
+			fs::path documentPath = "";
 			fs::path outputFilepath = "";
 			SWFType type = SWFType::SC2;
 
@@ -61,11 +62,12 @@ namespace sc {
 			bool generateStreamingTexture = true;
 
 			bool useMultiDocument = false;
-			std::vector<std::string> documentsPaths;
+			std::vector<fs::path> documentsPaths;
 		public:
 			virtual bool FromDict(const FCM::PIFCMDictionary dict) override;
 			void Load(const FCM::PIFCMDictionary dict);
 			void Normalize();
+			void NormalizePath(fs::path& path);
 
 			void DoConfigLogging();
 		};

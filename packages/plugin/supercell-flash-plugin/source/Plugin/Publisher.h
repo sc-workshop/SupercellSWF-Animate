@@ -16,7 +16,7 @@ namespace sc {
 			virtual ~SCPublisher();
 
 		public:
-			static bool VerifyDocument(const std::string& path);
+			static bool VerifyDocument(const fs::path& path);
 			static void LoadDocument(const fs::path& path, Animate::DOM::PIFLADocument& document);
 			static void CloseDocument(Animate::DOM::PIFLADocument& document);
 

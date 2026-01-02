@@ -19,7 +19,6 @@ export default function Button({
 	const label = TextField(text, {
 		color: "#ffffff",
 		marginRight: "5px",
-		userSelect: "none",
 	});
 
 	const button = createElement(

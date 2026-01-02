@@ -208,8 +208,8 @@ namespace sc {
 			return code.digest();
 		}
 
-		bool SCMovieclipWriter::Finalize(uint16_t id, bool required, bool new_symbol) {
-			m_object.id = id;
+		bool SCMovieclipWriter::Finalize(ResourceReference reference, bool required, bool new_symbol) {
+			m_object.id = reference.GetId();
 
 			if (m_symbol.linkage_name.empty())
 			{
@@ -223,7 +223,7 @@ namespace sc {
 				m_writer.IncrementSymbolsProcessed();
 				m_writer.swf.CreateExportName(
 					flash::SWFString(m_symbol.linkage_name),
-					id
+					reference.GetId()
 				);
 
 				if (!new_symbol) return true;

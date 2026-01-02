@@ -422,7 +422,7 @@ namespace sc {
 			return code.digest();
 		}
 
-		bool SCShapeWriter::Finalize(uint16_t id, bool required, bool new_symbol) {
+		bool SCShapeWriter::Finalize(ResourceReference reference, bool required, bool new_symbol) {
 			if (!new_symbol) return true;
 
 			if (m_group.Size() == 0)
@@ -431,7 +431,7 @@ namespace sc {
 				{
 					// Small workaround to avoid crashes with empty shapes but keep it required
 					flash::MovieClip& movieclip = m_writer.swf.movieclips.emplace_back();
-					movieclip.id = id;
+					movieclip.id = reference.GetId();
 
 					return true;
 				}
@@ -442,7 +442,7 @@ namespace sc {
 			}
 
 			flash::Shape& shape = m_writer.swf.shapes.emplace_back();
-			shape.id = id;
+			shape.id = reference.GetId();
 
 			m_writer.AddGraphicGroup(m_group);
 

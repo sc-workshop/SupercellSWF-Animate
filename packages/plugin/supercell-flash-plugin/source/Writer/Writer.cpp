@@ -46,9 +46,9 @@ namespace sc {
 			return wk::CreateRef<SCShapeWriter>(*this, symbol);
 		}
 
-		void SCWriter::AddModifier(uint16_t id, MaskedLayerState type) {
+		void SCWriter::AddModifier(ResourceReference ref, MaskedLayerState type) {
 			flash::MovieClipModifier& modifier = swf.movieclip_modifiers.emplace_back();
-			modifier.id = id;
+			modifier.id = ref.GetId();
 
 			switch (type)
 			{

@@ -32,7 +32,7 @@ namespace sc {
 			virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape);
 			virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice);
 
-			virtual bool Finalize(uint16_t id, bool required, bool new_symbol);
+			virtual bool Finalize(ResourceReference reference, bool required, bool new_symbol);
 
 		protected:
 			virtual std::size_t GenerateHash() const;
@@ -109,8 +109,6 @@ namespace sc {
 			SCWriter& m_writer;
 			Animate::Publisher::StaticElementsGroup m_group;
 			wk::Unique<RasterizingContext> canvas;
-
-			//std::vector<FilledElementRegion> m_vector_graphics;
 		};
 	}
 }

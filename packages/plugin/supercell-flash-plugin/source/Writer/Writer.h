@@ -21,12 +21,12 @@ namespace sc::Adobe {
 		virtual ~SCWriter();
 
 	public:
-		virtual void SetDocument(const std::vector<SymbolContext>& symbols) override;
+		virtual void SetDocument(const std::vector<SymbolContext>& symbols);
 		virtual wk::Ref<SharedMovieclipWriter> AddMovieclip(SymbolContext& symbol);
 		virtual wk::Ref<SharedShapeWriter> AddShape(SymbolContext& symbol);
 		virtual wk::Ref<SharedTextFieldWriter> AddTextField(SymbolContext& symbol);
 
-		virtual void AddModifier(uint16_t id, MaskedLayerState type);
+		virtual void AddModifier(ResourceReference ref, MaskedLayerState type);
 
 		virtual void Finalize();
 

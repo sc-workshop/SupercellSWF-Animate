@@ -18,7 +18,7 @@ namespace sc::Adobe {
 		void SetTextRun(const Animate::Publisher::TextRun& textRun);
 		virtual void SetGlowFilter(const Animate::Publisher::GlowFilter& filter) override;
 
-		virtual bool Finalize(uint16_t id, bool required, bool new_symbol);
+		virtual bool Finalize(ResourceReference reference, bool required, bool new_symbol);
 
 	protected:
 		virtual std::size_t GenerateHash() const;

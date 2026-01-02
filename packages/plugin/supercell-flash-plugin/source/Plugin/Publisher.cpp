@@ -92,7 +92,7 @@ namespace sc {
 			}
 		}
 
-		bool SCPublisher::VerifyDocument(const std::string& path)
+		bool SCPublisher::VerifyDocument(const fs::path& path)
 		{
 			if (!fs::exists(path))
 				return false;
