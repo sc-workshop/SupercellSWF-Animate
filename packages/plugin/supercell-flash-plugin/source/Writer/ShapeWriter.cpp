@@ -562,7 +562,9 @@ namespace sc {
 		{
 			wk::RawImageRef sprite;
 			wk::Point region_offset;
-			DrawRegion(region, resolution, sprite, region_offset);
+
+			if (!DrawRegion(region, resolution, sprite, region_offset))
+				return; // Failed to draw, return
 
 			for (uint16_t h = 0; sprite->height() > h; h++)
 			{
