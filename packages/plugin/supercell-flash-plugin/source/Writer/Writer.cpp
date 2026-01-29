@@ -271,10 +271,8 @@ namespace sc {
 			swf.multi_resolution_suffix = flash::SWFString(config.multiResolutionSuffix);
 			swf.low_resolution_suffix = flash::SWFString(config.lowResolutionSuffix);
 			swf.use_external_texture = config.hasExternalTexture;
-			swf.use_external_textures = config.hasExternalTextureFile;
 			swf.use_low_resolution = config.hasLowresTexture;
 			swf.use_texture_streaming = config.generateStreamingTexture;
-
 		}
 
 		void SCWriter::Finalize() {
