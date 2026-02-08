@@ -44,10 +44,16 @@ namespace sc {
 			const Animate::DOM::Utils::MATRIX2D& matrix,
 			const Animate::DOM::Utils::COLOR& color
 		){
-			CDT::Triangulation<float> cdt;
+			using namespace CDT;
 
-			std::vector<CDT::V2d<float>> vertices;
-			std::vector<CDT::Edge> edges;
+			Triangulation<float> cdt(
+				VertexInsertionOrder::Auto, 
+				IntersectingConstraintEdges::TryResolve, 
+				0
+			);
+
+			std::vector<V2d<float>> vertices;
+			std::vector<Edge> edges;
 
 			{
 				std::vector<Animate::Publisher::Point2D> points;
@@ -65,7 +71,7 @@ namespace sc {
 				if (secondIndex >= vertices.size()) {
 					secondIndex = 0;
 				}
-				edges.push_back(CDT::Edge(i, secondIndex));
+				edges.push_back(Edge(i, secondIndex));
 			}
 
 			// Holes
@@ -78,7 +84,7 @@ namespace sc {
 					if (secondIndex >= points.size() + vertices.size()) {
 						secondIndex = vertices.size();
 					}
-					edges.push_back(CDT::Edge(vertices.size() + i, secondIndex));
+					edges.push_back(Edge(vertices.size() + i, secondIndex));
 				}
 
 				for (const auto& point : points) {
@@ -86,7 +92,7 @@ namespace sc {
 				}
 			}
 
-			CDT::RemoveDuplicatesAndRemapEdges(vertices, edges);
+			RemoveDuplicatesAndRemapEdges(vertices, edges);
 
 			cdt.insertVertices(vertices);
 			cdt.insertEdges(edges);
@@ -95,7 +101,7 @@ namespace sc {
 
 			std::vector<FilledItemContour> contours;
 
-			for (const CDT::Triangle& triangle : cdt.triangles) {
+			for (const Triangle& triangle : cdt.triangles) {
 				auto& point1 = cdt.vertices[triangle.vertices[0]];
 				auto& point2 = cdt.vertices[triangle.vertices[1]];
 				auto& point3 = cdt.vertices[triangle.vertices[2]];
