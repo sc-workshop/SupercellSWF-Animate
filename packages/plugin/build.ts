@@ -10,6 +10,7 @@ import {
 	makeLink,
 	progress,
 } from "../../scripts/utils";
+import { getCmakePath } from "../../scripts/tools"
 import { version } from "./package.json";
 
 if (!isWindows && !isMac) {
@@ -46,7 +47,7 @@ const doctypeId = "org.scWorkshop.SupercellSWF";
 const assetsFolder = "resources";
 
 const buildDirectory = join(__dirname, "build");
-const outputDirectory = join(libPath, "win");
+const outputDirectory = join(libPath, isWindows ? "win" : "mac");
 const binaryDirectory = join(
 	buildDirectory,
 	"animate_bin",
@@ -55,25 +56,34 @@ const binaryDirectory = join(
 
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
+const MacOSFlags = [
+	"-G Xcode"
+]
+
+const WindowsFlags = [
+	`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`
+]
+
 const CmakeFlagsList = [
 	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
 	`${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
-	`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`,
-	"-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+	`-DCMAKE_POLICY_VERSION_MINIMUM=3.5`,
 	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`,
+	isMac ? MacOSFlags : undefined,
+	isWindows ? WindowsFlags : undefined
 ];
 
-const CmakeFlags = CmakeFlagsList.join(" ");
+const CmakeFlags = CmakeFlagsList
+	.flat()
+	.filter((value) => { return value !== undefined; })
+	.join(" ");
 
-function buildWindows() {
-	const cmakePath = which.sync("cmake");
-	if (cmakePath.length <= 0) {
-		throw new Error("Failed to find CMake executable");
-	}
+function exec(command: string) {
+	execSync(command, { stdio: [0, 1, 2], cwd: __dirname });
+}
 
-	function exec(command: string) {
-		execSync(command, { stdio: [0, 1, 2], cwd: __dirname });
-	}
+function build() {
+	const cmakePath = getCmakePath();
 
 	// Configure project
 	log(`Running cmake with flags: ${CmakeFlags}`);
@@ -94,10 +104,6 @@ function buildWindows() {
 	// Copy builded artifacts
 	copyDir(binaryDirectory, outputDirectory);
 	progress("Done");
-}
-
-function buildMac() {
-	throw new Error();
 }
 
 const config =
@@ -134,10 +140,5 @@ if (!existsSync(dstResourceFolder)) {
 	}
 }
 
-if (isWindows) {
-	buildWindows();
-} else {
-	buildMac();
-}
-
+build();
 writeFileSync(join(outputPath, "fcm.xml"), "");

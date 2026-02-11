@@ -78,13 +78,14 @@ namespace sc {
 			for (const auto& hole : holes) {
 				std::vector<Animate::Publisher::Point2D> points;
 				hole.Rasterize(points);
-
+                
+                uint32_t vertexSize = (uint32_t)vertices.size();
 				for (uint32_t i = 0; points.size() > i; i++) {
-					uint32_t secondIndex = vertices.size() + i + 1;
+					uint32_t secondIndex = vertexSize + i + 1;
 					if (secondIndex >= points.size() + vertices.size()) {
-						secondIndex = vertices.size();
+						secondIndex = vertexSize;
 					}
-					edges.push_back(Edge(vertices.size() + i, secondIndex));
+					edges.push_back(Edge(vertexSize + i, secondIndex));
 				}
 
 				for (const auto& point : points) {
@@ -164,13 +165,13 @@ namespace sc {
 
 					if (!inited++)
 					{
-						contour.moveTo(
+						contour.move_to(
 							seg.begin.x + offset.x,
 							seg.begin.y + offset.y
 						);
 					}
 
-					contour.lineTo(
+					contour.line_to(
 						seg.end.x + offset.x,
 						seg.end.y + offset.y
 					);
@@ -183,13 +184,13 @@ namespace sc {
 
 					if (!inited++)
 					{
-						contour.moveTo(
+						contour.move_to(
 							seg.begin.x + offset.x,
 							seg.begin.y + offset.y
 						);
 					}
 
-					contour.cubicTo(
+					contour.cubic_to(
 						seg.control_l.x + offset.x, seg.control_l.y + offset.y,
 						seg.control_r.x + offset.x, seg.control_r.y + offset.y,
 						seg.end.x + offset.x, seg.end.y + offset.y
@@ -202,13 +203,13 @@ namespace sc {
 
 					if (!inited++)
 					{
-						contour.moveTo(
+						contour.move_to(
 							seg.begin.x + offset.x,
 							seg.begin.y + offset.y
 						);
 					}
 
-					contour.quadTo(
+					contour.quad_to(
 						seg.control.x + offset.x, seg.control.y + offset.y,
 						seg.end.x + offset.x, seg.end.y + offset.y
 					);
@@ -493,8 +494,8 @@ namespace sc {
 				{
 					const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
 
-					result = canvas->ctx.fillPath(
-						contour, 
+					result = canvas->ctx.fill_path(
+						contour,
 						BLRgba32(fill.color.blue, fill.color.green, fill.color.red, fill.color.alpha)
 					);
 				}
@@ -533,29 +534,29 @@ namespace sc {
 						matrix.tx,
 						matrix.ty
 					};
-					result = pattern.setTransform(pattern_matrix);
+					result = pattern.set_transform(pattern_matrix);
 					bl_assert(result);
 					
-					result = canvas->ctx.fillPath(contour, pattern);
+					result = canvas->ctx.fill_path(contour, pattern);
 				}
 				bl_assert(result);
 			}
 
 			// Hole drawing
 			{
-				canvas->ctx.setCompOp(BLCompOp::BL_COMP_OP_CLEAR);
+				canvas->ctx.set_comp_op(BLCompOp::BL_COMP_OP_CLEAR);
 				for (const auto& hole : region.holes)
 				{
 					BLPath contour;
 					SCShapeWriter::CreatePath(hole, offset, contour, resolution);
 
-					BLResult result = canvas->ctx.fillPath(
+					BLResult result = canvas->ctx.fill_path(
 						contour, BLRgba32(0)
 					);
 					bl_assert(result);
 				}
 
-				canvas->ctx.setCompOp(BLCompOp::BL_COMP_OP_SRC_OVER);
+				canvas->ctx.set_comp_op(BLCompOp::BL_COMP_OP_SRC_OVER);
 			}
 		}
 
@@ -715,7 +716,7 @@ namespace sc {
 				}
 			}
 
-			BLResult result = texture.createFromData(
+			BLResult result = texture.create_from_data(
 				image->width(), image->height(),
 				BLFormat::BL_FORMAT_PRGB32, image->data(), image->pixel_size() * image->width()
 			);

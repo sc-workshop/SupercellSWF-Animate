@@ -134,10 +134,8 @@ For extension to work correctly, you need:
 - [Visual C++ Redistributable Runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
 ## MacOS
-Not supported now
-> [!NOTE]
-> MacOS support will be available one day, but it is not a priority at all right now.
-  
+well well well
+
 # Installing
 First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
 Unpack zip to any place convenient for you.  
@@ -159,14 +157,19 @@ If you have an already installed plugin and want to update, run installation fil
 Before starting you need to have:
 - [node.js](https://nodejs.org/)
 - [pnpm](https://pnpm.io/installation)
-- MSVC Build tools (Visual Studio)
+To build publisher interface
+
+And next tools to build native code:
+- [CMake (CLI)](https://cmake.org/download/)
+- [MSVC](https://visualstudio.microsoft.com/ru/downloads/) on Windows OS
+- [Xcode](https://developer.apple.com/xcode/) and [Homebrew](https://brew.sh/) on MacOS
 
 To prepare all the necessary dependencies, run the following command in the project folder:  
 `
     pnpm install
 `  
   
-Next, after preparing all modules, you need to open console (as admin in case of Debug) in root of repository.  
+Next, after preparing all modules, you need to open console (as admin in case of Debug) in root of repository:
 - Release  
     To build a installer with all packages, you need to fill in certificate details in `scripts/cert.ts` and then run following command:  
     `

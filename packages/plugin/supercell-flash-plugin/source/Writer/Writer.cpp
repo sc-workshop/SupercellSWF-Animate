@@ -339,6 +339,16 @@ namespace sc {
 
 			context.Window()->DestroyStatusBar(status);
 		}
+    
+        fs::path SCWriter::generateTempName() {
+#if defined(_WINDOWS)
+            return fs::path(tmpnam(nullptr));
+#elif defined(__APPLE__)
+            char name[] = "/tmp/swfSpriteXXXXXX";
+            mkstemp(name);
+            return fs::path(name);
+#endif
+        }
 
 		void SCWriter::IncrementSymbolsProcessed()
 		{

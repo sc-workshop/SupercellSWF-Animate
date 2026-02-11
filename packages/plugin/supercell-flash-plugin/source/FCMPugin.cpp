@@ -7,11 +7,6 @@
 using namespace sc::Adobe;
 
 static SCPlugin* Module = nullptr;
-const Animate::FCMPluginID SCPlugin::Publisher::PluginID(
-	CLSID_Publisher,
-	CLSID_DocType,
-	CLSID_FeatureMatrix
-);
 
 namespace sc {
 	namespace Adobe

@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import {
 	copyFileSync,
 	existsSync,
@@ -13,6 +14,7 @@ import { homedir, userInfo } from "node:os";
 import { join } from "node:path";
 import colors from "picocolors";
 import type { Colors, Formatter } from "picocolors/types";
+import type { BaseExtension, Extension } from "./manifest/interfaces";
 
 export const processPath = process.cwd();
 
@@ -111,15 +113,18 @@ export function getEnv(): Environment {
 }
 
 export function extensionsFolder() {
-	if (isWindows) {
-		const extensionsPath = `${userInfo().homedir}\\AppData\\Roaming\\Adobe\\CEP\\extensions`;
-		if (existsSync(extensionsPath))
-			mkdirSync(extensionsPath, { recursive: true });
+	let folder = "";
 
-		return extensionsPath;
+	if (isWindows) {
+		folder = `${userInfo().homedir}\\AppData\\Roaming\\Adobe\\CEP\\extensions`;
+	} else if (isMac) {
+		folder = join(homedir(), "Library/Application Support/Adobe/CEP/extensions");
 	} else {
-		return join(homedir(), "Library/Application Support/Adobe/CEP/extensions");
+		throw new Error("Unsupported platform");
 	}
+
+	mkdirSync(folder, { recursive: true });
+	return folder;
 }
 
 export function makeLink(src: string, dst: string) {
@@ -128,9 +133,21 @@ export function makeLink(src: string, dst: string) {
 	symlinkSync(src, dst, "dir");
 }
 
-export function getPreferencesFolder() {}
+/**
+ * Executes command from project root
+ * @param command 
+ */
+export function exec(command: string) {
+	execSync(command, { stdio: [0, 1, 2], cwd: join(__dirname, "../") });
+}
+
+export function getPreferencesFolder() { }
 
 export function createDistMark(path: string) {
 	const dest = join(path, ".dist");
 	writeFileSync(dest, "");
+}
+
+export function isExtension(extension: Extension): extension is BaseExtension {
+	return extension.type !== undefined && (extension.type == "extension" || extension.type == "native");
 }

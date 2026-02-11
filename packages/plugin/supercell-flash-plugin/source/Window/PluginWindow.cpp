@@ -19,7 +19,7 @@ namespace sc::Adobe {
 			title,
 			wxDefaultPosition,
 			wxDefaultSize,
-			wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
+			(wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP) & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
 	{
 		SCPlugin& context = SCPlugin::Instance();
 		context.logger->info("PluginWindow initialized. Creating elements...");

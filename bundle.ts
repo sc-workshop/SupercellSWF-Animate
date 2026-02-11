@@ -30,9 +30,10 @@ export const config: ConfigInterface = {
 			},
 		},
 		Plugin: {
-			type: "extension",
+			type: "native",
 			root: "./packages/plugin",
 			path: "./fcm.xml",
+			useFeatureSets: true,
 			ui: {
 				//name: "SC Plugin",
 				type: "ModalDialog",

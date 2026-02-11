@@ -504,7 +504,7 @@ namespace sc::flash
 			{
 				size_t bitmap_index = bitmap_counter++;
 				AtlasGenerator::Item& item = *items[indices[bitmap_index]];
-				auto& texture = swf.textures[item.texture_index];
+				auto& texture = swf.textures[(uint32_t)item.texture_index];
 
 				wk::PointF uv_offset{ cord_max, cord_max };
 
@@ -579,7 +579,7 @@ namespace sc::flash
 
 		uint16_t index = 0;
 		SupercellSWF::TextureArray new_textures;
-		new_textures.reserve(used_textures.size());
+		new_textures.reserve((uint32_t)used_textures.size());
 
 		std::unordered_map<uint16_t, uint16_t> texture_indices_mapping;
 		for (std::map<uint16_t, SWFTexture>::iterator it = used_textures.begin(); it != used_textures.end(); ++it)

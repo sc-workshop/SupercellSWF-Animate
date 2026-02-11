@@ -15,8 +15,8 @@ namespace Animate::IO
 			if (!entry.is_regular_file())
 				continue;
 
-			auto path = std::filesystem::relative(m_basedir, entry.path());
-			m_paths.push_back(path);
+			auto name = std::filesystem::relative(m_basedir, entry.path());
+			m_paths.push_back(name);
 		}
 
 		return true;

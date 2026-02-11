@@ -23,6 +23,10 @@ namespace Animate::XFL
 	public:
 		XFLFile(const Path& path);
 
+	public:
+		const std::vector<Path>& GetPaths();
+		wk::Ref<wk::Stream> ReadFile(const Path& path);
+
 	private:
 		void CreateStream();
 

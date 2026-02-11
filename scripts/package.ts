@@ -17,6 +17,7 @@ import {
 	packageFolder,
 } from "./manifest";
 import { isWindows, log, removeDirs } from "./utils";
+import { CommandExtension, BaseExtension, NativeExtension } from "./manifest/interfaces";
 
 function build_extension_package(
 	output_package: string,
@@ -37,8 +38,8 @@ function build_extension_package(
 		execSync(`pnpm run build:prod ${additional_args}`, { stdio: [0, 1, 2] });
 	}
 
-	const zxpCmd = isWindows ? `ZXPSignCmd` : `./ZXPSignCmd`;
-	const cwdDir = join(__dirname, "zxp");
+	const zxpCmd = isWindows ? `ZXPSignCmd.exe` : `./ZXPSignCmd`;
+	const cwdDir = join(__dirname, "zxp", process.platform);
 	const certPath = join(process.cwd(), "cert.p12");
 
 	if (existsSync(certPath)) {
@@ -77,52 +78,74 @@ mkdirSync(packageDistFolder, { recursive: true });
 mkdirSync(packageCommandsFolder, { recursive: true });
 
 // Building extension
-const package_name = `${bundleId}-${version}`;
-const extensionPackagePath = join(packageDistFolder, `${package_name}.zxp`);
-build_extension_package(extensionPackagePath, "--fresh --cpuf=Default");
+interface ExtensionVariants {
+	name: string;
+	featureSet: string;
+}
 
-const package_name_sse = `${bundleId}-${version}-sse4.2`;
-const extensionPackagePath_sse = join(
-	packageDistFolder,
-	`${package_name_sse}.zxp`,
-);
-build_extension_package(extensionPackagePath_sse, "--cpuf=SSE41");
+const defaultVariant = {
+	name: "",
+	featureSet: "Default"
+}
 
-const package_name_avx = `${bundleId}-${version}-avx2`;
-const extensionPackagePath_avx = join(
-	packageDistFolder,
-	`${package_name_avx}.zxp`,
-);
-build_extension_package(extensionPackagePath_avx, "--cpuf=AVX2");
+const windowsVariants: ExtensionVariants[] = [
+	defaultVariant,
+	{
+		name: "sse4.1",
+		featureSet: "SSE41"
+	},
+	{
+		name: "avx2",
+		featureSet: "AVX2"
+	}
+]
 
 const packageManifest: any = {
 	name: bundleId,
 	version: version,
-	extensions: [
-		{
+	extensions: [],
+};
+
+function createCommand(name: string, extension: CommandExtension) {
+	const scriptName = basename(extension.path);
+	const scriptDist = join(packageCommandsFolder, scriptName);
+	copyFileSync(extension.path, scriptDist);
+
+	packageManifest.extensions.push({
+		type: "command",
+		name: name,
+		path: relative(packageFolder, scriptDist),
+		install: `${scripInstallName}/${scriptName}`,
+	});
+}
+
+function createExtension(name: string, extension: BaseExtension) {
+	const useFeatureSets = extension.type == "native" && (extension as NativeExtension).useFeatureSets;
+	const targetVariants = isWindows && useFeatureSets ? windowsVariants : [defaultVariant];
+
+	for (const variant of targetVariants) {
+		const package_name = [bundleId, version, variant.name]
+			.filter((value) => { return value != ""; })
+			.join("-");
+
+		const extensionPackagePath = join(packageDistFolder, `${package_name}.zxp`);
+		build_extension_package(extensionPackagePath, `--fresh --cpuf=${variant.featureSet}`);
+
+		let extensionManifest: any = {
 			type: "extension",
-			name: "Plugin",
-			path: relative(packageFolder, extensionPackagePath_avx),
-			install: bundleId,
-			condition: "cpuf:avx2",
-			variant_name: "AVX2",
-		},
-		{
-			type: "extension",
-			name: "Plugin",
-			path: relative(packageFolder, extensionPackagePath_sse),
-			install: bundleId,
-			condition: "cpuf:sse42",
-			variant_name: "SSE4.2",
-		},
-		{
-			type: "extension",
-			name: "Plugin",
+			name: name,
 			path: relative(packageFolder, extensionPackagePath),
 			install: bundleId,
-		},
-	],
-};
+		}
+
+		if (variant.name !== "") {
+			extensionManifest.condition = `cpuf:${variant.featureSet}`;
+			extensionManifest.variant_name = variant.name;
+		}
+
+		packageManifest.extensions.push(extensionManifest);
+	}
+}
 
 const scripInstallName = config.organization_name
 	? config.organization_name
@@ -130,20 +153,14 @@ const scripInstallName = config.organization_name
 
 for (const extensionName of Object.keys(config.extensions)) {
 	const extension = config.extensions[extensionName];
-	if (extension.type === "extension") continue;
 
 	switch (extension.type) {
+		case "extension": {
+			createExtension(extensionName, extension);
+			break;
+		}
 		case "command": {
-			const scriptName = basename(extension.path);
-			const scriptDist = join(packageCommandsFolder, scriptName);
-			copyFileSync(extension.path, scriptDist);
-
-			packageManifest.extensions.push({
-				type: "command",
-				name: extensionName,
-				path: relative(packageFolder, scriptDist),
-				install: `${scripInstallName}/${scriptName}`,
-			});
+			createCommand(extensionName, extension as CommandExtension);
 			break;
 		}
 	}

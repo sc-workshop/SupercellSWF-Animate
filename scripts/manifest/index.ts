@@ -3,7 +3,7 @@ import { join as joinPath, posix, resolve as resolvePath } from "node:path";
 import { create as CreateXML } from "xmlbuilder2";
 import { config } from "../../bundle";
 import { version as bundleVersion, name } from "../../package.json";
-import { isDev, processPath } from "../utils";
+import { isDev, isExtension, processPath } from "../utils";
 import type { ConfigInterface } from "./interfaces";
 
 export { config } from "../../bundle";
@@ -59,7 +59,7 @@ export function generateCSXS(config: ConfigInterface) {
 
 	for (const extensionName of Object.keys(config.extensions)) {
 		const extension = config.extensions[extensionName];
-		if (extension.type !== "extension") continue;
+		if (!isExtension(extension)) continue;
 
 		const extensionRoot = resolvePath(processPath, extension.root);
 		const extensionPackage = JSON.parse(

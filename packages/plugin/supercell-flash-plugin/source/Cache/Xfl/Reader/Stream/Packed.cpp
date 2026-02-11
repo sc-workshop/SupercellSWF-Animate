@@ -34,8 +34,8 @@ namespace Animate::IO
 		for (size_t i = 0; count > i; i++) {
 			zip_entry_openbyindex(m_context, i);
 			if (!zip_entry_isdir(m_context)) {
-				Path path = zip_entry_name(m_context);
-				m_paths.push_back(path);
+				Path entry = zip_entry_name(m_context);
+				m_paths.push_back(entry);
 			}
 
 			zip_entry_close(m_context);

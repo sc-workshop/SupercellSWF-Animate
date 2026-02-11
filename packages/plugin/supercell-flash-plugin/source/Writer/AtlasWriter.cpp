@@ -355,7 +355,7 @@ namespace sc::Adobe {
 		for (const FilledItemContour& contour : filled_item.contours)
 		{
 			flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			shape_command.texture_index = atlas_item.texture_index + texture_offset;
+			shape_command.texture_index = (uint32_t)atlas_item.texture_index + texture_offset;
 
 			for (const Point2D& point : contour.Contour())
 			{

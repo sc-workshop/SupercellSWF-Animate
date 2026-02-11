@@ -13,15 +13,15 @@ namespace sc::Adobe {
 	public:
 		SCTextFieldWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol);
 
-		virtual void Initialize(const Animate::Publisher::TextElement& textfield);
-		virtual void AddParagraph(const Animate::Publisher::TextParagraph& paragraph);
+		virtual void Initialize(const Animate::Publisher::TextElement& textfield) override;
+		virtual void AddParagraph(const Animate::Publisher::TextParagraph& paragraph) override;
 		void SetTextRun(const Animate::Publisher::TextRun& textRun);
 		virtual void SetGlowFilter(const Animate::Publisher::GlowFilter& filter) override;
 
-		virtual bool Finalize(ResourceReference reference, bool required, bool new_symbol);
+		virtual bool Finalize(ResourceReference reference, bool required, bool new_symbol) override;
 
 	protected:
-		virtual std::size_t GenerateHash() const;
+		virtual std::size_t GenerateHash() const override;
 
 	private:
 		SCWriter& m_writer;

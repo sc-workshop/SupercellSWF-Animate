@@ -16,8 +16,8 @@ interface Icon {
 	path: string;
 }
 
-export interface Extension {
-	type: "extension";
+export interface BaseExtension {
+	type: "extension" | "command" | "native";
 	root: string;
 	parent?: string;
 	path: string;
@@ -42,10 +42,12 @@ export interface CommandExtension {
 	path: string;
 }
 
-export interface NativeExtension {
+export interface NativeExtension extends BaseExtension {
 	type: "native";
-	path: string;
+	useFeatureSets?: boolean;
 }
+
+export type Extension = BaseExtension | NativeExtension | CommandExtension;
 
 export interface ConfigInterface {
 	organization: string; // Name for package signing
@@ -53,6 +55,6 @@ export interface ConfigInterface {
 	cep_version: string;
 	environment: EnvironmentInterface;
 	extensions: {
-		[name: string]: Extension | CommandExtension | NativeExtension;
+		[name: string]: Extension;
 	};
 }

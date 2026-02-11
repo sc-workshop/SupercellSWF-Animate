@@ -3,7 +3,8 @@
 .vscode
 /node_modules
 
-plugin/include/PluginConfiguration.h
+packages/plugin/include/PluginConfiguration.h
 
 *.p12
 *.zxp
+.DS_Store

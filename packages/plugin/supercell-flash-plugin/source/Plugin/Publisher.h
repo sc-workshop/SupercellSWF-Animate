@@ -5,7 +5,7 @@
 
 #include "AnimateModule.h"
 #include "Module/Config.h"
-#include "Animate/app/DOM/Service/Document/IFLADocService.h"
+#include "animate/app/DOM/Service/Document/IFLADocService.h"
 
 namespace sc {
 	namespace Adobe {

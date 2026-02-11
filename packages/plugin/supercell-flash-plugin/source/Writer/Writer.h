@@ -31,8 +31,10 @@ namespace sc::Adobe {
 		virtual void Finalize();
 
 	public:
+        static fs::path generateTempName();
+        
 		// Path to temp sprite file
-		const fs::path sprite_temp_path = fs::path(tmpnam(nullptr)).concat(".png");
+		const fs::path sprite_temp_path = generateTempName().concat(".png");
 
 		// kokoro
 		flash::SupercellSWF swf;

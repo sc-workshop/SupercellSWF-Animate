@@ -31,6 +31,7 @@ for (const extensionName of Object.keys(config.extensions)) {
 	progress(`Building ${extensionName}..`);
 
 	switch (extension.type) {
+		case "native":
 		case "extension":
 			build_extension(extensionName, extension, flags);
 			break;

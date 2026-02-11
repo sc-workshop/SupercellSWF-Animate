@@ -55,7 +55,7 @@ namespace sc {
 				{
 					std::random_device seed;
 					std::mt19937 generator(seed());
-					std::uniform_int_distribution<> distr(0, files.size() - 1);
+					std::uniform_int_distribution<> distr(0, (int)files.size() - 1);
 			
 					animation_index = distr(generator);
 				}

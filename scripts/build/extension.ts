@@ -2,12 +2,12 @@ import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { extensionDistFolder } from "../manifest";
-import type { Extension } from "../manifest/interfaces";
+import type { BaseExtension } from "../manifest/interfaces";
 import { isDev, processExecError, processPath, removeFiles } from "../utils";
 
 export function build_extension(
 	name: string,
-	extension: Extension,
+	extension: BaseExtension,
 	flags: string[],
 ) {
 	const outputFolder = join(extensionDistFolder, name);

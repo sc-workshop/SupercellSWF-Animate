@@ -1,19 +1,27 @@
 export {};
 
 declare global {
-	interface Extension {
+	interface BaseExtension {
 		type: "command" | "extension";
 		name: string;
 		path: string;
 		install: string;
+	}
+
+	interface Extension extends BaseExtension {
+		type: "extension";
 		condition?: string;
 		variant_name?: string;
+	}
+
+	interface CommandExtension extends BaseExtension {
+		type: "command";
 	}
 
 	interface InstallManifest {
 		name: string;
 		version: string;
-		extensions: Extension[];
+		extensions: BaseExtension[];
 	}
 
 	interface ManifestWindow extends Window {

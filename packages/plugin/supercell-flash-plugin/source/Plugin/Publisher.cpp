@@ -5,19 +5,34 @@
 #include "Module/Module.h"
 #include "Writer/Writer.h"
 #include "Module/SCPluginException.h"
+#include "wx/init.h"
 
 using namespace Animate::Publisher;
 using namespace sc::Adobe;
 
 template<>
-SCConfig& ::Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>::ActiveConfig()
+SCConfig&
+::Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>::ActiveConfig()
 {
 	static SCConfig config;
 	return config;
 }
 
+template<>
+const Animate::FCMPluginID&
+::Animate::Publisher::GenericPublisher<SCConfig, SCPublisher>::PluginID()
+{
+    static Animate::FCMPluginID id(
+        CLSID_Publisher,
+        CLSID_DocType,
+        CLSID_FeatureMatrix
+    );
+    return id;
+}
+
 namespace sc {
 	namespace Adobe {
+    
 		void SCPublisher::PublishDocuments()
 		{
 			SCPlugin& context = SCPlugin::Instance();
@@ -151,9 +166,12 @@ namespace sc {
 			context.logger->info("Starting UI...");
 			std::thread progressWindow(
 				[&context, &publishing_ui]()
-				{;
+				{
+                    int argc = 0;
+                    char** argv = nullptr;
+                    
 					context.InitializeWindow();
-					bool entry_start_status = wxEntryStart(0, nullptr);
+					bool entry_start_status = wxEntryStart(argc, argv);
 					
 					if (!entry_start_status)
 					{

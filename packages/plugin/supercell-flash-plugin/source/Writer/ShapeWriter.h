@@ -5,7 +5,7 @@
 #include "core/memory/ref.h"
 #include "core/image/raw_image.h"
 
-#include <blend2d.h>
+#include <blend2d/blend2d.h>
 
 namespace sc {
 	namespace Adobe {

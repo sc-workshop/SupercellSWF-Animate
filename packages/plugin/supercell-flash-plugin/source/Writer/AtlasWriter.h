@@ -34,7 +34,7 @@ namespace sc::Adobe {
 			using namespace AtlasGenerator;
 
 			flash::ShapeDrawBitmapCommand& shape_command = shape.commands.emplace_back();
-			shape_command.texture_index = atlas_item.texture_index + texture_offset;
+			shape_command.texture_index = (uint32_t)atlas_item.texture_index + texture_offset;
 
 			for (const auto& vertex : vertices)
 			{
@@ -70,7 +70,7 @@ namespace sc::Adobe {
 		void WriteAtlas();
 
 	public:
-		size_t texture_offset = 0;
+		uint32_t texture_offset = 0;
 
 	private:
 		SCWriter& m_writer;

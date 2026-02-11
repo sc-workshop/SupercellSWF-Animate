@@ -47,8 +47,8 @@ namespace sc::Adobe {
 		if (m_has_paragraph)
 		{
 			context.Trace(
-				"TextField in symbol \"%ls\" frame %d, has more than one Paragraph. Skip...",
-				m_symbol.name.c_str(),
+				"TextField in symbol \"%s\" frame %d, has more than one Paragraph. Skip...",
+				Locale::ToUtf8(m_symbol.name).c_str(),
 				m_symbol.current_frame_index + 1
 			);
 
@@ -81,8 +81,8 @@ namespace sc::Adobe {
 		if (paragraph.textRuns.size() > 1)
 		{
 			context.Trace(
-				"TextField in symbol \"%ls\" frame %d, has more than one TextRun. Using the first text run...",
-				m_symbol.name.c_str(),
+				"TextField in symbol \"%s\" frame %d, has more than one TextRun. Using the first text run...",
+                Locale::ToUtf8(m_symbol.name).c_str(),
 				m_symbol.current_frame_index + 1
 			);
 		}

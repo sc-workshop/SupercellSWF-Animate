@@ -20,7 +20,7 @@ namespace Animate::IO
 		virtual bool Open(const Path& path);
 
 		virtual bool OpenFile(const Path& path);
-		virtual wk::Ref<wk::Stream> ReadFile() = 0;
+		virtual wk::Ref<wk::Stream> ReadFile();
 		virtual void CloseFile();
 
 	private:

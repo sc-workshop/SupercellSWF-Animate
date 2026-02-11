@@ -21,6 +21,19 @@ namespace Animate::XFL
 		CreateStream();
 	}
 
+	const std::vector<Path>& XFLFile::GetPaths()
+	{
+		return m_stream->GetPaths();
+	}
+
+	wk::Ref<wk::Stream> XFLFile::ReadFile(const Path& path)
+	{
+		m_stream->OpenFile(path);
+		auto result = m_stream->ReadFile();
+		m_stream->CloseFile();
+		return result;
+	}
+
 	void XFLFile::CreateStream()
 	{
 		if (m_filetype == XFLType::Packed)
