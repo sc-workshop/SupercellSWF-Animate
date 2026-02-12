@@ -10,7 +10,7 @@
 #include "Events/DestroyProgress.h"
 
 namespace sc::Adobe {
-	class PluginWindow : public wxFrame
+	class PluginWindow : public wxDialog
 	{
 	public:
 		StatusComponent* CreateStatusBarComponent(
@@ -28,6 +28,7 @@ namespace sc::Adobe {
 		PluginWindow(PluginWindow&) = delete;
 
 	public:
+        void Wait();
 		void ThrowException(const wxString& what);
 
 	public:
@@ -47,6 +48,7 @@ namespace sc::Adobe {
 
 		std::condition_variable m_window_cv;
 		std::mutex m_window_mut;
+        bool m_ready;
 
 		uint32_t m_elements_counter = 0;
 

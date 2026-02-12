@@ -21,6 +21,9 @@ namespace sc {
 			static void CloseDocument(Animate::DOM::PIFLADocument& document);
 
 		public:
+            void StartWindow();
+            FCM::Result StartPublishing();
+            
 			virtual void Publish(const SCConfig& config);
 			
 			void PublishDocuments();

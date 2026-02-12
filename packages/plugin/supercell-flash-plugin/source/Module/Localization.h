@@ -10,8 +10,7 @@
 using namespace nlohmann;
 
 #include "animate/core/common/FCMPluginInterface.h"
-
-#define SC_wxStringU16(str) wxString((const wchar_t*)str.c_str())
+#include "core/string/string_converter.h"
 
 namespace sc {
 	namespace Adobe {
@@ -27,14 +26,15 @@ namespace sc {
 			template <class ... Args>
 			std::u16string GetString(const std::string& TID, Args ... args)
 			{
-				auto text = m_locale[TID];
-				if (!text.is_string()) return FCM::Locale::ToUtf16(TID);
-
-				std::u16string format = FCM::Locale::ToUtf16(text);
+                json textValue = m_locale[TID];
+				if (!textValue.is_string()) return wk::StringConverter::ToUTF16(TID);
+                
+                std::string text = textValue;
+				std::u16string format = wk::StringConverter::ToUTF16(text);
 
 				return Localization::Format(format, args...);
 			}
-
+#if defined(_WINDOWS)
 			template <class ... Args>
 			static std::u16string Format(const std::u16string& message, Args ... args)
 			{
@@ -44,6 +44,19 @@ namespace sc {
 
 				return std::u16string(reinterpret_cast<const char16_t*>(buffer));
 			}
+#elif defined(__APPLE__)
+            template <class ... Args>
+            static std::u16string Format(const std::u16string& message, Args ... args)
+            {
+                std::u32string converted = wk::StringConverter::ToUTF32(message);
+                
+                const size_t bufferSize = 1024;
+                wchar_t buffer[bufferSize] = { 0 };
+                std::swprintf(buffer, bufferSize, reinterpret_cast<const wchar_t*>(converted.c_str()), args...);
+
+                return wk::StringConverter::ToUTF16(std::u32string(reinterpret_cast<const char32_t*>(buffer)));
+            }
+#endif
 		};
 	}
 }

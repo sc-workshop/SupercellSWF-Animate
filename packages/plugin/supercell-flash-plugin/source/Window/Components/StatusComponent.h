@@ -3,6 +3,7 @@
 #include <wx/wx.h>
 #include <wx/stattext.h>
 #include "Window/Ui/ProgressBar.h"
+#include "Window/Utilities.hpp"
 
 namespace sc::Adobe {
     class StatusComponent : public wxPanel

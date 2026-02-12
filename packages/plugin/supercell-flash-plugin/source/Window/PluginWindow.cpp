@@ -6,24 +6,24 @@
 #endif
 
 namespace sc::Adobe {
-	wxBEGIN_EVENT_TABLE(PluginWindow, wxFrame)
+	wxBEGIN_EVENT_TABLE(PluginWindow, wxDialog)
 		EVT_CLOSE(PluginWindow::OnClose)
 		SC_EVT_CREATE_PROGRESS(wxID_ANY, PluginWindow::OnProgressCreate)
 		SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
-		wxEND_EVENT_TABLE();
+    wxEND_EVENT_TABLE();
 
 	PluginWindow::PluginWindow(const wxString& title)
-		: wxFrame(
+		: wxDialog(
 			nullptr,
 			wxID_ANY,
 			title,
 			wxDefaultPosition,
 			wxDefaultSize,
-			(wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP) & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
+            wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER)
 	{
 		SCPlugin& context = SCPlugin::Instance();
 		context.logger->info("PluginWindow initialized. Creating elements...");
-
+        
 		Center();
 		SetBackgroundColour(wxColor(0x333333));
 
@@ -44,7 +44,19 @@ namespace sc::Adobe {
 			Close(true);
 			wxTheApp->ExitMainLoop();
 		});
+        
+        Bind(wxEVT_SHOW, [&](wxShowEvent& event){
+            if (event.IsShown()) {
+                m_ready = true;
+                m_window_cv.notify_all();
+            }
+        });
 	}
+
+    void PluginWindow::Wait() {
+        std::unique_lock<std::mutex> guard(m_window_mut);
+        m_window_cv.wait(guard, [&]{ return m_ready; });
+    }
 
 	StatusComponent* PluginWindow::CreateStatusBarComponent(
 		const std::u16string& title,
@@ -106,7 +118,7 @@ namespace sc::Adobe {
 		}
 
 		if (readyToExit) {
-			event.Skip();
+            EndModal(wxID_OK);
 		}
 		else {
 			event.Veto();

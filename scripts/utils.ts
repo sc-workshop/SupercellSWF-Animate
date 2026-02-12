@@ -31,11 +31,15 @@ type ColorName = keyof Pick<
 type Environment = "production" | "development";
 
 export function log(val: any) {
-	console.log(val);
+	progress(val, "green");
 }
 
 export function error(val: string) {
 	progress(val, "red");
+}
+
+export function warn(val: string) {
+	progress(val, "yellow");
 }
 
 export function progress(value: string, color?: ColorName) {
@@ -129,7 +133,11 @@ export function extensionsFolder() {
 
 export function makeLink(src: string, dst: string) {
 	progress(`Creating link from "${src}" to "${dst}"`, "blue");
-
+	if (existsSync(dst)) {
+		warn(`makeLink: ${dst} already exists`);
+		return;
+	}
+	
 	symlinkSync(src, dst, "dir");
 }
 

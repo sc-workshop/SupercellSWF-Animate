@@ -61,7 +61,7 @@ namespace sc {
 			// Thread pool for multiple documents export
 			BS::thread_pool<0> threads;
 
-		private:
+		public:
 			// Progress Window
 			PluginWindowApp* m_app = nullptr;
 		};

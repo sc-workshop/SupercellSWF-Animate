@@ -23,6 +23,9 @@ namespace sc {
 				FCM::PIFCMCalloc falloc,
 				FCM::PFCMClassInterfaceInfo* info)
 		{
+#if WK_DEBUG
+            Module->logger->info("Called get PluginGetClassInfo");
+#endif
 			return Module->GetClassInfo(falloc, info);
 		}
 
@@ -33,6 +36,11 @@ namespace sc {
 				FCM::ConstRefFCMIID iid,
 				FCM::PPVoid any)
 		{
+#if WK_DEBUG
+            std::string clsid_name = clsid;
+            std::string iid_name = iid;
+            Module->logger->info("Called get PluginGetClassObject clsid: {}, iid: {}", clsid_name.c_str(), iid_name.c_str());
+#endif
 			return Module->GetClassObject(clsid, iid, any);
 		}
 		

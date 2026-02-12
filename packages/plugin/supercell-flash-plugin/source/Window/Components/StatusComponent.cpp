@@ -10,8 +10,8 @@ namespace sc::Adobe {
 	{
 		SetBackgroundStyle(wxBG_STYLE_PAINT);
 		Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
-
-		m_label = new wxStaticText(this, wxID_ANY, (const wchar_t*)title.c_str(), wxPoint(0, 5));
+        
+		m_label = new wxStaticText(this, wxID_ANY, "", wxPoint(0, 5));
 		m_label->SetForegroundColour(wxColor(0xFFFFFF));
 
 		m_progressBar = new ui::ProgressBar(this);
@@ -19,16 +19,19 @@ namespace sc::Adobe {
 		m_progressBar->SetPosition(wxPoint(10, 25));
 		m_progressBar->SetSize(wxSize(325, 20));
 
-		m_status = new wxStaticText(this, wxID_ANY, (const wchar_t*)defaulStatus.c_str(), wxPoint(10, 50));
+		m_status = new wxStaticText(this, wxID_ANY, "", wxPoint(10, 50));
 		m_status->SetForegroundColour(wxColor(0xFFFFFF));
+        
+        SetStatusLabel(title);
+        SetStatus(defaulStatus);
 	}
 
     void StatusComponent::SetStatusLabel(const std::u16string& label) {
-        m_label->SetLabel((const wchar_t*)label.c_str());
+        m_label->SetLabel(CreateWxString(label));
     }
 
     void StatusComponent::SetStatus(const std::u16string& status) {
-        m_status->SetLabel((const wchar_t*)status.c_str());
+        m_status->SetLabel(CreateWxString(status));
     }
 
     void StatusComponent::SetRange(int range) {

@@ -24,9 +24,12 @@ function install_windows(extension: Extension) {
 	const system = window.SupercellSWF.system();
 
 	const installed = [];
-	for (const extension of window.SupercellSWF.manifest.extensions) {
-		if (extension.type !== "extension") continue;
+	for (const baseExtension of window.SupercellSWF.manifest.extensions) {
+		if (baseExtension.type !== "extension") continue;
+
+		const extension = baseExtension as Extension;
 		if (installed.indexOf(extension.name) != -1) continue;
+		
 		let valid = true;
 		if (extension.condition) {
 			const conditions = extension.condition.split(",");

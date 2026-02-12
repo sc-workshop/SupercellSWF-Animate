@@ -6,7 +6,7 @@ export const config: ConfigInterface = {
 	cep_version: "9.0",
 	environment: {
 		apps: {
-			FLPR: "[22.0,99.0]",
+			FLPR: "[19.0,99.0]",
 		},
 		locales: ["All"],
 		runtimes: {

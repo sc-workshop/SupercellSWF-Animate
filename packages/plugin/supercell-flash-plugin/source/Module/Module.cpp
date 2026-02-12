@@ -25,9 +25,7 @@ namespace sc::Adobe {
 		const fs::path log_path = fs::temp_directory_path() / log_name;
 
 		if (fs::exists(log_path))
-		{
-			fs::remove(log_path);
-		}
+            fs::remove(log_path);
 
 		logger_file = std::ofstream(log_path);
 		auto ostream_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(logger_file, true);
@@ -71,6 +69,7 @@ namespace sc::Adobe {
 	void SCPlugin::InitializeWindow()
 	{
 		m_app = new PluginWindowApp();
+        m_app->sm_isEmbedded = true;
 		wxApp::SetInstance(m_app);
 	}
 
@@ -78,9 +77,14 @@ namespace sc::Adobe {
 	{
 		if (m_app)
 		{
-			m_app->OnExit();
-			m_app->ExitMainLoop();
-			m_app = nullptr;
+            m_app->CallAfter([&](){
+                if (m_app->window->IsShown())
+                    m_app->window->EndModal(wxID_OK);
+                
+                m_app->OnExit();
+                m_app->ExitMainLoop();
+                m_app = nullptr;
+            });
 		}
 	}
 

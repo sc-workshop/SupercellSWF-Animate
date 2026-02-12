@@ -61,7 +61,7 @@ if (APPLE)
     set_target_properties(${TARGET} PROPERTIES
         MACOSX_BUNDLE TRUE
         BUNDLE TRUE
-        BUNDLE_EXTENSION "plugin"
+        BUNDLE_EXTENSION "fcm.plugin"
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_BINARY_DIR}/SupercellSWFAnimate.plist
     )
 
@@ -76,12 +76,6 @@ if (APPLE)
     add_dependencies(${TARGET}
         blend2d_universal_Debug
         blend2d_universal_Release
-    )
-
-    add_custom_command(TARGET ScAnimatePlugin POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -DBUNDLE_DIR=$<TARGET_FILE_DIR:ScAnimatePlugin>
-                                -DCONFIG=$<CONFIG>
-                                -P ${CMAKE_SOURCE_DIR}/cmake/fixup_bundle.cmake
     )
 endif()
 

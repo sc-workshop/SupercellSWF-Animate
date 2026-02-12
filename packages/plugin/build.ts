@@ -48,9 +48,10 @@ const assetsFolder = "resources";
 
 const buildDirectory = join(__dirname, "build");
 const outputDirectory = join(libPath, isWindows ? "win" : "mac");
+const binaryDirName = "animate_bin";
 const binaryDirectory = join(
 	buildDirectory,
-	"animate_bin",
+	binaryDirName,
 	activeConfiguration,
 );
 
@@ -90,8 +91,15 @@ function build() {
 	exec(`"${cmakePath}" -S "${__dirname}" -B "${buildDirectory}" ${CmakeFlags}`);
 
 	if (isDev) {
+		// Create directory with build artifacts ahead of time
 		mkdirSync(binaryDirectory, { recursive: true });
+
+		// Create link from artifacts folder to extension lib folder
 		makeLink(binaryDirectory, outputDirectory);
+
+		// Create link to resources folder
+		makeLink(join(__dirname, "resources"), join(buildDirectory, binaryDirName, "resources"));
+
 		progress("Now you can compile Binaries from IDE");
 		return;
 	}

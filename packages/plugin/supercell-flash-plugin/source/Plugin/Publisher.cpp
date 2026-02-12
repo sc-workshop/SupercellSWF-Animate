@@ -150,6 +150,74 @@ namespace sc {
 			const auto& service = context.GetService<IFLADocService>(FLA_DOC_SERVICE);
 			service->CloseDocument(document);
 		}
+    
+        void SCPublisher::StartWindow() {
+            SCPlugin& context = SCPlugin::Instance();
+
+            int argc = 0;
+            char** argv = nullptr;
+            
+            bool entry_start_status = wxEntryStart(argc, argv);
+            
+            if (!entry_start_status)
+            {
+                auto message = wxSysErrorMsgStr(0);
+                context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
+            }
+            
+            context.logger->info("UI successfully inited. Starting publishing...");
+            
+            // Important reminder
+            // Since then when app started working with modal windows
+            // GUI starting working immediatly on Initialization process
+            bool init_status = wxTheApp->CallOnInit();
+            context.logger->info("Windows init finished with status: {}", init_status);
+            if (!init_status)
+            {
+                auto message = wxSysErrorMsgStr(0);
+                context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
+            }
+            
+            // Not sure if this is required here now
+            //wxEntryCleanup();
+        }
+    
+        FCM::Result SCPublisher::StartPublishing() {
+            SCPlugin& context = SCPlugin::Instance();
+            
+            try {
+                DoPublish();
+            }
+            catch (const FCM::FCMPluginException& exception)
+            {
+                std::string reason;
+                {
+                    std::stringstream message;
+                    auto& symbol = exception.Symbol();
+                    if (!symbol.name.empty())
+                    {
+                        message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
+                    }
+                    message << exception.what();
+                    reason = message.str();
+                }
+
+                context.Window()->ThrowException(reason);
+                context.Window()->readyToExit = true;
+                return FCM_EXPORT_FAILED;
+            }
+            catch (const std::exception& exception) {
+                context.Window()->ThrowException(exception.what());
+                context.Window()->readyToExit = true;
+                return FCM_EXPORT_FAILED;
+            }
+            catch (...) {
+                context.logger->error("Publishing finished with unknown exception!");
+
+                context.Window()->readyToExit = true;
+                return FCM_EXPORT_FAILED;
+            }
+        }
 
 		void SCPublisher::Publish(const SCConfig& /*config*/)
 		{
@@ -158,85 +226,26 @@ namespace sc {
 			context.logger->info("--------------------------- Called Publish -----------------------------");
 
 			auto start = std::chrono::high_resolution_clock::now();
-
-			std::shared_mutex publishing_ui;
-			// Must be unlocked when ui is ready to use
-			publishing_ui.lock();
-
-			context.logger->info("Starting UI...");
-			std::thread progressWindow(
-				[&context, &publishing_ui]()
-				{
-                    int argc = 0;
-                    char** argv = nullptr;
-                    
-					context.InitializeWindow();
-					bool entry_start_status = wxEntryStart(argc, argv);
-					
-					if (!entry_start_status)
-					{
-						auto message = wxSysErrorMsgStr(0);
-						context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
-					}
-
-					bool init_status = wxTheApp->CallOnInit();
-					context.logger->info("Windows init finished with status: {}", init_status);
-					if (!init_status)
-					{
-						auto message = wxSysErrorMsgStr(0);
-						context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
-					}
-
-					context.logger->info("UI successfully started");
-					publishing_ui.unlock();
-
-					wxTheApp->OnRun();
-					wxEntryCleanup();
-				}
-			);
-
-			FCM::Result result = FCM_SUCCESS;
-			// Block thread until publishing ui is ready
-			publishing_ui.lock();
-			context.logger->info("Starting publishing...");
-
-			try {
-				DoPublish();
-			}
-			catch (const FCM::FCMPluginException& exception)
-			{
-				std::string reason;
-				{
-					std::stringstream message;
-					auto& symbol = exception.Symbol();
-					if (!symbol.name.empty())
-					{
-						message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
-					}
-					message << exception.what();
-					reason = message.str();
-				}
-
-				context.Window()->ThrowException(reason);
-				context.Window()->readyToExit = true;
-				result = FCM_EXPORT_FAILED;
-			}
-			catch (const std::exception& exception) {
-				context.Window()->ThrowException(exception.what());
-				context.Window()->readyToExit = true;
-				result = FCM_EXPORT_FAILED;
-			}
-			catch (...) {
-				context.logger->error("Publishing finished with unknown exception!");
-
-				context.Window()->readyToExit = true;
-				result = FCM_EXPORT_FAILED;
-			}
-
-			publishing_ui.unlock();
-			progressWindow.join();
+            
+            FCM::Result result = FCM_SUCCESS;
+            
+            context.InitializeWindow();
+            std::thread worker([&]() {
+                // Waiting UI to be ready...
+                context.m_app->Wait();
+                
+                // Publish
+                result = StartPublishing();
+            });
+            
+            // Starting UI window
+            StartWindow();
+            
+            // And waiting for results
+            worker.join();
+            
+            // Result handling
 			context.logger->info("Publisher finished with status: {}", (uint32_t)result);
-
 			auto end = std::chrono::high_resolution_clock::now();
 
 			long long int executionTime = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();

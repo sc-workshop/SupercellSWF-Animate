@@ -7,6 +7,15 @@ namespace sc {
 	namespace Adobe {
 		PluginWindowApp::PluginWindowApp()
 		{};
+    
+        void PluginWindowApp::Wait() {
+            // Waiting for main app class to be ready
+            std::unique_lock<std::mutex> guard(m_mutex);
+            m_cv.wait(guard, [&]{ return m_ready; });
+            
+            // Waiting for modal window then
+            window->Wait();
+        }
 
 		bool PluginWindowApp::OnInit() {
 			SCPlugin& context = SCPlugin::Instance();
@@ -26,10 +35,11 @@ namespace sc {
 			context.logger->info("Document name: {}", documentName.string());
 
 			auto title = wxString(DOCTYPE_NAME);
-			if (WK_DEBUG) title += " DEBUG";
+			if constexpr (WK_DEBUG) title += " DEBUG";
 			
 			window = new PluginWindow(title);
 			
+#if defined(_WINDOWS)
 			{
 				wxIcon icon;
 				fs::path iconPath = SCPlugin::CurrentPath(SCPlugin::PathType::Assets) / "window.ico";
@@ -39,6 +49,7 @@ namespace sc {
 					window->SetIcon(icon);
 				}
 			}
+#endif
 			
 			{
 				fs::path animFolder = SCPlugin::CurrentPath(SCPlugin::PathType::Assets) / "loading";
@@ -69,14 +80,15 @@ namespace sc {
 			}
 			
 			context.logger->info("Calling window->Show()");
-			bool window_showed = window->Show(true);
+            m_ready = true;
+            m_cv.notify_all();
+            
+            bool window_showed = window->ShowModal();
 			if (!window_showed)
 			{
 				auto message = wxSysErrorMsgStr(0);
 				context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
 			}
-			
-			context.logger->info("Window succesfully inited");
 			return true;
 		}
 	}
