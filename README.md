@@ -129,12 +129,17 @@ For extension to work correctly, you need:
 
 - Adobe Animate 2022 or higher
 
+> [!IMPORTANT]
+> Since 1.4.0 required by plugin Adobe Animate version was downgraded to Animate 2019. 
+> Which means that you will have no restriction to install plugin on older versions. 
+> But keep in mind that some features may not work or plugin may not work at all. 
+
 ## Windows
 - Windows 10 x64 or Windows 11
 - [Visual C++ Redistributable Runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
 ## MacOS
-well well well
+- MacOS 15.0 (Sequoia) or newer
 
 # Installing
 First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
@@ -163,6 +168,12 @@ And next tools to build native code:
 - [CMake (CLI)](https://cmake.org/download/)
 - [MSVC](https://visualstudio.microsoft.com/ru/downloads/) on Windows OS
 - [Xcode](https://developer.apple.com/xcode/) and [Homebrew](https://brew.sh/) on MacOS
+
+> [!IMPORTANT]
+> For MacOS users who reads this: Native package management is quite bad here. Mostly because of Universal binaries.  
+> So heres some things you should know about:  
+> - You cant build Universal binary out of the box. Some packages (nlopt, spdlog, fmt, etc) should be builded and installed by hands with appropriate osx arch define. CMake will try to fetch them using FetchContent but final binary will have just host arch.
+> - Some packages (`libomp` iirc) should be installed manually using homebrew.
 
 To prepare all the necessary dependencies, run the following command in the project folder:  
 `
@@ -196,6 +207,8 @@ If you find any problem with export process or you just need any help, please re
 > Native part of plugin saves logs in "%temp%/org.scWorkshop.SupercellSWF_export_log.txt", please provide them along with a description for a faster solution to the problem.  
   
 # Changelog
+## v 1.4.0
+TBD
 ## v 1.3.9
 - Improved texture handling
 - Improved Publisher Settings and Publisher Progress windows

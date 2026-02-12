@@ -69,7 +69,6 @@ const CmakeFlagsList = [
 	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
 	`${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
 	`-DCMAKE_POLICY_VERSION_MINIMUM=3.5`,
-	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`,
 	isMac ? MacOSFlags : undefined,
 	isWindows ? WindowsFlags : undefined
 ];

@@ -1,8 +1,12 @@
-function install_windows(extension: Extension) {
-	const system = window.SupercellSWF.system();
+function install(extension: Extension) {
+	const context = window.SupercellSWF;
+	const system = context.system();
 
-	const package_path = window.SupercellSWF.cwd + extension.path;
-	const archiver_bin = `${window.SupercellSWF.cwd}core/bin/windows/7z.exe`;
+	const exe_extension = context.os == "WIN" ? ".exe" : "";
+	const runner = context.os == "WIN" ? "call " : "";
+
+	const package_path = context.cwd + extension.path;
+	const archiver_bin = `${context.binary_path}7z${exe_extension}`;
 	const unpack_log = `${window.SupercellSWF.cwd}unpack_log.txt`;
 
 	const extensions_folder = `${FLfile.platformPathToURI(system.install_path)}extensions/`;
@@ -12,7 +16,7 @@ function install_windows(extension: Extension) {
 	}
 
 	FLfile.createFolder(destination_folder);
-	const command = `call "${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}"`;
+	const command = `${runner}"${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}"`;
 	const status = FLfile.runCommandLine(command);
 	if (!status) {
 		fl.trace(`Failed to unpack ${extension.path}`);
@@ -20,16 +24,16 @@ function install_windows(extension: Extension) {
 }
 
 (() => {
-	const [os, _version] = fl.version.split(" ");
-	const system = window.SupercellSWF.system();
+	const context = window.SupercellSWF;
+	const system = context.system();
 
 	const installed = [];
-	for (const baseExtension of window.SupercellSWF.manifest.extensions) {
+	for (const baseExtension of context.manifest.extensions) {
 		if (baseExtension.type !== "extension") continue;
 
 		const extension = baseExtension as Extension;
 		if (installed.indexOf(extension.name) != -1) continue;
-		
+
 		let valid = true;
 		if (extension.condition) {
 			const conditions = extension.condition.split(",");
@@ -47,20 +51,18 @@ function install_windows(extension: Extension) {
 		if (!valid) continue;
 
 		if (extension.variant_name) {
-			fl.trace(
-				`Installed "${extension.name}" extension with "${extension.variant_name}" variant`,
-			);
+			if (context.os == "WIN") {
+				fl.trace(
+					`Installed "${extension.name}" extension with "${extension.variant_name}" variant`,
+				);
+			} else {
+				fl.trace(
+					`Installed "${extension.name}" extension with`,
+				);
+			}
 		}
 
-		switch (os) {
-			case "WIN":
-				install_windows(extension);
-				break;
-
-			default:
-				throw Error("Unknown platform");
-		}
-
+		install(extension);
 		installed.push(extension.name);
 	}
 })();

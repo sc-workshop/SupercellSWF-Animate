@@ -1,11 +1,17 @@
 import { execSync } from "node:child_process";
-import { lstatSync, readdirSync, renameSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, renameSync } from "node:fs";
 import { format, join, parse } from "node:path";
 import { copyDir } from "../../scripts/utils";
 
 const args = process.argv;
 const outputPath = args[2];
-copyDir("./runtime", outputPath);
+const binariesPath = join(__dirname, "bin", process.platform);
+const runtimePath = join(__dirname, "runtime");
+if (!existsSync(binariesPath))
+	throw new Error("Unsupported system");
+
+copyDir(runtimePath, outputPath);
+copyDir(binariesPath, join(outputPath, "bin"));
 
 execSync(`tsc --outDir "${outputPath}"`, { stdio: [0, 1, 2], cwd: __dirname });
 

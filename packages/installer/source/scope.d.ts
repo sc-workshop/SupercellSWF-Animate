@@ -29,18 +29,34 @@ declare global {
 			cwd: string;
 			cwd_path: string;
 
-			// Package manifest
+			/**
+			 * Path to helper utilities folder
+			 */
+			binary_path: string;
+
+			os: "WIN" | "MAC";
+
+			/**
+			 * Path to package manifest
+			 */
 			manifest_path: string;
+			/**
+			 * Parsed package manifest
+			 */
 			manifest: InstallManifest;
 
-			// User manifest. Undefined when user already has installed extension
+			/**
+			 * User manifest. Undefined when user already has installed extension
+			 */
 			user_manifest_uri: string;
+			/**
+			 * Parsed manifest that user might have
+			 */
 			user_manifest?: InstallManifest;
 
 			locale: Localization;
 			error_message: string;
 
-			// Path to CEP folder with user extensions
 			system: () => SystemInfo;
 			_system?: SystemInfo;
 		};

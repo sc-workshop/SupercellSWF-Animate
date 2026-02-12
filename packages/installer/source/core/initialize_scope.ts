@@ -1,21 +1,36 @@
 class SystemInfo {
 	constructor() {
-		const info_output_path = `${window.SupercellSWF.cwd}user_data.txt`;
-		const info_executable = `${window.SupercellSWF.cwd}core/bin/windows/info`;
-		const command = `call "${FLfile.uriToPlatformPath(info_executable)}" "${FLfile.uriToPlatformPath(info_output_path)}"`;
-		const status = FLfile.runCommandLine(command);
-		if (!status) {
-			fl.trace("Failed to get system info!");
+		const context = window.SupercellSWF;
+		const [os, _version] = fl.version.split(" ");
+
+		if (os == "WIN") {
+			const info_output_path = `${window.SupercellSWF.cwd}user_data.txt`;
+			const info_executable = `${context.binary_path}/info`;
+			const command = `call "${FLfile.uriToPlatformPath(info_executable)}" "${FLfile.uriToPlatformPath(info_output_path)}"`;
+			const status = FLfile.runCommandLine(command);
+			if (!status) {
+				fl.trace("Failed to get system info!");
+			}
+
+			const data = FLfile.read(info_output_path);
+			const [cep_path, cpu_features] = data.match(/[^\r\n]+/g);
+
+			this.install_path = cep_path.replace(/\\/g, "\\\\");
+			this.cpu_features = cpu_features.split(",");
+		} else {
+			this.install_path = "$HOME/Library/Application Support/Adobe/CEP/"
 		}
-
-		const data = FLfile.read(info_output_path);
-		const [cep_path, cpu_features] = data.match(/[^\r\n]+/g);
-
-		this.install_path = cep_path.replace(/\\/g, "\\\\");
-		this.cpu_features = cpu_features.split(",");
 	}
 
+	/**
+	 * Path to CEP extensions (User scope)
+	 */
 	public install_path: string = "";
+
+	/**
+	 * Current system cpu supported instruction set
+	 * Windows feature only
+	 */
 	public cpu_features: string[] = [];
 }
 
@@ -51,15 +66,16 @@ class Localization {
 		error_message: "",
 	};
 
-	const [os, _version] = fl.version.split(" ");
-	if (os !== "WIN") {
-		window.SupercellSWF.error_message = "Unsupported OS";
-	}
-
 	// Initialize polyfills
 	fl.runScript(`${window.SupercellSWF.cwd}core/polyfill/string.jsfl`);
 	fl.runScript(`${window.SupercellSWF.cwd}core/polyfill/array.jsfl`);
 	fl.runScript(`${window.SupercellSWF.cwd}core/polyfill/JSON.jsfl`);
+
+	const [os, _version] = fl.version.split(" ");
+	if (os !== "WIN" && os !== "MAC") {
+		window.SupercellSWF.error_message = "Unsupported OS";
+		return;
+	}
 
 	// Reading Manifest
 	window.SupercellSWF.manifest_path = `${window.SupercellSWF.cwd}manifest.json`;
@@ -75,6 +91,9 @@ class Localization {
 
 	// Localization Init
 	window.SupercellSWF.locale = new Localization();
+
+	window.SupercellSWF.binary_path = `${window.SupercellSWF.cwd}bin/`;
+	window.SupercellSWF.os = os;
 
 	window.SupercellSWF.system = () => {
 		if (!window.SupercellSWF._system) {

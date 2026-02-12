@@ -8,3 +8,5 @@ packages/plugin/include/PluginConfiguration.h
 *.p12
 *.zxp
 .DS_Store
+*.sc
+RECOVER_*

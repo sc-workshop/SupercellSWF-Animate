@@ -14,6 +14,17 @@ export const config: ConfigInterface = {
 		},
 	},
 	extensions: {
+		Plugin: {
+			type: "native",
+			root: "./packages/plugin",
+			path: "./fcm.xml",
+			useFeatureSets: true,
+			ui: {
+				//name: "SC Plugin",
+				type: "ModalDialog",
+				size: { width: 1, height: 1 },
+			},
+		},
 		PublishSettings: {
 			type: "extension",
 			parent: "Plugin",
@@ -27,17 +38,6 @@ export const config: ConfigInterface = {
 				//name: "SCSWF Publisher",
 				type: "ModalDialog",
 				size: { width: 630, height: 800 },
-			},
-		},
-		Plugin: {
-			type: "native",
-			root: "./packages/plugin",
-			path: "./fcm.xml",
-			useFeatureSets: true,
-			ui: {
-				//name: "SC Plugin",
-				type: "ModalDialog",
-				size: { width: 1, height: 1 },
 			},
 		},
 		/*ExportNameTransfer:
