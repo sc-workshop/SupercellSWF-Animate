@@ -71,7 +71,7 @@ namespace sc::Adobe {
 		m_app = new PluginWindowApp();
 		wxApp::SetInstance(m_app);
 
-#if defined(__APPLE_)
+#if defined(__APPLE__)
 		m_app->sm_isEmbedded = true;
 #endif
 	}
