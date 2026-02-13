@@ -2,9 +2,11 @@ class SystemInfo {
 	constructor() {
 		const context = window.SupercellSWF;
 		const [os, _version] = fl.version.split(" ");
+		const info_output_path = `${window.SupercellSWF.cwd}user_data.txt`;
+		if (FLfile.exists(info_output_path))
+			FLfile.remove(info_output_path);
 
 		if (os == "WIN") {
-			const info_output_path = `${window.SupercellSWF.cwd}user_data.txt`;
 			const info_executable = `${context.binary_path}/info`;
 			const command = `call "${FLfile.uriToPlatformPath(info_executable)}" "${FLfile.uriToPlatformPath(info_output_path)}"`;
 			const status = FLfile.runCommandLine(command);
@@ -18,7 +20,14 @@ class SystemInfo {
 			this.install_path = cep_path.replace(/\\/g, "\\\\");
 			this.cpu_features = cpu_features.split(",");
 		} else {
-			this.install_path = "$HOME/Library/Application Support/Adobe/CEP/"
+			// We need to get full path to extensions folder in order to make URI conversions work properly
+			const command = `echo $HOME/Library/Application Support/Adobe/CEP/ >> "${FLfile.uriToPlatformPath(info_output_path)}"`;
+			const status = FLfile.runCommandLine(command);
+			if (!status) {
+				fl.trace("Failed to get system info!");
+			}
+
+			this.install_path = FLfile.read(info_output_path);
 		}
 	}
 

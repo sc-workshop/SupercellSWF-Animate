@@ -2,11 +2,7 @@ function install(extension: Extension) {
 	const context = window.SupercellSWF;
 	const system = context.system();
 
-	const exe_extension = context.os == "WIN" ? ".exe" : "";
-	const runner = context.os == "WIN" ? "call " : "";
-
 	const package_path = context.cwd + extension.path;
-	const archiver_bin = `${context.binary_path}7z${exe_extension}`;
 	const unpack_log = `${window.SupercellSWF.cwd}unpack_log.txt`;
 
 	const extensions_folder = `${FLfile.platformPathToURI(system.install_path)}extensions/`;
@@ -16,7 +12,15 @@ function install(extension: Extension) {
 	}
 
 	FLfile.createFolder(destination_folder);
-	const command = `${runner}"${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}"`;
+
+	let command;
+	if (context.os == "WIN") {
+		const archiver_bin = `${context.binary_path}7z.exe`;
+		command = `call "${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" > "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
+	} else if (context.os == "MAC") {
+		command = `ditto -x -k "${FLfile.uriToPlatformPath(package_path)}" "${FLfile.uriToPlatformPath(destination_folder)}" > "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
+	}
+
 	const status = FLfile.runCommandLine(command);
 	if (!status) {
 		fl.trace(`Failed to unpack ${extension.path}`);
