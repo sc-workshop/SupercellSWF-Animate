@@ -29,6 +29,8 @@ class SystemInfo {
 
 			this.install_path = FLfile.read(info_output_path);
 		}
+
+		this.install_path = this.install_path.replace(/[\r\n]/g, "");
 	}
 
 	/**
