@@ -13,12 +13,12 @@ function install(extension: Extension) {
 
 	FLfile.createFolder(destination_folder);
 
-	let command;
+	let command: string;
 	if (context.os == "WIN") {
 		const archiver_bin = `${context.binary_path}7z.exe`;
-		command = `call "${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" > "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
+		command = `call "${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
 	} else if (context.os == "MAC") {
-		command = `ditto -x -k "${FLfile.uriToPlatformPath(package_path)}" "${FLfile.uriToPlatformPath(destination_folder)}" > "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
+		command = `ditto -x -k "${FLfile.uriToPlatformPath(package_path)}" "${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
 	}
 
 	const status = FLfile.runCommandLine(command);
@@ -60,9 +60,7 @@ function install(extension: Extension) {
 					`Installed "${extension.name}" extension with "${extension.variant_name}" variant`,
 				);
 			} else {
-				fl.trace(
-					`Installed "${extension.name}" extension with`,
-				);
+				fl.trace(`Installed "${extension.name}" extension with`);
 			}
 		}
 
