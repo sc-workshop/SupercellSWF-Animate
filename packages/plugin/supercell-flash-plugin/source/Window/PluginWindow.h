@@ -48,7 +48,7 @@ namespace sc::Adobe {
 
 		std::condition_variable m_window_cv;
 		std::mutex m_window_mut;
-        bool m_ready;
+        bool m_ready = false;
 
 		uint32_t m_elements_counter = 0;
 

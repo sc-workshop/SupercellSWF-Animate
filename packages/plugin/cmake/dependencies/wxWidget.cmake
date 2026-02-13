@@ -29,9 +29,9 @@ find_package(wxWidgets QUIET COMPONENTS core base)
 if (wxWidgets_FOUND)
     include(${wxWidgets_USE_FILE})
 
-    add_library(wxWidgets INTERFACE)
+    add_library(wxWidgetsCore INTERFACE)
     target_link_libraries(
-        wxWidgets INTERFACE
+        wxWidgetsCore INTERFACE
         ${wxWidgets_LIBRARIES}
     )
 else()
@@ -42,11 +42,14 @@ else()
         FIND_PACKAGE_ARGS
     )
     FetchContent_MakeAvailable(wxWidgets)
-
-    add_library(wxWidgets INTERFACE)
-    target_link_libraries(
-        wxWidgets INTERFACE
-        wx::core wx::base 
-    )
+	
+    message(STATUS "Using FetchContent to build wxWidgets")
+	if (NOT TARGET wxWidgetsCore)
+		add_library(wxWidgetsCore INTERFACE)
+		target_link_libraries(
+			wxWidgetsCore INTERFACE
+			wx::core wx::base 
+		)
+	endif()
 endif()
 

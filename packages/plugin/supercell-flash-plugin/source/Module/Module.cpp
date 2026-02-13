@@ -69,8 +69,11 @@ namespace sc::Adobe {
 	void SCPlugin::InitializeWindow()
 	{
 		m_app = new PluginWindowApp();
-        m_app->sm_isEmbedded = true;
 		wxApp::SetInstance(m_app);
+
+#if defined(__APPLE_)
+		m_app->sm_isEmbedded = true;
+#endif
 	}
 
 	void SCPlugin::DestroyWindow()

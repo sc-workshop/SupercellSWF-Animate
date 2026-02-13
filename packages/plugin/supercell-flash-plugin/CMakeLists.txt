@@ -22,7 +22,7 @@ set_target_properties(${TARGET} PROPERTIES
 
 target_link_libraries(${TARGET} PUBLIC 
     wk::atlasGenerator # Texture generate
-    wxWidgets          # Status bar
+    wxWidgetsCore      # Status bar
     supercell::flash   # File writer
     blend2d::blend2d   # Vector rasterizer
     spdlog::spdlog     # Logging

@@ -1,11 +1,7 @@
-#pragma once
-
-#include <wx/wx.h>
-#include <string>
-#include "core/string/string_converter.h"
+#include "Utilities.h"
 
 namespace sc::Adobe {
-    static wxString CreateWxString(const std::u16string& str) {
+    wxString CreateWxString(const std::u16string& str) {
 #if defined(_WINDOWS)
         // On Windows wchar is already 2 bytes long, so we can just interprete pointer
         return wxString((const wchar_t*)str.c_str());

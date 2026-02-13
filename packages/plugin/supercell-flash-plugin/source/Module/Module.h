@@ -11,9 +11,11 @@
 #include "Module/Version.h"
 #include "Window/PluginWindowApp.h"
 
+#pragma warning(push, 0) 
 #include <fmt/xchar.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
+#pragma warning(pop)
 
 #include "core/memory/ref.h"
 #include "core/parallel/bs_thread_pool.hpp"

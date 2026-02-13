@@ -217,6 +217,8 @@ namespace sc {
                 context.Window()->readyToExit = true;
                 return FCM_EXPORT_FAILED;
             }
+
+			return FCM_SUCCESS;
         }
 
 		void SCPublisher::Publish(const SCConfig& /*config*/)
