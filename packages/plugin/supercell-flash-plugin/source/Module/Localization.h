@@ -6,6 +6,9 @@
 
 #include <filesystem>
 
+#include <fmt/xchar.h>
+#include <fmt/format.h>
+
 #include "nlohmann/json.hpp"
 using namespace nlohmann;
 
@@ -23,40 +26,23 @@ namespace sc {
 			std::string GetUTF(const std::string& TID);
 
 		public:
+            template <class ... Args>
+            std::string GetU8String(const std::string& TID, Args ... args)
+            {
+                json textValue = m_locale[TID];
+                if (!textValue.is_string()) return TID;
+                
+                std::string text = textValue;
+                std::string formatted = fmt::format(fmt::runtime(text), args...);
+
+                return formatted;
+            }
+            
 			template <class ... Args>
 			std::u16string GetString(const std::string& TID, Args ... args)
 			{
-                json textValue = m_locale[TID];
-				if (!textValue.is_string()) return wk::StringConverter::ToUTF16(TID);
-                
-                std::string text = textValue;
-				std::u16string format = wk::StringConverter::ToUTF16(text);
-
-				return Localization::Format(format, args...);
+                return wk::StringConverter::ToUTF16(GetU8String(TID, std::forward<Args>(args)...));
 			}
-#if defined(_WINDOWS)
-			template <class ... Args>
-			static std::u16string Format(const std::u16string& message, Args ... args)
-			{
-				const size_t bufferSize = 1024;
-				wchar_t buffer[bufferSize] = { 0 };
-				std::swprintf(buffer, bufferSize, reinterpret_cast<const wchar_t*>(message.c_str()), args...);
-
-				return std::u16string(reinterpret_cast<const char16_t*>(buffer));
-			}
-#elif defined(__APPLE__)
-            template <class ... Args>
-            static std::u16string Format(const std::u16string& message, Args ... args)
-            {
-                std::u32string converted = wk::StringConverter::ToUTF32(message);
-                
-                const size_t bufferSize = 1024;
-                wchar_t buffer[bufferSize] = { 0 };
-                std::swprintf(buffer, bufferSize, reinterpret_cast<const wchar_t*>(converted.c_str()), args...);
-
-                return wk::StringConverter::ToUTF16(std::u32string(reinterpret_cast<const char32_t*>(buffer)));
-            }
-#endif
 		};
 	}
 }

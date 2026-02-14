@@ -22,14 +22,14 @@ namespace sc::Adobe {
 		void DestroyStatusBar(StatusComponent* bar);
 
 	public:
-		PluginWindow(const wxString& title);
+		PluginWindow(wxString title);
 
 	private:
 		PluginWindow(PluginWindow&) = delete;
 
 	public:
         void Wait();
-		void ThrowException(const wxString& what);
+		void ThrowException(wxString what);
 
 	public:
 		bool aboutToExit = false;

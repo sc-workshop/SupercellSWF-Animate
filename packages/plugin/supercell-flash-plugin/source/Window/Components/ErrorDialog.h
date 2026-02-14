@@ -8,7 +8,7 @@ namespace sc {
         class ErrorDialog : public wxDialog
         {
         public:
-            ErrorDialog(wxWindow* parent, const wxString& errorMessage);
+            ErrorDialog(wxWindow* parent, wxString errorMessage);
         };
     }
 }

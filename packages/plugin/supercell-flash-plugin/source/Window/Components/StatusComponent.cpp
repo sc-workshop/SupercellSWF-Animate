@@ -28,10 +28,14 @@ namespace sc::Adobe {
 
     void StatusComponent::SetStatusLabel(const std::u16string& label) {
         m_label->SetLabel(CreateWxString(label));
+        m_label->Fit();
+        Layout();
     }
 
     void StatusComponent::SetStatus(const std::u16string& status) {
         m_status->SetLabel(CreateWxString(status));
+        m_status->Fit();
+        Layout();
     }
 
     void StatusComponent::SetRange(int range) {

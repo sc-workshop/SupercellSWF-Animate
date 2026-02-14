@@ -280,7 +280,7 @@ namespace sc {
 			SCPlugin& context = SCPlugin::Instance();
 
 			if (swf.exports.empty())
-				throw SCPluginException("TID_SWF_NO_EXPORTS", config.exportToExternalPath.wstring().c_str());
+				throw SCPluginException("TID_SWF_NO_EXPORTS", config.exportToExternalPath.string());
 
 			enum FinalizeStep : uint8_t
 			{
@@ -321,7 +321,7 @@ namespace sc {
 			status->SetProgress(SWF_SAVING);
 			status->SetStatusLabel(
 				context.locale.GetString(
-					"TID_FILE_SAVE", basename.u16string().c_str()
+					"TID_FILE_SAVE", basename.string()
 				)
 			);
 

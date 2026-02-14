@@ -3,8 +3,8 @@
 
 namespace sc {
 	namespace Adobe {
-		ErrorDialog::ErrorDialog(wxWindow* parent, const wxString& errorMessage)
-			: wxDialog(parent, wxID_ANY, "Error")
+		ErrorDialog::ErrorDialog(wxWindow* parent, wxString errorMessage)
+			: wxDialog(parent, wxID_ANY, "Error", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP)
 		{
 			SetBackgroundColour(wxColor(0x333333));
 

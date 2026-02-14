@@ -3,6 +3,10 @@
 #include "Module/Module.h"
 #include "core/exception/exception.h"
 
+#if defined(__APPLE__) && WK_DEBUG
+#include <execinfo.h>
+#endif
+
 namespace sc
 {
 	namespace Adobe
@@ -25,6 +29,17 @@ namespace sc
 
 				context.logger->error("Called SCPluginException");
 				context.logger->error("	Message: {}", m_message);
+#if defined(__APPLE__) && WK_DEBUG
+                void* callstack[128];
+                int frames = backtrace(callstack, 128);
+
+                char** symbols = backtrace_symbols(callstack, frames);
+
+                for (int i = 0; i < frames; ++i)
+                    context.logger->error("    Stack: {}", symbols[i]);
+
+                free(symbols);
+#endif
 			};
 
 			SCPluginException(const std::u16string& reason);

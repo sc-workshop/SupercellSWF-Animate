@@ -159,10 +159,10 @@ namespace sc::Adobe {
 			if (exception.reason() == AtlasGenerator::PackagingException::Reason::Unknown)
 			{
 				throw SCPluginException(
-					Localization::Format(
-						u"[AtlasGenerator] %ls",
-						context.locale.GetString("TID_SWF_ATLAS_UNKNOWN").c_str()
-					)
+					wk::StringConverter::ToUTF16(fmt::format(
+                         "[AtlasGenerator] {}",
+                         context.locale.GetU8String("TID_SWF_ATLAS_UNKNOWN")
+                     ))
 				);
 			}
 
@@ -208,9 +208,9 @@ namespace sc::Adobe {
 
 		FINALIZE_THROW:
 			throw SCPluginException(
-				Localization::Format(
-					u"[AtlasGenerator] %ls %ls", reason.c_str(), symbol_name.c_str()
-				)
+				wk::StringConverter::ToUTF16(fmt::format(
+                     "[AtlasGenerator] {} \"{}\"", wk::StringConverter::ToUTF8(reason), wk::StringConverter::ToUTF8(symbol_name)
+                 ))
 			);
 		}
 

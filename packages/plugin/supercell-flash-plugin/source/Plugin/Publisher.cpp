@@ -56,7 +56,7 @@ namespace sc {
 					}
 					else
 					{
-						throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.wstring().c_str());
+						throw SCPluginException("TID_SWF_MISSING_EXTERNAL_FILE", config.exportToExternalPath.string());
 					}
 				}
 			}
@@ -70,7 +70,7 @@ namespace sc {
 				publishStatus->SetStatusLabel(
 					context.locale.GetString(
 						"TID_WINDOW_TITLE",
-						document_path.filename().u16string().c_str()
+						document_path.filename().string()
 					)
 				);
 
@@ -190,7 +190,7 @@ namespace sc {
             }
             catch (const FCM::FCMPluginException& exception)
             {
-                std::string reason;
+                wxString reason;
                 {
                     std::stringstream message;
                     auto& symbol = exception.Symbol();
@@ -199,7 +199,7 @@ namespace sc {
                         message << " [" << FCM::Locale::ToUtf8(symbol.name) << "] ";
                     }
                     message << exception.what();
-                    reason = message.str();
+                    reason = wxString::FromUTF8(message.str());
                 }
 
                 context.Window()->ThrowException(reason);
@@ -207,7 +207,7 @@ namespace sc {
                 return FCM_EXPORT_FAILED;
             }
             catch (const std::exception& exception) {
-                context.Window()->ThrowException(exception.what());
+                context.Window()->ThrowException(wxString::FromUTF8(exception.what()));
                 context.Window()->readyToExit = true;
                 return FCM_EXPORT_FAILED;
             }

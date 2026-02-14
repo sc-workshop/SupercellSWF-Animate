@@ -12,7 +12,7 @@ namespace sc::Adobe {
 		SC_EVT_DESTROY_PROGRESS(wxID_ANY, PluginWindow::OnProgressDestroy)
     wxEND_EVENT_TABLE();
 
-	PluginWindow::PluginWindow(const wxString& title)
+	PluginWindow::PluginWindow(wxString title)
 		: wxDialog(
 			nullptr,
 			wxID_ANY,
@@ -91,7 +91,7 @@ namespace sc::Adobe {
 		m_elements_counter--;
 	}
 
-	void PluginWindow::ThrowException(const wxString& what) {
+	void PluginWindow::ThrowException(wxString what) {
 		wxCommandEvent* exceptionEvent = new wxCommandEvent(WX_EVT_ERROR_RAISE);
 		exceptionEvent->SetString(what);
 		exceptionEvent->SetEventObject(this);
