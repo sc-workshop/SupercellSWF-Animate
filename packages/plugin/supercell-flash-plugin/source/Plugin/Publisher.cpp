@@ -129,7 +129,7 @@ namespace sc {
 			);
 
 			if (!FCM_SUCCESS_CODE(status) || !document) {
-				throw SCPluginException("TID_LOAD_EXTERNAL_DOCUMENT_FAILED", path.c_str());
+				throw SCPluginException("TID_LOAD_EXTERNAL_DOCUMENT_FAILED", path.string());
 			}
 
 			FCM::FCMGUID docId;
@@ -137,7 +137,7 @@ namespace sc {
 
 			if (!FCM_SUCCESS_CODE(status) || docId != CLSID_DocType) {
 				service->CloseDocument(document);
-				throw SCPluginException("TID_EXTERNAL_DOCUMENT_WRONG_TYPE", path.c_str());
+				throw SCPluginException("TID_EXTERNAL_DOCUMENT_WRONG_TYPE", path.string());
 			}
 		}
 
@@ -271,13 +271,13 @@ namespace sc {
 
 				for (const auto& path : config.documentsPaths) {
 					if (!VerifyDocument(path))
-						throw SCPluginException("TID_INVALID_EXTERNAL_DOCUMENT", path.c_str());
+						throw SCPluginException("TID_INVALID_EXTERNAL_DOCUMENT", path.string());
 				}
 
-				for (auto& path : config.documentsPaths) {
+				for (auto& path : config.documentsPaths) { 
 					LoadDocument(path, m_loaded_documents.emplace_back());
 
-					documentProgress->SetStatus(fs::path(path).filename().u16string().c_str());
+					documentProgress->SetStatus(fs::path(path).filename().u16string());
 				}
 
 				context.Window()->DestroyStatusBar(documentProgress);
