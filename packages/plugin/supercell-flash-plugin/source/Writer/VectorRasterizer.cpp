@@ -144,9 +144,12 @@ namespace sc::Adobe {
 
         ReleaseCanvas();
         image = std::move(m_image);
-        matrix.tx = shape_offset.x;
-        matrix.ty = shape_offset.y;
+        matrix.a = 1.f / resolution;
+        matrix.d = 1.f / resolution;
+        matrix.tx = shape_offset.x / matrix.a;
+        matrix.ty = shape_offset.y / matrix.d;
 
+        m_queue.clear();
         return true;
     }
 

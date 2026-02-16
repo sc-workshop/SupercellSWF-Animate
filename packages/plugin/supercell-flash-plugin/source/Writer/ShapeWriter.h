@@ -16,6 +16,7 @@ namespace sc::Adobe {
             m_writer(writer), m_rasterizer(writer) {};
         virtual ~SCShapeWriter() = default;
 
+        /// @brief 9Slice shapes resolution value
         static inline const float RasterizationResolution = 2.f;
 
     public:
@@ -30,6 +31,10 @@ namespace sc::Adobe {
         virtual std::size_t GenerateHash() const;
 
     public:
+        void AddContourRegion(const Animate::Publisher::FilledElementPath& contour,
+                                   const Animate::DOM::Utils::MATRIX2D& matrix,
+                                   const Animate::DOM::Utils::COLOR& color);
+
         void AddTriangulatedRegion(const Animate::Publisher::FilledElementPath& contour,
                                    const std::vector<Animate::Publisher::FilledElementPath>& holes,
                                    const Animate::DOM::Utils::MATRIX2D& matrix,
@@ -46,6 +51,11 @@ namespace sc::Adobe {
     private:
         SCWriter& m_writer;
         Animate::Publisher::StaticElementsGroup m_group;
+
+        // Queue of vector shapes rasterization
         VectorRasterizer m_rasterizer;
+
+        // Current 9slice shape guides
+        std::optional<VectorBound> m_guides;
     };
 }

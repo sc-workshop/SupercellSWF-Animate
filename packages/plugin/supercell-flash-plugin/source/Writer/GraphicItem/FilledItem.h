@@ -23,7 +23,7 @@ namespace sc
 			}
 
 		public:
-			const std::vector<Point> m_contour;
+			std::vector<Point> m_contour;
 		};
 
 		// Class that represents simple filled contour

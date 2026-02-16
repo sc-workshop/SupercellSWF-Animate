@@ -2,6 +2,7 @@
 
 #include "Module/Module.h"
 #include "Writer.h"
+#include "atlas_generator/Item/Item.h"
 #include "core/hashing/hash.h"
 #include "core/hashing/ncrypto/xxhash.h"
 
@@ -23,6 +24,56 @@ namespace sc::Adobe {
 
         for (const auto& region : shape.stroke) {
             AddFilledShapeRegion(region, shape.Transformation());
+        }
+    }
+
+    void SCShapeWriter::AddContourRegion(const Animate::Publisher::FilledElementPath& path,
+                                         const Animate::DOM::Utils::MATRIX2D& matrix,
+                                         const Animate::DOM::Utils::COLOR& color) {
+        std::vector<Point2D> points;
+        path.Rasterize(points);
+
+        std::vector<FilledItemContour> contour;
+        if (m_guides) {
+            using namespace wk::AtlasGenerator;
+            contour.reserve(9);
+
+            // Pretransform vertices
+            Container<VertexF> vertices;
+            for (const Point2D& point : points) {
+                // Also need to multiply by rasterization resolotion for guides
+                vertices.emplace_back((matrix.a * point.x + matrix.b * point.y + matrix.tx) *
+                                          SCShapeWriter::RasterizationResolution,
+                                      (matrix.c * point.x + matrix.d * point.y + matrix.ty) *
+                                          SCShapeWriter::RasterizationResolution,
+                                      0,
+                                      0);
+            }
+
+            // Generate 9slice contours
+            Container<Container<wk::AtlasGenerator::VertexF>> regions;
+            Item::Generate9Slice(SlicedItem::RoundScalingGrid(*m_guides), regions, vertices);
+
+            for (auto& region : regions) {
+                std::vector<Point2D> contour_points;
+                for (auto& point : region) {
+                    contour_points.emplace_back(point.xy.x, point.xy.y);
+                }
+
+                contour.emplace_back(contour_points);
+            }
+
+            Animate::DOM::Utils::MATRIX2D regions_matrix = {1.0f / SCShapeWriter::RasterizationResolution,
+                                                            0.f,
+                                                            0.f,
+                                                            1.0f / SCShapeWriter::RasterizationResolution,
+                                                            0.f,
+                                                            0.f};
+
+            m_group.AddElement<FilledItem>(m_symbol, contour, color, regions_matrix);
+        } else {
+            contour = {FilledItemContour(points)};
+            m_group.AddElement<FilledItem>(m_symbol, contour, color, matrix);
         }
     }
 
@@ -105,13 +156,27 @@ namespace sc::Adobe {
         if (m_rasterizer.Empty())
             return;
 
-        wk::PointF offset;
+        bool is_9slice = m_guides.has_value();
+
         wk::RawImageRef sprite;
         VectorMatrix matrix;
-        if (!m_rasterizer.GetImage(sprite, matrix, 1.0f))
+        if (!m_rasterizer.GetImage(sprite, matrix, is_9slice ? SCShapeWriter::RasterizationResolution : 1.0f))
             return;
 
-        m_group.AddElement<BitmapItem>(m_symbol, sprite, matrix, true);
+        if (is_9slice) {
+            // Extracting translation values for regions generating
+            wk::PointF offset;
+            offset.x = matrix.tx;
+            offset.y = matrix.ty;
+
+            // Null translation values since get_9slice returns already translated vertices
+            matrix.tx = 0;
+            matrix.ty = 0;
+
+            m_group.AddElement<SlicedItem>(m_symbol, sprite, matrix, offset, m_guides.value());
+        } else {
+            m_group.AddElement<BitmapItem>(m_symbol, sprite, matrix, true);
+        }
     }
 
     bool SCShapeWriter::IsComplexShapeRegion(const FilledElementRegion& region) {
@@ -175,11 +240,7 @@ namespace sc::Adobe {
         // we have guarantee that fill style is Solid Color
         const auto& fill = std::get<FilledElementRegion::SolidFill>(region.style);
         if (is_contour) {
-            std::vector<Point2D> points;
-            region.contour.Rasterize(points);
-
-            std::vector<FilledItemContour> contour = {FilledItemContour(points)};
-            m_group.AddElement<FilledItem>(m_symbol, contour, fill.color, matrix);
+            AddContourRegion(region.contour, matrix, fill.color);
         } else if (should_triangulate) {
             AddTriangulatedRegion(region.contour, region.holes, matrix, fill.color);
         }
@@ -190,53 +251,23 @@ namespace sc::Adobe {
         // So we need to scale their resolution by 2
         // But xy coordinates must be remains the same
 
-        // So first we create a bigger guide
-
-        /*const float resolution = SCShapeWriter::RasterizationResolution;
+        const float resolution = SCShapeWriter::RasterizationResolution;
         auto guides = slice.Guides();
-        Animate::DOM::Utils::RECT element_guides = {{guides.topLeft.x * resolution, guides.topLeft.y * resolution},
-                                                    {guides.bottomRight.x * resolution,
-                                                     guides.bottomRight.y * resolution}};
 
-        Animate::DOM::Utils::RECT bound {{std::numeric_limits<float>::min(), std::numeric_limits<float>::min()},
-                                         {std::numeric_limits<float>::max(), std::numeric_limits<float>::max()}};
+        // Create a scaled guide to cut final sprite
+        m_guides = {{guides.topLeft.x * resolution, guides.topLeft.y * resolution},
+                    {guides.bottomRight.x * resolution, guides.bottomRight.y * resolution}};
 
-        // Then create copy of elements
-        // And make their points bigger
-        std::vector<FilledElement> transformed_elements;
         const auto& elements = slice.Elements();
         for (size_t i = 0; elements.Size() > i; i++) {
             StaticElement& element = elements[i];
-            if (!element.IsFilledArea())
-                continue;
 
-            FilledElement& transformed_element = transformed_elements.emplace_back((const FilledElement&) element);
-            transformed_element.Transform(element.Transformation());
-
-            transformed_element.Transform({resolution, 0.0f, 0.0f, resolution, 0.0f, 0.0f});
-
-            bound = bound + transformed_element.Bound();
-        }
-
-        wk::Point offset(bound.bottomRight.x, bound.bottomRight.y);
-        SCShapeWriter::RoundDomRectangle(bound);
-        wk::RawImageRef sprite = wk::CreateRef<wk::RawImage>(std::ceil(bound.topLeft.x - offset.x),
-                                                             std::ceil(bound.topLeft.y - offset.y),
-                                                             wk::Image::PixelDepth::RGBA8);
-
-        for (const FilledElement& element : transformed_elements) {
-            for (const FilledElementRegion region : element.fill) {
-                if (!IsValidFilledShapeRegion(region))
-                    continue;
-
-                DrawRegionTo(sprite, region, offset);
+            if (element.IsFilledArea()) {
+                AddFilledElement((FilledElement&) element);
+            } else if (element.IsSprite()) {
+                AddGraphic((BitmapElement&) element);
             }
         }
-
-        // Scale back
-        const Animate::DOM::Utils::MATRIX2D transform = {1.f / resolution, 0.0f, 0.0f, 1.f / resolution, 0, 0};
-
-        m_group.AddElement<SlicedItem>(m_symbol, sprite, transform, offset, element_guides);*/
     }
 
     std::size_t SCShapeWriter::GenerateHash() const {
