@@ -77,7 +77,7 @@
 		"properties": [
 			{
 				"name": "GradientFlow",
-				"supported": false,
+				"supported": true,
 				"default": "Extend",
 				"values": [
 					{
@@ -109,21 +109,21 @@
 					},
 					{
 						"name": "LinearGradientFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "RadialGradientFill",
-						"supported": false
+						"supported": true
 					},
 					{
 						"name": "BitmapFill",
-						"supported": false
+						"supported": true
 					}
 				]
 			},
 			{
 				"name": "LinearRGB",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			}
 		]
