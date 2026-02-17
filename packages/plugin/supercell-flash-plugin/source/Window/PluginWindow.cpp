@@ -1,7 +1,7 @@
-#include "Window/PluginWindow.h"
-
+// clang-format off
 #include "Module/Module.h"
-
+#include "Window/PluginWindow.h"
+// clang-format on
 #ifdef __WXMSW__
     #include <wx/msw/msvcrt.h>
 #endif

@@ -1,6 +1,7 @@
-#include "Window/PluginWindowApp.h"
-
+// clang-format off
 #include "Module/Module.h"
+#include "Window/PluginWindowApp.h"
+// clang-format on
 
 #include <random>
 
