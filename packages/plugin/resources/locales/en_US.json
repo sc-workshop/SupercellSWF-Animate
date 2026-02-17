@@ -18,7 +18,7 @@
 	// Exceptions
 	"TID_FAILED_TO_EXPORT_SYMBOL": "Failed to export symbol \"{}\" for some unknown internal reason",
 	"TID_UNKNOWN_FILL_STYLE_TYPE": "Unknown or unsupported type of Filled Shape in \"{}\"",
-	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Make sure symbol does not have Graphic or Gradient fills",
+	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Unknown fill type",
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "External file at path \"{}\" does not exist",
 	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Make sure path is entered correctly and file is readable, and then try again",
@@ -26,5 +26,9 @@
 	"TID_SWF_ATLAS_INVALID_POLYGON": "Failed to generate polygon in",
 	"TID_SWF_ATLAS_TOO_BIG_IMAGE": "Too big image in",
 	"TID_SWF_ATLAS_UNKNOWN": "Unknown exception",
-	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Unknown symbol"
+	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Unknown symbol",
+	// External documents
+	"TID_LABEL_DOCUMENT_LOADING": "Loading external documents...",
+	"TID_EXTERNAL_DOCUMENT_WRONG_TYPE": "External document has incorrect type! Make sure that \"{}\" has SupercellSWF type",
+	"TID_LOAD_EXTERNAL_DOCUMENT_FAILED": "Failed to load external document: \"{}\". Document may be damaged or unsupported."
 }

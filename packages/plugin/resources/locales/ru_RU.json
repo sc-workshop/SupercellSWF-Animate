@@ -18,7 +18,7 @@
 	// Exceptions
 	"TID_FAILED_TO_EXPORT_SYMBOL": "Не удалось экспортировать символ \"{}\" из-за неизвестной ошибки",
 	"TID_UNKNOWN_FILL_STYLE_TYPE": "Неизвестный или не поддерживаемый тип заливки региона в символе \"{}\"",
-	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Убедитесь что символ не имеет Графических или Градиентной заливок",
+	"TID_UNKNOWN_FILL_STYLE_TYPE_description": "Неизвестный тип заливки",
 	// SWF Exceptions
 	"TID_SWF_MISSING_EXTERNAL_FILE": "Внешний файл по пути \"{}\" не существует",
 	"TID_SWF_MISSING_EXTERNAL_FILE_description": "Убедитесь что путь введён правильно и файл доступен для чтения, и затем повторите попытку",
@@ -26,5 +26,9 @@
 	"TID_SWF_ATLAS_INVALID_POLYGON": "Не удалось сгенерировать полигон в",
 	"TID_SWF_ATLAS_TOO_BIG_IMAGE": "Слишком большое изображение в",
 	"TID_SWF_ATLAS_UNKNOWN": "Неизвестная ошибка",
-	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Неизвестном символе"
+	"TID_SWF_ATLAS_UNKNOWN_SYMBOL": "Неизвестном символе",
+	// External document
+	"TID_LABEL_DOCUMENT_LOADING": "Загрузка внешних элементов...",
+	"TID_EXTERNAL_DOCUMENT_WRONG_TYPE": "Внешний документ имеет не корректный тип! Убедитесь что \"{}\" имеет тип SupercellSWF",
+	"TID_LOAD_EXTERNAL_DOCUMENT_FAILED": "Не удалось загрузить внешний документ: \"{}\". Документ может быть поврежден или не поддерживаться."
 }
