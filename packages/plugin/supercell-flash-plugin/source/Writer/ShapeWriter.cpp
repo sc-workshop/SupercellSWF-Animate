@@ -210,6 +210,8 @@ namespace sc::Adobe {
             }
         } else if (region.type == FilledElementRegion::ShapeType::Bitmap) {
             return true;
+        } else if (region.type == FilledElementRegion::ShapeType::GradientColor) {
+            return true;
         } else {
             return false;
         }

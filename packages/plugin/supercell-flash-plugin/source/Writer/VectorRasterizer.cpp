@@ -50,7 +50,6 @@ namespace sc::Adobe {
     }
 
     void VectorRasterizer::CreatePath(const Animate::Publisher::FilledElementPath& path,
-                                      wk::PointF offset,
                                       BLPath& contour,
                                       float resolution) {
         uint8_t inited = false;
@@ -62,38 +61,33 @@ namespace sc::Adobe {
                     const auto& seg = (const VectorLineSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x + offset.x, seg.begin.y + offset.y);
+                        contour.move_to(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.line_to(seg.end.x + offset.x, seg.end.y + offset.y);
-                }
-
-                break;
+                    contour.line_to(seg.end.x, seg.end.y);
+                } break;
                 case VectorSegment::Type::Cubic: {
                     const auto& seg = (const VectorCubicSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x + offset.x, seg.begin.y + offset.y);
+                        contour.move_to(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.cubic_to(seg.control_l.x + offset.x,
-                                     seg.control_l.y + offset.y,
-                                     seg.control_r.x + offset.x,
-                                     seg.control_r.y + offset.y,
-                                     seg.end.x + offset.x,
-                                     seg.end.y + offset.y);
+                    contour.cubic_to(seg.control_l.x,
+                                     seg.control_l.y,
+                                     seg.control_r.x,
+                                     seg.control_r.y,
+                                     seg.end.x,
+                                     seg.end.y);
                 } break;
                 case VectorSegment::Type::Quad: {
                     const auto& seg = (const VectorQuadSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x + offset.x, seg.begin.y + offset.y);
+                        contour.move_to(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.quad_to(seg.control.x + offset.x,
-                                    seg.control.y + offset.y,
-                                    seg.end.x + offset.x,
-                                    seg.end.y + offset.y);
+                    contour.quad_to(seg.control.x, seg.control.y, seg.end.x, seg.end.y);
                 } break;
                 default:
                     break;
@@ -175,13 +169,17 @@ namespace sc::Adobe {
     void VectorRasterizer::DrawRegion(const Animate::Publisher::FilledElementRegion& region,
                                       wk::PointF offset,
                                       float resolution) {
+        using namespace Animate::DOM;
         BLResult result = BL_SUCCESS;
         BLPath region_path;
+
+        BLPoint path_origin = {offset.x * resolution, offset.y * resolution};
+        VectorMatrix resolution_matrix = {resolution, 0.f, 0.f, resolution, 0.f, 0.f};
 
         // Add holes paths first
         for (const auto& hole : region.holes) {
             BLPath contour;
-            VectorRasterizer::CreatePath(hole, offset, contour, resolution);
+            VectorRasterizer::CreatePath(hole, contour, resolution);
 
             // Reverse hole for non zero fill rule
             result = region_path.add_path(contour);
@@ -191,15 +189,15 @@ namespace sc::Adobe {
         // Contour drawing
         {
             BLPath contour;
-            VectorRasterizer::CreatePath(region.contour, offset, contour, resolution);
+            VectorRasterizer::CreatePath(region.contour, contour, resolution);
             region_path.add_path(contour);
 
-            
             if (region.type == VectorRegion::ShapeType::SolidColor) {
                 const auto& fill = std::get<VectorRegion::SolidFill>(region.style);
 
                 result =
-                    m_draw.fill_path(region_path,
+                    m_draw.fill_path(path_origin,
+                                     region_path,
                                      BLRgba32(fill.color.blue, fill.color.green, fill.color.red, fill.color.alpha));
             } else if (region.type == VectorRegion::ShapeType::Bitmap) {
                 const auto& fill = std::get<VectorRegion::BitmapFill>(region.style);
@@ -223,14 +221,59 @@ namespace sc::Adobe {
                 matrix.tx += offset.x;
                 matrix.ty += offset.y;
 
-                matrix.a *= resolution;
-                matrix.c *= resolution;
+                matrix = matrix * resolution_matrix;
 
                 BLMatrix2D pattern_matrix {matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty};
                 result = pattern.set_transform(pattern_matrix);
                 bl_assert(result);
 
-                result = m_draw.fill_path(region_path, pattern);
+                result = m_draw.fill_path(path_origin, region_path, pattern);
+            } else if (region.type == VectorRegion::ShapeType::GradientColor) {
+                const auto& fill = std::get<VectorRegion::GradientFill>(region.style);
+
+                BLGradient gradient;
+
+                switch (fill.type) {
+                    case VectorRegion::GradientFill::FillType::Linear:
+                        gradient.create(BLLinearGradientValues(-0x333, 0, 0x333, 0));
+                        break;
+                    case VectorRegion::GradientFill::FillType::Radial:
+                        gradient.create(BLRadialGradientValues(0, 0, fill.focal_point, 0, 0x333, 0));
+                        break;
+                    default:
+                        return;
+                }
+
+                switch (fill.spread) {
+                    case FillStyle::GradientSpread::GRADIENT_SPREAD_EXTEND:
+                        gradient.set_extend_mode(BL_EXTEND_MODE_PAD);
+                        break;
+                    case FillStyle::GradientSpread::GRADIENT_SPREAD_REFLECT:
+                        gradient.set_extend_mode(BL_EXTEND_MODE_REFLECT);
+                        break;
+                    case FillStyle::GradientSpread::GRADIENT_SPREAD_REPEAT:
+                        gradient.set_extend_mode(BL_EXTEND_MODE_REPEAT);
+                        break;
+                    default:
+                        break;
+                }
+
+                for (auto& point : fill.points) {
+                    gradient
+                        .add_stop((double) point.pos / 0xFF,
+                                  BLRgba32(point.color.blue, point.color.green, point.color.red, point.color.alpha));
+                }
+
+                VectorMatrix matrix = fill.matrix;
+                matrix.tx += offset.x;
+                matrix.ty += offset.y;
+                matrix = matrix * resolution_matrix;
+
+                BLMatrix2D pattern_matrix {matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty};
+                result = gradient.set_transform(pattern_matrix);
+                bl_assert(result);
+
+                result = m_draw.fill_path(path_origin, region_path, gradient);
             }
             bl_assert(result);
         }

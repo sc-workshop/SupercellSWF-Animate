@@ -34,7 +34,6 @@ namespace sc::Adobe {
         static void CreateImage(wk::RawImageRef& image, BLImage& result, bool premultiply);
         static void RoundBound(Animate::DOM::Utils::RECT& rect);
         static void CreatePath(const Animate::Publisher::FilledElementPath& path,
-                               wk::PointF offset,
                                BLPath& contour,
                                float resolution = 1.f);
 
