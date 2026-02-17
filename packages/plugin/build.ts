@@ -10,7 +10,7 @@ import {
 	makeLink,
 	progress,
 } from "../../scripts/utils";
-import { getCmakePath } from "../../scripts/tools"
+import { getCmakePath } from "../../scripts/tools";
 import { version } from "./package.json";
 
 if (!isWindows && !isMac) {
@@ -57,25 +57,22 @@ const binaryDirectory = join(
 
 const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
-const MacOSFlags = [
-	"-G Xcode"
-]
+const MacOSFlags = ["-G Xcode"];
 
-const WindowsFlags = [
-	`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`
-]
+const WindowsFlags = [`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`];
 
 const CmakeFlagsList = [
 	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release
 	`${isDev || !isFresh ? "" : "--fresh"}`, // build from fresh for each release build just to make sure that everything will be ok
 	`-DCMAKE_POLICY_VERSION_MINIMUM=3.5`,
 	isMac ? MacOSFlags : undefined,
-	isWindows ? WindowsFlags : undefined
+	isWindows ? WindowsFlags : undefined,
 ];
 
-const CmakeFlags = CmakeFlagsList
-	.flat()
-	.filter((value) => { return value !== undefined; })
+const CmakeFlags = CmakeFlagsList.flat()
+	.filter((value) => {
+		return value !== undefined;
+	})
 	.join(" ");
 
 function exec(command: string) {
@@ -97,7 +94,10 @@ function build() {
 		makeLink(binaryDirectory, outputDirectory);
 
 		// Create link to resources folder
-		makeLink(join(__dirname, "resources"), join(buildDirectory, binaryDirName, "resources"));
+		makeLink(
+			join(__dirname, "resources"),
+			join(buildDirectory, binaryDirName, "resources"),
+		);
 
 		progress("Now you can compile Binaries from IDE");
 		return;
@@ -105,7 +105,7 @@ function build() {
 
 	// Execute build
 	exec(
-		`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} --target ScAnimatePlugin`,
+		`"${cmakePath}" --build "${buildDirectory}" --config ${activeConfiguration} --target ScAnimatePlugin --parallel`,
 	);
 
 	// Copy builded artifacts
