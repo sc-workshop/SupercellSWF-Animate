@@ -2,52 +2,40 @@
 
 namespace fs = std::filesystem;
 
-namespace Animate::XFL
-{
-	XFLFile::XFLFile(const Path & path)
-	{
-		m_filetype = path.extension() == ".xfl" ? XFLType::Unpacked : XFLType::Packed;
+namespace Animate::XFL {
+    XFLFile::XFLFile(const Path& path) {
+        m_filetype = path.extension() == ".xfl" ? XFLType::Unpacked : XFLType::Packed;
 
-		if (m_filetype == XFLType::Unpacked)
-		{
-			m_document_path = path;
-			m_document_path.replace_extension("");
-		}
-		else
-		{
-			m_document_path = path;
-		}
+        if (m_filetype == XFLType::Unpacked) {
+            m_document_path = path;
+            m_document_path.replace_extension("");
+        } else {
+            m_document_path = path;
+        }
 
-		CreateStream();
-	}
+        CreateStream();
+    }
 
-	const std::vector<Path>& XFLFile::GetPaths()
-	{
-		return m_stream->GetPaths();
-	}
+    const std::vector<Path>& XFLFile::GetPaths() {
+        return m_stream->GetPaths();
+    }
 
-	wk::Ref<wk::Stream> XFLFile::ReadFile(const Path& path)
-	{
-		m_stream->OpenFile(path);
-		auto result = m_stream->ReadFile();
-		m_stream->CloseFile();
-		return result;
-	}
+    wk::Ref<wk::Stream> XFLFile::ReadFile(const Path& path) {
+        m_stream->OpenFile(path);
+        auto result = m_stream->ReadFile();
+        m_stream->CloseFile();
+        return result;
+    }
 
-	void XFLFile::CreateStream()
-	{
-		if (m_filetype == XFLType::Packed)
-		{
-			m_stream = CreateRef<IO::PackedStream>();
-		}
-		else
-		{
-			m_stream = CreateRef<IO::UnpackedStream>();
-		}
+    void XFLFile::CreateStream() {
+        if (m_filetype == XFLType::Packed) {
+            m_stream = CreateRef<IO::PackedStream>();
+        } else {
+            m_stream = CreateRef<IO::UnpackedStream>();
+        }
 
-		if (!m_stream->Open(m_document_path))
-		{
-			throw Exception("Failed to open XFL file %s", m_document_path.c_str());
-		}
-	}
+        if (!m_stream->Open(m_document_path)) {
+            throw Exception("Failed to open XFL file %s", m_document_path.c_str());
+        }
+    }
 }

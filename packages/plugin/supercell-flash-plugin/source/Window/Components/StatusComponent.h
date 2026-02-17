@@ -1,24 +1,23 @@
 #pragma once
 
-#include <wx/wx.h>
-#include <wx/stattext.h>
 #include "Window/Ui/ProgressBar.h"
 #include "Window/Utilities.h"
 
+#include <wx/stattext.h>
+#include <wx/wx.h>
+
 namespace sc::Adobe {
-    class StatusComponent : public wxPanel
-    {
+    class StatusComponent : public wxPanel {
     private:
         ui::ProgressBar* m_progressBar = nullptr;
         wxStaticText* m_label = nullptr;
         wxStaticText* m_status = nullptr;
 
     public:
-        StatusComponent(
-            wxWindow* parent,
-            const std::u16string& title = u"",
-            const std::u16string& defaultLabel = u"",
-            int range = 99 // Equals to 100 percent
+        StatusComponent(wxWindow* parent,
+                        const std::u16string& title = u"",
+                        const std::u16string& defaultLabel = u"",
+                        int range = 99 // Equals to 100 percent
         );
 
     public:

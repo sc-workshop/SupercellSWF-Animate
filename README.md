@@ -72,7 +72,7 @@ This project was created with the goal of exploring various interesting tools an
 Full support. It can be unstable sometimes especially with big fills and curves so try to work more with sprites
 
     - Fill styles ✅  
-    Currently supported are solid color fill and bitmap fill. Linear fill will be added later if needed.
+    Currently supported are solid color fill, bitmap fill and gradient fill (Linear and Radial)
 
 - Filters ❌  
 There will be no support for filters for Symbols
@@ -141,6 +141,9 @@ For extension to work correctly, you need:
 ## MacOS
 - MacOS 15.0 (Sequoia) or newer
 
+> [!IMPORTANT]
+> Apple Silicon does not supports CEP extensions, which means that  <span style="color: red;font-weight: bold;">Publish Settings will not work</span>. As a workaround, when you need access to Publish Settings, [you need to run Adobe Animate in Rosetta mode](https://community.adobe.com/questions-712/p-legacy-cep-extension-panels-don-t-load-on-apple-m1-computers-1133289?postid=4594277#post4594277). The rest of functionality will work fine in default mode.
+
 # Installing
 First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
 Unpack zip to any place convenient for you.  
@@ -173,7 +176,7 @@ And next tools to build native code:
 > For MacOS users who reads this: Native package management is quite bad here. Mostly because of Universal binaries.  
 > So heres some things you should know about:  
 > - You cant build Universal binary out of the box. Some packages (nlopt, spdlog, fmt, etc) should be builded and installed by hands with appropriate osx arch define. CMake will try to fetch them using FetchContent but final binary will have just host arch.
-> - Some packages (`libomp` iirc) should be installed manually using homebrew.
+> - `libomp` should be installed manually using homebrew.
 
 To prepare all the necessary dependencies, run the following command in the project folder:  
 `

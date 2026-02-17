@@ -1,36 +1,33 @@
 #pragma once
 
-#include <chrono>
-#include <thread>
-
 #include "AnimateModule.h"
 #include "Module/Config.h"
 #include "animate/app/DOM/Service/Document/IFLADocService.h"
 
-namespace sc {
-	namespace Adobe {
-		class SCPublisher : public Animate::Publisher::GenericPublisherInterface<SCConfig>
-		{
-		public:
-			SCPublisher() = default;
-			virtual ~SCPublisher();
+#include <chrono>
+#include <thread>
 
-		public:
-			static bool VerifyDocument(const fs::path& path);
-			static void LoadDocument(const fs::path& path, Animate::DOM::PIFLADocument& document);
-			static void CloseDocument(Animate::DOM::PIFLADocument& document);
+namespace sc::Adobe {
+    class SCPublisher : public Animate::Publisher::GenericPublisherInterface<SCConfig> {
+    public:
+        SCPublisher() = default;
+        virtual ~SCPublisher();
 
-		public:
-            void StartWindow();
-            FCM::Result StartPublishing();
-            
-			virtual void Publish(const SCConfig& config);
-			
-			void PublishDocuments();
-			void DoPublish();
+    public:
+        static bool VerifyDocument(const fs::path& path);
+        static void LoadDocument(const fs::path& path, Animate::DOM::PIFLADocument& document);
+        static void CloseDocument(Animate::DOM::PIFLADocument& document);
 
-		private:
-			std::vector<Animate::DOM::PIFLADocument> m_loaded_documents;
-		};
-	}
+    public:
+        void StartWindow();
+        FCM::Result StartPublishing();
+
+        virtual void Publish(const SCConfig& config);
+
+        void PublishDocuments();
+        void DoPublish();
+
+    private:
+        std::vector<Animate::DOM::PIFLADocument> m_loaded_documents;
+    };
 }

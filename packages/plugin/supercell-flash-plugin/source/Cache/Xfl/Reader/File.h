@@ -1,38 +1,35 @@
 #pragma once
 
-#include "core/memory/ref.h"
-#include "core/exception/exception.h"
-#include <filesystem>
-
 #include "Stream/Packed.h"
 #include "Stream/Unpacked.h"
+#include "core/exception/exception.h"
+#include "core/memory/ref.h"
 
-namespace Animate::XFL
-{
-	using namespace wk;
+#include <filesystem>
 
-	class XFLFile
-	{
-	private:
-		enum class XFLType
-		{
-			Unpacked,
-			Packed
-		};
+namespace Animate::XFL {
+    using namespace wk;
 
-	public:
-		XFLFile(const Path& path);
+    class XFLFile {
+    private:
+        enum class XFLType {
+            Unpacked,
+            Packed
+        };
 
-	public:
-		const std::vector<Path>& GetPaths();
-		wk::Ref<wk::Stream> ReadFile(const Path& path);
+    public:
+        XFLFile(const Path& path);
 
-	private:
-		void CreateStream();
+    public:
+        const std::vector<Path>& GetPaths();
+        wk::Ref<wk::Stream> ReadFile(const Path& path);
 
-	private:
-		Ref<IO::Stream> m_stream;
-		XFLType m_filetype;
-		Path m_document_path;
-	};
+    private:
+        void CreateStream();
+
+    private:
+        Ref<IO::Stream> m_stream;
+        XFLType m_filetype;
+        Path m_document_path;
+    };
 }

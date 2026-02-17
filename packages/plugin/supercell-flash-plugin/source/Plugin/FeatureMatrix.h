@@ -2,16 +2,11 @@
 
 #include "AnimateModule.h"
 
-namespace sc
-{
-	namespace Adobe
-	{
-		using FeatureMatrix = Animate::DocType::GenericFeatureMatrix;
+namespace sc::Adobe {
+    using FeatureMatrix = Animate::DocType::GenericFeatureMatrix;
 
-		class SCFeatureMatrixLoader : public Animate::DocType::GenericFeatureMatrixLoader<FeatureMatrix>
-		{
-		public:
-			virtual void LoadMatrix(FeatureMatrix* matrix);
-		};
-	}
+    class SCFeatureMatrixLoader : public Animate::DocType::GenericFeatureMatrixLoader<FeatureMatrix> {
+    public:
+        virtual void LoadMatrix(FeatureMatrix* matrix);
+    };
 }

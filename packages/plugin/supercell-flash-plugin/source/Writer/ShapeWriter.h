@@ -1,10 +1,9 @@
 #pragma once
 
 #include "AnimatePublisher.h"
+#include "VectorRasterizer.h"
 #include "core/image/raw_image.h"
 #include "core/math/point.h"
-
-#include "VectorRasterizer.h"
 
 namespace sc::Adobe {
     class SCWriter;
@@ -13,7 +12,8 @@ namespace sc::Adobe {
     public:
         SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) :
             Animate::Publisher::SharedShapeWriter(symbol),
-            m_writer(writer), m_rasterizer(writer) {};
+            m_writer(writer),
+            m_rasterizer(writer) {};
         virtual ~SCShapeWriter() = default;
 
         /// @brief 9Slice shapes resolution value
@@ -32,8 +32,8 @@ namespace sc::Adobe {
 
     public:
         void AddContourRegion(const Animate::Publisher::FilledElementPath& contour,
-                                   const Animate::DOM::Utils::MATRIX2D& matrix,
-                                   const Animate::DOM::Utils::COLOR& color);
+                              const Animate::DOM::Utils::MATRIX2D& matrix,
+                              const Animate::DOM::Utils::COLOR& color);
 
         void AddTriangulatedRegion(const Animate::Publisher::FilledElementPath& contour,
                                    const std::vector<Animate::Publisher::FilledElementPath>& holes,

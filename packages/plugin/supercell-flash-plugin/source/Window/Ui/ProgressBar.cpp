@@ -1,9 +1,8 @@
 #include "ProgressBar.h"
 
 namespace sc::Adobe::ui {
-    ProgressBar::ProgressBar(wxWindow* parent)
-        : wxPanel(parent, wxID_ANY)
-    {
+    ProgressBar::ProgressBar(wxWindow* parent) :
+        wxPanel(parent, wxID_ANY) {
         SetBackgroundStyle(wxBG_STYLE_PAINT);
         Bind(wxEVT_PAINT, &ProgressBar::OnPaint, this);
     }
