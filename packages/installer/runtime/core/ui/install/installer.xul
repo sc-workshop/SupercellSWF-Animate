@@ -1,3 +1,3 @@
 <dialog id="dialog" title="SC Workshop">
-	<flash class="control" id="flash" src="installer.swf" width="640" height="640" />
+	<flash class="control" id="flash" src="installer.swf" width="600" height="600" />
 </dialog>
