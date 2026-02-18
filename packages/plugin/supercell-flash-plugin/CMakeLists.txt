@@ -7,12 +7,28 @@ file(GLOB_RECURSE SOURCES
 add_library(${TARGET} MODULE ${SOURCES})
 wk_project_setup(${TARGET})
 
+# Setup output to our predefined folder
 set_target_properties(${TARGET}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/animate_bin"
 )
+
+# Enable LTO for Release
+set_target_properties(${TARGET} PROPERTIES
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE
+)
+
+# And some additional flags for msvc
+if (MSVC)
+    target_compile_options(${TARGET} PRIVATE
+        $<$<CONFIG:Release>:/GL>
+    )
+    target_link_options(${TARGET} PRIVATE
+        $<$<CONFIG:Release>:/LTCG>
+    )
+endif()
 
 # Base properties
 set_target_properties(${TARGET} PROPERTIES 
