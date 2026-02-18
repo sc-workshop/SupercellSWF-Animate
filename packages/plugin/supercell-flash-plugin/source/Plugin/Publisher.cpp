@@ -146,8 +146,7 @@ namespace sc::Adobe {
             context.logger->error("wxSysErrorMsgStr: {}", message.ToStdString());
         }
 
-        // Not sure if this is required here now
-        // wxEntryCleanup();
+        wxEntryCleanup();
     }
 
     FCM::Result SCPublisher::StartPublishing() {
