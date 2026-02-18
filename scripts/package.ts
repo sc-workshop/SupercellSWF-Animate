@@ -16,8 +16,13 @@ import {
 	extensionDistFolder,
 	packageFolder,
 } from "./manifest";
-import { isWindows, log, removeDirs } from "./utils";
-import { CommandExtension, BaseExtension, NativeExtension } from "./manifest/interfaces";
+import type {
+	BaseExtension,
+	CommandExtension,
+	Extension,
+	NativeExtension,
+} from "./manifest/interfaces";
+import { isWindows, log, progress, removeDirs } from "./utils";
 
 function build_extension_package(
 	output_package: string,
@@ -85,20 +90,20 @@ interface ExtensionVariants {
 
 const defaultVariant = {
 	name: "",
-	featureSet: "Default"
-}
+	featureSet: "Default",
+};
 
 const windowsVariants: ExtensionVariants[] = [
-	defaultVariant,
-	{
-		name: "sse4.1",
-		featureSet: "SSE41"
-	},
 	{
 		name: "avx2",
-		featureSet: "AVX2"
-	}
-]
+		featureSet: "avx2",
+	},
+	{
+		name: "sse4.1",
+		featureSet: "sse41",
+	},
+	defaultVariant,
+];
 
 const packageManifest: any = {
 	name: bundleId,
@@ -119,24 +124,41 @@ function createCommand(name: string, extension: CommandExtension) {
 	});
 }
 
-function createExtension(name: string, extension: BaseExtension) {
-	const useFeatureSets = extension.type == "native" && (extension as NativeExtension).useFeatureSets;
-	const targetVariants = isWindows && useFeatureSets ? windowsVariants : [defaultVariant];
+function create_base_extension(name: string, extension: BaseExtension) {
+	const useFeatureSets =
+		extension.type == "native" && (extension as NativeExtension).useFeatureSets;
+	const targetVariants =
+		isWindows && useFeatureSets ? windowsVariants : [defaultVariant];
+
+	if (useFeatureSets && isWindows) {
+		progress(
+			`Building feature sets: ${targetVariants
+				.map((set) => {
+					return set.name || "Default";
+				})
+				.join(", ")}`,
+		);
+	}
 
 	for (const variant of targetVariants) {
 		const package_name = [bundleId, version, variant.name]
-			.filter((value) => { return value != ""; })
+			.filter((value) => {
+				return value && value != "";
+			})
 			.join("-");
 
 		const extensionPackagePath = join(packageDistFolder, `${package_name}.zxp`);
-		build_extension_package(extensionPackagePath, `--fresh --cpuf=${variant.featureSet}`);
+		build_extension_package(
+			extensionPackagePath,
+			`--cpuf=${variant.featureSet}`,
+		);
 
-		let extensionManifest: any = {
+		const extensionManifest: any = {
 			type: "extension",
 			name: name,
 			path: relative(packageFolder, extensionPackagePath),
 			install: bundleId,
-		}
+		};
 
 		if (variant.name !== "") {
 			extensionManifest.condition = `cpuf:${variant.featureSet}`;
@@ -147,23 +169,26 @@ function createExtension(name: string, extension: BaseExtension) {
 	}
 }
 
+function create_extension(name: string, extension: Extension) {
+	switch (extension.type) {
+		case "native": {
+			create_base_extension(name, extension);
+			break;
+		}
+		case "command": {
+			createCommand(name, extension as CommandExtension);
+			break;
+		}
+	}
+}
+
 const scripInstallName = config.organization_name
 	? config.organization_name
 	: config.organization;
 
 for (const extensionName of Object.keys(config.extensions)) {
 	const extension = config.extensions[extensionName];
-
-	switch (extension.type) {
-		case "extension": {
-			createExtension(extensionName, extension);
-			break;
-		}
-		case "command": {
-			createCommand(extensionName, extension as CommandExtension);
-			break;
-		}
-	}
+	create_extension(extensionName, extension);
 }
 
 writeFileSync(

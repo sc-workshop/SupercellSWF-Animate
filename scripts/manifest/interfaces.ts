@@ -19,7 +19,7 @@ interface Icon {
 export interface BaseExtension {
 	type: "extension" | "command" | "native";
 	root: string;
-	parent?: string;
+	children?: string[];
 	path: string;
 	scriptPath?: string;
 	params?: string[];

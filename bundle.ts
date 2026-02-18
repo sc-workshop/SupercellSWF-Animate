@@ -18,6 +18,7 @@ export const config: ConfigInterface = {
 			type: "native",
 			root: "./packages/plugin",
 			path: "./fcm.xml",
+			children: ["PublishSettings"],
 			useFeatureSets: true,
 			ui: {
 				//name: "SC Plugin",
@@ -27,7 +28,6 @@ export const config: ConfigInterface = {
 		},
 		PublishSettings: {
 			type: "extension",
-			parent: "Plugin",
 			root: "./packages/publisher",
 			path: "./index.html",
 			params: ["--enable-nodejs", "--mixed-context"],

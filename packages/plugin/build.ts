@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import which from "which";
+import { getCmakePath } from "../../scripts/tools";
 import {
 	copyDir,
 	isMac,
@@ -10,7 +11,6 @@ import {
 	makeLink,
 	progress,
 } from "../../scripts/utils";
-import { getCmakePath } from "../../scripts/tools";
 import { version } from "./package.json";
 
 if (!isWindows && !isMac) {
@@ -59,7 +59,11 @@ const [MAJOR, MINOR, MAINTENANCE] = version.split(".");
 
 const MacOSFlags = ["-G Xcode"];
 
-const WindowsFlags = [`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`];
+const WindowsFlags = [
+	`-DVCPKG_FEATURE_FLAGS="${[cpuFeature == "avx2" ? "simd" : undefined].filter((value) => value !== undefined).join(";")}"`,
+	`--preset Windows-${isDev ? "Debug" : "Release"}`,
+	`-DWK_PREFERRED_CPU_FEATURES=${cpuFeature}`,
+];
 
 const CmakeFlagsList = [
 	`-DBUILD_SHARED_LIBS=${isDev ? "ON" : "OFF"}`, // Build static lib for Release

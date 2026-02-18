@@ -34,6 +34,11 @@ if (wxWidgets_FOUND)
         wxWidgetsCore INTERFACE
         ${wxWidgets_LIBRARIES}
     )
+
+    find_package(WebP QUIET)
+    if(TARGET WebP::webp)
+        target_link_libraries(wxWidgetsCore INTERFACE WebP::webp WebP::webpdemux)
+    endif()
 else()
     FetchContent_Declare(
         wxWidgets

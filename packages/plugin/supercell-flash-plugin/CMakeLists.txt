@@ -28,7 +28,7 @@ target_link_libraries(${TARGET} PUBLIC
     spdlog::spdlog     # Logging
     Adobe::Animate     # Adobe Animate API
     fmt::fmt           # String format
-    CDT                # Vector triangulation
+    CDT::CDT           # Vector triangulation
     zip                # Fla reader
 )
 

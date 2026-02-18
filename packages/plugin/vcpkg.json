@@ -1,0 +1,15 @@
+{
+    "name": "supercell-swf-animate",
+    "dependencies": [
+        "spdlog",
+        "fmt",
+        "wxwidgets",
+        "zstd",
+        "clipper2",
+        "polyclipping",
+        "nlopt",
+        "simdutf",
+        "cdt",
+        "nlohmann-json"
+    ]
+}
