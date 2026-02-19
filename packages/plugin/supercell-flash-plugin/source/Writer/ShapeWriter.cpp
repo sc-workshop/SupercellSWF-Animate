@@ -224,8 +224,12 @@ namespace sc::Adobe {
         if (!IsValidFilledShapeRegion(region))
             return;
 
-        bool should_rasterize =
-            region.type != FilledElementRegion::ShapeType::SolidColor || IsComplexShapeRegion(region);
+        const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
+
+        bool agressive_rasterize = !m_rasterizer.Empty() && config.agressiveRasterization;
+
+        bool should_rasterize = agressive_rasterize || region.type != FilledElementRegion::ShapeType::SolidColor ||
+                                IsComplexShapeRegion(region);
 
         bool is_contour =
             !should_rasterize && region.contour.Count() <= 4 && !(region.contour.Count() > 6) && region.holes.empty();

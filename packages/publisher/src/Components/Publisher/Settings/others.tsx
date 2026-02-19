@@ -59,6 +59,15 @@ export default function OtherSettings() {
 		callback: (value) => Settings.setParam("writeFieldsText", value),
 	});
 
+	const aggressiveRasterize = new BoolField({
+		name: Locale.Get("TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE"),
+		keyName: "aggressive_rasterization",
+		defaultValue: Settings.getParam("aggressiveRasterization"),
+		style: default_style,
+		callback: (value) => Settings.setParam("aggressiveRasterization", value),
+		tip_tid: "TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE_TIP",
+	});
+
 	if (useBackwardCompatibility) {
 		Settings.setParam("hasPrecisionMatrices", false);
 		precisionMatrix.state.checked = false;
@@ -79,7 +88,11 @@ export default function OtherSettings() {
 		fileType == SWFType.SC1 || useAutoProperties,
 	);
 
-	const props = renderComponents([writeFieldsText, sc1Props]);
+	const props = renderComponents([
+		writeFieldsText,
+		aggressiveRasterize,
+		sc1Props,
+	]);
 
 	return SubMenu(
 		Locale.Get("TID_OTHER_LABEL"),

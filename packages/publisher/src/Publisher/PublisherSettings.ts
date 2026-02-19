@@ -51,6 +51,7 @@ type PublisherSettingsData = {
 	hasPrecisionMatrices: boolean;
 	writeCustomProperties: boolean;
 	writeFieldsText: boolean;
+	aggressiveRasterization: boolean;
 
 	// Export to another file settings
 	exportToExternal: boolean;
@@ -92,6 +93,7 @@ const PublisherDefaultSettings: PublisherSettingsData = {
 	hasPrecisionMatrices: false,
 	writeCustomProperties: true,
 	writeFieldsText: true,
+	aggressiveRasterization: true,
 
 	exportToExternal: false,
 	exportToExternalPath: "",

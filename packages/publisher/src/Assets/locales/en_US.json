@@ -52,5 +52,7 @@
 	"TID_SWF_SETTINGS_COMPRESSION": "Compression method",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Write custom properties",
 	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Precise matrices",
-	"TID_SWF_WRITE_FIELDS_TEXT": "Export text of TextFields"
+	"TID_SWF_WRITE_FIELDS_TEXT": "Export text of TextFields",
+	"TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE": "Aggressive rasterization",
+	"TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE_TIP": "When rasterizing vector shapes, does more aggressive sampling, which often results in fewer sprites for hand-drawn assets, or, in the worst case, slightly increased resource usage"
 }

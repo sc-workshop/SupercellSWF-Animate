@@ -56,6 +56,7 @@ namespace sc::Adobe {
         bool useShortFrames = true;
         bool writeFieldsText = true;
         bool generateStreamingTexture = true;
+        bool aggressiveRasterization = false;
 
         bool useMultiDocument = false;
         std::vector<fs::path> documentsPaths;

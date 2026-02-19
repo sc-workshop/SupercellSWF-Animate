@@ -52,5 +52,7 @@
 	"TID_SWF_SETTINGS_COMPRESSION": "Тип сжатия",
 	"TID_SWF_WRITE_CUSTOM_PROPERTIES": "Сохранить кастомные свойства",
 	"TID_SWF_SETTINGS_PRECISION_MATRIX": "Точные матрицы",
-	"TID_SWF_WRITE_FIELDS_TEXT": "Экспортировать текст из текстовых полей"
+	"TID_SWF_WRITE_FIELDS_TEXT": "Экспортировать текст из текстовых полей",
+	"TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE": "Агрессивная растеризация",
+	"TID_SWF_SETTINGS_AGGRESSIVE_RASTERIZE_TIP": "При растеризации векторных шейпов, делает более агрессивную выборку, что чаще всего приводит к меньшему количеству спрайтов для ресурсов нарисованных от руки или, в худшем случае, к немного увеличенном употреблении ресурсов"
 }
