@@ -93,7 +93,7 @@ const PublisherDefaultSettings: PublisherSettingsData = {
 	hasPrecisionMatrices: false,
 	writeCustomProperties: true,
 	writeFieldsText: true,
-	aggressiveRasterization: true,
+	aggressiveRasterization: false,
 
 	exportToExternal: false,
 	exportToExternalPath: "",

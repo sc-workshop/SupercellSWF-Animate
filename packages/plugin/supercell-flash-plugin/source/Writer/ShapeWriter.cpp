@@ -226,7 +226,7 @@ namespace sc::Adobe {
 
         const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
 
-        bool agressive_rasterize = !m_rasterizer.Empty() && config.agressiveRasterization;
+        bool agressive_rasterize = !m_rasterizer.Empty() && config.aggressiveRasterization;
 
         bool should_rasterize = agressive_rasterize || region.type != FilledElementRegion::ShapeType::SolidColor ||
                                 IsComplexShapeRegion(region);

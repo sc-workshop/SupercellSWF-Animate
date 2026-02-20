@@ -184,6 +184,8 @@ namespace sc { namespace Adobe {
         if (m_symbol.linkage_name.empty()) {
             if (m_object.childrens.empty() && !required) {
                 return false;
+            } else if (!new_symbol) {
+                return false;
             }
         } else {
             m_writer.IncrementSymbolsProcessed();
