@@ -4,8 +4,15 @@
 #include "core/image/raw_image.h"
 #include "core/math/point.h"
 
-#include <blend2d/blend2d.h>
-#include <vector>
+#include <include/core/SkBitmap.h>
+#include <include/core/SkCanvas.h>
+#include <include/core/SkData.h>
+#include <include/core/SkImage.h>
+#include <include/core/SkPathBuilder.h>
+#include <include/core/SkStream.h>
+#include <include/core/SkSurface.h>
+#include <include/codec/SkPngDecoder.h>
+#include <include/effects/SkGradient.h>
 
 namespace sc::Adobe {
     using VectorShape = Animate::Publisher::FilledElementRegion;
@@ -31,10 +38,10 @@ namespace sc::Adobe {
         bool GetImage(wk::RawImageRef& image, VectorMatrix& matrix, float resolution);
 
     private:
-        static void CreateImage(wk::RawImageRef& image, BLImage& result, bool premultiply);
+        static void CreateImage(wk::RawImageRef& image, sk_sp<SkSurface>& result, bool premultiply);
         static void RoundBound(Animate::DOM::Utils::RECT& rect);
         static void CreatePath(const Animate::Publisher::FilledElementPath& path,
-                               BLPath& contour,
+                               SkPathBuilder& contour,
                                float resolution = 1.f);
 
     private:
@@ -65,8 +72,8 @@ namespace sc::Adobe {
 
         std::vector<VectorShape> m_queue;
 
-        BLImage m_canvas;
-        BLContext m_draw;
         wk::RawImageRef m_image;
+        sk_sp<SkSurface> m_canvas;
+        SkCanvas* m_draw = nullptr;
     };
 }

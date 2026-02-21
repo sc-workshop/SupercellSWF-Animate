@@ -1,17 +1,9 @@
 #include "VectorRasterizer.h"
 
 #include "Writer.h"
-#include "core/stb/stb.h"
-
-static inline void bl_assert(BLResult result) {
-    if (result != BL_SUCCESS) {
-        BLResultCode code = (BLResultCode) result;
-        assert(code == BL_SUCCESS);
-    }
-}
 
 namespace sc::Adobe {
-    void VectorRasterizer::CreateImage(wk::RawImageRef& image, BLImage& texture, bool premultiply) {
+    void VectorRasterizer::CreateImage(wk::RawImageRef& image, sk_sp<SkSurface>& result, bool premultiply) {
         if (image->depth() != wk::Image::PixelDepth::RGBA8) {
             wk::RawImageRef converted =
                 wk::CreateRef<wk::RawImage>(image->width(), image->height(), wk::Image::PixelDepth::RGBA8);
@@ -34,12 +26,9 @@ namespace sc::Adobe {
             }
         }
 
-        BLResult result = texture.create_from_data(image->width(),
-                                                   image->height(),
-                                                   BLFormat::BL_FORMAT_PRGB32,
-                                                   image->data(),
-                                                   image->pixel_size() * image->width());
-        bl_assert(result);
+        SkImageInfo info = SkImageInfo::MakeN32Premul(image->width(), image->height());
+        size_t rowBytes = info.minRowBytes();
+        result = SkSurfaces::WrapPixels(info, image->data(), rowBytes);
     }
 
     void VectorRasterizer::RoundBound(Animate::DOM::Utils::RECT& rect) {
@@ -50,7 +39,7 @@ namespace sc::Adobe {
     }
 
     void VectorRasterizer::CreatePath(const Animate::Publisher::FilledElementPath& path,
-                                      BLPath& contour,
+                                      SkPathBuilder& contour,
                                       float resolution) {
         uint8_t inited = false;
         for (size_t i = 0; path.Count() > i; i++) {
@@ -61,33 +50,33 @@ namespace sc::Adobe {
                     const auto& seg = (const VectorLineSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x, seg.begin.y);
+                        contour.moveTo(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.line_to(seg.end.x, seg.end.y);
+                    contour.lineTo(seg.end.x, seg.end.y);
                 } break;
                 case VectorSegment::Type::Cubic: {
                     const auto& seg = (const VectorCubicSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x, seg.begin.y);
+                        contour.moveTo(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.cubic_to(seg.control_l.x,
-                                     seg.control_l.y,
-                                     seg.control_r.x,
-                                     seg.control_r.y,
-                                     seg.end.x,
-                                     seg.end.y);
+                    contour.cubicTo(seg.control_l.x,
+                                    seg.control_l.y,
+                                    seg.control_r.x,
+                                    seg.control_r.y,
+                                    seg.end.x,
+                                    seg.end.y);
                 } break;
                 case VectorSegment::Type::Quad: {
                     const auto& seg = (const VectorQuadSegment&) segment;
 
                     if (!inited++) {
-                        contour.move_to(seg.begin.x, seg.begin.y);
+                        contour.moveTo(seg.begin.x, seg.begin.y);
                     }
 
-                    contour.quad_to(seg.control.x, seg.control.y, seg.end.x, seg.end.y);
+                    contour.quadTo(seg.control.x, seg.control.y, seg.end.x, seg.end.y);
                 } break;
                 default:
                     break;
@@ -95,9 +84,11 @@ namespace sc::Adobe {
         }
 
         if (resolution != 1.0f) {
-            BLMatrix2D matrix(resolution, 0, 0, resolution, 0, 0);
+            SkMatrix matrix = SkMatrix::Scale(resolution, resolution);
             contour.transform(matrix);
         }
+
+        contour.close();
     }
 
     void VectorRasterizer::Add(const VectorShape& shape, const VectorMatrix& matrix) {
@@ -155,14 +146,18 @@ namespace sc::Adobe {
 
         m_image =
             wk::CreateRef<wk::RawImage>(width, height, wk::Image::PixelDepth::RGBA8, wk::Image::ColorSpace::Linear);
-        VectorRasterizer::CreateImage(m_image, m_canvas, false);
 
-        m_draw = BLContext(m_canvas);
+        sk_sp<SkColorSpace> colorSpace = SkColorSpace::MakeSRGB();
+        SkImageInfo info = SkImageInfo::Make(width, height, kRGBA_8888_SkColorType, kPremul_SkAlphaType, colorSpace);
+        size_t rowBytes = info.minRowBytes();
+        m_canvas = SkSurfaces::WrapPixels(info, m_image->data(), rowBytes);
+        m_draw = m_canvas->getCanvas();
+
         return true;
     }
 
     void VectorRasterizer::ReleaseCanvas() {
-        bl_assert(m_draw.end());
+        m_draw = nullptr;
         m_canvas.reset();
     }
 
@@ -170,48 +165,55 @@ namespace sc::Adobe {
                                       wk::PointF offset,
                                       float resolution) {
         using namespace Animate::DOM;
-        BLResult result = BL_SUCCESS;
-        BLPath region_path;
+        SkPathBuilder region_path;
 
-        BLPoint path_origin = {offset.x * resolution, offset.y * resolution};
         VectorMatrix resolution_matrix = {resolution, 0.f, 0.f, resolution, 0.f, 0.f};
 
         // Add holes paths first
         for (const auto& hole : region.holes) {
-            BLPath contour;
+            SkPathBuilder contour;
             VectorRasterizer::CreatePath(hole, contour, resolution);
-
-            // Reverse hole for non zero fill rule
-            result = region_path.add_path(contour);
-            bl_assert(result);
+            region_path.addPath(contour.detach());
         }
 
-        // Contour drawing
+        // Add contour then
         {
-            BLPath contour;
+            SkPathBuilder contour;
             VectorRasterizer::CreatePath(region.contour, contour, resolution);
-            region_path.add_path(contour);
+            region_path.addPath(contour.detach());
+        }
 
+        region_path.transform(SkMatrix::Translate(offset.x * resolution, offset.y * resolution));
+
+        // Creating fill style
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        {
             if (region.type == VectorRegion::ShapeType::SolidColor) {
                 const auto& fill = std::get<VectorRegion::SolidFill>(region.style);
 
-                result =
-                    m_draw.fill_path(path_origin,
-                                     region_path,
-                                     BLRgba32(fill.color.blue, fill.color.green, fill.color.red, fill.color.alpha));
+                paint.setColor(SkColorSetARGB(fill.color.alpha, fill.color.red, fill.color.green, fill.color.blue));
+                paint.setStyle(SkPaint::kFill_Style);
+
             } else if (region.type == VectorRegion::ShapeType::Bitmap) {
                 const auto& fill = std::get<VectorRegion::BitmapFill>(region.style);
 
                 fill.bitmap.ExportImage(m_writer.sprite_temp_path);
+                sk_sp<SkData> data = SkData::MakeFromFileName(m_writer.sprite_temp_path.string().c_str());
+                if (!data)
+                    return;
 
-                wk::RawImageRef image;
-                BLImage texture;
-                {
-                    wk::InputFileStream file(m_writer.sprite_temp_path);
-                    wk::stb::load_image(file, image);
-                }
-                VectorRasterizer::CreateImage(image, texture, true);
-                BLPattern pattern(texture);
+                SkCodec::Result decode_result;
+                auto codec = SkPngDecoder::Decode(data, &decode_result);
+                if (decode_result != SkCodec::kSuccess)
+                    return;
+
+                auto [bitmap, image_result] = codec->getImage();
+                if (image_result != SkCodec::kSuccess)
+                    return;
+
+                SkTileMode mode = fill.is_clipped ? SkTileMode::kRepeat : SkTileMode::kDecal;
+                SkSamplingOptions sampling(SkFilterMode::kLinear, SkMipmapMode::kNone);
 
                 auto matrix = fill.bitmap.Transformation();
                 matrix.a /= Animate::DOM::TWIPS_PER_PIXEL;
@@ -223,45 +225,29 @@ namespace sc::Adobe {
 
                 matrix = matrix * resolution_matrix;
 
-                BLMatrix2D pattern_matrix {matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty};
-                result = pattern.set_transform(pattern_matrix);
-                bl_assert(result);
+                SkMatrix pattern_matrix =
+                    SkMatrix::MakeAll(matrix.a, matrix.b, matrix.tx, matrix.c, matrix.d, matrix.ty, 0, 0, 1.f);
 
-                result = m_draw.fill_path(path_origin, region_path, pattern);
+                paint.setShader(bitmap->makeShader(mode, mode, sampling, pattern_matrix));
+
             } else if (region.type == VectorRegion::ShapeType::GradientColor) {
                 const auto& fill = std::get<VectorRegion::GradientFill>(region.style);
 
-                BLGradient gradient;
+                sk_sp<SkShader> shader;
 
-                switch (fill.type) {
-                    case VectorRegion::GradientFill::FillType::Linear:
-                        gradient.create(BLLinearGradientValues(-0x333, 0, 0x333, 0));
-                        break;
-                    case VectorRegion::GradientFill::FillType::Radial:
-                        gradient.create(BLRadialGradientValues(0, 0, fill.focal_point, 0, 0x333, 0));
-                        break;
-                    default:
-                        return;
-                }
-
+                SkTileMode tile_mode = SkTileMode::kDecal;
                 switch (fill.spread) {
                     case FillStyle::GradientSpread::GRADIENT_SPREAD_EXTEND:
-                        gradient.set_extend_mode(BL_EXTEND_MODE_PAD);
+                        tile_mode = SkTileMode::kClamp;
                         break;
                     case FillStyle::GradientSpread::GRADIENT_SPREAD_REFLECT:
-                        gradient.set_extend_mode(BL_EXTEND_MODE_REFLECT);
+                        tile_mode = SkTileMode::kMirror;
                         break;
                     case FillStyle::GradientSpread::GRADIENT_SPREAD_REPEAT:
-                        gradient.set_extend_mode(BL_EXTEND_MODE_REPEAT);
+                        tile_mode = SkTileMode::kRepeat;
                         break;
                     default:
                         break;
-                }
-
-                for (auto& point : fill.points) {
-                    gradient
-                        .add_stop((double) point.pos / 0xFF,
-                                  BLRgba32(point.color.blue, point.color.green, point.color.red, point.color.alpha));
                 }
 
                 VectorMatrix matrix = fill.matrix;
@@ -269,13 +255,44 @@ namespace sc::Adobe {
                 matrix.ty += offset.y;
                 matrix = matrix * resolution_matrix;
 
-                BLMatrix2D pattern_matrix {matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty};
-                result = gradient.set_transform(pattern_matrix);
-                bl_assert(result);
+                SkMatrix gradient_matrix =
+                    SkMatrix::MakeAll(matrix.a, matrix.b, matrix.tx, matrix.c, matrix.d, matrix.ty, 0.f, 0.f, 1.f);
 
-                result = m_draw.fill_path(path_origin, region_path, gradient);
+                std::vector<SkColor4f> colors;
+                colors.reserve(fill.points.size());
+
+                std::vector<SkScalar> positions;
+                positions.reserve(fill.points.size());
+
+                for (auto& point : fill.points) {
+                    colors.emplace_back(SkColor4f::FromColor(
+                        SkColorSetARGB(point.color.alpha, point.color.red, point.color.green, point.color.blue)));
+
+                    positions.push_back((float) point.pos / 0xFF);
+                };
+
+                SkGradient::Colors gradient_colors(SkSpan<const SkColor4f>(colors),
+                                                   SkSpan<const float>(positions),
+                                                   tile_mode);
+                SkGradient::Interpolation interp;
+                SkGradient gradient(gradient_colors, interp);
+
+                switch (fill.type) {
+                    case VectorRegion::GradientFill::FillType::Linear: {
+                        const SkPoint points[2] = {SkPoint::Make(-0x333, 0), SkPoint::Make(0x333, 0)};
+                        shader = SkShaders::LinearGradient(points, gradient, &gradient_matrix);
+                    } break;
+                    case VectorRegion::GradientFill::FillType::Radial: {
+                        shader = SkShaders::RadialGradient(SkPoint::Make(0.f, 0.f), 0x333, gradient, &gradient_matrix);
+                    } break;
+                    default:
+                        return;
+                }
+
+                paint.setShader(shader);
             }
-            bl_assert(result);
         }
+
+        m_draw->drawPath(region_path.detach(), paint);
     }
 }

@@ -8,3 +8,4 @@
 *.vcxproj
 *.vcxproj.*
 *.sln
+./skia

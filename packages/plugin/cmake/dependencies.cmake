@@ -1,7 +1,7 @@
 include(FetchContent)
 
+include(cmake/dependencies/skia.cmake)
 include(cmake/dependencies/atlasGenerator.cmake)
-include(cmake/dependencies/blend2d.cmake)
 include(cmake/dependencies/CDT.cmake)
 include(cmake/dependencies/SDK.cmake)
 include(cmake/dependencies/spdlog.cmake)

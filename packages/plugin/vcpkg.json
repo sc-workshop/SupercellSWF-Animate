@@ -9,7 +9,6 @@
         "polyclipping",
         "nlopt",
         "simdutf",
-        "cdt",
-        "nlohmann-json"
+        "cdt"
     ]
 }

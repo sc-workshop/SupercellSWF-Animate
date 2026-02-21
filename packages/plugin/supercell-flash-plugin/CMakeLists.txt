@@ -21,7 +21,7 @@ set_target_properties(${TARGET} PROPERTIES
 )
 
 # And some additional flags for msvc
-if (MSVC)
+if(MSVC)
     target_compile_options(${TARGET} PRIVATE
         $<$<CONFIG:Release>:/GL>
     )
@@ -31,21 +31,21 @@ if (MSVC)
 endif()
 
 # Base properties
-set_target_properties(${TARGET} PROPERTIES 
+set_target_properties(${TARGET} PROPERTIES
     OUTPUT_NAME "SupercellSWFAnimate"
     SUFFIX ".fcm"
 )
 
-target_link_libraries(${TARGET} PUBLIC 
+target_link_libraries(${TARGET} PUBLIC
     wk::atlasGenerator # Texture generate
-    wxWidgetsCore      # Status bar
-    supercell::flash   # File writer
-    blend2d::blend2d   # Vector rasterizer
-    spdlog::spdlog     # Logging
-    Adobe::Animate     # Adobe Animate API
-    fmt::fmt           # String format
-    CDT::CDT           # Vector triangulation
-    zip                # Fla reader
+    wxWidgetsCore # Status bar
+    supercell::flash # File writer
+    skia # Vector rasterizer
+    spdlog::spdlog # Logging
+    Adobe::Animate # Adobe Animate API
+    fmt::fmt # String format
+    CDT::CDT # Vector triangulation
+    zip # Fla reader
 )
 
 target_include_directories(${TARGET}
@@ -53,7 +53,7 @@ target_include_directories(${TARGET}
     "source/"
 )
 
-if (APPLE)
+if(APPLE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
@@ -61,7 +61,7 @@ if (APPLE)
     set(BUNDLE_ID "SupercellSWFAnimate.fcm.plugin")
 
     set(VERSION_SHORT "1.4.0")
-    set(VERSION_FULL  "1.4.0")
+    set(VERSION_FULL "1.4.0")
 
     set(COPYRIGHT "SC Workshop")
     set(MIN_OS "15.0")
@@ -95,7 +95,7 @@ if (APPLE)
     )
 endif()
 
-if (WIN32 AND BUILD_SHARED_LIBS)
+if(WIN32 AND BUILD_SHARED_LIBS)
     add_custom_command(
         TARGET ${TARGET} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${TARGET}> $<TARGET_FILE_DIR:${TARGET}>

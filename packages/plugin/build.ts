@@ -46,7 +46,7 @@ const doctypeId = "org.scWorkshop.SupercellSWF";
 
 const assetsFolder = "resources";
 
-const buildDirectory = join(__dirname, "build");
+const buildDirectory = join(__dirname, isDev ? "build" : "build-release");
 const outputDirectory = join(libPath, isWindows ? "win" : "mac");
 const binaryDirName = "animate_bin";
 const binaryDirectory = join(
