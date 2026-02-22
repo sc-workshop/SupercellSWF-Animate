@@ -3,44 +3,14 @@
 #include "Writer.h"
 
 namespace sc::Adobe {
-    void VectorRasterizer::CreateImage(wk::RawImageRef& image, sk_sp<SkSurface>& result, bool premultiply) {
-        if (image->depth() != wk::Image::PixelDepth::RGBA8) {
-            wk::RawImageRef converted =
-                wk::CreateRef<wk::RawImage>(image->width(), image->height(), wk::Image::PixelDepth::RGBA8);
-
-            image->copy(*converted);
-            image = converted;
-        }
-
-        if (premultiply) {
-            for (uint16_t h = 0; image->height() > h; h++) {
-                for (uint16_t w = 0; image->width() > w; w++) {
-                    wk::ColorRGBA& pixel = image->at<wk::ColorRGBA>(w, h);
-
-                    float alpha = (float) pixel.a / 255.f;
-
-                    pixel.r = (uint8_t) (pixel.r * alpha);
-                    pixel.g = (uint8_t) (pixel.g * alpha);
-                    pixel.b = (uint8_t) (pixel.b * alpha);
-                }
-            }
-        }
-
-        SkImageInfo info = SkImageInfo::MakeN32Premul(image->width(), image->height());
-        size_t rowBytes = info.minRowBytes();
-        result = SkSurfaces::WrapPixels(info, image->data(), rowBytes);
+    void VectorRasterizer::RoundBound(SkRect& rect) {
+        rect.setLTRB(std::round(rect.left()),
+                     std::round(rect.top()),
+                     std::round(rect.right()),
+                     std::round(rect.bottom()));
     }
 
-    void VectorRasterizer::RoundBound(Animate::DOM::Utils::RECT& rect) {
-        rect.bottomRight.x = std::round(rect.bottomRight.x);
-        rect.bottomRight.y = std::round(rect.bottomRight.y);
-        rect.topLeft.x = std::round(rect.topLeft.x);
-        rect.topLeft.y = std::round(rect.topLeft.y);
-    }
-
-    void VectorRasterizer::CreatePath(const Animate::Publisher::FilledElementPath& path,
-                                      SkPathBuilder& contour,
-                                      float resolution) {
+    void VectorRasterizer::CreatePath(const Animate::Publisher::FilledElementPath& path, SkPathBuilder& contour) {
         uint8_t inited = false;
         for (size_t i = 0; path.Count() > i; i++) {
             const VectorSegment& segment = path.GetSegment(i);
@@ -83,17 +53,35 @@ namespace sc::Adobe {
             }
         }
 
-        if (resolution != 1.0f) {
-            SkMatrix matrix = SkMatrix::Scale(resolution, resolution);
-            contour.transform(matrix);
-        }
-
         contour.close();
     }
 
-    void VectorRasterizer::Add(const VectorShape& shape, const VectorMatrix& matrix) {
-        VectorShape& region = m_queue.emplace_back(shape);
-        region.Transform(matrix);
+    void VectorRasterizer::Add(const RawShape& raw, const VectorMatrix& matrix) {
+        SkMatrix path_matrix =
+            SkMatrix::MakeAll(matrix.a, matrix.c, matrix.tx, matrix.b, matrix.d, matrix.ty, 0.f, 0.f, 1.f);
+
+        SkShape& shape = m_queue.emplace_back();
+        shape.type = raw.type;
+        shape.style = raw.style;
+
+        // Convert all holes to paths
+        {
+            for (const auto& hole : raw.holes) {
+                SkPathBuilder builder;
+                VectorRasterizer::CreatePath(hole, builder);
+                builder.transform(path_matrix);
+
+                shape.holes.emplace_back(builder.detach());
+            }
+        }
+
+        // Convert path itself then
+        {
+            SkPathBuilder builder;
+            VectorRasterizer::CreatePath(raw.contour, builder);
+            builder.transform(path_matrix);
+            shape.path = builder.detach();
+        }
     }
 
     bool VectorRasterizer::Empty() const {
@@ -101,25 +89,27 @@ namespace sc::Adobe {
     }
 
     bool VectorRasterizer::GetImage(wk::RawImageRef& image, VectorMatrix& matrix, float resolution) {
-        VectorBound bound;
-        for (const VectorShape& region : m_queue) {
-            bound = region.Bound(bound);
+        SkRect bound;
+        for (const auto& region : m_queue) {
+            SkRect local_bound = region.path.getBounds();
+            bound.join(local_bound);
         }
+        bound.sort();
 
         wk::PointF shape_offset;
-        shape_offset.x = std::min(bound.topLeft.x, bound.bottomRight.x);
-        shape_offset.y = std::min(bound.topLeft.y, bound.bottomRight.y);
+        shape_offset.x = bound.x();
+        shape_offset.y = bound.y();
 
         VectorRasterizer::RoundBound(bound);
         if (!CreateCanvas(bound, resolution))
             return false;
 
-        for (const VectorShape& region : m_queue) {
-            VectorBound region_bound = region.Bound();
+        for (const auto& region : m_queue) {
+            SkRect region_bound = region.path.getBounds();
 
             wk::PointF region_offset;
-            region_offset.x = std::min(region_bound.topLeft.x, region_bound.bottomRight.x);
-            region_offset.y = std::min(region_bound.topLeft.y, region_bound.bottomRight.y);
+            region_offset.x = bound.top();
+            region_offset.y = bound.left();
 
             region_offset.x = -region_offset.x + (region_offset.x - shape_offset.x);
             region_offset.y = -region_offset.y + (region_offset.y - shape_offset.y);
@@ -138,9 +128,9 @@ namespace sc::Adobe {
         return true;
     }
 
-    bool VectorRasterizer::CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution) {
-        uint16_t width = std::ceil(bound.topLeft.x - bound.bottomRight.x) * resolution;
-        uint16_t height = std::ceil(bound.topLeft.y - bound.bottomRight.y) * resolution;
+    bool VectorRasterizer::CreateCanvas(const SkRect& bound, float resolution) {
+        uint16_t width = std::ceil(bound.width()) * resolution;
+        uint16_t height = std::ceil(bound.height()) * resolution;
         if (width == 0 || height == 0)
             return false;
 
@@ -161,29 +151,12 @@ namespace sc::Adobe {
         m_canvas.reset();
     }
 
-    void VectorRasterizer::DrawRegion(const Animate::Publisher::FilledElementRegion& region,
-                                      wk::PointF offset,
-                                      float resolution) {
+    void VectorRasterizer::DrawRegion(const SkShape& region, wk::PointF offset, float resolution) {
         using namespace Animate::DOM;
-        SkPathBuilder region_path;
 
-        VectorMatrix resolution_matrix = {resolution, 0.f, 0.f, resolution, 0.f, 0.f};
-
-        // Add holes paths first
-        for (const auto& hole : region.holes) {
-            SkPathBuilder contour;
-            VectorRasterizer::CreatePath(hole, contour, resolution);
-            region_path.addPath(contour.detach());
-        }
-
-        // Add contour then
-        {
-            SkPathBuilder contour;
-            VectorRasterizer::CreatePath(region.contour, contour, resolution);
-            region_path.addPath(contour.detach());
-        }
-
-        region_path.transform(SkMatrix::Translate(offset.x * resolution, offset.y * resolution));
+        SkMatrix scale_matrix = SkMatrix::Scale(resolution, resolution);
+        SkMatrix offset_matrix = SkMatrix::Translate(offset.x, offset.y);
+        SkMatrix resolution_matrix = SkMatrix::Concat(scale_matrix, offset_matrix);
 
         // Creating fill style
         SkPaint paint;
@@ -216,19 +189,19 @@ namespace sc::Adobe {
                 SkSamplingOptions sampling(SkFilterMode::kLinear, SkMipmapMode::kNone);
 
                 auto matrix = fill.bitmap.Transformation();
-                matrix.a /= Animate::DOM::TWIPS_PER_PIXEL;
-                matrix.b /= Animate::DOM::TWIPS_PER_PIXEL;
-                matrix.c /= Animate::DOM::TWIPS_PER_PIXEL;
-                matrix.d /= Animate::DOM::TWIPS_PER_PIXEL;
-                matrix.tx += offset.x;
-                matrix.ty += offset.y;
+                SkMatrix pattern_matrix = SkMatrix::MakeAll(matrix.a / Animate::DOM::TWIPS_PER_PIXEL,
+                                                            matrix.c / Animate::DOM::TWIPS_PER_PIXEL,
+                                                            matrix.tx,
+                                                            matrix.c / Animate::DOM::TWIPS_PER_PIXEL,
+                                                            matrix.d / Animate::DOM::TWIPS_PER_PIXEL,
+                                                            matrix.ty,
+                                                            0,
+                                                            0,
+                                                            1.f);
 
-                matrix = matrix * resolution_matrix;
+                SkMatrix scaled_matrix = SkMatrix::Concat(resolution_matrix, pattern_matrix);
 
-                SkMatrix pattern_matrix =
-                    SkMatrix::MakeAll(matrix.a, matrix.b, matrix.tx, matrix.c, matrix.d, matrix.ty, 0, 0, 1.f);
-
-                paint.setShader(bitmap->makeShader(mode, mode, sampling, pattern_matrix));
+                paint.setShader(bitmap->makeShader(mode, mode, sampling, scaled_matrix));
 
             } else if (region.type == VectorRegion::ShapeType::GradientColor) {
                 const auto& fill = std::get<VectorRegion::GradientFill>(region.style);
@@ -251,12 +224,17 @@ namespace sc::Adobe {
                 }
 
                 VectorMatrix matrix = fill.matrix;
-                matrix.tx += offset.x;
-                matrix.ty += offset.y;
-                matrix = matrix * resolution_matrix;
+                SkMatrix pattern_matrix = SkMatrix::MakeAll(matrix.a,
+                                                            matrix.c,
+                                                            matrix.tx + offset.x,
+                                                            matrix.b,
+                                                            matrix.d,
+                                                            matrix.ty + offset.y,
+                                                            0.f,
+                                                            0.f,
+                                                            1.f);
 
-                SkMatrix gradient_matrix =
-                    SkMatrix::MakeAll(matrix.a, matrix.b, matrix.tx, matrix.c, matrix.d, matrix.ty, 0.f, 0.f, 1.f);
+                pattern_matrix = SkMatrix::Concat(scale_matrix, pattern_matrix);
 
                 std::vector<SkColor4f> colors;
                 colors.reserve(fill.points.size());
@@ -280,10 +258,15 @@ namespace sc::Adobe {
                 switch (fill.type) {
                     case VectorRegion::GradientFill::FillType::Linear: {
                         const SkPoint points[2] = {SkPoint::Make(-0x333, 0), SkPoint::Make(0x333, 0)};
-                        shader = SkShaders::LinearGradient(points, gradient, &gradient_matrix);
+                        shader = SkShaders::LinearGradient(points, gradient, &pattern_matrix);
                     } break;
                     case VectorRegion::GradientFill::FillType::Radial: {
-                        shader = SkShaders::RadialGradient(SkPoint::Make(0.f, 0.f), 0x333, gradient, &gradient_matrix);
+                        shader = SkShaders::TwoPointConicalGradient(SkPoint::Make(fill.focal_point, 0.f),
+                                                                    0.0f,
+                                                                    SkPoint::Make(0.f, 0.f),
+                                                                    0x333,
+                                                                    gradient,
+                                                                    &pattern_matrix);
                     } break;
                     default:
                         return;
@@ -293,6 +276,11 @@ namespace sc::Adobe {
             }
         }
 
-        m_draw->drawPath(region_path.detach(), paint);
+        SkPathBuilder builder;
+        builder.addPath(region.path);
+        for (auto& hole : region.holes) {
+            builder.addPath(hole);
+        }
+        m_draw->drawPath(builder.detach(&resolution_matrix), paint);
     }
 }

@@ -1,5 +1,7 @@
 include(ExternalProject)
 
+# TODO: Check if this work on MacOS
+
 # Required tools
 find_program(GIT_EXECUTABLE git REQUIRED)
 find_package(Python3 COMPONENTS Interpreter REQUIRED)

@@ -4,6 +4,7 @@
 #include "core/image/raw_image.h"
 #include "core/math/point.h"
 
+#include <include/codec/SkPngDecoder.h>
 #include <include/core/SkBitmap.h>
 #include <include/core/SkCanvas.h>
 #include <include/core/SkData.h>
@@ -11,11 +12,10 @@
 #include <include/core/SkPathBuilder.h>
 #include <include/core/SkStream.h>
 #include <include/core/SkSurface.h>
-#include <include/codec/SkPngDecoder.h>
 #include <include/effects/SkGradient.h>
 
 namespace sc::Adobe {
-    using VectorShape = Animate::Publisher::FilledElementRegion;
+    using RawShape = Animate::Publisher::FilledElementRegion;
     using VectorRegion = Animate::Publisher::FilledElementRegion;
     using VectorSegment = Animate::Publisher::FilledElementPathSegment;
     using VectorLineSegment = Animate::Publisher::FilledElementPathLineSegment;
@@ -26,23 +26,28 @@ namespace sc::Adobe {
 
     class SCWriter;
 
+    struct SkShape {
+        RawShape::ShapeType type;
+        RawShape::FillStyle style;
+
+        SkPath path;
+        std::vector<SkPath> holes;
+    };
+
     class VectorRasterizer {
     public:
         VectorRasterizer(SCWriter& writer) :
             m_writer(writer) {}
 
     public:
-        void Add(const VectorShape& shape, const VectorMatrix& matrix);
+        void Add(const RawShape& shape, const VectorMatrix& matrix);
 
         bool Empty() const;
         bool GetImage(wk::RawImageRef& image, VectorMatrix& matrix, float resolution);
 
     private:
-        static void CreateImage(wk::RawImageRef& image, sk_sp<SkSurface>& result, bool premultiply);
-        static void RoundBound(Animate::DOM::Utils::RECT& rect);
-        static void CreatePath(const Animate::Publisher::FilledElementPath& path,
-                               SkPathBuilder& contour,
-                               float resolution = 1.f);
+        static void RoundBound(SkRect& rect);
+        static void CreatePath(const Animate::Publisher::FilledElementPath& path, SkPathBuilder& contour);
 
     private:
         /// <summary>
@@ -51,16 +56,14 @@ namespace sc::Adobe {
         /// <param name="region">Region itself</param>
         /// <param name="offset">Region offset</param>
         /// <param name="resolution">Draw resolution</param>
-        void DrawRegion(const Animate::Publisher::FilledElementRegion& region,
-                        wk::PointF offset,
-                        float resolution = 1.f);
+        void DrawRegion(const SkShape& region, wk::PointF offset, float resolution = 1.f);
 
         /// <summary>
         /// Create canvas context by given bound
         /// </summary>
         /// <param name="bound"></param>
         ///
-        bool CreateCanvas(const Animate::DOM::Utils::RECT bound, float resolution);
+        bool CreateCanvas(const SkRect& bound, float resolution);
 
         /// <summary>
         /// Destroy canvas context and flush drawing
@@ -70,7 +73,7 @@ namespace sc::Adobe {
     private:
         SCWriter& m_writer;
 
-        std::vector<VectorShape> m_queue;
+        std::vector<SkShape> m_queue;
 
         wk::RawImageRef m_image;
         sk_sp<SkSurface> m_canvas;
