@@ -2,7 +2,165 @@
 
 #include "Writer.h"
 
+#if WK_DEBUG
+
+    #include "include/encode/SkPngEncoder.h"
+static void DebugDrawPathAuto(const SkPath& originalPath,
+                              const char* filename = "debug.png",
+                              bool drawStrokeOverlay = false,
+                              float padding = 20.0f) {
+    if (originalPath.isEmpty())
+        return;
+
+    SkRect bounds = originalPath.getBounds();
+
+    if (bounds.isEmpty())
+        return;
+
+    const int width = static_cast<int>(std::ceil(bounds.width() + padding * 2.0f));
+    const int height = static_cast<int>(std::ceil(bounds.height() + padding * 2.0f));
+
+    SkImageInfo info =
+        SkImageInfo::Make(width, height, SkColorType::kRGBA_8888_SkColorType, SkAlphaType::kPremul_SkAlphaType);
+
+    sk_sp<SkSurface> surface = SkSurfaces::Raster(info);
+    if (!surface)
+        return;
+
+    SkCanvas* canvas = surface->getCanvas();
+    canvas->clear(SK_ColorWHITE);
+
+    SkPathBuilder builder;
+    builder.addPath(originalPath);
+
+    SkMatrix translate;
+    translate.setTranslate(padding - bounds.left(), padding - bounds.top());
+
+    builder.transform(translate);
+    SkPath path = builder.detach();
+
+    SkPaint fillPaint;
+    fillPaint.setAntiAlias(true);
+    fillPaint.setStyle(SkPaint::kFill_Style);
+    fillPaint.setColor(SkColorSetARGB(255, 100, 150, 255));
+
+    canvas->drawPath(path, fillPaint);
+
+    if (drawStrokeOverlay) {
+        SkPaint strokePaint;
+        strokePaint.setAntiAlias(true);
+        strokePaint.setStyle(SkPaint::kStroke_Style);
+        strokePaint.setStrokeWidth(2.0f);
+        strokePaint.setColor(SK_ColorRED);
+
+        canvas->drawPath(path, strokePaint);
+    }
+
+    sk_sp<SkImage> image = surface->makeImageSnapshot();
+    if (!image)
+        return;
+
+    SkPixmap src;
+    if (!image->peekPixels(&src))
+        return;
+
+    sk_sp<SkData> png = SkPngEncoder::Encode(src, {});
+    if (!png)
+        return;
+
+    SkFILEWStream out(filename);
+    out.write(png->data(), png->size());
+    out.flush();
+}
+#endif
+
+static bool IsPathCCW(const SkPath& path) {
+    SkPathMeasure meas(path, true);
+
+    SkPoint prevPt, firstPt;
+    bool first = true;
+    float area = 0.0f;
+    float length = meas.getLength();
+    constexpr int steps = 100;
+
+    if (length == 0.0f)
+        return false;
+
+    for (int i = 0; i <= steps; ++i) {
+        SkPoint pt;
+        float distance = length * (float(i) / steps);
+        if (!meas.getPosTan(distance, &pt, nullptr))
+            continue;
+
+        if (first) {
+            firstPt = pt;
+            prevPt = pt;
+            first = false;
+        } else {
+            area += (prevPt.fX * pt.fY) - (pt.fX * prevPt.fY);
+            prevPt = pt;
+        }
+    }
+
+    area += (prevPt.fX * firstPt.fY) - (firstPt.fX * prevPt.fY);
+    area *= 0.5f;
+
+    return area < 0.0f;
+}
+
 namespace sc::Adobe {
+    SkPath& SkShape::GetPath() const {
+        if (m_path)
+            return *m_path;
+
+        SkPathBuilder builder;
+        for (auto& hole : holes) {
+            const float inset = 0.5f;
+
+            SkPaint strokePaint;
+            strokePaint.setStyle(SkPaint::kStroke_Style);
+            strokePaint.setStrokeWidth(inset * 2.0f); // 0.5px inset -> 1px stroke
+            strokePaint.setStrokeJoin(SkPaint::kMiter_Join);
+            strokePaint.setStrokeMiter(4.0f);
+            strokePaint.setAntiAlias(true);
+
+            SkPathBuilder stroke_builder;
+            SkPath inset_hole_diff;
+            SkPath inset_hole;
+
+            bool inset_success = false;
+            inset_success = skpathutils::FillPathWithPaint(hole, strokePaint, &stroke_builder);
+            if (inset_success) {
+                SkPath strokePath = stroke_builder.detach();
+
+                inset_success = Op(hole, strokePath, kDifference_SkPathOp, &inset_hole_diff);
+                if (inset_success) {
+                    if (IsPathCCW(inset_hole_diff)) {
+                        SkPathBuilder inset_hole_builder;
+                        SkPathPriv::ReverseAddPath(&inset_hole_builder, inset_hole_diff);
+                        inset_hole = inset_hole_builder.detach();
+                    } else {
+                        inset_hole = inset_hole_diff;
+                    }
+
+                    inset_hole.setFillType(SkPathFillType::kWinding);
+                }
+            }
+
+            builder.addPath(inset_success ? inset_hole : hole);
+        }
+        builder.addPath(contour);
+
+        m_path = wk::CreateRef<SkPath>(builder.detach());
+        return *m_path;
+    }
+
+    void SkShape::SetPath(const SkPath& path) const {
+        m_path.reset();
+
+        m_path = wk::CreateRef<SkPath>(path);
+    }
+
     void VectorRasterizer::RoundBound(SkRect& rect) {
         rect.setLTRB(std::round(rect.left()),
                      std::round(rect.top()),
@@ -80,7 +238,7 @@ namespace sc::Adobe {
             SkPathBuilder builder;
             VectorRasterizer::CreatePath(raw.contour, builder);
             builder.transform(path_matrix);
-            shape.path = builder.detach();
+            shape.contour = builder.detach();
         }
     }
 
@@ -89,9 +247,11 @@ namespace sc::Adobe {
     }
 
     bool VectorRasterizer::GetImage(wk::RawImageRef& image, VectorMatrix& matrix, float resolution) {
+        // FillHoles();
+
         SkRect bound;
         for (const auto& region : m_queue) {
-            SkRect local_bound = region.path.getBounds();
+            SkRect local_bound = region.contour.getBounds();
             bound.join(local_bound);
         }
         bound.sort();
@@ -105,7 +265,7 @@ namespace sc::Adobe {
             return false;
 
         for (const auto& region : m_queue) {
-            SkRect region_bound = region.path.getBounds();
+            SkRect region_bound = region.contour.getBounds();
 
             wk::PointF region_offset;
             region_offset.x = bound.top();
@@ -151,6 +311,51 @@ namespace sc::Adobe {
         m_canvas.reset();
     }
 
+    void VectorRasterizer::FillHoles() {
+        SkPath accumulatedFill;
+        accumulatedFill.setFillType(SkPathFillType::kWinding);
+
+        for (auto& shape : m_queue) {
+            std::vector<SkPath> newHoles;
+            newHoles.reserve(shape.holes.size());
+
+            for (auto& hole : shape.holes) {
+                // early-out based on AABB
+                if (!hole.getBounds().intersects(accumulatedFill.getBounds())) {
+                    newHoles.push_back(hole);
+                    continue;
+                }
+
+                SkPath clippedHole;
+                if (Op(hole, accumulatedFill, kDifference_SkPathOp, &clippedHole)) {
+                    if (!clippedHole.isEmpty())
+                        newHoles.push_back(std::move(clippedHole));
+                }
+            }
+
+            shape.holes = std::move(newHoles);
+            SkPath newAccumulated;
+            if (accumulatedFill.isEmpty()) {
+                accumulatedFill = shape.contour;
+            } else {
+                Op(accumulatedFill, shape.contour, kUnion_SkPathOp, &newAccumulated);
+                accumulatedFill = std::move(newAccumulated);
+            }
+        }
+
+        for (auto& shape : m_queue) {
+            SkPath result = shape.contour;
+
+            for (auto& hole : shape.holes) {
+                SkPath tmp;
+                Op(result, hole, kDifference_SkPathOp, &tmp);
+                result = std::move(tmp);
+            }
+
+            shape.SetPath(result);
+        }
+    }
+
     void VectorRasterizer::DrawRegion(const SkShape& region, wk::PointF offset, float resolution) {
         using namespace Animate::DOM;
 
@@ -161,6 +366,7 @@ namespace sc::Adobe {
         // Creating fill style
         SkPaint paint;
         paint.setAntiAlias(true);
+        // paint.setBlendMode(SkBlendMode::kSrc);
         {
             if (region.type == VectorRegion::ShapeType::SolidColor) {
                 const auto& fill = std::get<VectorRegion::SolidFill>(region.style);
@@ -192,7 +398,7 @@ namespace sc::Adobe {
                 SkMatrix pattern_matrix = SkMatrix::MakeAll(matrix.a / Animate::DOM::TWIPS_PER_PIXEL,
                                                             matrix.c / Animate::DOM::TWIPS_PER_PIXEL,
                                                             matrix.tx,
-                                                            matrix.c / Animate::DOM::TWIPS_PER_PIXEL,
+                                                            matrix.b / Animate::DOM::TWIPS_PER_PIXEL,
                                                             matrix.d / Animate::DOM::TWIPS_PER_PIXEL,
                                                             matrix.ty,
                                                             0,
@@ -277,10 +483,8 @@ namespace sc::Adobe {
         }
 
         SkPathBuilder builder;
-        builder.addPath(region.path);
-        for (auto& hole : region.holes) {
-            builder.addPath(hole);
-        }
+        builder.addPath(region.GetPath());
+
         m_draw->drawPath(builder.detach(&resolution_matrix), paint);
     }
 }

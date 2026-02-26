@@ -13,6 +13,10 @@
 #include <include/core/SkStream.h>
 #include <include/core/SkSurface.h>
 #include <include/effects/SkGradient.h>
+#include <include/pathops/SkPathOps.h>
+#include <include/core/SkPathUtils.h>
+#include <include/core/SkPathMeasure.h>
+#include <src/core/SkPathPriv.h>
 
 namespace sc::Adobe {
     using RawShape = Animate::Publisher::FilledElementRegion;
@@ -27,11 +31,18 @@ namespace sc::Adobe {
     class SCWriter;
 
     struct SkShape {
+    public:
         RawShape::ShapeType type;
         RawShape::FillStyle style;
 
-        SkPath path;
+        SkPath contour;
         std::vector<SkPath> holes;
+
+        SkPath& GetPath() const;
+        void SetPath(const SkPath& path) const;
+
+    private:
+        mutable wk::Ref<SkPath> m_path;
     };
 
     class VectorRasterizer {
@@ -69,6 +80,8 @@ namespace sc::Adobe {
         /// Destroy canvas context and flush drawing
         /// </summary>
         void ReleaseCanvas();
+
+        void FillHoles();
 
     private:
         SCWriter& m_writer;
