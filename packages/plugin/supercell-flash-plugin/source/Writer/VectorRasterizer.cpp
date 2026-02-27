@@ -1,4 +1,5 @@
 #include "VectorRasterizer.h"
+#include "Skia/Skia.h"
 
 #include "Writer.h"
 
@@ -82,87 +83,7 @@ static void DebugDrawPathAuto(const SkPath& originalPath,
 }
 #endif
 
-static bool IsPathCCW(const SkPath& path) {
-    SkPathMeasure meas(path, true);
-
-    SkPoint prevPt, firstPt;
-    bool first = true;
-    float area = 0.0f;
-    float length = meas.getLength();
-    constexpr int steps = 100;
-
-    if (length == 0.0f)
-        return false;
-
-    for (int i = 0; i <= steps; ++i) {
-        SkPoint pt;
-        float distance = length * (float(i) / steps);
-        if (!meas.getPosTan(distance, &pt, nullptr))
-            continue;
-
-        if (first) {
-            firstPt = pt;
-            prevPt = pt;
-            first = false;
-        } else {
-            area += (prevPt.fX * pt.fY) - (pt.fX * prevPt.fY);
-            prevPt = pt;
-        }
-    }
-
-    area += (prevPt.fX * firstPt.fY) - (firstPt.fX * prevPt.fY);
-    area *= 0.5f;
-
-    return area < 0.0f;
-}
-
 namespace sc::Adobe {
-    SkPath& SkShape::GetPath(const SkMatrix* matrix) const {
-        if (m_path)
-            return *m_path;
-
-        SkPathBuilder builder;
-        for (auto& hole : holes) {
-            const float inset = 0.5f;
-
-            SkPaint strokePaint;
-            strokePaint.setStyle(SkPaint::kStroke_Style);
-            strokePaint.setStrokeWidth(inset * 2.0f); // 0.5px inset -> 1px stroke
-            strokePaint.setStrokeJoin(SkPaint::kMiter_Join);
-            strokePaint.setStrokeMiter(4.0f);
-            strokePaint.setAntiAlias(true);
-
-            SkPathBuilder stroke_builder;
-            SkPath inset_hole_diff;
-            SkPath inset_hole;
-
-            bool inset_success = false;
-            inset_success = skpathutils::FillPathWithPaint(hole, strokePaint, &stroke_builder);
-            if (inset_success) {
-                SkPath strokePath = stroke_builder.detach();
-
-                inset_success = Op(hole, strokePath, kDifference_SkPathOp, &inset_hole_diff);
-                if (inset_success) {
-                    if (IsPathCCW(inset_hole_diff)) {
-                        SkPathBuilder inset_hole_builder;
-                        SkPathPriv::ReverseAddPath(&inset_hole_builder, inset_hole_diff);
-                        inset_hole = inset_hole_builder.detach();
-                    } else {
-                        inset_hole = inset_hole_diff;
-                    }
-
-                    inset_hole.setFillType(SkPathFillType::kWinding);
-                }
-            }
-
-            builder.addPath(inset_success ? inset_hole : hole);
-        }
-        builder.addPath(contour);
-
-        m_path = wk::CreateRef<SkPath>(builder.detach(matrix));
-        return *m_path;
-    }
-
     void VectorRasterizer::RoundBound(SkRect& rect) {
         rect.setLTRB(std::round(rect.left()),
                      std::round(rect.top()),
@@ -221,7 +142,6 @@ namespace sc::Adobe {
             SkMatrix::MakeAll(matrix.a, matrix.c, matrix.tx, matrix.b, matrix.d, matrix.ty, 0.f, 0.f, 1.f);
 
         SkShape& shape = m_queue.emplace_back();
-        shape.type = raw.type;
         shape.style = raw.style;
 
         // Convert all holes to paths
