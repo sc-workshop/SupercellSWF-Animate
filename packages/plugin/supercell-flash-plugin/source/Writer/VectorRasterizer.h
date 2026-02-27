@@ -10,12 +10,12 @@
 #include <include/core/SkData.h>
 #include <include/core/SkImage.h>
 #include <include/core/SkPathBuilder.h>
+#include <include/core/SkPathMeasure.h>
+#include <include/core/SkPathUtils.h>
 #include <include/core/SkStream.h>
 #include <include/core/SkSurface.h>
 #include <include/effects/SkGradient.h>
 #include <include/pathops/SkPathOps.h>
-#include <include/core/SkPathUtils.h>
-#include <include/core/SkPathMeasure.h>
 #include <src/core/SkPathPriv.h>
 
 namespace sc::Adobe {
@@ -38,8 +38,7 @@ namespace sc::Adobe {
         SkPath contour;
         std::vector<SkPath> holes;
 
-        SkPath& GetPath() const;
-        void SetPath(const SkPath& path) const;
+        SkPath& GetPath(const SkMatrix* matrix = nullptr) const;
 
     private:
         mutable wk::Ref<SkPath> m_path;
@@ -81,7 +80,13 @@ namespace sc::Adobe {
         /// </summary>
         void ReleaseCanvas();
 
-        void FillHoles();
+    private:
+        void CreateFillPaint(const VectorRegion::SolidFill& fill, SkPaint& paint) const;
+        void CreateFillPaint(const VectorRegion::BitmapFill& fill, SkPaint& paint, const SkMatrix& matrix) const;
+        void CreateFillPaint(const VectorRegion::GradientFill& fill,
+                             SkPaint& paint,
+                             wk::PointF offset,
+                             const SkMatrix& matrix) const;
 
     private:
         SCWriter& m_writer;
