@@ -169,7 +169,7 @@ To build publisher interface
 
 And next tools to build native code:
 - [CMake (CLI)](https://cmake.org/download/)
-- [MSVC](https://visualstudio.microsoft.com/ru/downloads/) on Windows OS
+- [MSVC](https://visualstudio.microsoft.com/downloads/) on Windows OS
 - [Xcode](https://developer.apple.com/xcode/) and [Homebrew](https://brew.sh/) on MacOS
 
 > [!IMPORTANT]
