@@ -39,26 +39,89 @@ endif()
 
 set(GN_EXECUTABLE "")
 set(NINJA_EXECUTABLE "")
+set(CONFIGURE_SCRIPT "")
 
-set(SKIA_ARGS_DEBUG "")
-set(SKIA_ARGS_RELEASE "")
+set(GN_ARGS_DEBUG "")
+set(GN_ARGS_RELEASE "")
 
-set(SKIA_BASE_DEBUG_ARGS "skia_use_no_png_encode=false skia_use_libpng_encode=true")
-set(SKIA_BASE_RELEASE_ARGS "skia_use_no_png_encode=true skia_use_libpng_encode=false")
-set(SKIA_BASE_ARGS "skia_use_no_webp_encode=true skia_use_no_jpeg_encode=true skia_use_lua=false skia_use_libwebp_decode=false skia_use_libwebp_encode=false skia_use_libjpeg_turbo_encode=false skia_use_libjpeg_turbo_decode=false skia_use_jpeg_gainmaps=false skia_use_icu=false skia_use_harfbuzz=false skia_use_expat=false skia_use_dng_sdk=false skia_enable_tools=false skia_enable_spirv_validation=false skia_enable_pdf=false skia_enable_metal_debug_info=false skia_enable_gpu_debug_layers=false skia_enable_fontmgr_win_gdi=false skia_enable_android_utils=false skia_canvaskit_enable_sksl_trace=false skia_canvaskit_enable_embedded_font=false skia_canvaskit_enable_canvas_bindings=false skia_canvaskit_enable_alias_font=false is_official_build=false is_debug=true is_component_build=true skia_use_d3d12=true")
+set(GN_BASE_DEBUG_ARGS 
+    skia_use_no_png_encode=false 
+    skia_use_libpng_encode=true
+)
+set(GN_BASE_RELEASE_ARGS 
+    skia_use_no_png_encode=true 
+    skia_use_libpng_encode=false
+)
+set(GN_BASE_ARGS 
+    skia_use_no_webp_encode=true 
+    skia_use_no_jpeg_encode=true 
+    skia_use_lua=false 
+    skia_use_libwebp_decode=false 
+    skia_use_libwebp_encode=false 
+    skia_use_libjpeg_turbo_encode=false 
+    skia_use_libjpeg_turbo_decode=false 
+    skia_use_jpeg_gainmaps=false 
+    skia_use_icu=false 
+    skia_use_harfbuzz=false 
+    skia_use_expat=false 
+    skia_use_dng_sdk=false 
+    skia_enable_tools=false 
+    skia_enable_spirv_validation=false 
+    skia_enable_pdf=false 
+    skia_enable_metal_debug_info=false 
+    skia_enable_gpu_debug_layers=false 
+    skia_enable_fontmgr_win_gdi=false 
+    skia_enable_android_utils=false 
+    skia_canvaskit_enable_sksl_trace=false 
+    skia_canvaskit_enable_embedded_font=false 
+    skia_canvaskit_enable_canvas_bindings=false
+)
 
 if(WIN32)
     set(NINJA_EXECUTABLE "${SKIA_ROOT}/third_party/ninja/ninja.exe")
     set(GN_EXECUTABLE "${SKIA_ROOT}/bin/gn.exe")
-    set(SKIA_ARGS_DEBUG "${SKIA_BASE_ARGS} ${SKIA_BASE_DEBUG_ARGS} is_official_build=false is_debug=true is_component_build=true skia_use_gl=true skia_use_d3d12=true")
-    set(SKIA_ARGS_RELEASE "${SKIA_BASE_ARGS} ${SKIA_BASE_RELEASE_ARGS} is_official_build=true is_debug=false is_component_build=false skia_use_gl=true skia_use_d3d12=true")
+    set(CONFIGURE_SCRIPT "${CMAKE_SOURCE_DIR}/cmake/dependencies/configure_skia.bat")
+    set(GN_ARGS_DEBUG 
+        ${GN_BASE_ARGS} ${GN_BASE_DEBUG_ARGS} 
+        is_official_build=false 
+        is_debug=true 
+        is_component_build=true 
+        skia_use_gl=true 
+        skia_use_d3d12=true
+    )
+    set(GN_ARGS_RELEASE 
+        ${GN_BASE_ARGS} ${GN_BASE_RELEASE_ARGS} 
+        is_official_build=true 
+        is_debug=false 
+        is_component_build=false 
+        skia_use_gl=true 
+        skia_use_d3d12=true
+    )
 else()
     set(NINJA_EXECUTABLE "${SKIA_ROOT}/third_party/ninja/ninja")
     set(GN_EXECUTABLE "${SKIA_ROOT}/bin/gn")
-    set(SKIA_ARGS_DEBUG "${SKIA_BASE_ARGS} ${SKIA_BASE_DEBUG_ARGS} is_official_build=false is_debug=true is_component_build=true skia_use_metal=true skia_use_gl=false skia_use_vulkan=false")
-    set(SKIA_ARGS_RELEASE "${SKIA_BASE_ARGS} ${SKIA_BASE_RELEASE_ARGS} is_official_build=true is_debug=false is_component_build=false skia_use_metal=true skia_use_gl=false skia_use_vulkan=false")
+    set(CONFIGURE_SCRIPT "${CMAKE_SOURCE_DIR}/cmake/dependencies/configure_skia.sh")
+    set(GN_ARGS_DEBUG 
+        ${GN_BASE_ARGS} ${GN_BASE_DEBUG_ARGS} 
+        is_official_build=false is_debug=true 
+        is_component_build=true 
+        skia_use_metal=true 
+        skia_use_gl=false 
+        skia_use_vulkan=false
+    )
+    set(GN_ARGS_RELEASE 
+        ${GN_BASE_ARGS} ${GN_BASE_RELEASE_ARGS} 
+        is_official_build=true 
+        is_debug=false 
+        is_component_build=false 
+        skia_use_metal=true 
+        skia_use_gl=false 
+        skia_use_vulkan=false
+    )
 endif()
 
+string (JOIN " " SKIA_ARGS_RELEASE ${GN_ARGS_RELEASE})
+string (JOIN " " SKIA_ARGS_DEBUG ${GN_ARGS_DEBUG})
 ExternalProject_Add(
     skia_project
     PREFIX ${CMAKE_BINARY_DIR}/skia_build
@@ -68,10 +131,11 @@ ExternalProject_Add(
     SOURCE_DIR ${SKIA_ROOT}
 
     CONFIGURE_COMMAND
-    cmake -E env GIT_SYNC_DEPS_SKIP_EMSDK=1 ${Python3_EXECUTABLE} ${SKIA_ROOT}/tools/git-sync-deps && ${Python3_EXECUTABLE} ${SKIA_ROOT}/bin/fetch-ninja
+    cmake -E env GIT_SYNC_DEPS_SKIP_EMSDK=1 ${Python3_EXECUTABLE} ${SKIA_ROOT}/tools/git-sync-deps 
+    COMMAND ${Python3_EXECUTABLE} ${SKIA_ROOT}/bin/fetch-ninja
 
-    COMMAND ${GN_EXECUTABLE} gen ${SKIA_DEBUG_DIR} --root=${SKIA_ROOT} --args=${SKIA_ARGS_DEBUG}
-    COMMAND ${GN_EXECUTABLE} gen ${SKIA_RELEASE_DIR} --root=${SKIA_ROOT} --args=${SKIA_ARGS_RELEASE}
+    COMMAND ${CONFIGURE_SCRIPT} ${GN_EXECUTABLE} ${SKIA_ROOT} ${SKIA_DEBUG_DIR} "${SKIA_ARGS_DEBUG}" Debug
+    COMMAND ${CONFIGURE_SCRIPT} ${GN_EXECUTABLE} ${SKIA_ROOT} ${SKIA_RELEASE_DIR} "${SKIA_ARGS_RELEASE}" Release
 
     BUILD_COMMAND
     ${NINJA_EXECUTABLE} -C ${SKIA_DEBUG_DIR} skia -v

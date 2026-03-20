@@ -1,0 +1,10 @@
+#!/bin/bash
+
+GN_EXECUTABLE=$1
+SKIA_ROOT=$2
+SKIA_BUILD_DIR=$3
+SKIA_ARGS=$4
+BUILD_TYPE=$5
+
+echo "Running GN gen for $SKIA_ROOT..."
+"$GN_EXECUTABLE" gen "$SKIA_BUILD_DIR" --root="$SKIA_ROOT" --args="$SKIA_ARGS"
