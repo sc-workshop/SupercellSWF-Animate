@@ -57,7 +57,10 @@ namespace sc::Adobe {
 
     private:
         void CreateFillPaint(const VectorRegion::SolidFill& fill, SkPaint& paint) const;
-        void CreateFillPaint(const VectorRegion::BitmapFill& fill, SkPaint& paint, const SkMatrix& matrix) const;
+        void CreateFillPaint(const VectorRegion::BitmapFill& fill,
+                             SkPaint& paint,
+                             wk::PointF offset,
+                             const SkMatrix& matrix) const;
         void CreateFillPaint(const VectorRegion::GradientFill& fill,
                              SkPaint& paint,
                              wk::PointF offset,

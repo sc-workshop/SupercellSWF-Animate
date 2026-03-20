@@ -10,3 +10,4 @@ packages/plugin/include/PluginConfiguration.h
 .DS_Store
 *.sc
 RECOVER_*
+/packages/plugin/build-release

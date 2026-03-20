@@ -57,7 +57,7 @@ namespace sc::Adobe {
         textureMaxHeight = data["textureMaxHeight"];
 
         if (data["compressionMethod"].is_number_unsigned()) {
-            compression = (sc::flash::Signature)(data["compressionMethod"]);
+            compression = static_cast<sc::flash::Signature>(data["compressionMethod"]);
         }
 
         if (data["textureScaleFactor"].is_number_unsigned()) {
@@ -81,7 +81,7 @@ namespace sc::Adobe {
         }
 
         if (data["textureEncoding"].is_number_unsigned()) {
-            textureEncoding = (SWFTexture::TextureEncoding) data["textureEncoding"];
+            textureEncoding = static_cast<SWFTexture::TextureEncoding>(data["textureEncoding"]);
         }
 
         if (data["textureQuality"].is_number_unsigned()) {
@@ -108,6 +108,7 @@ namespace sc::Adobe {
         writeFieldsText = data["writeFieldsText"];
         generateStreamingTexture = data["generateStreamingTexture"];
         useMultiDocument = data["multipleDocuments"];
+        aggressiveRasterization = data["aggressiveRasterization"];
 
         if (data["documentsPaths"].is_array()) {
             const auto& paths = data["documentsPaths"];

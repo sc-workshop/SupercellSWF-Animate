@@ -240,6 +240,7 @@ namespace sc::Adobe {
 
     void VectorRasterizer::CreateFillPaint(const VectorRegion::BitmapFill& fill,
                                            SkPaint& paint,
+                                           wk::PointF offset,
                                            const SkMatrix& resolution_matrix) const {
         fill.bitmap.ExportImage(m_writer.sprite_temp_path);
         sk_sp<SkData> data = SkData::MakeFromFileName(m_writer.sprite_temp_path.string().c_str());
@@ -261,10 +262,10 @@ namespace sc::Adobe {
         auto matrix = fill.bitmap.Transformation();
         SkMatrix pattern_matrix = SkMatrix::MakeAll(matrix.a / Animate::DOM::TWIPS_PER_PIXEL,
                                                     matrix.c / Animate::DOM::TWIPS_PER_PIXEL,
-                                                    matrix.tx,
+                                                    matrix.tx + offset.x,
                                                     matrix.b / Animate::DOM::TWIPS_PER_PIXEL,
                                                     matrix.d / Animate::DOM::TWIPS_PER_PIXEL,
-                                                    matrix.ty,
+                                                    matrix.ty + offset.y,
                                                     0,
                                                     0,
                                                     1.f);
@@ -358,7 +359,7 @@ namespace sc::Adobe {
         paint.setAntiAlias(true);
         std::visit(Overloaded {[&](VectorRegion::SolidFill fill) { CreateFillPaint(fill, paint); },
                                [&](const VectorRegion::BitmapFill& fill) {
-                                   CreateFillPaint(fill, paint, resolution_matrix);
+                                   CreateFillPaint(fill, paint, offset, scale_matrix);
                                },
                                [&](const VectorRegion::GradientFill& fill) {
                                    CreateFillPaint(fill, paint, offset, scale_matrix);

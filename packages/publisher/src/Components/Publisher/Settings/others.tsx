@@ -1,9 +1,9 @@
 import BoolField from "Components/Shared/BoolField";
+import renderComponents from "Components/Shared/ComponentRenderer";
 import EnumField from "Components/Shared/EnumField";
 import SubMenu from "Components/Shared/SubMenu";
 import { GetPublishContext } from "Publisher/Context";
 import Locale from "Publisher/Localization";
-import renderComponents from "Components/Shared/ComponentRenderer";
 import {
 	BaseCompressionMethods,
 	CompressionMethods,

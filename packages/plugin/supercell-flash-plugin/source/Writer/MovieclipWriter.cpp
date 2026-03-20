@@ -102,11 +102,12 @@ namespace sc { namespace Adobe {
 
                                             std::optional<Animate::DOM::Utils::MATRIX2D> matrix,
                                             std::optional<Animate::DOM::Utils::COLOR_MATRIX> color) {
+        uint16_t id = resource.GetId();
         flash::MovieClipFrame& frame = m_object.frames[m_position];
 
         // Index of bind element
         uint16_t instanceIndex =
-            GetInstanceIndex(frame.elements_count, resource.GetId(), blending, FCM::Locale::ToUtf8(name));
+            GetInstanceIndex(frame.elements_count,id, blending, FCM::Locale::ToUtf8(name));
 
         // New frame element
         flash::MovieClipFrameElement& element = m_object.frame_elements.emplace_back();

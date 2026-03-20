@@ -23,7 +23,6 @@ const Animate::FCMPluginID& ::Animate::Publisher::GenericPublisher<SCConfig, SCP
 }
 
 namespace sc::Adobe {
-
     void SCPublisher::PublishDocuments() {
         SCPlugin& context = SCPlugin::Instance();
         SCConfig& config = SCPlugin::Publisher::ActiveConfig();
