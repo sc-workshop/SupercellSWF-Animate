@@ -69,9 +69,14 @@ namespace sc::Adobe {
         bool isSc2 = false;
         if (config.autoProperties) {
             wk::InputFileStream file(path);
-            isSc2 = flash::SupercellSWF::IsSC2(file);
+            uint32_t scVersion = flash::SupercellSWF::GetVersion(file);
 
-            if (isSc2) {
+            if (scVersion >= 5) {
+                isSc2 = true;
+                if (scVersion == 6) {
+                    file.read_unsigned_short(); // always 0
+                }
+
                 config.type = SCConfig::SWFType::SC2;
                 swf.load_sc2(file);
 
