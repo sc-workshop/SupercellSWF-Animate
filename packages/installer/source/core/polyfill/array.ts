@@ -1,6 +1,6 @@
 Array.prototype.indexOf = Array.prototype.indexOf
 	? Array.prototype.indexOf
-	: function (searchElement, fromIndex) {
+	: function (this: any[], searchElement, fromIndex: number = 0) {
 			var k: string | number;
 
 			var O = Object(this);

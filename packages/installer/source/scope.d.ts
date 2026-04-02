@@ -25,7 +25,7 @@ declare global {
 	}
 
 	interface ManifestWindow extends Window {
-		SupercellSWF?: {
+		SupercellSWF: {
 			cwd: string;
 			cwd_path: string;
 

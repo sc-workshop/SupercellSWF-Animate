@@ -3,7 +3,8 @@
 	const cep_uri = FLfile.platformPathToURI(system.install_path);
 	const uninstalled: string[] = [];
 
-	for (const extension of window.SupercellSWF.user_manifest.extensions) {
+	const extensions = window.SupercellSWF.user_manifest?.extensions || [];
+	for (const extension of extensions) {
 		if (uninstalled.indexOf(extension.name) != -1) continue;
 
 		let path = "";

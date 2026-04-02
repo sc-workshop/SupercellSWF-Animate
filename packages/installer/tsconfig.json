@@ -4,7 +4,8 @@
 		"noLib": true,
 		"types": [
 			"types-for-adobe/Animate/22.0"
-		]
+		],
+		"rootDir": "source"
 	},
 	"exclude": [
 		"node_modules",

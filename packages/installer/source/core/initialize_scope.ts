@@ -3,8 +3,7 @@ class SystemInfo {
 		const context = window.SupercellSWF;
 		const [os, _version] = fl.version.split(" ");
 		const info_output_path = `${window.SupercellSWF.cwd}user_data.txt`;
-		if (FLfile.exists(info_output_path))
-			FLfile.remove(info_output_path);
+		if (FLfile.exists(info_output_path)) FLfile.remove(info_output_path);
 
 		if (os == "WIN") {
 			const info_executable = `${context.binary_path}/info`;
@@ -14,8 +13,8 @@ class SystemInfo {
 				fl.trace("Failed to get system info!");
 			}
 
-			const data = FLfile.read(info_output_path);
-			const [cep_path, cpu_features] = data.match(/[^\r\n]+/g);
+			const data = FLfile.read(info_output_path) || "";
+			const [cep_path, cpu_features] = data.match(/[^\r\n]+/g) || [];
 
 			this.install_path = cep_path.replace(/\\/g, "\\\\");
 			this.cpu_features = cpu_features.split(",");
@@ -27,7 +26,7 @@ class SystemInfo {
 				fl.trace("Failed to get system info!");
 			}
 
-			this.install_path = FLfile.read(info_output_path);
+			this.install_path = FLfile.read(info_output_path) || "";
 		}
 
 		this.install_path = this.install_path.replace(/[\r\n]/g, "");
@@ -52,7 +51,8 @@ class Localization {
 			locale_path = `${window.SupercellSWF.cwd}core/locales/en_US.json`;
 		}
 
-		this.data = JSON.parse(FLfile.read(locale_path));
+		const json = FLfile.read(locale_path) || "{}";
+		this.data = JSON.parse(json);
 	}
 
 	get(tid: string): string {
@@ -64,16 +64,21 @@ class Localization {
 	}
 
 	private lang = fl.languageCode;
-	private data: object = {};
+	private data: Record<string, string> = {};
 }
 
 (() => {
-	// @ts-expect-error
 	window.SupercellSWF = {
 		cwd: fl.scriptURI.replace("core/initialize_scope.jsfl", ""),
-		manifest: undefined,
-		locale: undefined,
-		system: undefined,
+		cwd_path: "",
+		binary_path: "",
+		os: "WIN",
+		manifest_path: "",
+		user_manifest_uri: "",
+		user_manifest: undefined,
+		manifest: undefined as unknown as InstallManifest, // Initialize later
+		locale: undefined as unknown as Localization,
+		system: undefined as unknown as () => SystemInfo,
 		error_message: "",
 	};
 
@@ -91,13 +96,15 @@ class Localization {
 	// Reading Manifest
 	window.SupercellSWF.manifest_path = `${window.SupercellSWF.cwd}manifest.json`;
 	window.SupercellSWF.manifest = JSON.parse(
-		FLfile.read(window.SupercellSWF.manifest_path),
+		FLfile.read(window.SupercellSWF.manifest_path) || "{}",
 	) as any;
 	window.SupercellSWF.user_manifest_uri = `${fl.configURI + window.SupercellSWF.manifest.name}.manifest.json`;
 	window.SupercellSWF.user_manifest = FLfile.exists(
 		window.SupercellSWF.user_manifest_uri,
 	)
-		? (JSON.parse(FLfile.read(window.SupercellSWF.user_manifest_uri)) as any)
+		? (JSON.parse(
+				FLfile.read(window.SupercellSWF.user_manifest_uri) || "{}",
+			) as any)
 		: undefined;
 
 	// Localization Init

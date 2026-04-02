@@ -1,11 +1,20 @@
 {
 	"compilerOptions": {
-		"plugins": [{ "name": "typescript-plugin-css-modules" }],
+		"plugins": [
+			{
+				"name": "typescript-plugin-css-modules"
+			}
+		],
 		"target": "es5",
-		"lib": ["dom", "dom.iterable", "esnext"],
-		"baseUrl": "./src",
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": [
+				"./src/*"
+			]
 		},
 		"allowJs": true,
 		"skipLibCheck": true,
@@ -19,7 +28,11 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"noEmit": false,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"rootDir": "./src",
+		"baseUrl": "./src"
 	},
-	"include": ["src"]
+	"include": [
+		"src"
+	]
 }

@@ -19,6 +19,9 @@ function install(extension: Extension) {
 		command = `call "${FLfile.uriToPlatformPath(archiver_bin)}" x -y "${FLfile.uriToPlatformPath(package_path)}" -o"${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
 	} else if (context.os == "MAC") {
 		command = `ditto -x -k "${FLfile.uriToPlatformPath(package_path)}" "${FLfile.uriToPlatformPath(destination_folder)}" >> "${FLfile.uriToPlatformPath(unpack_log)}" 2>&1`;
+	} else {
+		fl.trace(`Unsupported OS: ${context.os}`);
+		return;
 	}
 
 	const status = FLfile.runCommandLine(command);

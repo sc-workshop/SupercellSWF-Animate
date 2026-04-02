@@ -14,8 +14,9 @@ function baseName(str: string) {
 
 	const commands_folder = `${fl.configURI}Commands/`;
 	const commands_locale_path = `${commands_folder}names.xml`;
+
 	const names_xml = FLfile.exists(commands_locale_path)
-		? FLfile.read(commands_locale_path).split("\n")
+		? (FLfile.read(commands_locale_path) || "").split("\n")
 		: default_commands_locale;
 
 	for (const extension of window.SupercellSWF.manifest.extensions) {
@@ -23,8 +24,10 @@ function baseName(str: string) {
 
 		const script_path = window.SupercellSWF.cwd + extension.path;
 		const script_destination = commands_folder + extension.install;
-		const script_destination_folder =
-			script_destination.match(/(.*)[/\\]/)[1] || "";
+		const script_destination_folder = (script_destination.match(
+			/(.*)[/\\]/,
+		) || ["", ""])[1];
+
 		FLfile.createFolder(script_destination_folder);
 		FLfile.copy(script_path, script_destination);
 
