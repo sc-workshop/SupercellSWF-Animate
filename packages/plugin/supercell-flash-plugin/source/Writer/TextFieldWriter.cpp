@@ -62,8 +62,13 @@ namespace sc::Adobe {
                 break;
         }
 
-        if (paragraph.style.lineSpacing > 0) {
+        // Default value
+        if (paragraph.style.lineSpacing == 2) {
             m_object.font_vertical_align = flash::TextField::Align::Center;
+        } else if (paragraph.style.lineSpacing > 2) {
+            m_object.font_vertical_align = flash::TextField::Align::Left;
+        } else if (paragraph.style.lineSpacing < 2) {
+            m_object.font_vertical_align = flash::TextField::Align::Right;
         }
 
         if (paragraph.textRuns.size() > 1) {
