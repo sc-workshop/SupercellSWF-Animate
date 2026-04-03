@@ -112,8 +112,8 @@ namespace sc::Adobe {
 
     void SCTextFieldWriter::SetGlowFilter(const GlowFilter& filter) {
         m_object.is_outlined = true;
-        m_object.outline_color = *(uint32_t*) &filter.color;
-        m_object.outline_strength = (float) std::max(filter.strength, 100) / 25500;
+        m_object.outline_color = {filter.color.blue, filter.color.green, filter.color.red, filter.color.alpha};
+        m_object.outline_strength = (float) std::min(filter.strength, 100) / 100;
     }
 
     std::size_t SCTextFieldWriter::GenerateHash() const {
