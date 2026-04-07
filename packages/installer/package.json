@@ -11,7 +11,10 @@
   "author": "DaniilSV",
   "license": "MIT",
   "dependencies": {
-    "types-for-adobe": "7.2.1",
-    "patch-package": "8.0.0"
+    "patch-package": "8.0.0",
+    "types-for-adobe": "7.2.1"
+  },
+  "devDependencies": {
+    "typescript": "4.9.5"
   }
 }

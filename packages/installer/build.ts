@@ -11,7 +11,7 @@ const runtimePath = join(__dirname, "runtime");
 copyDir(runtimePath, outputPath);
 if (existsSync(binariesPath)) copyDir(binariesPath, join(outputPath, "bin"));
 
-execSync(`tsc --outDir "${outputPath}"`, { stdio: [0, 1, 2], cwd: __dirname });
+execSync(`pnpm exec tsc --outDir "${outputPath}"`, { stdio: [0, 1, 2], cwd: __dirname });
 
 function rename_files(path: string) {
 	if (lstatSync(path).isDirectory()) {
