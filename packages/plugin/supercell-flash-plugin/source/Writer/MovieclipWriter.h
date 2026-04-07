@@ -20,7 +20,7 @@ namespace sc::Adobe {
 
         // Helper functions
 
-        uint16_t GetInstanceIndex(uint16_t elementsCount, uint16_t id, FCM::BlendMode blending, std::string name);
+        uint16_t GetInstanceIndex(uint16_t elementsCount, uint16_t id, uint8_t blendIndex, std::string name);
 
         void FinalizeTransforms();
 
@@ -31,7 +31,7 @@ namespace sc::Adobe {
         virtual void InitializeTimeline(uint32_t fps, uint32_t frameCount);
         virtual void SetLabel(const std::u16string& label);
         virtual void AddFrameElement(Animate::Publisher::ResourceReference resource,
-                                     FCM::BlendMode blending,
+                                     const Animate::Publisher::DisplayObjectProperties& properties,
                                      const std::u16string& name,
                                      std::optional<Animate::DOM::Utils::MATRIX2D> matrix,
                                      std::optional<Animate::DOM::Utils::COLOR_MATRIX> color);

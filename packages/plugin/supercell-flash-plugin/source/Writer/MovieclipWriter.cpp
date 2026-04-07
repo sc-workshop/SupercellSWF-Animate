@@ -8,7 +8,7 @@
 
 using namespace Animate::Publisher;
 
-namespace sc { namespace Adobe {
+namespace sc::Adobe {
     SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol) :
         Animate::Publisher::SharedMovieclipWriter(symbol),
         m_writer(writer) {};
@@ -53,9 +53,9 @@ namespace sc { namespace Adobe {
 
     uint16_t SCMovieclipWriter::GetInstanceIndex(uint16_t elementsCount,
                                                  uint16_t id,
-                                                 FCM::BlendMode _blending,
+                                                 uint8_t blendIndex,
                                                  std::string name) {
-        flash::DisplayObjectInstance::BlendMode blending = (flash::DisplayObjectInstance::BlendMode)(_blending);
+        flash::DisplayObjectInstance::BlendMode blending = (flash::DisplayObjectInstance::BlendMode)(blendIndex);
 
         uint16_t frameInstancesOffset = 0;
         uint32_t frameElementsLastIndex = m_object.frame_elements.size() - 1;
@@ -97,13 +97,17 @@ namespace sc { namespace Adobe {
     }
 
     void SCMovieclipWriter::AddFrameElement(ResourceReference resource,
-                                            FCM::BlendMode blending,
+                                            const DisplayObjectProperties& properties,
                                             const std::u16string& name,
-
                                             std::optional<Animate::DOM::Utils::MATRIX2D> matrix,
                                             std::optional<Animate::DOM::Utils::COLOR_MATRIX> color) {
         uint16_t id = resource.GetId();
         flash::MovieClipFrame& frame = m_object.frames[m_position];
+
+        uint8_t blending = (uint8_t) properties.blend_mode;
+        if (!properties.visible) {
+            blending |= 0x40;
+        }
 
         // Index of bind element
         uint16_t instanceIndex =
@@ -294,7 +298,7 @@ namespace sc { namespace Adobe {
             }
         }
     }
-}}
+}
 
 namespace wk::hash {
     template <>
