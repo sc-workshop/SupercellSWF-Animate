@@ -55,7 +55,7 @@ namespace sc::Adobe {
         std::ofstream logger_file;
 
         // Thread pool for multiple documents export
-        BS::thread_pool<0> threads;
+        BS::light_thread_pool threads;
 
     public:
         // Progress Window
