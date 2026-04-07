@@ -35,7 +35,6 @@
 		"style-loader": "2.0.0",
 		"ts-loader": "8.0.17",
 		"tsconfig-paths-webpack-plugin": "^4.2.0",
-		"typescript": "4.2.2",
 		"typescript-plugin-css-modules": "5.0.1",
 		"url-loader": "4.1.1",
 		"webpack": "4.47.0",
@@ -44,6 +43,7 @@
 		"wrap-text": "1.0.9"
 	},
 	"devDependencies": {
-		"@types/css-font-loading-module": "^0.0.14"
+		"@types/css-font-loading-module": "^0.0.14",
+		"typescript": "4.9.5"
 	}
 }
