@@ -4,6 +4,8 @@
 #include "Writer.h"
 #include "core/hashing/ncrypto/xxhash.h"
 
+#include <numbers>
+
 using namespace Animate::Publisher;
 
 namespace sc::Adobe {
@@ -115,7 +117,23 @@ namespace sc::Adobe {
     void SCTextFieldWriter::SetGlowFilter(const GlowFilter& filter) {
         m_object.is_outlined = true;
         m_object.outline_color = {filter.color.blue, filter.color.green, filter.color.red, filter.color.alpha};
-        m_object.outline_strength = (float) std::min(filter.strength, 100) / 100;
+        m_object.outline_angle = (float) std::min(filter.strength, 100) / 100;
+    }
+
+    void SCTextFieldWriter::SetDropShadowFilter(const Animate::Publisher::DropShadowFilter& filter) {
+        if (!filter.enabled)
+            return;
+
+        m_object.is_outlined = true;
+        m_object.outline_color = {filter.color.blue, filter.color.green, filter.color.red, filter.color.alpha};
+        double angle = filter.angle * (180.0 / std::numbers::pi);
+        angle -= 45.0;
+        if (angle < 0.0) {
+            angle += 360.0;
+        }
+        uint16_t normalizedAngle = (uint16_t) ((angle / 360.0) * 65535);
+
+        m_object.outline_angle = 0xFFFF0000 | uint32_t(normalizedAngle);
     }
 
     std::size_t SCTextFieldWriter::GenerateHash() const {
@@ -146,8 +164,7 @@ namespace sc::Adobe {
         code.update(m_object.bend_angle);
 
         code.update(m_object.unknown_flag);
-        code.update(m_object.unknown_value);
-        code.update(m_object.outline_strength);
+        code.update(m_object.outline_angle);
 
         code.update(m_object.typography_file);
 

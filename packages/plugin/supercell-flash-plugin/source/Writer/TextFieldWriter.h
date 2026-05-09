@@ -15,6 +15,7 @@ namespace sc::Adobe {
         virtual void AddParagraph(const Animate::Publisher::TextParagraph& paragraph) override;
         void SetTextRun(const Animate::Publisher::TextRun& textRun);
         virtual void SetGlowFilter(const Animate::Publisher::GlowFilter& filter) override;
+        virtual void SetDropShadowFilter(const Animate::Publisher::DropShadowFilter& filter) override;
 
         virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol) override;
 

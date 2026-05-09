@@ -511,43 +511,79 @@
 	},
 	{
 		"name": "DropShadowFilter",
-		"supported": false,
+		"supported": true,
 		"properties": [
 			{
 				"name": "Quality",
-				"supported": false,
+				"supported": true,
 				"default": "High"
 			},
 			{
 				"name": "Angle",
 				"supported": true,
-				"default": "0.785"
+				"default": "1.5708"
 			},
 			{
 				"name": "Distance",
-				"supported": false,
+				"supported": true,
 				"default": "0"
 			},
 			{
 				"name": "Knockout",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "Inner",
-				"supported": false,
+				"supported": true,
 				"default": "false"
 			},
 			{
 				"name": "HideObject",
-				"supported": false,
+				"supported": true,
+				"default": "false"
+			}
+		]
+	},
+	{
+		"name": "dropShadowFilter",
+		"supported": true,
+		"properties": [
+			{
+				"name": "Quality",
+				"supported": true,
+				"default": "High"
+			},
+			{
+				"name": "Angle",
+				"supported": true,
+				"default": "1.5708"
+			},
+			{
+				"name": "Distance",
+				"supported": true,
+				"default": "0"
+			},
+			{
+				"name": "Knockout",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "Inner",
+				"supported": true,
+				"default": "false"
+			},
+			{
+				"name": "HideObject",
+				"supported": true,
 				"default": "false"
 			}
 		]
 	},
 	{
 		"name": "GlowFilter",
-		"supported": true,
+		"supported": false,
 		"properties": [
 			{
 				"name": "Quality",
@@ -568,7 +604,7 @@
 	},
 	{
 		"name": "glowFilter",
-		"supported": true,
+		"supported": false,
 		"properties": [
 			{
 				"name": "Quality",
