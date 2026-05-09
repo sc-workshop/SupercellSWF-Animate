@@ -47,10 +47,14 @@ set(GN_ARGS_RELEASE "")
 set(GN_BASE_DEBUG_ARGS 
     skia_use_no_png_encode=false 
     skia_use_libpng_encode=true
+    skia_use_libpng_decode=true
+    skia_use_system_libpng=false
 )
 set(GN_BASE_RELEASE_ARGS 
     skia_use_no_png_encode=true 
     skia_use_libpng_encode=false
+    skia_use_libpng_decode=true
+    skia_use_system_libpng=false
 )
 set(GN_BASE_ARGS 
     skia_use_no_webp_encode=true 
@@ -72,9 +76,8 @@ set(GN_BASE_ARGS
     skia_enable_gpu_debug_layers=false 
     skia_enable_fontmgr_win_gdi=false 
     skia_enable_android_utils=false 
-    skia_canvaskit_enable_sksl_trace=false 
+    skia_canvaskit_enable_sksl_trace=false
     skia_canvaskit_enable_embedded_font=false 
-    skia_canvaskit_enable_canvas_bindings=false
 )
 
 if(WIN32)
@@ -127,7 +130,7 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/skia_build
 
     GIT_REPOSITORY https://skia.googlesource.com/skia
-    GIT_TAG main
+    GIT_TAG 05a03f99c74e0fa2d350f26a4c951560d229bbd0
     SOURCE_DIR ${SKIA_ROOT}
 
     CONFIGURE_COMMAND

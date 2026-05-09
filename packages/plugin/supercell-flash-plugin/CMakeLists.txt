@@ -87,12 +87,6 @@ if(APPLE)
         XCODE_ATTRIBUTE_SKIP_INSTALL "NO"
         INSTALL_RPATH "@loader_path/libs"
     )
-
-    # Add universal libs target for blend2d
-    add_dependencies(${TARGET}
-        blend2d_universal_Debug
-        blend2d_universal_Release
-    )
 endif()
 
 if(WIN32 AND BUILD_SHARED_LIBS)
