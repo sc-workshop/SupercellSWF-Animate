@@ -14,6 +14,7 @@ namespace sc::Adobe {
         virtual void Initialize(const Animate::Publisher::TextElement& textfield) override;
         virtual void AddParagraph(const Animate::Publisher::TextParagraph& paragraph) override;
         void SetTextRun(const Animate::Publisher::TextRun& textRun);
+        void FixupBounds();
         virtual void SetGlowFilter(const Animate::Publisher::GlowFilter& filter) override;
         virtual void SetDropShadowFilter(const Animate::Publisher::DropShadowFilter& filter) override;
 
