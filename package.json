@@ -13,6 +13,7 @@
 	"author": "DaniilSV",
 	"license": "MIT",
 	"dependencies": {
+		"typescript": "4.9.5",
 		"@types/node": "20.5.9",
 		"@types/which": "3.0.0",
 		"picocolors": "1.0.0",

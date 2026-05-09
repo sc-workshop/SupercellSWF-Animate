@@ -19,7 +19,10 @@ importers:
         version: 1.0.0
       ts-node:
         specifier: 10.9.1
-        version: 10.9.1(@types/node@20.5.9)(typescript@5.0.3)
+        version: 10.9.1(@types/node@20.5.9)(typescript@4.9.5)
+      typescript:
+        specifier: 4.9.5
+        version: 4.9.5
       url:
         specifier: 0.11.0
         version: 0.11.0
@@ -52,6 +55,9 @@ importers:
       '@types/node':
         specifier: 20.5.9
         version: 20.5.9
+      typescript:
+        specifier: 4.9.5
+        version: 4.9.5
 
   packages/publisher:
     dependencies:
@@ -126,7 +132,7 @@ importers:
         version: 4.2.0
       typescript-plugin-css-modules:
         specifier: 5.0.1
-        version: 5.0.1(ts-node@10.9.1(@types/node@20.5.9)(typescript@4.9.5))(typescript@4.9.5)
+        version: 5.0.1(ts-node@10.9.1(@types/node@24.10.0)(typescript@4.9.5))(typescript@4.9.5)
       url-loader:
         specifier: 4.1.1
         version: 4.1.1(file-loader@6.2.0(webpack@4.47.0))(webpack@4.47.0)
@@ -4444,11 +4450,6 @@ packages:
   typescript@4.9.5:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
-    hasBin: true
-
-  typescript@5.0.3:
-    resolution: {integrity: sha512-xv8mOEDnigb/tN9PSMTwSEqAnUvkoXMQlicOb0IUVDBSQCgBSaAAROUZYy2IcUy5qU6XajK5jjjO7TMWqBTKZA==}
-    engines: {node: '>=12.20'}
     hasBin: true
 
   unbox-primitive@1.1.0:
@@ -9009,13 +9010,13 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-load-config@3.1.4(postcss@8.5.6)(ts-node@10.9.1(@types/node@20.5.9)(typescript@4.9.5)):
+  postcss-load-config@3.1.4(postcss@8.5.6)(ts-node@10.9.1(@types/node@24.10.0)(typescript@4.9.5)):
     dependencies:
       lilconfig: 2.1.0
       yaml: 1.10.2
     optionalDependencies:
       postcss: 8.5.6
-      ts-node: 10.9.1(@types/node@20.5.9)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@24.10.0)(typescript@4.9.5)
 
   postcss-modules-extract-imports@3.1.0(postcss@8.5.6):
     dependencies:
@@ -10002,25 +10003,25 @@ snapshots:
       typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-    optional: true
 
-  ts-node@10.9.1(@types/node@20.5.9)(typescript@5.0.3):
+  ts-node@10.9.1(@types/node@24.10.0)(typescript@4.9.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.9
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 20.5.9
+      '@types/node': 24.10.0
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 5.0.3
+      typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    optional: true
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
@@ -10085,7 +10086,7 @@ snapshots:
 
   types-for-adobe@7.2.1: {}
 
-  typescript-plugin-css-modules@5.0.1(ts-node@10.9.1(@types/node@20.5.9)(typescript@4.9.5))(typescript@4.9.5):
+  typescript-plugin-css-modules@5.0.1(ts-node@10.9.1(@types/node@24.10.0)(typescript@4.9.5))(typescript@4.9.5):
     dependencies:
       '@types/postcss-modules-local-by-default': 4.0.2
       '@types/postcss-modules-scope': 3.0.4
@@ -10094,7 +10095,7 @@ snapshots:
       less: 4.4.2
       lodash.camelcase: 4.3.0
       postcss: 8.5.6
-      postcss-load-config: 3.1.4(postcss@8.5.6)(ts-node@10.9.1(@types/node@20.5.9)(typescript@4.9.5))
+      postcss-load-config: 3.1.4(postcss@8.5.6)(ts-node@10.9.1(@types/node@24.10.0)(typescript@4.9.5))
       postcss-modules-extract-imports: 3.1.0(postcss@8.5.6)
       postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
       postcss-modules-scope: 3.2.1(postcss@8.5.6)
@@ -10109,8 +10110,6 @@ snapshots:
       - ts-node
 
   typescript@4.9.5: {}
-
-  typescript@5.0.3: {}
 
   unbox-primitive@1.1.0:
     dependencies:

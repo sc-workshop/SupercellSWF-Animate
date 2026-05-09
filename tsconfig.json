@@ -9,14 +9,12 @@
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
-		//"noPropertyAccessFromIndexSignature": true,
-		//"noUnusedLocals": true,
-		//"noUnusedParameters": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
-		"typeRoots": ["node_modules/@types"]
+		"typeRoots": ["node_modules/@types"],
+		"types": ["node"],
 	},
 	"include": ["./**/*.ts"]
 }

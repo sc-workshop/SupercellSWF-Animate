@@ -11,6 +11,7 @@
 	"author": "DaniilSV",
 	"license": "MIT",
 	"dependencies": {
+		"typescript": "4.9.5",
 		"@types/node": "20.5.9"
 	}
 }
