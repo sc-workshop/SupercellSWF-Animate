@@ -31,6 +31,8 @@ namespace sc::Adobe {
         if (textfield.renderingMode.aaMode == FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
             m_object.use_device_font = true;
         }
+
+        m_object.unknown_flag = textfield.isSelectable;
     }
 
     void SCTextFieldWriter::AddParagraph(const TextParagraph& paragraph) {
