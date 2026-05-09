@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Animate/generator/TimelineBuilder/FrameElements/FilledElement.h"
+#include "animate/generator/TimelineBuilder/FrameElements/FilledElement.h"
 #include "Skia.h"
 
 namespace sc::Adobe {

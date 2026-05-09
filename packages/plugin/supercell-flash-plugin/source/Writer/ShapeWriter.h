@@ -21,14 +21,14 @@ namespace sc::Adobe {
 
     public:
         virtual void AddGraphic(const Animate::Publisher::BitmapElement& item);
-        virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape);
-        virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice);
+        virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape) override;
+        virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice) override;
 
         virtual void PreFinalize() override;
-        virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol);
+        virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol) override;
 
     protected:
-        virtual std::size_t GenerateHash() const;
+        virtual std::size_t GenerateHash() const override;
 
     public:
         void AddContourRegion(const Animate::Publisher::FilledElementPath& contour,
