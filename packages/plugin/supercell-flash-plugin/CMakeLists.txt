@@ -28,6 +28,8 @@ if(MSVC)
     target_link_options(${TARGET} PRIVATE
         $<$<CONFIG:Release>:/LTCG>
     )
+elseif (APPLE)
+    target_compile_options(${TARGET} PRIVATE -Wno-gnu-zero-variadic-macro-arguments)
 endif()
 
 # Base properties

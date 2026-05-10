@@ -20,7 +20,7 @@ namespace sc::Adobe {
         static inline const float RasterizationResolution = 2.f;
 
     public:
-        virtual void AddGraphic(const Animate::Publisher::BitmapElement& item);
+        virtual void AddGraphic(const Animate::Publisher::BitmapElement& item) override;
         virtual void AddFilledElement(const Animate::Publisher::FilledElement& shape) override;
         virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice) override;
 
