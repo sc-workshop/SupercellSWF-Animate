@@ -85,7 +85,6 @@ set(GN_BASE_ARGS
     skia_enable_gpu_debug_layers=false
     skia_enable_fontmgr_win_gdi=false
     skia_enable_android_utils=false
-    skia_canvaskit_enable_sksl_trace=false
 )
 
 if(WIN32)
@@ -131,31 +130,9 @@ else()
     )
 endif()
 
-function(join_gn_args OUT_VAR)
-    string(JOIN " " JOINED_ARGS ${ARGN})
-    set(${OUT_VAR} "${JOINED_ARGS}" PARENT_SCOPE)
-endfunction()
+string(JOIN " " SKIA_ARGS_RELEASE ${GN_ARGS_RELEASE})
+string(JOIN " " SKIA_ARGS_DEBUG ${GN_ARGS_DEBUG})
 
-function(make_skia_args OUT_VAR CONFIG)
-    if("${CONFIG}" STREQUAL "Debug")
-        set(SKIA_CONFIG_ARGS ${GN_BASE_DEBUG_ARGS})
-    elseif("${CONFIG}" STREQUAL "Release")
-        set(SKIA_CONFIG_ARGS ${GN_BASE_RELEASE_ARGS})
-    else()
-        message(FATAL_ERROR "Unsupported Skia config: ${CONFIG}")
-    endif()
-
-    join_gn_args(
-        SKIA_JOINED_ARGS
-        ${GN_BASE_ARGS}
-        ${SKIA_CONFIG_ARGS}
-    )
-
-    set(${OUT_VAR} "${SKIA_JOINED_ARGS}" PARENT_SCOPE)
-endfunction()
-
-make_skia_args(SKIA_ARGS_DEBUG Debug)
-make_skia_args(SKIA_ARGS_RELEASE Release)
 if(APPLE)
     ExternalProject_Add(
         skia_project

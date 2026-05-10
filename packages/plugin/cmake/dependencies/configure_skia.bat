@@ -11,7 +11,6 @@ if /I "%BUILD_TYPE%"=="Release" (
     set "SKIA_ARGS=%SKIA_ARGS% extra_cflags=[\"/MD\"] extra_cflags_cc=[\"/MD\"]"
 )
 
-:: Запуск GN
 echo Running GN gen for %SKIA_ROOT%...
 "%GN_EXECUTABLE%" gen "%SKIA_BUILD_DIR%" --root="%SKIA_ROOT%" --args="%SKIA_ARGS%"
 
