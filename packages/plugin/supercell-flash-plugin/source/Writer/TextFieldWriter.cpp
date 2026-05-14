@@ -33,7 +33,7 @@ namespace sc::Adobe {
                                            FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE);
 
         m_object.style.set_unknown_flag(textfield.isSelectable);
-        FixupBounds();
+        //FixupBounds();
     }
 
     void SCTextFieldWriter::AddParagraph(const TextParagraph& paragraph) {
@@ -106,34 +106,6 @@ namespace sc::Adobe {
             return;
 
         m_object.style.set_auto_kern(textRun.autoKern);
-        m_object.bend_angle = 0.f;
-        m_object.typography_file.clear();
-    }
-
-    void SCTextFieldWriter::FixupBounds() {
-        if (m_object.left > 0) {
-            m_object.left -= 2;
-        } else if (m_object.left < 0) {
-            m_object.left += 2;
-        }
-
-        if (m_object.top > 0) {
-            m_object.top -= 2;
-        } else if (m_object.top < 0) {
-            m_object.top += 2;
-        }
-
-        if (m_object.right > 0) {
-            m_object.right += 2;
-        } else if (m_object.right < 0) {
-            m_object.right -= 2;
-        }
-
-        if (m_object.bottom > 0) {
-            m_object.bottom += 2;
-        } else if (m_object.bottom < 0) {
-            m_object.bottom -= 2;
-        }
     }
 
     void SCTextFieldWriter::SetGlowFilter(const GlowFilter& filter) {
