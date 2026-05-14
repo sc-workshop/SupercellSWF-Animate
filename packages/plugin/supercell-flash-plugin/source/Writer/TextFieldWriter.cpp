@@ -100,11 +100,11 @@ namespace sc::Adobe {
         m_object.font_size = (uint8_t) textRun.fontSize;
 
         if (textRun.fontStyle != FrameElement::REGULAR_STYLE_STR) {
-            if (textRun.fontStyle != FrameElement::ITALIC_STYLE_STR) {
+            if (textRun.fontStyle == FrameElement::ITALIC_STYLE_STR) {
                 m_object.is_italic = true;
-            } else if (textRun.fontStyle != FrameElement::BOLD_STYLE_STR) {
+            } else if (textRun.fontStyle == FrameElement::BOLD_STYLE_STR) {
                 m_object.is_bold = true;
-            } else if (textRun.fontStyle != FrameElement::BOLD_ITALIC_STYLE_STR) {
+            } else if (textRun.fontStyle == FrameElement::BOLD_ITALIC_STYLE_STR) {
                 m_object.is_italic = true;
                 m_object.is_bold = true;
             }
@@ -112,7 +112,10 @@ namespace sc::Adobe {
 
         if (config.backwardCompatibility)
             return;
+
         m_object.auto_kern = textRun.autoKern == FCM::Boolean(true);
+        m_object.bend_angle = 0.f;
+        m_object.typography_file.clear();
     }
 
     void SCTextFieldWriter::FixupBounds() {
