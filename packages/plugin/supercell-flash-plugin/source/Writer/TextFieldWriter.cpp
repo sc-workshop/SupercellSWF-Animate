@@ -28,13 +28,11 @@ namespace sc::Adobe {
             m_object.text = flash::SWFString(FCM::Locale::ToUtf8(textfield.text));
         }
 
-        m_object.is_multiline = textfield.lineMode == FrameElement::LineMode::LINE_MODE_SINGLE ? false : true;
+        m_object.style.set_multiline(textfield.lineMode == FrameElement::LineMode::LINE_MODE_SINGLE ? false : true);
+        m_object.style.set_use_device_font(textfield.renderingMode.aaMode ==
+                                           FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE);
 
-        if (textfield.renderingMode.aaMode == FrameElement::AAMode::ANTI_ALIAS_MODE_DEVICE) {
-            m_object.use_device_font = true;
-        }
-
-        m_object.unknown_flag = textfield.isSelectable;
+        m_object.style.set_unknown_flag(textfield.isSelectable);
         FixupBounds();
     }
 
@@ -99,21 +97,15 @@ namespace sc::Adobe {
 
         m_object.font_size = (uint8_t) textRun.fontSize;
 
-        if (textRun.fontStyle != FrameElement::REGULAR_STYLE_STR) {
-            if (textRun.fontStyle == FrameElement::ITALIC_STYLE_STR) {
-                m_object.is_italic = true;
-            } else if (textRun.fontStyle == FrameElement::BOLD_STYLE_STR) {
-                m_object.is_bold = true;
-            } else if (textRun.fontStyle == FrameElement::BOLD_ITALIC_STYLE_STR) {
-                m_object.is_italic = true;
-                m_object.is_bold = true;
-            }
-        }
+        m_object.style.set_italic(textRun.fontStyle == FrameElement::ITALIC_STYLE_STR ||
+                                  textRun.fontStyle == FrameElement::BOLD_ITALIC_STYLE_STR);
+        m_object.style.set_bold(textRun.fontStyle == FrameElement::BOLD_STYLE_STR ||
+                                textRun.fontStyle == FrameElement::BOLD_ITALIC_STYLE_STR);
 
         if (config.backwardCompatibility)
             return;
 
-        m_object.auto_kern = textRun.autoKern == FCM::Boolean(true);
+        m_object.style.set_auto_kern(textRun.autoKern);
         m_object.bend_angle = 0.f;
         m_object.typography_file.clear();
     }
@@ -145,7 +137,7 @@ namespace sc::Adobe {
     }
 
     void SCTextFieldWriter::SetGlowFilter(const GlowFilter& filter) {
-        m_object.is_outlined = true;
+        m_object.style.set_outlined(true);
         m_object.outline_color = {filter.color.blue, filter.color.green, filter.color.red, filter.color.alpha};
         m_object.outline_angle = (float) std::min(filter.strength, 100) / 100;
     }
@@ -154,7 +146,7 @@ namespace sc::Adobe {
         if (!filter.enabled)
             return;
 
-        m_object.is_outlined = true;
+        m_object.style.set_outlined(true);
         m_object.outline_color = {filter.color.blue, filter.color.green, filter.color.red, filter.color.alpha};
         double angle = filter.angle * (180.0 / std::numbers::pi);
         angle -= 45.0;
@@ -182,18 +174,9 @@ namespace sc::Adobe {
         code.update(m_object.right);
         code.update(m_object.bottom);
 
-        code.update(m_object.is_bold);
-        code.update(m_object.is_italic);
-        code.update(m_object.is_multiline);
-        code.update(m_object.is_outlined);
-        code.update(m_object.unknown_flag3);
-
+        code.update(m_object.style.flags());
         code.update(m_object.outline_color);
-        code.update(m_object.use_device_font);
-        code.update(m_object.auto_kern);
         code.update(m_object.bend_angle);
-
-        code.update(m_object.unknown_flag);
         code.update(m_object.outline_angle);
 
         code.update(m_object.typography_file);
