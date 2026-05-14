@@ -157,8 +157,7 @@ namespace sc::Adobe {
                 config.textureEncoding = texture.encoding();
                 if (texture.encoding() == flash::SWFTexture::TextureEncoding::SupercellTexture) {
                     const auto image = std::static_pointer_cast<texture::SupercellTexture>(texture.image());
-                    config.generateStreamingTexture =
-                        image->streaming_variants.has_value() && !image->streaming_variants.value().empty();
+                    config.generateStreamingTexture = !image->proxy_textures.empty();
                 }
             }
 
