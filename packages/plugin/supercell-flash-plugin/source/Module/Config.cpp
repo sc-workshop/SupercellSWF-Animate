@@ -64,16 +64,16 @@ namespace sc::Adobe {
             uint8_t scaleFactor = data["textureScaleFactor"];
             switch (scaleFactor) {
                 case 0:
-                    textureScaleFactor = 1;
+                    textureScaleFactor = 1.f;
                     break;
                 case 1:
-                    textureScaleFactor = 1.5;
+                    textureScaleFactor = 1.5f;
                     break;
                 case 2:
-                    textureScaleFactor = 2;
+                    textureScaleFactor = 2.f;
                     break;
                 case 3:
-                    textureScaleFactor = 4;
+                    textureScaleFactor = 4.f;
                     break;
                 default:
                     break;

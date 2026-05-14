@@ -45,7 +45,7 @@ namespace sc::Adobe {
         bool hasMultiresTexture = false;
         std::string multiResolutionSuffix;
         std::string lowResolutionSuffix;
-        uint8_t textureScaleFactor = 1;
+        float textureScaleFactor = 1.f;
         Quality textureQuality = Quality::Highest;
         uint32_t textureMaxWidth = 4096;
         uint32_t textureMaxHeight = 4096;
