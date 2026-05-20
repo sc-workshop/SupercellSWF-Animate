@@ -240,13 +240,15 @@ namespace sc::Adobe {
                 wk::Ref<texture::SupercellTexture> image =
                     std::static_pointer_cast<texture::SupercellTexture>(texture.image());
 
-                wk::RawImage streamingTexture((uint16_t) floor<uint16_t>(atlas->width() / 8),
-                                              (uint16_t) floor<uint16_t>(atlas->height() / 8),
-                                              atlas->depth(),
-                                              atlas->colorspace());
-                atlas->copy(streamingTexture);
+                if (image->proxy_textures.empty()) {
+                    wk::RawImage streamingTexture((uint16_t) floor<uint16_t>(atlas->width() / 8),
+                                                  (uint16_t) floor<uint16_t>(atlas->height() / 8),
+                                                  atlas->depth(),
+                                                  atlas->colorspace());
+                    atlas->copy(streamingTexture);
 
-                image->proxy_textures.emplace_back(streamingTexture, image->pixel_type());
+                    image->proxy_textures.emplace_back(streamingTexture, image->pixel_type());
+                }
             }
         };
 
