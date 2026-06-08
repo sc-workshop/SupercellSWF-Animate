@@ -185,6 +185,7 @@ namespace sc::Adobe {
 
     bool SCMovieclipWriter::Finalize(ResourceReference reference, bool required, bool new_symbol) {
         m_object.id = reference.GetId();
+        m_object.unknown_flag = m_writer.movieclip_flag;
 
         if (m_symbol.linkage_name.empty()) {
             if (m_object.childrens.empty() && !required) {

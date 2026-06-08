@@ -39,6 +39,9 @@ namespace sc::Adobe {
         // kokoro
         flash::SupercellSWF swf;
 
+        // Unknown flag for movieclip
+        bool movieclip_flag = true;
+
     public:
         void IncrementSymbolsProcessed();
         wk::RawImageRef GetBitmap(const BitmapElement& item);

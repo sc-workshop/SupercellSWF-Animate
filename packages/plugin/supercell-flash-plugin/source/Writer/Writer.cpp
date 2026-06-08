@@ -167,6 +167,14 @@ namespace sc::Adobe {
                     break;
                 }
             }
+
+            movieclip_flag = false;
+            for (auto& movieclip : swf.movieclips) {
+                if (movieclip.unknown_flag) {
+                    movieclip_flag = true;
+                    break;
+                }
+            }
         } else {
             {
                 wk::InputFileStream file(path);
