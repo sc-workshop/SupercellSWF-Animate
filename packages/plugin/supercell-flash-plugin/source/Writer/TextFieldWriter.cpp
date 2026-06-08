@@ -136,6 +136,7 @@ namespace sc::Adobe {
         code.update(m_object.text);
         code.update(m_object.font_name);
         code.update(m_object.font_color);
+        code.update(m_object.font_size);
         code.update(m_object.font_horizontal_align);
         code.update(m_object.font_vertical_align);
         code.update(m_object.unknown_align6);
