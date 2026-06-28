@@ -8,6 +8,7 @@
         "polyclipping",
         "nlopt",
         "simdutf",
-        "cdt"
+        "cdt",
+        "zlib"
     ]
 }
