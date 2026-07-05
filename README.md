@@ -39,7 +39,7 @@
 
 - Create something!  
 In [examples](#examples) you can find different use cases for extension in different games!  
-Also, before creating something, do not forget to read information about ["limitations"](#Limitations) that will help you not to create any problems.
+Also, before creating something, do not forget to read information about ["limitations"](#Limitations) that will help you avoid any problems.
 
 - To set export options you need to click "File -> Publish Settings.."  
 You can set all options here for the first time only once and then just press "Publish" button. You can also find a description of some options, just hold mouse on label for a moment.
@@ -48,7 +48,7 @@ You can set all options here for the first time only once and then just press "P
 <img src="./assets/publish_settings_select.png"  width="35%" height="30%">
 </p>
 
-- After setting all options, you can click on publish button. You are great!  
+- After setting all options, you can click on publish button. You're all done!  
 Then you just need to wait until file is saved. 
 
 # Content creation tips
@@ -69,26 +69,39 @@ This project was created with the goal of exploring various interesting tools an
   
 # Export features
 - Stroke  / Fills / Brushes ✅  
-Full support. It can be unstable sometimes especially with big fills and curves so try to work more with sprites
+Full support. It can be unstable sometimes especially with big fills and curves, so try to work more with sprites
 
     - Fill styles ✅  
     Currently supported are solid color fill, bitmap fill and gradient fill (Linear and Radial)
 
 - Filters ❌  
-There will be no support for filters for Symbols
+There is no support for Symbols using filters
 
 - Scripts (ActionScript, JavaScript) ❌  
-.sc file does not support any scripts
+`.sc` files do not support any kind of scripts
 
 - Sounds ❌  
-.sc file does not support sounds
+`.sc` files do not support sounds
 
-- Parenting / Camera / Advanced Layers ✅  
-Partial support. 
-At the moment, implemented layer parenting (rigging)
+- Parenting / Camera / Advanced Layers ⚠️  
+ Partial support.  
+ At the moment, implemented layer parenting (rigging)  
+`.sc` files do not support camera feature
 
-- Text ✅  
-Partial support
+
+- Text fields ⚠️  
+Partial support.
+    - Text outline ✅  
+    Add "Glow" filter to text field to enable  
+      
+    - Horizontal and vertical alignment ✅  
+      Vertical alignment is done by using the line spacing field.
+        - Value = 1 - bottom vertical alignment
+        - Value = 2 - center vertical alignment
+        - Value > 2 - top vertical alignment
+         
+    - Typography file and bending ❌  
+    Currently not supported. Only used in mo.co
 
 - Symbols (Graphic, MovieClip) ✅  
 Full support except for "Button" type
@@ -100,13 +113,14 @@ Full support except for "Button" type
     2D Transforms are fully supported. 3D transformations have a potentially small range of uses and a small chance of being supported.
 
 - Layers ✅  
-All types of layers are supported: Normal, Masks, Folders, Guides
+All types of layers are supported: Normal, Masks, Folders, Guides  
 Also note that all symbols from guide layer will be ignored and will only be used for animation if necessary.
+
 
 - Classic / Animation tweens ✅  
 Absolutely all types of animation tweens and their types of interpolation are supported.
 
- - Shape animation ✅  
+- Shape animation ✅  
 Full support. Be careful when using it, the result can be very unstable.
 
 - Nine-slice ✅  
@@ -120,9 +134,8 @@ Be careful when transforming colors. Color values can only be positive, otherwis
 - Text Fields  
 Text fields are covered with a large layer of mystique.  
 But there is also support for basic things here.
-Also be careful, not all settings can somehow affect text in final file (because they cannot be disabled, Animate just crashes)  
+Also be careful, not all settings can somehow affect text in final result (because they cannot be disabled, Animate just crashes)  
 Also, text must have no more than 255 characters, otherwise text will not be written to file.
-To enable text outline you need to add "Glow" filter to text field  
   
 # Requirements
 For extension to work correctly, you need:
@@ -145,18 +158,18 @@ For extension to work correctly, you need:
 > Apple Silicon does not supports CEP extensions, which means that  <span style="color: red;font-weight: bold;">Publish Settings will not work</span>. As a workaround, when you need access to Publish Settings, [you need to run Adobe Animate in Rosetta mode](https://community.adobe.com/questions-712/p-legacy-cep-extension-panels-don-t-load-on-apple-m1-computers-1133289?postid=4594277#post4594277). The rest of functionality will work fine in default mode.
 
 # Installing
-First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
-Unpack zip to any place convenient for you.  
-Inside archive there is a file ```install.jsfl```. You need to run it in Adobe Animate.  
-By default, ```.jsfl``` is associated with Animate, so you can double-click on it and run it as a command, but if something is wrong, you can open it in Animate itself as a script and click on run button.  
-After installation is complete, be sure to restart Animate.
-If you want to remove plugin, run ```install.jsfl``` again, and this time you will see a confirmation button.
+- First of all, download .zip package from [Releases](https://github.com/sc-workshop/SupercellSWF-Animate/releases)  
+- Unpack zip to any place convenient for you.  
+- Inside archive there is a file ```install.jsfl```. You need to run it in Adobe Animate.  
+- By default, ```.jsfl``` is associated with Animate, so you can double-click on it and run it as a command, but if something is wrong, you can open it in Animate itself as a script and click on run button.  
+- After installation is complete, be sure to restart Animate.
+- If you want to remove plugin, run ```install.jsfl``` again, and this time you will see a confirmation button to uninstall the plugin.
   
 # Plugin Update
 If you have an already installed plugin and want to update, run installation file and <strong>remove</strong> plugin, restart Animate and install plugin as usual.  
 
 > [!TIP]
-> You might need to reboot your device after uninstall old version, to successful install plugin update
+> You might need to reboot your device after uninstalling an old version, to successfully update the plugin
 
 > [!IMPORTANT]
 > If you are using version 1.2.0 and lower, you <strong>MUST</strong> remove extension files <strong>MANUALLY</strong>. If you do not do this, then installation may not be successful.
