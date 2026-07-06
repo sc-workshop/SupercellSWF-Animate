@@ -92,7 +92,7 @@ There is no support for Symbols using filters
 - Text fields ⚠️  
 Partial support.
     - Text outline ✅  
-    Add "Glow" filter to text field to enable  
+    Add "Drop Shadow" filter to text field to enable  
       
     - Horizontal and vertical alignment ✅  
       Vertical alignment is done by using the line spacing field.
