@@ -1,8 +1,14 @@
 set(TARGET ScAnimatePlugin)
 
 file(GLOB_RECURSE SOURCES
-    "source/*"
+    "source/*.cpp"
+    "source/*.h"
 )
+
+if(APPLE)
+    list(FILTER SOURCES EXCLUDE REGEX "ProgressBackend_Win32\\.cpp$")
+    list(APPEND SOURCES "source/Progress/ProgressBackend_mac.mm")
+endif()
 
 add_library(${TARGET} MODULE ${SOURCES})
 wk_project_setup(${TARGET})
@@ -40,7 +46,7 @@ set_target_properties(${TARGET} PROPERTIES
 
 target_link_libraries(${TARGET} PUBLIC
     wk::atlasGenerator # Texture generate
-    wxWidgetsCore # Status bar
+    ImGui # Progress UI
     supercell::flash # File writer
     skia # Vector rasterizer
     spdlog::spdlog # Logging

@@ -1,5 +1,8 @@
 include(ExternalProject)
 
+# Skia's static release build embeds libpng, which needs zlib symbols at final link time.
+find_package(ZLIB REQUIRED)
+
 # TODO: Check if this work on MacOS
 
 # Required tools
@@ -252,6 +255,7 @@ add_library(skia INTERFACE)
 add_dependencies(skia skia_project)
 target_link_libraries(
     skia INTERFACE
+    ZLIB::ZLIB # libpng inside static skia
     $<$<CONFIG:Debug>:skia_debug> # Debug lib
     $<$<NOT:$<CONFIG:Debug>>:skia_release> # Release lib
 

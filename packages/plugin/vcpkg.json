@@ -3,7 +3,6 @@
     "dependencies": [
         "spdlog",
         "fmt",
-        "wxwidgets",
         "clipper2",
         "polyclipping",
         "nlopt",

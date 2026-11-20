@@ -63,6 +63,7 @@ namespace sc::Adobe {
 
     public:
         virtual bool FromDict(const FCM::PIFCMDictionary dict) override;
+        virtual void Reset() override;
         void Load(const FCM::PIFCMDictionary dict);
         void Normalize();
         void NormalizePath(fs::path& path);

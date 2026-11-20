@@ -58,34 +58,4 @@ namespace sc::Adobe {
             }
         }
     }
-
-    void SCPlugin::InitializeWindow() {
-        m_app = new PluginWindowApp();
-        wxApp::SetInstance(m_app);
-
-#if defined(__APPLE__)
-        m_app->sm_isEmbedded = true;
-#endif
-    }
-
-    void SCPlugin::DestroyWindow() {
-        if (m_app) {
-            m_app->CallAfter([&]() {
-                if (m_app->window->IsShown())
-                    m_app->window->EndModal(wxID_OK);
-
-                m_app->OnExit();
-                m_app->ExitMainLoop();
-                m_app = nullptr;
-            });
-        }
-    }
-
-    PluginWindow* SCPlugin::Window() {
-        if (m_app) {
-            return m_app->window;
-        }
-
-        return nullptr;
-    }
 }

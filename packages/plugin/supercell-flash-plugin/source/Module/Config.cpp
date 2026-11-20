@@ -110,6 +110,7 @@ namespace sc::Adobe {
         useMultiDocument = data["multipleDocuments"];
         aggressiveRasterization = data["aggressiveRasterization"];
 
+        documentsPaths.clear();
         if (data["documentsPaths"].is_array()) {
             const auto& paths = data["documentsPaths"];
             for (const std::string& path : paths) {
@@ -121,6 +122,11 @@ namespace sc::Adobe {
         {
             DoConfigLogging();
         }
+    }
+
+    void SCConfig::Reset() {
+        documentsPaths.clear();
+        Animate::Publisher::GenericPublisherConfig::Reset();
     }
 
     void SCConfig::Normalize() {

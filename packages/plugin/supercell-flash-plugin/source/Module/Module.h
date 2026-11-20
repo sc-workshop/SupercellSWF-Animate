@@ -8,7 +8,7 @@
 #include "Module/Version.h"
 #include "Plugin/FeatureMatrix.h"
 #include "Plugin/Publisher.h"
-#include "Window/PluginWindowApp.h"
+#include "Progress/ExportProgress.h"
 
 #pragma warning(push, 0)
 #include "spdlog/sinks/ostream_sink.h"
@@ -18,7 +18,6 @@
 #pragma warning(pop)
 
 #include "core/memory/ref.h"
-#include "core/parallel/bs_thread_pool.hpp"
 
 namespace sc::Adobe {
     class SCPlugin : public FCM::PluginModule {
@@ -41,9 +40,8 @@ namespace sc::Adobe {
         void InitializeLogger();
         void InitializeLogData();
 
-        void InitializeWindow();
-        void DestroyWindow();
-        PluginWindow* Window();
+        ExportProgress* Progress() const { return m_progress; }
+        void SetProgress(ExportProgress* progress) { m_progress = progress; }
 
     public:
         Localization locale;
@@ -54,11 +52,10 @@ namespace sc::Adobe {
         // Log File for logger
         std::ofstream logger_file;
 
-        // Thread pool for multiple documents export
-        BS::light_thread_pool threads;
-
-    public:
-        // Progress Window
-        PluginWindowApp* m_app = nullptr;
+    private:
+        // Active publish state, set for the lifetime of Publish()
+        // Worker threads use it for progress and cancellation
+        // The publish thread owns the progress window
+        ExportProgress* m_progress = nullptr;
     };
 }

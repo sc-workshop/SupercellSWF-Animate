@@ -25,6 +25,7 @@ namespace sc::Adobe {
         virtual void AddSlicedElements(const Animate::Publisher::Slice9Element& slice) override;
 
         virtual void PreFinalize() override;
+        virtual bool HasContent() const override;
         virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol) override;
 
     protected:

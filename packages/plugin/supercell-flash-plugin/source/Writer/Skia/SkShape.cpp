@@ -1,4 +1,5 @@
 #include "SkShape.h"
+
 #include "SkiaUtils.hpp"
 
 namespace sc::Adobe {

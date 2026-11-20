@@ -7,6 +7,8 @@
 #include "flash/flash.h"
 
 #include <filesystem>
+#include <mutex>
+#include <thread>
 
 namespace sc::Adobe {
     using namespace Animate::Publisher;
@@ -47,6 +49,35 @@ namespace sc::Adobe {
         wk::RawImageRef GetBitmap(const BitmapElement& item);
         void AddGraphicGroup(const GraphicGroup& group);
 
+        /// @brief Reports whether the calling thread is the one that started publishing.
+        ///
+        /// Kept for call sites that need to distinguish serial commit work from parallel prepare
+        /// work. Progress reporting itself is thread-safe and needs no guard.
+        bool IsPublishThread() const;
+
+        /// @brief Guards the temporary raster image file, which is shared by all worker threads.
+        std::mutex& ImageMutex() { return m_image_mutex; }
+
+    public:
+        /// @brief Looks up a matrix in one of the global transformation banks.
+        ///
+        /// The banks grow to tens of thousands of entries, so the upstream scan is expensive and
+        /// commit performs one lookup per frame element per candidate bank. Each bank therefore
+        /// keeps an index of its entries (see SyncBankLookup), which turns the lookup into a few
+        /// hash probes followed by the exact comparison. Results are identical to the upstream
+        /// scan by construction: candidates are always verified with Matrix2D::operator== and the
+        /// lowest matching index wins, which is what the linear scan returns.
+        bool FindMatrixIndex(size_t bank_index,
+                             const flash::MatrixBank& bank,
+                             const flash::Matrix2D& matrix,
+                             uint16_t& index);
+
+        /// @brief Same as FindMatrixIndex, for color transforms.
+        bool FindColorTransformIndex(size_t bank_index,
+                                     const flash::MatrixBank& bank,
+                                     const flash::ColorTransform& color,
+                                     uint16_t& index);
+
     public:
         uint16_t LoadExternal(fs::path path);
         void SetupTextureSettings();
@@ -59,9 +90,31 @@ namespace sc::Adobe {
         // Name / Image
         std::unordered_map<std::u16string, wk::RawImageRef> m_cached_images;
 
-        // Total symbols status bar
+        // Total symbols exported in the commit phase
         size_t m_symbols_processed = 0;
-        StatusComponent* m_status = 0;
+
+        // Thread that constructed the writer, and therefore owns publishing and the window
+        const std::thread::id m_owner_thread = std::this_thread::get_id();
+
+        // Serializes access to the shared temporary raster image file
+        std::mutex m_image_mutex;
+
+        /// @brief Lookup index over one global transformation bank, built as the bank grows.
+        struct BankLookup {
+            // Cell key -> indices of the bank entries that fall into that cell.
+            std::unordered_map<uint64_t, std::vector<uint16_t>> matrix_cells;
+            // Packed color transform -> index of its first occurrence.
+            std::unordered_map<uint64_t, uint16_t> color_indices;
+            // Number of bank entries already inserted (banks are append-only).
+            size_t synced_matrices = 0;
+            size_t synced_colors = 0;
+        };
+
+        /// @brief Brings the lookup index of a bank up to date with its contents.
+        void SyncBankLookup(size_t bank_index, const flash::MatrixBank& bank);
+
+        // Indexed by the position of the bank in flash::SupercellSWF::matrixBanks
+        std::vector<BankLookup> m_bank_lookups;
 
         AtlasWriter m_atlas;
     };

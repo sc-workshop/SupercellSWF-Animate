@@ -10,7 +10,65 @@
 #include "core/io/file_stream.h"
 #include "core/stb/stb.h"
 
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <fmt/format.h>
+#include <system_error>
+
+#if defined(_WIN32) || defined(_WINDOWS)
+    #define WIN32_LEAN_AND_MEAN
+    #define NOMINMAX
+    #include <windows.h>
+#elif defined(__APPLE__)
+    #include <unistd.h>
+#endif
+
 using namespace Animate::Publisher;
+
+namespace {
+    inline bool FloatEqual(float a, float b) {
+        return std::fabs(a - b) <= ((std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * 0.001f);
+    }
+
+    inline uint64_t PackColorTransform(const sc::flash::ColorTransform& color) {
+        return (uint64_t) color.multiply.r | ((uint64_t) color.multiply.g << 8) | ((uint64_t) color.multiply.b << 16) |
+               ((uint64_t) color.alpha << 24) | ((uint64_t) color.add.r << 32) | ((uint64_t) color.add.g << 40) |
+               ((uint64_t) color.add.b << 48);
+    }
+
+    /// @brief Total-order integer image of a float: monotone in the value, one unit per ULP.
+    inline uint32_t SortableFloat(float value) {
+        uint32_t bits;
+        std::memcpy(&bits, &value, sizeof(bits));
+        return (bits & 0x80000000u) != 0 ? ~bits : (bits | 0x80000000u);
+    }
+
+    // Width of an index cell, in ULP units. Matrix2D::operator== treats two components as equal
+    // when they differ by at most 0.1% of the larger magnitude, which is at most 16777 ULP units
+    // (a 23-bit mantissa step is 2^-23 relative, and the bound doubles across a power of two).
+    // A cell is much wider than the tolerance box, so the box never overlaps more than two cells
+    // per component: probing the overlapping cells cannot miss a matching entry.
+    constexpr uint32_t CELL_SHIFT = 18;
+    constexpr int64_t CELL_HALF_WIDTH = 16777;
+
+    inline uint64_t CellKey(const uint32_t (&cells)[6]) {
+        uint64_t key = 1469598103934665603ull;
+        for (uint32_t cell : cells) {
+            key = (key ^ cell) * 1099511628211ull;
+        }
+        return key;
+    }
+
+    /// @brief Fills the cell coordinates of a matrix.
+    inline void MatrixCells(const sc::flash::Matrix2D& matrix, uint32_t (&cells)[6]) {
+        const float values[6] = {matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty};
+        for (int i = 0; i < 6; i++) {
+            cells[i] = SortableFloat(values[i]) >> CELL_SHIFT;
+        }
+    }
+} // namespace
 
 namespace sc::Adobe {
     SCWriter::SCWriter() :
@@ -18,16 +76,18 @@ namespace sc::Adobe {
     }
 
     SCWriter::~SCWriter() {
-        if (fs::exists(sprite_temp_path)) {
-            fs::remove(sprite_temp_path);
-        }
+        // Destructors are implicitly noexcept. Use the error_code overload: a transient
+        // cleanup failure (locked/missing file, bad temp path) must not terminate the host.
+        std::error_code ignored;
+        fs::remove(sprite_temp_path, ignored);
     }
 
     void SCWriter::SetDocument(const std::vector<SymbolContext>& symbols) {
         SCPlugin& context = SCPlugin::Instance();
+        ExportProgress* progress = context.Progress();
 
-        m_status = context.Window()->CreateStatusBarComponent(context.locale.GetString("TID_BAR_LABEL_LIBRARY_ITEMS"));
-        m_status->SetRange((int) symbols.size());
+        progress->SetCounts(0, symbols.size());
+        progress->SetDetail(context.locale.GetU8String("TID_BAR_LABEL_LIBRARY_ITEMS"));
     }
 
     wk::Ref<SharedMovieclipWriter> SCWriter::AddMovieclip(SymbolContext& symbol) {
@@ -251,31 +311,137 @@ namespace sc::Adobe {
         swf.use_texture_streaming = config.generateStreamingTexture;
     }
 
+    bool SCWriter::FindMatrixIndex(size_t bank_index,
+                                   const flash::MatrixBank& bank,
+                                   const flash::Matrix2D& matrix,
+                                   uint16_t& index) {
+        if (FloatEqual(matrix.a, 1.0f) && FloatEqual(matrix.b, 0.f) && FloatEqual(matrix.c, 0.f) &&
+            FloatEqual(matrix.d, 1.0f) && FloatEqual(matrix.tx, 0.f) && FloatEqual(matrix.ty, 0.f)) {
+            index = 0xFFFF;
+            return true;
+        }
+
+        SyncBankLookup(bank_index, bank);
+
+        // Tolerance box of the query in cell space
+        // clamped to the valid range of the encoding
+        uint32_t low[6];
+        uint32_t high[6];
+        int counts[6];
+        const uint32_t keys[6] = {SortableFloat(matrix.a),
+                                  SortableFloat(matrix.b),
+                                  SortableFloat(matrix.c),
+                                  SortableFloat(matrix.d),
+                                  SortableFloat(matrix.tx),
+                                  SortableFloat(matrix.ty)};
+        for (int i = 0; i < 6; i++) {
+            int64_t begin = (int64_t) keys[i] - CELL_HALF_WIDTH;
+            int64_t end = (int64_t) keys[i] + CELL_HALF_WIDTH;
+            if (begin < 0)
+                begin = 0;
+            if (end > 0xFFFFFFFFll)
+                end = 0xFFFFFFFFll;
+
+            low[i] = (uint32_t) ((uint64_t) begin >> CELL_SHIFT);
+            high[i] = (uint32_t) ((uint64_t) end >> CELL_SHIFT);
+            counts[i] = (int) (high[i] - low[i] + 1);
+        }
+
+        uint16_t best = 0xFFFF;
+        auto& lookup = m_bank_lookups[bank_index].matrix_cells;
+
+        int offsets[6] = {0, 0, 0, 0, 0, 0};
+        for (;;) {
+            uint32_t probe[6];
+            for (int i = 0; i < 6; i++) {
+                probe[i] = low[i] + (uint32_t) offsets[i];
+            }
+
+            auto cell = lookup.find(CellKey(probe));
+            if (cell != lookup.end()) {
+                for (uint16_t candidate : cell->second) {
+                    if (candidate < best && bank.matrices[candidate] == matrix) {
+                        best = candidate;
+                    }
+                }
+            }
+
+            int dimension = 5;
+            while (dimension >= 0 && ++offsets[dimension] >= counts[dimension]) {
+                offsets[dimension] = 0;
+                dimension--;
+            }
+            if (dimension < 0)
+                break;
+        }
+
+        if (best == 0xFFFF)
+            return false;
+
+        index = best;
+        return true;
+    }
+
+    bool SCWriter::FindColorTransformIndex(size_t bank_index,
+                                           const flash::MatrixBank& bank,
+                                           const flash::ColorTransform& color,
+                                           uint16_t& index) {
+        if (color.alpha == 0xFF && color.add.r == 0 && color.add.g == 0 && color.add.b == 0 &&
+            color.multiply.r == 0xFF && color.multiply.g == 0xFF && color.multiply.b == 0xFF) {
+            index = 0xFFFF;
+            return true;
+        }
+
+        SyncBankLookup(bank_index, bank);
+
+        auto& lookup = m_bank_lookups[bank_index].color_indices;
+        auto entry = lookup.find(PackColorTransform(color));
+        if (entry == lookup.end())
+            return false;
+
+        index = entry->second;
+        return true;
+    }
+
+    void SCWriter::SyncBankLookup(size_t bank_index, const flash::MatrixBank& bank) {
+        if (m_bank_lookups.size() <= bank_index) {
+            m_bank_lookups.resize(bank_index + 1);
+        }
+
+        BankLookup& lookup = m_bank_lookups[bank_index];
+
+        // Both banks are append-only, so only the tail has to be inserted.
+        for (size_t i = lookup.synced_matrices; i < bank.matrices.size(); i++) {
+            uint32_t cells[6];
+            MatrixCells(bank.matrices[i], cells);
+            lookup.matrix_cells[CellKey(cells)].push_back((uint16_t) i);
+        }
+        lookup.synced_matrices = bank.matrices.size();
+
+        for (size_t i = lookup.synced_colors; i < bank.color_transforms.size(); i++) {
+            // Keep the first occurrence, which is what the linear scan returns.
+            lookup.color_indices.emplace(PackColorTransform(bank.color_transforms[i]), (uint16_t) i);
+        }
+        lookup.synced_colors = bank.color_transforms.size();
+    }
+
     void SCWriter::Finalize() {
         const SCConfig& config = SCPlugin::Publisher::ActiveConfig();
         SCPlugin& context = SCPlugin::Instance();
+        ExportProgress* progress = context.Progress();
 
         if (swf.exports.empty())
             throw SCPluginException("TID_SWF_NO_EXPORTS", config.exportToExternalPath.string());
 
-        enum FinalizeStep : uint8_t {
-            INIT = 0,
-            ATLAS_FINALIZE = 50,
-            SWF_SAVING = 80,
-            END = 100
-        };
+        progress->BeginPhase(ExportPhase::Atlas, 0, context.locale.GetU8String("TID_STATUS_TEXTURE_SAVE"));
+        ThrowIfCancelled(progress);
 
-        StatusComponent* status =
-            context.Window()->CreateStatusBarComponent(context.locale.GetString("TID_STATUS_INIT"), u"");
-
-        if (config.exportToExternal) {
+        if (config.exportToExternal)
             flash::remove_unused(swf);
-        }
 
-        status->SetProgress(ATLAS_FINALIZE);
-        status->SetStatusLabel(context.locale.GetString("TID_STATUS_TEXTURE_SAVE"));
         SetupTextureSettings();
         m_atlas.WriteAtlas();
+        ThrowIfCancelled(progress);
 
         swf.use_precision_matrix = config.hasPrecisionMatrices;
         swf.save_custom_property = config.writeCustomProperties;
@@ -288,11 +454,13 @@ namespace sc::Adobe {
         }
 
         fs::path filepath = fs::path(config.outputFilepath).replace_extension("sc");
-        fs::path basename = filepath.filename();
+        std::string basename = filepath.filename().string();
 
-        status->SetProgress(SWF_SAVING);
-        status->SetStatusLabel(context.locale.GetString("TID_FILE_SAVE", basename.string()));
+        progress->BeginPhase(ExportPhase::Saving, 0, context.locale.GetU8String("TID_FILE_SAVE", basename));
+        ThrowIfCancelled(progress);
 
+        // SupercellSWF writes the .sc plus any external textures directly from the supplied path.
+        // Output files are written in place; user is responsible for cleaning them if publish is cancelled.
         switch (config.type) {
             case SCConfig::SWFType::SC1:
                 swf.save(filepath, config.compression, config.generateLowresTexture);
@@ -304,32 +472,62 @@ namespace sc::Adobe {
                 break;
         }
 
-        context.Window()->DestroyStatusBar(status);
+        ThrowIfCancelled(progress);
     }
 
     fs::path SCWriter::generateTempName() {
-#if defined(_WINDOWS)
-        return fs::path(tmpnam(nullptr));
+#if defined(_WIN32) || defined(_WINDOWS)
+        wchar_t directory[MAX_PATH] = {};
+        UINT directoryLength = GetTempPathW(MAX_PATH, directory);
+        if (directoryLength != 0 && directoryLength < MAX_PATH) {
+            wchar_t name[MAX_PATH] = {};
+            if (GetTempFileNameW(directory, L"swf", 0, name) != 0) {
+                // GetTempFileName creates an empty file; bitmap export expects to create it.
+                std::error_code ignored;
+                fs::remove(fs::path(name), ignored);
+                return fs::path(name);
+            }
+        }
+        return fs::temp_directory_path() / "swfSprite.png";
 #elif defined(__APPLE__)
         char name[] = "/tmp/swfSpriteXXXXXX";
-        mkstemp(name);
+        int descriptor = mkstemp(name);
+        if (descriptor >= 0)
+            close(descriptor);
+
+        // mkstemp creates an empty file; bitmap export expects to create it.
+        std::error_code ignored;
+        fs::remove(fs::path(name), ignored);
         return fs::path(name);
+#else
+        return fs::temp_directory_path() / "swfSprite.png";
 #endif
     }
 
     void SCWriter::IncrementSymbolsProcessed() {
-        if (!m_status)
-            return;
+        SCPlugin& context = SCPlugin::Instance();
+        ExportProgress* progress = context.Progress();
 
-        m_status->SetProgress((int) ++m_symbols_processed);
+        ++m_symbols_processed;
+        progress->Advance();
+        ThrowIfCancelled(progress);
+    }
+
+    bool SCWriter::IsPublishThread() const {
+        return std::this_thread::get_id() == m_owner_thread;
     }
 
     wk::RawImageRef SCWriter::GetBitmap(const BitmapElement& item) {
         const std::u16string& name = item.Name();
 
+        // Library extraction runs in parallel, but the sprite cache and the temporary image file
+        // are shared. Keep both under one lock.
+        std::lock_guard<std::mutex> lock(m_image_mutex);
+
         auto it = m_cached_images.find(name);
-        if (it != m_cached_images.end())
+        if (it != m_cached_images.end()) {
             return it->second;
+        }
 
         item.ExportImage(sprite_temp_path);
 

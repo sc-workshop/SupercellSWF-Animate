@@ -6,30 +6,78 @@
 #include "core/hashing/hash.h"
 #include "core/hashing/ncrypto/xxhash.h"
 
+#include <cmath>
+#include <fmt/format.h>
+
 using namespace Animate::Publisher;
+
+namespace {
+    // MatrixBank::get_matrix_index()/get_colorTransform_index() look matrices up with
+    // wk::find_parallel(), i.e. std::find(std::execution::par_unseq, ...). Commit performs one
+    // lookup per frame element for every candidate bank, and each of those calls dispatches a
+    // parallel algorithm to the thread pool, so the dispatch overhead - not the scan itself -
+    // dominated the commit phase. These helpers are equivalent scans without the dispatch:
+    // same identity fast path, same floatEqual tolerance (Matrix2D::operator==), same first
+    // match semantics, so the resulting identifiers and bank layout are unchanged.
+    inline bool FloatEqual(float a, float b) {
+        return std::fabs(a - b) <= ((std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * 0.001f);
+    }
+
+    bool FindLocalMatrixIndex(const sc::flash::MatrixBank& bank, const sc::flash::Matrix2D& matrix, uint16_t& index) {
+        if (FloatEqual(matrix.a, 1.0f) && FloatEqual(matrix.b, 0.f) && FloatEqual(matrix.c, 0.f) &&
+            FloatEqual(matrix.d, 1.0f) && FloatEqual(matrix.tx, 0.f) && FloatEqual(matrix.ty, 0.f)) {
+            index = 0xFFFF;
+            return true;
+        }
+
+        for (size_t i = 0; bank.matrices.size() > i; i++) {
+            if (bank.matrices[i] == matrix) {
+                index = (uint16_t) i;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool FindLocalColorTransformIndex(const sc::flash::MatrixBank& bank,
+                                      const sc::flash::ColorTransform& color,
+                                      uint16_t& index) {
+        if (color.alpha == 0xFF && color.add.r == 0 && color.add.g == 0 && color.add.b == 0 &&
+            color.multiply.r == 0xFF && color.multiply.g == 0xFF && color.multiply.b == 0xFF) {
+            index = 0xFFFF;
+            return true;
+        }
+
+        for (size_t i = 0; bank.color_transforms.size() > i; i++) {
+            if (bank.color_transforms[i] == color) {
+                index = (uint16_t) i;
+                return true;
+            }
+        }
+
+        return false;
+    }
+} // namespace
 
 namespace sc::Adobe {
     SCMovieclipWriter::SCMovieclipWriter(SCWriter& writer, SymbolContext& symbol) :
         Animate::Publisher::SharedMovieclipWriter(symbol),
         m_writer(writer) {};
 
-    SCMovieclipWriter::~SCMovieclipWriter() {
-        SCPlugin& context = SCPlugin::Instance();
-
-        if (m_status) {
-            context.Window()->DestroyStatusBar(m_status);
-        }
-    }
+    SCMovieclipWriter::~SCMovieclipWriter() = default;
 
     void SCMovieclipWriter::InitializeTimeline(uint32_t fps, uint32_t frameCount) {
         SCPlugin& context = SCPlugin::Instance();
 
         m_object.frame_rate = (uint8_t) fps;
         m_object.frames.resize(frameCount);
+        m_frameCount = frameCount;
 
-        if (!m_status && frameCount > 100) {
-            m_status = context.Window()->CreateStatusBarComponent(m_symbol.name);
-            m_status->SetRange(frameCount);
+        if (frameCount > 100) {
+            ExportProgress* progress = context.Progress();
+            std::string name = FCM::Locale::ToUtf8(m_symbol.name);
+            progress->SetSubdetail(fmt::format("{}: 0/{}", name, frameCount));
         }
 
         if (m_symbol.slicing.IsEnabled()) {
@@ -44,10 +92,13 @@ namespace sc::Adobe {
     }
 
     void SCMovieclipWriter::Next() {
+        auto& instance = SCPlugin::Instance();
         SharedMovieclipWriter::Next();
 
-        if (m_status) {
-            m_status->SetProgress(m_position);
+        if (m_frameCount > 100 && (m_position % 20) == 0) {
+            ExportProgress* progress = instance.Progress();
+            std::string name = FCM::Locale::ToUtf8(m_symbol.name);
+            progress->SetSubdetail(fmt::format("{}: {}/{}", name, m_position, m_frameCount));
         }
     }
 
@@ -110,8 +161,7 @@ namespace sc::Adobe {
         }
 
         // Index of bind element
-        uint16_t instanceIndex =
-            GetInstanceIndex(frame.elements_count,id, blending, FCM::Locale::ToUtf8(name));
+        uint16_t instanceIndex = GetInstanceIndex(frame.elements_count, id, blending, FCM::Locale::ToUtf8(name));
 
         // New frame element
         flash::MovieClipFrameElement& element = m_object.frame_elements.emplace_back();
@@ -129,7 +179,7 @@ namespace sc::Adobe {
             transformMatrix.tx = matrix->tx;
             transformMatrix.ty = matrix->ty;
 
-            if (!m_bank.get_matrix_index(transformMatrix, element.matrix_index)) {
+            if (!FindLocalMatrixIndex(m_bank, transformMatrix, element.matrix_index)) {
                 element.matrix_index = m_bank.matrices.size();
                 m_bank.matrices.push_back(transformMatrix);
             }
@@ -149,7 +199,7 @@ namespace sc::Adobe {
             transformColor.add.g = (uint8_t) std::clamp(int(color->matrix[1][4]), 0, 255);
             transformColor.add.b = (uint8_t) std::clamp(int(color->matrix[2][4]), 0, 255);
 
-            if (!m_bank.get_colorTransform_index(transformColor, element.colorTransform_index)) {
+            if (!FindLocalColorTransformIndex(m_bank, transformColor, element.colorTransform_index)) {
                 element.colorTransform_index = m_bank.color_transforms.size();
                 m_bank.color_transforms.push_back(transformColor);
             }
@@ -181,6 +231,60 @@ namespace sc::Adobe {
         code.update(m_bank);
 
         return code.digest();
+    }
+
+    bool SCMovieclipWriter::HasContent() const {
+        // Matches the empty-symbol check in Finalize: an unlinked movieclip without children is
+        // never written to the library.
+        return !m_symbol.linkage_name.empty() || !m_object.childrens.empty();
+    }
+
+    void SCMovieclipWriter::ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap) {
+        bool remapped = false;
+        for (flash::DisplayObjectInstance& instance : m_object.childrens) {
+            auto iterator = remap.find(instance.id);
+            if (iterator == remap.end() || iterator->second == instance.id)
+                continue;
+
+            instance.id = iterator->second;
+            remapped = true;
+        }
+
+        // Different provisional identifiers can resolve to the same library object, because
+        // deduplication only runs on commit. The single-threaded implementation compared final
+        // identifiers inside GetInstanceIndex, so such children shared one instance entry. Rebuild
+        // the instance table with the exact same lookup to restore that layout.
+        if (remapped) {
+            const flash::MovieClipChildrensArray sourceChildren = m_object.childrens;
+            const flash::MovieClipFrameElementsArray sourceElements = m_object.frame_elements;
+
+            m_object.childrens.clear();
+            m_object.frame_elements.clear();
+            m_object.frame_elements.reserve(sourceElements.size());
+
+            size_t elementIndex = 0;
+            for (flash::MovieClipFrame& frame : m_object.frames) {
+                uint16_t frameInstancesCount = 0;
+
+                for (uint32_t i = 0; frame.elements_count > i; i++) {
+                    const flash::MovieClipFrameElement& source = sourceElements[elementIndex++];
+                    const flash::DisplayObjectInstance& instance = sourceChildren[source.instance_index];
+
+                    uint16_t instanceIndex = GetInstanceIndex(frameInstancesCount,
+                                                              instance.id,
+                                                              (uint8_t) instance.blend_mode,
+                                                              instance.name.string());
+
+                    flash::MovieClipFrameElement& element = m_object.frame_elements.emplace_back(source);
+                    element.instance_index = instanceIndex;
+
+                    frameInstancesCount++;
+                }
+            }
+        }
+
+        // Children identifiers participate in the hash, so it can never be cached before commit
+        m_hash_code = 0;
     }
 
     bool SCMovieclipWriter::Finalize(ResourceReference reference, bool required, bool new_symbol) {
@@ -239,7 +343,7 @@ namespace sc::Adobe {
                     goto NEXT_BANK;
                 };
 
-                if (!bank.get_matrix_index(matrix, new_matrix_index)) {
+                if (!m_writer.FindMatrixIndex(i, bank, matrix, new_matrix_index)) {
                     new_matrices_count++;
                 }
 
@@ -253,7 +357,7 @@ namespace sc::Adobe {
                     goto NEXT_BANK;
                 };
 
-                if (!bank.get_colorTransform_index(color, new_color_index)) {
+                if (!m_writer.FindColorTransformIndex(i, bank, color, new_color_index)) {
                     new_colors_count++;
                 }
 

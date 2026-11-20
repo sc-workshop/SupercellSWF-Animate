@@ -1,11 +1,10 @@
 #pragma once
 
 #include "AnimatePublisher.h"
+#include "Skia/SkShape.h"
+#include "Skia/Skia.h"
 #include "core/image/raw_image.h"
 #include "core/math/point.h"
-
-#include "Skia/Skia.h"
-#include "Skia/SkShape.h"
 
 namespace sc::Adobe {
     using RawShape = Animate::Publisher::FilledElementRegion;

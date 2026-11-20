@@ -1,10 +1,10 @@
 #include "Atlas.h"
 
 namespace sc::flash {
-    void get_sprite(RawImageRef& texture,
-                    AtlasGenerator::RectUV bound,
-                    const std::vector<AtlasGenerator::PointUV>& points,
-                    RawImageRef& result) {
+    void getSprite(RawImageRef& texture,
+                   AtlasGenerator::RectUV bound,
+                   const std::vector<AtlasGenerator::PointUV>& points,
+                   RawImageRef& result) {
         uint16_t width = (uint16_t) std::max<uint32_t>(std::abs(bound.left - bound.right), 1);
         uint16_t height = (uint16_t) std::max<uint32_t>(std::abs(bound.bottom - bound.top), 1);
 
@@ -47,7 +47,7 @@ namespace sc::flash {
         }
     }
 
-    bool is_solid_9slice(const Shape& shape) {
+    bool isSolid9Slice(const Shape& shape) {
         for (uint32_t i = 0; shape.commands.size() > i; i++) {
             uint8_t neighbors_count = 0;
             for (uint32_t t = 0; shape.commands.size() > t; t++) {
@@ -90,7 +90,7 @@ namespace sc::flash {
         return true;
     }
 
-    ShapeDrawBitmapCommand create_proxy_9slice_command(const Shape& shape) {
+    ShapeDrawBitmapCommand createProxy9Slice(const Shape& shape) {
         ShapeDrawBitmapCommand result;
         result.texture_index = shape.commands[0].texture_index;
 
@@ -122,7 +122,7 @@ namespace sc::flash {
         return result;
     }
 
-    void repack_atlas(SupercellSWF& swf) {
+    void repackAtlas(SupercellSWF& swf) {
         // Id of shapes for nine scaling
         std::set<uint16_t> nine_scalings_shapes;
 
@@ -133,7 +133,7 @@ namespace sc::flash {
             for (DisplayObjectInstance& children : movieclip.childrens) {
                 DisplayObject& object = swf.GetDisplayObjectByID(children.id);
 
-                if (object.is_shape() && is_solid_9slice((Shape&) object)) {
+                if (object.is_shape() && isSolid9Slice((Shape&) object)) {
                     nine_scalings_shapes.insert(object.id);
                 }
             }
@@ -188,7 +188,7 @@ namespace sc::flash {
             };
 
             if (nine_scalings_shapes.count(shape.id)) {
-                ShapeDrawBitmapCommand proxy = create_proxy_9slice_command(shape);
+                ShapeDrawBitmapCommand proxy = createProxy9Slice(shape);
                 push_bitmap(proxy);
 
                 // Denormalize 9slice commands right there because we need original coords in future
@@ -362,7 +362,7 @@ namespace sc::flash {
 
                 auto process_sprite = [&]() {
                     RawImageRef sprite;
-                    get_sprite(texture, bitmap_bound, points, sprite);
+                    getSprite(texture, bitmap_bound, points, sprite);
 
                     std::set<std::tuple<float, float>> points_set;
                     auto item = CreateRef<AtlasGenerator::Item>(*sprite);
@@ -401,14 +401,17 @@ namespace sc::flash {
             policy);
 
         Adobe::SCPlugin& context = Adobe::SCPlugin::Instance();
-        auto* status = context.Window()->CreateStatusBarComponent(context.locale.GetString("TID_STATUS_SPRITE_PACK"));
+        Adobe::ExportProgress* progress = context.Progress();
 
         AtlasGenerator::Config config(4096, 4096, 1.0f, 2);
 
-        int itemCount = (int) items.size();
-        status->SetRange(itemCount);
+        size_t itemCount = items.size();
+        progress->BeginPhase(Adobe::ExportPhase::Atlas,
+                             itemCount,
+                             context.locale.GetU8String("TID_STATUS_SPRITE_PACK"));
 
-        config.progress = [&status](uint32_t value) { status->SetProgress(value); };
+        config.progress = [progress, itemCount](size_t value) { progress->SetCounts(value, itemCount); };
+        config.cancelled = [progress] { return progress->IsCancelled(); };
 
         AtlasGenerator::Generator generator(config);
         size_t atlas_count = 0;
@@ -421,7 +424,8 @@ namespace sc::flash {
             }
 
             atlas_count = generator.generate<AtlasInput>(input);
-            context.Window()->DestroyStatusBar(status);
+        } catch (const AtlasGenerator::Cancelled&) {
+            throw Adobe::ExportCancelled();
         } catch (const AtlasGenerator::PackagingException& exception) {
             throw Exception(exception.what());
         }
@@ -495,7 +499,7 @@ namespace sc::flash {
         }
     }
 
-    void remove_unused_textures(SupercellSWF& swf) {
+    void removeUnusedTextures(SupercellSWF& swf) {
         std::map<uint16_t, SWFTexture> used_textures;
 
         for (const auto& shape : swf.shapes) {

@@ -242,8 +242,13 @@ namespace sc::Adobe {
                                            SkPaint& paint,
                                            wk::PointF offset,
                                            const SkMatrix& resolution_matrix) const {
-        fill.bitmap.ExportImage(m_writer.sprite_temp_path);
-        sk_sp<SkData> data = SkData::MakeFromFileName(m_writer.sprite_temp_path.string().c_str());
+        sk_sp<SkData> data;
+        {
+            // The temporary file is shared between extraction threads
+            std::lock_guard<std::mutex> lock(m_writer.ImageMutex());
+            fill.bitmap.ExportImage(m_writer.sprite_temp_path);
+            data = SkData::MakeFromFileName(m_writer.sprite_temp_path.string().c_str());
+        }
         if (!data)
             return;
 

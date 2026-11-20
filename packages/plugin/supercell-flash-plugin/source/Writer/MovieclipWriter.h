@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AnimatePublisher.h"
-#include "Window/Components/StatusComponent.h"
 #include "flash/flash.h"
 
 namespace sc::Adobe {
@@ -10,7 +9,7 @@ namespace sc::Adobe {
     class SCMovieclipWriter : public Animate::Publisher::SharedMovieclipWriter {
     private:
         SCWriter& m_writer;
-        StatusComponent* m_status = nullptr;
+        uint32_t m_frameCount = 0;
 
         // Current object
         flash::MovieClip m_object;
@@ -37,6 +36,10 @@ namespace sc::Adobe {
                                      std::optional<Animate::DOM::Utils::COLOR_MATRIX> color);
 
         virtual bool Finalize(Animate::Publisher::ResourceReference reference, bool required, bool new_symbol);
+
+        virtual bool HasContent() const override;
+
+        virtual void ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap) override;
 
     protected:
         virtual std::size_t GenerateHash() const;

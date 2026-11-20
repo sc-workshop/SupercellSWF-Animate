@@ -71,8 +71,7 @@ namespace sc::Adobe {
         SCConfig& config = SCPlugin::Publisher::ActiveConfig();
         SCPlugin& context = SCPlugin::Instance();
 
-        StatusComponent* status =
-            context.Window()->CreateStatusBarComponent(context.locale.GetString("TID_STATUS_SPRITE_PACK"));
+        ExportProgress* progress = context.Progress();
 
         std::vector<AtlasGenerator::Item> items;
 
@@ -104,10 +103,11 @@ namespace sc::Adobe {
                                                 1.f / config.textureScaleFactor,
                                                 2);
 
-        int itemCount = (int) items.size();
-        status->SetRange(itemCount);
+        size_t itemCount = items.size();
+        progress->BeginPhase(ExportPhase::Atlas, itemCount, context.locale.GetU8String("TID_STATUS_SPRITE_PACK"));
 
-        generator_config.progress = [&status](uint32_t value) { status->SetProgress(value); };
+        generator_config.progress = [progress, itemCount](size_t value) { progress->SetCounts(value, itemCount); };
+        generator_config.cancelled = [progress] { return progress && progress->IsCancelled(); };
 
         AtlasGenerator::Generator generator(generator_config);
 
@@ -115,6 +115,8 @@ namespace sc::Adobe {
 
         try {
             texture_count = generator.generate(items);
+        } catch (const AtlasGenerator::Cancelled&) {
+            throw ExportCancelled();
         } catch (const AtlasGenerator::PackagingException& exception) {
             // [AtlasGenerator] Reason / symbol name
             // or in case of unknown exception just reason
@@ -164,7 +166,7 @@ namespace sc::Adobe {
                                                          wk::StringConverter::ToUTF8(symbol_name))));
         }
 
-        context.Window()->DestroyStatusBar(status);
+        ThrowIfCancelled(progress);
 
         for (uint16_t i = 0; texture_count > i; i++) {
             wk::RawImage& atlas = generator.get_atlas(i);
@@ -201,9 +203,9 @@ namespace sc::Adobe {
         }
 
         if (config.exportToExternal && config.repackAtlas) {
-            flash::repack_atlas(m_writer.swf);
+            flash::repackAtlas(m_writer.swf);
         } else {
-            flash::remove_unused_textures(m_writer.swf);
+            flash::removeUnusedTextures(m_writer.swf);
         }
 
         auto encode_texture = [&config](flash::SWFTexture& texture, size_t) {

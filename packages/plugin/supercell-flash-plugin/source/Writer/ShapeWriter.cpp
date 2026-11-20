@@ -291,6 +291,11 @@ namespace sc::Adobe {
         FlushRasterizer();
     }
 
+    bool SCShapeWriter::HasContent() const {
+        // Matches the empty-group check in Finalize
+        return m_group.Size() != 0;
+    }
+
     bool SCShapeWriter::Finalize(ResourceReference reference, bool required, bool new_symbol) {
         if (!new_symbol)
             return true;

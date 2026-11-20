@@ -2,6 +2,7 @@
 
 #include "AnimateModule.h"
 #include "Module/Config.h"
+#include "Progress/ExportProgress.h"
 #include "animate/app/DOM/Service/Document/IFLADocService.h"
 
 #include <chrono>
@@ -19,8 +20,7 @@ namespace sc::Adobe {
         static void CloseDocument(Animate::DOM::PIFLADocument& document);
 
     public:
-        void StartWindow();
-        FCM::Result StartPublishing();
+        FCM::Result StartPublishing(ExportProgress& progress);
 
         virtual void Publish(const SCConfig& config);
 

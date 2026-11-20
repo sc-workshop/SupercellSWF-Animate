@@ -11,3 +11,4 @@ packages/plugin/include/PluginConfiguration.h
 *.sc
 RECOVER_*
 /packages/plugin/build-release
+/docs
