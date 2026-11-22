@@ -1,0 +1,31 @@
+include "CacheTypes.fbs";
+
+namespace sc.Adobe.Cache.Gen;
+
+table BlobEntry {
+    key:[ubyte];
+    kind:BlobKind;
+    offset:uint64;
+    packed_size:uint32;
+    raw_size:uint32;
+    checksum:uint32;
+}
+
+table RootKey {
+    key:[ubyte];
+}
+
+table CacheIndex {
+    file_guid:string;
+    global_key:[ubyte];
+    build:string;
+    generation:uint64;
+    committed_size:uint64;
+    entries:[BlobEntry];
+    raw_fla_hash:uint64;
+    root_keys:[RootKey];
+    roots_complete:bool;
+}
+
+root_type CacheIndex;
+file_identifier "SCIX";

@@ -1,14 +1,20 @@
 #pragma once
 
 #include "AnimateModule.h"
+#include "Cache/CacheManager.h"
 #include "Module/Config.h"
 #include "Progress/ExportProgress.h"
 #include "animate/app/DOM/Service/Document/IFLADocService.h"
 
 #include <chrono>
+#include <memory>
 #include <thread>
 
 namespace sc::Adobe {
+    namespace Cache {
+        class CacheManager;
+    }
+
     class SCPublisher : public Animate::Publisher::GenericPublisherInterface<SCConfig> {
     public:
         SCPublisher() = default;
@@ -20,14 +26,17 @@ namespace sc::Adobe {
         static void CloseDocument(Animate::DOM::PIFLADocument& document);
 
     public:
-        FCM::Result StartPublishing(ExportProgress& progress);
+        FCM::Result StartPublishing(ExportProgress& progress, const std::shared_ptr<Cache::CacheManager>& cache);
 
         virtual void Publish(const SCConfig& config);
 
-        void PublishDocuments();
-        void DoPublish();
+        void PublishDocuments(const std::shared_ptr<Cache::CacheManager>& cache);
+        void DoPublish(const std::shared_ptr<Cache::CacheManager>& cache);
 
     private:
-        std::vector<Animate::DOM::PIFLADocument> m_loaded_documents;
+        // Indexed in parallel with SCConfig::documentsPaths. A nullptr document means this
+        // external FLA was skipped and m_cachedDocuments holds its cached export roots.
+        std::vector<Animate::DOM::PIFLADocument> m_loadedDocuments;
+        std::vector<Cache::CacheManager::CachedDocument> m_cachedDocuments;
     };
 }

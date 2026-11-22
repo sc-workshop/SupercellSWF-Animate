@@ -16,17 +16,15 @@ namespace sc::Adobe {
     void SCTextFieldWriter::Initialize(const Animate::Publisher::TextElement& textfield) {
         using namespace Animate::DOM;
 
-        auto& config = SCPlugin::Publisher::ActiveConfig();
-
         m_object.left = (int16_t) floor(textfield.bound.topLeft.x);
         m_object.top = (int16_t) floor(textfield.bound.topLeft.y);
 
         m_object.right = (int16_t) floor(textfield.bound.bottomRight.x);
         m_object.bottom = (int16_t) floor(textfield.bound.bottomRight.y);
 
-        if (config.writeFieldsText) {
-            m_object.text = flash::SWFString(FCM::Locale::ToUtf8(textfield.text));
-        }
+        // Always keep the authored text in the writer/cached payload. writeFieldsText is
+        // applied at .sc write time so changing it does not change cache identity.
+        m_object.text = flash::SWFString(FCM::Locale::ToUtf8(textfield.text));
 
         m_object.style.set_multiline(textfield.lineMode == FrameElement::LineMode::LINE_MODE_SINGLE ? false : true);
         m_object.style.set_use_device_font(textfield.renderingMode.aaMode ==

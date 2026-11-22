@@ -8,6 +8,10 @@
 namespace sc::Adobe {
     class SCWriter;
 
+    namespace Cache {
+        class SymbolCache;
+    }
+
     class SCShapeWriter : public Animate::Publisher::SharedShapeWriter {
     public:
         SCShapeWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol) :
@@ -50,6 +54,8 @@ namespace sc::Adobe {
         bool IsComplexShapeRegion(const Animate::Publisher::FilledElementRegion& region);
 
     private:
+        friend class Cache::SymbolCache;
+
         SCWriter& m_writer;
         Animate::Publisher::StaticElementsGroup m_group;
 

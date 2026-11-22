@@ -1,5 +1,7 @@
 #include "Writer.h"
 
+#include "Cache/CacheManager.h"
+#include "Cache/SymbolCache.h"
 #include "Module/SCPluginException.h"
 #include "MovieclipWriter.h"
 #include "Reassemble/Object.hpp"
@@ -12,10 +14,10 @@
 
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <fmt/format.h>
 #include <system_error>
+#include <thread>
 
 #if defined(_WIN32) || defined(_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
@@ -71,8 +73,10 @@ namespace {
 } // namespace
 
 namespace sc::Adobe {
-    SCWriter::SCWriter() :
-        m_atlas(*this) {
+    SCWriter::SCWriter(std::shared_ptr<Cache::CacheManager> cache) :
+        m_atlas(*this),
+        m_cache(std::move(cache)),
+        m_symbolCache(m_cache ? std::make_unique<Cache::SymbolCache>(*m_cache, *this) : nullptr) {
     }
 
     SCWriter::~SCWriter() {
@@ -80,6 +84,7 @@ namespace sc::Adobe {
         // cleanup failure (locked/missing file, bad temp path) must not terminate the host.
         std::error_code ignored;
         fs::remove(sprite_temp_path, ignored);
+        fs::remove(pattern_temp_path, ignored);
     }
 
     void SCWriter::SetDocument(const std::vector<SymbolContext>& symbols) {
@@ -88,6 +93,16 @@ namespace sc::Adobe {
 
         progress->SetCounts(0, symbols.size());
         progress->SetDetail(context.locale.GetU8String("TID_BAR_LABEL_LIBRARY_ITEMS"));
+    }
+
+    void SCWriter::SetCacheDocument(const fs::path& documentPath) {
+        if (m_cache) {
+            m_cache->SetDocument(documentPath);
+        }
+
+        // The old in-memory cache belongs to another document namespace.
+        std::lock_guard<std::mutex> lock(m_image_mutex);
+        m_cached_images.clear();
     }
 
     wk::Ref<SharedMovieclipWriter> SCWriter::AddMovieclip(SymbolContext& symbol) {
@@ -446,6 +461,13 @@ namespace sc::Adobe {
         swf.use_precision_matrix = config.hasPrecisionMatrices;
         swf.save_custom_property = config.writeCustomProperties;
 
+        // Text is always captured so the cache stays independent of this output-only flag.
+        // Strip it here, at .sc write time, instead of at capture time.
+        if (!config.writeFieldsText) {
+            for (flash::TextField& textfield : swf.textfields)
+                textfield.text.clear();
+        }
+
         // SC2 settings
         {
             flash::Sc2CompileSettings& sc2 = swf.sc2_compile_settings;
@@ -517,6 +539,10 @@ namespace sc::Adobe {
         return std::this_thread::get_id() == m_owner_thread;
     }
 
+    Animate::Publisher::ISymbolCacheProvider* SCWriter::SymbolCache() const {
+        return m_symbolCache.get();
+    }
+
     wk::RawImageRef SCWriter::GetBitmap(const BitmapElement& item) {
         const std::u16string& name = item.Name();
 
@@ -529,12 +555,34 @@ namespace sc::Adobe {
             return it->second;
         }
 
-        item.ExportImage(sprite_temp_path);
+        Cache::CacheKey cacheKey{};
+        Cache::CacheKey sourceKey{};
+        const bool hasCacheKey = m_cache && m_cache->GetImageKey(name, cacheKey, sourceKey);
 
         wk::RawImageRef image;
-        wk::InputFileStream file(sprite_temp_path);
-        wk::stb::load_image(file, image);
+        if (hasCacheKey && m_cache->TryLoadImage(cacheKey, sourceKey, image)) {
+            m_cached_images[name] = image;
+            return image;
+        }
+
+        item.ExportImage(sprite_temp_path);
+
+        try {
+            wk::InputFileStream file(sprite_temp_path);
+            wk::stb::load_image(file, image);
+        } catch (const std::exception& exception) {
+            const std::string bitmapName = FCM::Locale::ToUtf8(name);
+            const std::string bitmapPath = sprite_temp_path.string();
+            throw wk::Exception("Failed to load exported bitmap '%s' from '%s': %s",
+                                bitmapName.c_str(),
+                                bitmapPath.c_str(),
+                                exception.what());
+        }
+
         m_cached_images[name] = image;
+        if (hasCacheKey) {
+            m_cache->StoreImage(cacheKey, sourceKey, *image);
+        }
 
         return image;
     }

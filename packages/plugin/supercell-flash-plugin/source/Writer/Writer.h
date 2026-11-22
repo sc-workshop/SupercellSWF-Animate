@@ -7,11 +7,17 @@
 #include "flash/flash.h"
 
 #include <filesystem>
+#include <memory>
 #include <mutex>
 #include <thread>
 
 namespace sc::Adobe {
     using namespace Animate::Publisher;
+
+    namespace Cache {
+        class CacheManager;
+        class SymbolCache;
+    }
 
     class SCWriter : public SharedWriter {
     public:
@@ -19,7 +25,7 @@ namespace sc::Adobe {
         using GraphicGroup = StaticElementsGroup;
 
     public:
-        SCWriter();
+        explicit SCWriter(std::shared_ptr<Cache::CacheManager> cache = {});
         virtual ~SCWriter();
 
     public:
@@ -32,11 +38,15 @@ namespace sc::Adobe {
 
         virtual void Finalize();
 
+        virtual Animate::Publisher::ISymbolCacheProvider* SymbolCache() const override;
+
     public:
         static fs::path generateTempName();
 
-        // Path to temp sprite file
+        // Paths to temp sprite files. Vector fills keep SkData mappings alive while
+        // painting, so they need a different file from bitmap extraction.
         const fs::path sprite_temp_path = generateTempName().concat(".png");
+        const fs::path pattern_temp_path = generateTempName().concat(".png");
 
         // kokoro
         flash::SupercellSWF swf;
@@ -48,6 +58,9 @@ namespace sc::Adobe {
         void IncrementSymbolsProcessed();
         wk::RawImageRef GetBitmap(const BitmapElement& item);
         void AddGraphicGroup(const GraphicGroup& group);
+
+        /// @brief Selects the document whose cache namespace is used for bitmap lookups.
+        void SetCacheDocument(const fs::path& documentPath);
 
         /// @brief Reports whether the calling thread is the one that started publishing.
         ///
@@ -98,6 +111,10 @@ namespace sc::Adobe {
 
         // Serializes access to the shared temporary raster image file
         std::mutex m_image_mutex;
+
+        // Persistent cache, shared with the publisher for index commit.
+        std::shared_ptr<Cache::CacheManager> m_cache;
+        std::unique_ptr<Cache::SymbolCache> m_symbolCache;
 
         /// @brief Lookup index over one global transformation bank, built as the bank grows.
         struct BankLookup {

@@ -1,0 +1,92 @@
+namespace sc.Adobe.Cache.Gen;
+
+enum BlobKind : byte {
+    Unknown = 0,
+    Image,
+    Shape,
+    TextField,
+    MovieClip
+}
+
+enum CachedPixelDepth : byte {
+    RGBA8 = 0,
+    RGBA4,
+    RGB5_A1,
+    RGB8,
+    RGB565,
+    LUMINANCE8_ALPHA8,
+    LUMINANCE8
+}
+
+enum CachedColorSpace : byte {
+    Linear = 0,
+    SRGB
+}
+
+enum SymbolKind : byte {
+    Graphic = 0,
+    MovieClip,
+    TextField
+}
+
+enum RequestKind : byte {
+    Symbol = 0,
+    Resource,
+    Modifier
+}
+
+enum ModifierKind : byte {
+    Mask = 0,
+    Masked,
+    Unmasked
+}
+
+enum TriangulatorFunction : byte {
+    Fan = 0,
+    Strip
+}
+
+struct Matrix2D {
+    a:float;
+    b:float;
+    c:float;
+    d:float;
+    tx:float;
+    ty:float;
+}
+
+struct ColorTransform {
+    alpha:ubyte;
+    multiply_r:ubyte;
+    multiply_g:ubyte;
+    multiply_b:ubyte;
+    add_r:ubyte;
+    add_g:ubyte;
+    add_b:ubyte;
+}
+
+struct ColorRGBA {
+    r:ubyte;
+    g:ubyte;
+    b:ubyte;
+    a:ubyte;
+}
+
+struct RectF {
+    left:float;
+    top:float;
+    right:float;
+    bottom:float;
+}
+
+struct ShapeVertex {
+    x:float;
+    y:float;
+    u:float;
+    v:float;
+}
+
+table MatrixBank {
+    matrices:[Matrix2D];
+    color_transforms:[ColorTransform];
+}

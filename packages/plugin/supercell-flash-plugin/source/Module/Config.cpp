@@ -7,6 +7,9 @@ namespace sc::Adobe {
     bool SCConfig::FromDict(const FCM::PIFCMDictionary dict) {
         Load(dict);
         Normalize();
+        // Log the effective, normalized values. Load() intentionally logs only the raw
+        // publish-settings JSON, so a missing dictionary produced no output-path diagnostics.
+        DoConfigLogging();
 
         return true;
     }
@@ -19,11 +22,13 @@ namespace sc::Adobe {
         std::string serializedConfig;
         if (!dict->Get(DOCTYPE_NAME, serializedConfig)) {
             context.logger->warn(std::string("Failed to load publish config for ").append(DOCTYPE_NAME));
+            ApplyDefaults();
             return;
         };
 
         if (serializedConfig.empty()) {
             context.logger->warn("Publish settings is empty");
+            ApplyDefaults();
             return;
         }
 
@@ -118,10 +123,42 @@ namespace sc::Adobe {
             }
         }
 
-        if (!autoProperties) // If use autoProperties, do logging later, after all properties are set
-        {
-            DoConfigLogging();
-        }
+    }
+
+    void SCConfig::ApplyDefaults() {
+        documentPath.clear();
+        outputFilepath.clear();
+        type = SWFType::SC2;
+        backwardCompatibility = false;
+        compression = sc::flash::Signature::Zstandard;
+        exportToExternal = false;
+        exportToExternalPath.clear();
+        repackAtlas = true;
+        autoProperties = false;
+
+        textureEncoding = sc::flash::SWFTexture::TextureEncoding::Raw;
+        hasExternalTexture = true;
+        hasExternalTextureFile = false;
+        compressExternalTextureFile = true;
+        hasLowresTexture = false;
+        generateLowresTexture = false;
+        hasMultiresTexture = false;
+        multiResolutionSuffix = "_highres";
+        lowResolutionSuffix = "_lowres";
+        textureScaleFactor = 1.f;
+        textureQuality = Quality::Highest;
+        textureMaxWidth = 4096;
+        textureMaxHeight = 4096;
+
+        writeCustomProperties = true;
+        hasPrecisionMatrices = false;
+        lowPrecisionMatrices = false;
+        useShortFrames = false;
+        writeFieldsText = true;
+        generateStreamingTexture = false;
+        aggressiveRasterization = false;
+        useMultiDocument = false;
+        documentsPaths.clear();
     }
 
     void SCConfig::Reset() {
@@ -210,5 +247,8 @@ namespace sc::Adobe {
         context.logger->info("	lowPrecisionMatrices: {}", lowPrecisionMatrices);
         context.logger->info("	useShortFrames: {}", useShortFrames);
         context.logger->info("	writeFieldsText: {}", writeFieldsText);
+        context.logger->info("	aggressiveRasterization: {}", aggressiveRasterization);
+        context.logger->info("	useMultiDocument: {}", useMultiDocument);
+        context.logger->info("	documentsPaths: {}", documentsPaths.size());
     }
 }

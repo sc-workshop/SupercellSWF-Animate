@@ -6,6 +6,7 @@
 #include "core/hashing/hash.h"
 #include "core/hashing/ncrypto/xxhash.h"
 
+#include <any>
 #include <cmath>
 #include <fmt/format.h>
 
@@ -108,10 +109,18 @@ namespace sc::Adobe {
                                                  std::string name) {
         flash::DisplayObjectInstance::BlendMode blending = (flash::DisplayObjectInstance::BlendMode)(blendIndex);
 
+        // Corrupt/stale cached payloads can carry a frame element count larger than the vector.
+        // Never let a bad count turn into an unchecked vector subscript.
+        if (elementsCount > m_object.frame_elements.size())
+            elementsCount = (uint16_t) m_object.frame_elements.size();
+
         uint16_t frameInstancesOffset = 0;
         uint32_t frameElementsLastIndex = m_object.frame_elements.size() - 1;
         for (uint32_t i = 0; elementsCount > i; i++) {
             uint16_t& instanceIndex = m_object.frame_elements[frameElementsLastIndex - i].instance_index;
+            if (instanceIndex >= m_object.childrens.size())
+                continue;
+
             flash::DisplayObjectInstance& instance = m_object.childrens[instanceIndex];
 
             if (instance.id == id && instance.name.string() == name && instance.blend_mode == blending) {
@@ -228,6 +237,16 @@ namespace sc::Adobe {
             code.update(m_object.scaling_grid.value());
         }
 
+        // Custom properties change the serialized tag, so they must participate in dedup.
+        const uint8_t propertyCount =
+            static_cast<uint8_t>(m_object.custom_properties.size());
+        code.update(propertyCount);
+        for (const std::any& property : m_object.custom_properties) {
+            const bool* value = std::any_cast<bool>(&property);
+            const uint8_t encoded = value ? (*value ? 1 : 0) : 0xFF;
+            code.update(encoded);
+        }
+
         code.update(m_bank);
 
         return code.digest();
@@ -239,7 +258,8 @@ namespace sc::Adobe {
         return !m_symbol.linkage_name.empty() || !m_object.childrens.empty();
     }
 
-    void SCMovieclipWriter::ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap) {
+    void SCMovieclipWriter::ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap,
+                                               bool rebuild_instances) {
         bool remapped = false;
         for (flash::DisplayObjectInstance& instance : m_object.childrens) {
             auto iterator = remap.find(instance.id);
@@ -250,35 +270,53 @@ namespace sc::Adobe {
             remapped = true;
         }
 
-        // Different provisional identifiers can resolve to the same library object, because
-        // deduplication only runs on commit. The single-threaded implementation compared final
-        // identifiers inside GetInstanceIndex, so such children shared one instance entry. Rebuild
-        // the instance table with the exact same lookup to restore that layout.
-        if (remapped) {
+        // Cached replay only swaps first-publish provisional ids for current provisional ids.
+        // Instance indices still describe the same children vector, so rebuilding here would
+        // discard valid state and run a second time during commit. Keep the table untouched.
+        if (remapped && rebuild_instances) {
             const flash::MovieClipChildrensArray sourceChildren = m_object.childrens;
             const flash::MovieClipFrameElementsArray sourceElements = m_object.frame_elements;
 
-            m_object.childrens.clear();
-            m_object.frame_elements.clear();
-            m_object.frame_elements.reserve(sourceElements.size());
+            size_t expectedElements = 0;
+            for (const flash::MovieClipFrame& frame : m_object.frames)
+                expectedElements += frame.elements_count;
 
-            size_t elementIndex = 0;
-            for (flash::MovieClipFrame& frame : m_object.frames) {
-                uint16_t frameInstancesCount = 0;
+            bool valid = expectedElements <= sourceElements.size();
+            if (valid) {
+                size_t sourceIndex = 0;
+                for (const flash::MovieClipFrameElement& element : sourceElements) {
+                    if (sourceIndex++ >= expectedElements)
+                        break;
+                    if (element.instance_index >= sourceChildren.size()) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
 
-                for (uint32_t i = 0; frame.elements_count > i; i++) {
-                    const flash::MovieClipFrameElement& source = sourceElements[elementIndex++];
-                    const flash::DisplayObjectInstance& instance = sourceChildren[source.instance_index];
+            if (valid) {
+                m_object.childrens.clear();
+                m_object.frame_elements.clear();
+                m_object.frame_elements.reserve(sourceElements.size());
 
-                    uint16_t instanceIndex = GetInstanceIndex(frameInstancesCount,
-                                                              instance.id,
-                                                              (uint8_t) instance.blend_mode,
-                                                              instance.name.string());
+                size_t elementIndex = 0;
+                for (flash::MovieClipFrame& frame : m_object.frames) {
+                    uint16_t frameInstancesCount = 0;
 
-                    flash::MovieClipFrameElement& element = m_object.frame_elements.emplace_back(source);
-                    element.instance_index = instanceIndex;
+                    for (uint32_t i = 0; frame.elements_count > i; i++) {
+                        const flash::MovieClipFrameElement& source = sourceElements[elementIndex++];
+                        const flash::DisplayObjectInstance& instance = sourceChildren[source.instance_index];
 
-                    frameInstancesCount++;
+                        uint16_t instanceIndex = GetInstanceIndex(frameInstancesCount,
+                                                                  instance.id,
+                                                                  (uint8_t) instance.blend_mode,
+                                                                  instance.name.string());
+
+                        flash::MovieClipFrameElement& element = m_object.frame_elements.emplace_back(source);
+                        element.instance_index = instanceIndex;
+
+                        frameInstancesCount++;
+                    }
                 }
             }
         }
@@ -381,25 +419,53 @@ namespace sc::Adobe {
         flash::MatrixBank& bank = m_writer.swf.matrixBanks[m_object.bank_index];
         for (flash::MovieClipFrameElement& element : m_object.frame_elements) {
             if (element.matrix_index != 0xFFFF) {
-                uint16_t& matrix_index = matrix_indices[element.matrix_index];
+                if (element.matrix_index >= matrix_indices.size() ||
+                    element.matrix_index >= m_bank.matrices.size()) {
+                    SCPlugin& context = SCPlugin::Instance();
+                    context.logger->error(
+                        "[Matrix] invalid element index: bank={} indices={} bankMatrices={} localMatrices={} element={} elements={}",
+                        static_cast<uint32_t>(bank_index),
+                        static_cast<uint32_t>(matrix_indices.size()),
+                        static_cast<uint32_t>(bank.matrices.size()),
+                        static_cast<uint32_t>(m_bank.matrices.size()),
+                        static_cast<uint32_t>(element.matrix_index),
+                        static_cast<uint32_t>(m_object.frame_elements.size()));
+                    element.matrix_index = 0xFFFF;
+                } else {
+                    uint16_t& matrix_index = matrix_indices[element.matrix_index];
 
-                if (matrix_index == 0xFFFF) {
-                    matrix_index = bank.matrices.size();
-                    bank.matrices.push_back(m_bank.matrices[element.matrix_index]);
+                    if (matrix_index == 0xFFFF) {
+                        matrix_index = bank.matrices.size();
+                        bank.matrices.push_back(m_bank.matrices[element.matrix_index]);
+                    }
+
+                    element.matrix_index = matrix_index;
                 }
-
-                element.matrix_index = matrix_index;
             }
 
             if (element.colorTransform_index != 0xFFFF) {
-                uint16_t& color_index = color_indices[element.colorTransform_index];
+                if (element.colorTransform_index >= color_indices.size() ||
+                    element.colorTransform_index >= m_bank.color_transforms.size()) {
+                    SCPlugin& context = SCPlugin::Instance();
+                    context.logger->error(
+                        "[Matrix] invalid color index: bank={} indices={} bankColors={} localColors={} element={} elements={}",
+                        static_cast<uint32_t>(bank_index),
+                        static_cast<uint32_t>(color_indices.size()),
+                        static_cast<uint32_t>(bank.color_transforms.size()),
+                        static_cast<uint32_t>(m_bank.color_transforms.size()),
+                        static_cast<uint32_t>(element.colorTransform_index),
+                        static_cast<uint32_t>(m_object.frame_elements.size()));
+                    element.colorTransform_index = 0xFFFF;
+                } else {
+                    uint16_t& color_index = color_indices[element.colorTransform_index];
 
-                if (color_index == 0xFFFF) {
-                    color_index = bank.color_transforms.size();
-                    bank.color_transforms.push_back(m_bank.color_transforms[element.colorTransform_index]);
+                    if (color_index == 0xFFFF) {
+                        color_index = bank.color_transforms.size();
+                        bank.color_transforms.push_back(m_bank.color_transforms[element.colorTransform_index]);
+                    }
+
+                    element.colorTransform_index = color_index;
                 }
-
-                element.colorTransform_index = color_index;
             }
         }
     }

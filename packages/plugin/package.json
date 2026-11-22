@@ -6,7 +6,8 @@
 	"main": "build.ts",
 	"scripts": {
 		"build:dev": "pnpx ts-node build.ts development",
-		"build:prod": "pnpx ts-node build.ts production"
+		"build:prod": "pnpx ts-node build.ts production",
+		"generate:flatbuffers": "node scripts/generate-flatbuffers.mjs"
 	},
 	"author": "DaniilSV",
 	"license": "MIT",

@@ -1,0 +1,18 @@
+namespace sc.Adobe.Cache.Gen;
+
+// Authoring metadata that lives only inside symbol XML headers. Persisted so an
+// unchanged symbol never needs its XML opened again. Keyed by the stable itemID.
+table SymbolMetaEntry {
+    item_id:string;
+    name:string;
+    linkage:string;
+    last_modified:string;
+}
+
+table SymbolMetaIndex {
+    schema_version:uint32;
+    entries:[SymbolMetaEntry];
+}
+
+root_type SymbolMetaIndex;
+file_identifier "SCME";

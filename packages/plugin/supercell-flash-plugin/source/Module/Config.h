@@ -34,17 +34,18 @@ namespace sc::Adobe {
         bool exportToExternal = false;
         fs::path exportToExternalPath = "";
         bool repackAtlas = true;
-        bool autoProperties = true;
+        // Defaults mirror PublisherDefaultSettings in packages/publisher/src/Publisher/PublisherSettings.ts.
+        bool autoProperties = false;
 
-        sc::flash::SWFTexture::TextureEncoding textureEncoding = sc::flash::SWFTexture::TextureEncoding::KhronosTexture;
-        bool hasExternalTexture = false;
-        bool hasExternalTextureFile = true;
+        sc::flash::SWFTexture::TextureEncoding textureEncoding = sc::flash::SWFTexture::TextureEncoding::Raw;
+        bool hasExternalTexture = true;
+        bool hasExternalTextureFile = false;
         bool compressExternalTextureFile = true;
         bool hasLowresTexture = false;
         bool generateLowresTexture = false;
         bool hasMultiresTexture = false;
-        std::string multiResolutionSuffix;
-        std::string lowResolutionSuffix;
+        std::string multiResolutionSuffix = "_highres";
+        std::string lowResolutionSuffix = "_lowres";
         float textureScaleFactor = 1.f;
         Quality textureQuality = Quality::Highest;
         uint32_t textureMaxWidth = 4096;
@@ -53,9 +54,9 @@ namespace sc::Adobe {
         bool writeCustomProperties = true;
         bool hasPrecisionMatrices = false;
         bool lowPrecisionMatrices = false;
-        bool useShortFrames = true;
+        bool useShortFrames = false;
         bool writeFieldsText = true;
-        bool generateStreamingTexture = true;
+        bool generateStreamingTexture = false;
         bool aggressiveRasterization = false;
 
         bool useMultiDocument = false;
@@ -68,6 +69,10 @@ namespace sc::Adobe {
         void Normalize();
         void NormalizePath(fs::path& path);
 
+    private:
+        void ApplyDefaults();
+
+    public:
         void DoConfigLogging();
     };
 }

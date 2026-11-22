@@ -1,0 +1,20 @@
+include "CacheTypes.fbs";
+
+namespace sc.Adobe.Cache.Gen;
+
+table CachedImage {
+    width:uint32;
+    height:uint32;
+    depth:CachedPixelDepth;
+    colorspace:CachedColorSpace;
+    source_key:[ubyte];
+    data:[ubyte];
+}
+
+table CachedImageBlob {
+    key:[ubyte];
+    image:CachedImage;
+}
+
+root_type CachedImageBlob;
+file_identifier "SCIM";

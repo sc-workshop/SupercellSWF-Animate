@@ -7,6 +7,10 @@
 namespace sc::Adobe {
     class SCWriter;
 
+    namespace Cache {
+        class SymbolCache;
+    }
+
     class SCTextFieldWriter : public Animate::Publisher::SharedTextFieldWriter {
     public:
         SCTextFieldWriter(SCWriter& writer, Animate::Publisher::SymbolContext& symbol);
@@ -23,6 +27,8 @@ namespace sc::Adobe {
         virtual std::size_t GenerateHash() const override;
 
     private:
+        friend class Cache::SymbolCache;
+
         SCWriter& m_writer;
 
         bool m_has_paragraph = false;

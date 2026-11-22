@@ -1,11 +1,12 @@
 #pragma once
 
+#include "core/exception/exception.h"
+
 #include <atomic>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <mutex>
-#include <stdexcept>
 #include <string>
 
 namespace sc::Adobe {
@@ -80,10 +81,10 @@ namespace sc::Adobe {
         std::atomic<bool> m_finished {false};
     };
 
-    class ExportCancelled : public std::runtime_error {
+    class ExportCancelled : public wk::Exception {
     public:
         ExportCancelled() :
-            std::runtime_error("Publishing cancelled") {}
+            wk::Exception("Publishing cancelled") {}
     };
 
     inline void ThrowIfCancelled(const ExportProgress* progress) {

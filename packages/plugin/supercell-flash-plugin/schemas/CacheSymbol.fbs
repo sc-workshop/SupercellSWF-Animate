@@ -1,0 +1,93 @@
+include "CacheTypes.fbs";
+
+namespace sc.Adobe.Cache.Gen;
+
+table ResourceRef {
+    key:[ubyte];
+    name:string;
+}
+
+table ShapeDrawBitmapCommand {
+    vertices:[ShapeVertex];
+    bitmap:ResourceRef;
+    texture_index:uint32;
+    type:TriangulatorFunction;
+}
+
+table CachedShape {
+    commands:[ShapeDrawBitmapCommand];
+}
+
+table FrameElement {
+    instance_index:uint16;
+    matrix_index:uint16;
+    color_transform_index:uint16;
+}
+
+table DisplayObjectInstance {
+    target:ResourceRef;
+    blend_mode:ubyte;
+    name:string;
+}
+
+table MovieClipFrame {
+    label:string;
+    elements_count:uint32;
+}
+
+table CachedMovieClip {
+    frame_elements:[FrameElement];
+    children:[DisplayObjectInstance];
+    frames:[MovieClipFrame];
+    scaling_grid:RectF;
+    bank_index:uint32;
+    frame_rate:uint8;
+    unknown_flag:bool;
+}
+
+table CachedTextField {
+    text:string;
+    font_name:string;
+    font_color:ColorRGBA;
+    font_size:uint8;
+    horizontal_align:uint8;
+    vertical_align:uint8;
+    style_flags:uint8;
+    left:int16;
+    top:int16;
+    right:int16;
+    bottom:int16;
+    outline_color:ColorRGBA;
+    bend_angle:float;
+    outline_angle:int32;
+    typography_file:string;
+}
+
+table CachedRequest {
+    kind:RequestKind;
+    key:[ubyte];
+    name:string;
+    linkage:string;
+    modifier_kind:ModifierKind;
+    required:bool;
+    provisional:uint16;
+}
+
+table CachedSymbol {
+    key:[ubyte];
+    name:string;
+    linkage:string;
+    kind:SymbolKind;
+    has_content:bool;
+    required:bool;
+    data:[ubyte];
+    requests:[CachedRequest];
+}
+
+table CachedSymbolBlob {
+    key:[ubyte];
+    symbol:CachedSymbol;
+}
+
+root_type CachedSymbolBlob;
+file_identifier "SCSY";

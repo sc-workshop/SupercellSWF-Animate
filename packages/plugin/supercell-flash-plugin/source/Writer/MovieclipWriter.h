@@ -6,6 +6,10 @@
 namespace sc::Adobe {
     class SCWriter;
 
+    namespace Cache {
+        class SymbolCache;
+    }
+
     class SCMovieclipWriter : public Animate::Publisher::SharedMovieclipWriter {
     private:
         SCWriter& m_writer;
@@ -39,9 +43,13 @@ namespace sc::Adobe {
 
         virtual bool HasContent() const override;
 
-        virtual void ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap) override;
+        virtual void ApplyResourceRemap(const std::unordered_map<uint16_t, uint16_t>& remap,
+                                        bool rebuild_instances = true) override;
 
     protected:
         virtual std::size_t GenerateHash() const;
+
+    private:
+        friend class Cache::SymbolCache;
     };
 }

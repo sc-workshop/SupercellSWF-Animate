@@ -54,6 +54,7 @@ target_link_libraries(${TARGET} PUBLIC
     fmt::fmt # String format
     CDT::CDT # Vector triangulation
     zip # Fla reader
+    supercell::compression # Cache pack streaming compression
 )
 
 target_include_directories(${TARGET}
