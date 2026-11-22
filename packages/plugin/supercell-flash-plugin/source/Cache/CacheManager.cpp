@@ -13,7 +13,6 @@
 
 namespace sc::Adobe::Cache {
     namespace {
-        constexpr uint32_t ConfigSchemaVersion = 1;
 #if defined(NDEBUG)
         constexpr const char* CacheBuild = __SC_ANIMATE_VERSION__;
 #else
@@ -111,6 +110,7 @@ namespace sc::Adobe::Cache {
             builder.updateScalar(symbol.looping.GetMode());
             builder.updateScalar(symbol.looping.GetStartFrame());
             builder.updateScalar(symbol.looping.GetEndFrame());
+            builder.updateScalar(symbol.looping.GetFrameCount());
             builder.updateScalar(symbol.slicing.IsEnabled());
             if (symbol.slicing.IsEnabled()) {
                 const auto& guides = symbol.slicing.Guides();
@@ -125,7 +125,6 @@ namespace sc::Adobe::Cache {
         CacheKey BuildPolicyKey(const SCConfig& config) {
             CacheKeyBuilder builder;
 
-            builder.updateScalar(ConfigSchemaVersion);
             builder.update(std::string(CacheBuild));
 
             // Only settings that change captured symbol/image bytes belong here.
@@ -173,7 +172,10 @@ namespace sc::Adobe::Cache {
         }
 
         const std::string fileGuid = document.fileGuid;
-        const uint64_t rawHash = HashFileBytes(documentPath);
+        // The XFL marker file is only a few bytes. The reader's document hash covers the real
+        // DOMDocument.xml and library contents, so it is the only fingerprint that can invalidate
+        // the cache when the animation changes.
+        const uint64_t rawHash = document.hash;
         std::shared_ptr<CacheStore> store;
         {
             std::lock_guard<std::mutex> lock(m_mutex);
@@ -216,13 +218,11 @@ namespace sc::Adobe::Cache {
     }
 
     bool CacheManager::TryGetCachedDocument(const std::filesystem::path& documentPath, CachedDocument& result) {
-        const uint64_t rawHash = HashFileBytes(documentPath);
-        if (rawHash == 0)
+        XflDocumentInfo info;
+        if (!XflDocumentReader::TryRead(documentPath, info) || info.fileGuid.empty() || info.hash == 0)
             return false;
 
-        XflDocumentInfo info;
-        if (!XflDocumentReader::TryRead(documentPath, info) || info.fileGuid.empty())
-            return false;
+        const uint64_t rawHash = info.hash;
 
         std::shared_ptr<CacheStore> store;
         {

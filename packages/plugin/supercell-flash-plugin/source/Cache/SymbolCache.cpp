@@ -27,7 +27,7 @@
 
 namespace sc::Adobe::Cache {
     namespace {
-        constexpr uint32_t PayloadMagic = 0x31435353; // "SCS1"
+        constexpr uint32_t PayloadMagic = 0x32535353; // "SCS2"
 
         enum class ShapeItemKind : uint8_t {
             Bitmap = 1,
@@ -259,15 +259,28 @@ namespace sc::Adobe::Cache {
             writer.WriteU16String(context.name);
             writer.WriteString(context.linkage_name);
             writer.WriteScalar(static_cast<uint8_t>(context.type));
+            writer.WriteScalar(static_cast<uint8_t>(context.looping.GetMode()));
+            writer.WriteScalar(context.looping.GetStartFrame());
+            writer.WriteScalar(context.looping.GetEndFrame());
+            writer.WriteScalar(context.looping.GetFrameCount());
+            writer.WriteScalar(context.duration);
         }
 
         Animate::Publisher::SymbolContext ReadSymbolContext(BinaryReader& reader) {
-            // Field order must match WriteSymbolContext: name, linkage, type.
+            // Field order must match WriteSymbolContext.
             const std::u16string name = reader.ReadU16String();
             const std::string linkage = reader.ReadString();
             const auto type = static_cast<Animate::Publisher::SymbolContext::SymbolType>(reader.ReadScalar<uint8_t>());
+            const auto mode = static_cast<Animate::Publisher::LoopingContext::LoopMode>(reader.ReadScalar<uint8_t>());
+            const uint32_t startFrame = reader.ReadScalar<uint32_t>();
+            const uint32_t endFrame = reader.ReadScalar<uint32_t>();
+            const uint32_t frameCount = reader.ReadScalar<uint32_t>();
+            const uint32_t duration = reader.ReadScalar<uint32_t>();
+
             Animate::Publisher::SymbolContext context(name, type);
             context.linkage_name = linkage;
+            context.looping = Animate::Publisher::LoopingContext(mode, startFrame, endFrame, frameCount);
+            context.duration = duration;
             return context;
         }
     }

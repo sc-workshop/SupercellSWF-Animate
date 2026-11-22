@@ -3,14 +3,14 @@
 #include "Cache/Generated/CacheImage_generated.h"
 #include "Cache/Generated/CacheIndex_generated.h"
 #include "Cache/Generated/CacheSymbol_generated.h"
+#include "compression/backend/zstd/zstd_compressor.h"
+#include "compression/backend/zstd/zstd_decompressor.h"
 #include "core/asset_manager/asset_manager.h"
 #include "core/hashing/ncrypto/fnv.h"
 #include "core/image/image.h"
 #include "core/io/shared_memory_stream.h"
 #include "core/memory/ref.h"
 #include "core/string/string_converter.h"
-#include "compression/backend/zstd/zstd_compressor.h"
-#include "compression/backend/zstd/zstd_decompressor.h"
 
 #include <algorithm>
 #include <chrono>
@@ -147,6 +147,18 @@ namespace sc::Adobe::Cache {
             }
         }
 
+        uint8_t ToCachedLoopMode(Animate::Publisher::LoopingContext::LoopMode mode) {
+            return static_cast<uint8_t>(mode);
+        }
+
+        bool FromCachedLoopMode(uint8_t value, Animate::Publisher::LoopingContext::LoopMode& mode) {
+            using LoopMode = Animate::Publisher::LoopingContext::LoopMode;
+            if (value > static_cast<uint8_t>(LoopMode::ANIMATION_PLAY_REVERSE))
+                return false;
+            mode = static_cast<LoopMode>(value);
+            return true;
+        }
+
         Gen::ModifierKind ToCachedModifierKind(Animate::Publisher::MaskedLayerState type) {
             using Animate::Publisher::MaskedLayerState;
             switch (type) {
@@ -178,9 +190,7 @@ namespace sc::Adobe::Cache {
         }
     }
 
-    CacheStore::CacheStore(const std::string& fileGuid,
-                           const CacheKey& policyKey,
-                           const std::string& build) :
+    CacheStore::CacheStore(const std::string& fileGuid, const CacheKey& policyKey, const std::string& build) :
         m_fileGuid(fileGuid),
         m_policyKey(policyKey),
         m_build(build) {
@@ -405,12 +415,8 @@ namespace sc::Adobe::Cache {
         return true;
     }
 
-    bool CacheStore::AppendBlobLocked(const CacheKey& key,
-                                      const uint8_t* bytes,
-                                      size_t size,
-                                      size_t rawSize,
-                                      Gen::BlobKind kind,
-                                      BlobEntry& entry) {
+    bool CacheStore::AppendBlobLocked(
+        const CacheKey& key, const uint8_t* bytes, size_t size, size_t rawSize, Gen::BlobKind kind, BlobEntry& entry) {
         if (size == 0 || size > std::numeric_limits<uint32_t>::max() ||
             rawSize > std::numeric_limits<uint32_t>::max() || m_rawPack.size() != m_writeOffset) {
             DisableLocked("cache.pack size desync");
@@ -703,8 +709,10 @@ namespace sc::Adobe::Cache {
                                         continue;
 
                                     Animate::Publisher::CachedSymbolRequest request;
+                                    Animate::Publisher::LoopingContext::LoopMode loopMode;
                                     if (!FromCachedRequestKind(stored->kind(), request.kind) || !stored->key() ||
                                         stored->key()->size() != request.key.size() ||
+                                        !FromCachedLoopMode(stored->loop_mode(), loopMode) ||
                                         !FromCachedModifierKind(stored->modifier_kind(), request.modifier)) {
                                         failure = "symbol-request";
                                         requestsValid = false;
@@ -716,6 +724,10 @@ namespace sc::Adobe::Cache {
                                     request.name = stored->name() ? wk::StringConverter::ToUTF16(stored->name()->str())
                                                                   : std::u16string();
                                     request.linkage = stored->linkage() ? stored->linkage()->str() : std::string();
+                                    request.playback = Animate::Publisher::LoopingContext(loopMode,
+                                                                                          stored->first_frame(),
+                                                                                          stored->last_frame(),
+                                                                                          stored->frame_count());
                                     request.required = stored->required();
                                     request.provisional = stored->provisional();
                                     result.requests.push_back(std::move(request));
@@ -780,7 +792,11 @@ namespace sc::Adobe::Cache {
                                                    request.linkage.empty() ? nullptr : request.linkage.c_str(),
                                                    ToCachedModifierKind(request.modifier),
                                                    request.required,
-                                                   request.provisional));
+                                                   request.provisional,
+                                                   ToCachedLoopMode(request.playback.GetMode()),
+                                                   request.playback.GetStartFrame(),
+                                                   request.playback.GetEndFrame(),
+                                                   request.playback.GetFrameCount()));
             }
 
             const auto symbol =

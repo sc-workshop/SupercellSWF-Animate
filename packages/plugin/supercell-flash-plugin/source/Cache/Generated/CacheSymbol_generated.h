@@ -877,7 +877,11 @@ struct CachedRequest FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_LINKAGE = 10,
     VT_MODIFIER_KIND = 12,
     VT_REQUIRED = 14,
-    VT_PROVISIONAL = 16
+    VT_PROVISIONAL = 16,
+    VT_LOOP_MODE = 18,
+    VT_FIRST_FRAME = 20,
+    VT_LAST_FRAME = 22,
+    VT_FRAME_COUNT = 24
   };
   sc::Adobe::Cache::Gen::RequestKind kind() const {
     return static_cast<sc::Adobe::Cache::Gen::RequestKind>(GetField<int8_t>(VT_KIND, 0));
@@ -900,6 +904,18 @@ struct CachedRequest FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   uint16_t provisional() const {
     return GetField<uint16_t>(VT_PROVISIONAL, 0);
   }
+  uint8_t loop_mode() const {
+    return GetField<uint8_t>(VT_LOOP_MODE, 0);
+  }
+  uint32_t first_frame() const {
+    return GetField<uint32_t>(VT_FIRST_FRAME, 0);
+  }
+  uint32_t last_frame() const {
+    return GetField<uint32_t>(VT_LAST_FRAME, 4294967295);
+  }
+  uint32_t frame_count() const {
+    return GetField<uint32_t>(VT_FRAME_COUNT, 4294967295);
+  }
   template <bool B = false>
   bool Verify(::flatbuffers::VerifierTemplate<B> &verifier) const {
     return VerifyTableStart(verifier) &&
@@ -913,6 +929,10 @@ struct CachedRequest FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
            VerifyField<int8_t>(verifier, VT_MODIFIER_KIND, 1) &&
            VerifyField<uint8_t>(verifier, VT_REQUIRED, 1) &&
            VerifyField<uint16_t>(verifier, VT_PROVISIONAL, 2) &&
+           VerifyField<uint8_t>(verifier, VT_LOOP_MODE, 1) &&
+           VerifyField<uint32_t>(verifier, VT_FIRST_FRAME, 4) &&
+           VerifyField<uint32_t>(verifier, VT_LAST_FRAME, 4) &&
+           VerifyField<uint32_t>(verifier, VT_FRAME_COUNT, 4) &&
            verifier.EndTable();
   }
 };
@@ -942,6 +962,18 @@ struct CachedRequestBuilder {
   void add_provisional(uint16_t provisional) {
     fbb_.AddElement<uint16_t>(CachedRequest::VT_PROVISIONAL, provisional, 0);
   }
+  void add_loop_mode(uint8_t loop_mode) {
+    fbb_.AddElement<uint8_t>(CachedRequest::VT_LOOP_MODE, loop_mode, 0);
+  }
+  void add_first_frame(uint32_t first_frame) {
+    fbb_.AddElement<uint32_t>(CachedRequest::VT_FIRST_FRAME, first_frame, 0);
+  }
+  void add_last_frame(uint32_t last_frame) {
+    fbb_.AddElement<uint32_t>(CachedRequest::VT_LAST_FRAME, last_frame, 4294967295);
+  }
+  void add_frame_count(uint32_t frame_count) {
+    fbb_.AddElement<uint32_t>(CachedRequest::VT_FRAME_COUNT, frame_count, 4294967295);
+  }
   explicit CachedRequestBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -961,12 +993,20 @@ inline ::flatbuffers::Offset<CachedRequest> CreateCachedRequest(
     ::flatbuffers::Offset<::flatbuffers::String> linkage = 0,
     sc::Adobe::Cache::Gen::ModifierKind modifier_kind = sc::Adobe::Cache::Gen::ModifierKind::Mask,
     bool required = false,
-    uint16_t provisional = 0) {
+    uint16_t provisional = 0,
+    uint8_t loop_mode = 0,
+    uint32_t first_frame = 0,
+    uint32_t last_frame = 4294967295,
+    uint32_t frame_count = 4294967295) {
   CachedRequestBuilder builder_(_fbb);
+  builder_.add_frame_count(frame_count);
+  builder_.add_last_frame(last_frame);
+  builder_.add_first_frame(first_frame);
   builder_.add_linkage(linkage);
   builder_.add_name(name);
   builder_.add_key(key);
   builder_.add_provisional(provisional);
+  builder_.add_loop_mode(loop_mode);
   builder_.add_required(required);
   builder_.add_modifier_kind(modifier_kind);
   builder_.add_kind(kind);
@@ -986,7 +1026,11 @@ inline ::flatbuffers::Offset<CachedRequest> CreateCachedRequestDirect(
     const char *linkage = nullptr,
     sc::Adobe::Cache::Gen::ModifierKind modifier_kind = sc::Adobe::Cache::Gen::ModifierKind::Mask,
     bool required = false,
-    uint16_t provisional = 0) {
+    uint16_t provisional = 0,
+    uint8_t loop_mode = 0,
+    uint32_t first_frame = 0,
+    uint32_t last_frame = 4294967295,
+    uint32_t frame_count = 4294967295) {
   auto key__ = key ? _fbb.CreateVector<uint8_t>(*key) : 0;
   auto name__ = name ? _fbb.CreateString(name) : 0;
   auto linkage__ = linkage ? _fbb.CreateString(linkage) : 0;
@@ -998,7 +1042,11 @@ inline ::flatbuffers::Offset<CachedRequest> CreateCachedRequestDirect(
       linkage__,
       modifier_kind,
       required,
-      provisional);
+      provisional,
+      loop_mode,
+      first_frame,
+      last_frame,
+      frame_count);
 }
 
 struct CachedSymbol FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

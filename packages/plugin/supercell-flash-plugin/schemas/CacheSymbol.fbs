@@ -71,6 +71,12 @@ table CachedRequest {
     modifier_kind:ModifierKind;
     required:bool;
     provisional:uint16;
+    // Append-only for FlatBuffers compatibility. Defaults match LoopingContext(),
+    // so payloads written before playback fields were added still replay correctly.
+    loop_mode:ubyte = 0;
+    first_frame:uint32 = 0;
+    last_frame:uint32 = 4294967295;
+    frame_count:uint32 = 4294967295;
 }
 
 table CachedSymbol {

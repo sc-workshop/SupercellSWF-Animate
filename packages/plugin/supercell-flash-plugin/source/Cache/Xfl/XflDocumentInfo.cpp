@@ -31,11 +31,30 @@ namespace sc::Adobe::Cache {
     thread_local std::string g_lastXflError;
 
     namespace {
+        bool IsXflMarker(const std::filesystem::path& path) {
+            std::string extension = path.extension().string();
+            std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) {
+                return static_cast<char>(std::tolower(c));
+            });
+            return extension == ".xfl";
+        }
+
         class FlaReader {
         public:
             explicit FlaReader(const std::filesystem::path& path) :
                 m_root(path),
-                m_packed(path.extension() != ".xfl") {}
+                m_packed(!IsXflMarker(path)) {
+                // Animate passes the marker file inside an uncompressed XFL folder, not the
+                // folder itself. Treat that marker as the document root so the cache can read
+                // DOMDocument.xml and the library subtree.
+                if (!m_packed) {
+                    std::error_code error;
+                    if (std::filesystem::is_regular_file(m_root, error) && !error)
+                        m_root = m_root.parent_path();
+                    if (m_root.empty())
+                        m_root = ".";
+                }
+            }
 
             ~FlaReader() {
                 if (m_zip) {
@@ -698,7 +717,7 @@ namespace sc::Adobe::Cache {
                 CacheKeyBuilder builder;
 
                 // Authoring metadata already carries CRC/import date/size. Reading bitmap
-                // bytes here is unnecessary and would make every publish decompress the atlas.
+                // bytes here is unnecessary and would make every publish decompress the atlas
                 static constexpr const char* attributes[] = {"name",
                                                              "itemID",
                                                              "href",
